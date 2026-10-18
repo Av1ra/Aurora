@@ -23,6 +23,7 @@
 | Cloud build (never publishes releases) | .github/workflows/build.yml |
 | Build and signing | docs/DEVELOPMENT.md |
 | Current verified state and remaining work | docs/STATUS.md |
+| Codex resume checkpoint, acceptance matrix and owner constraints | docs/CODEX_HANDOFF.md |
 | English player description for future release | docs/RELEASE_DESCRIPTION.md |
 | Prior notes and audit (historical, not current instructions) | docs/archive/ |
 
