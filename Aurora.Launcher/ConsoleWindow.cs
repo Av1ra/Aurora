@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.UI.Xaml;
@@ -53,7 +53,7 @@ sealed class ConsoleWindow : Window
     }
     int Read(int index){if(SendMessageTimeout(host,GetSetting,(nuint)index,0,3,250,out var value)==0)throw new InvalidOperationException("Game settings host is unavailable");return unchecked((int)value);}
     void Write(int index,int value){if(SendMessageTimeout(host,SetSetting,(nuint)index,(nint)value,3,250,out var result)==0||result!=1){((InfoBar)root.FindName("Status")).Message=UiLanguage.Text("Не удалось применить настройку. Проверьте, что игра отвечает.");((InfoBar)root.FindName("Status")).IsOpen=true;}}
-    void Refresh(){updating=true;try{enabled.IsOn=Read(0)!=0;mirror.IsOn=Read(1)!=0;for(int i=0;i<6;i++){sliders[i].Value=Read(i+2);percentages[i].Text=$"{(int)sliders[i].Value}%";}view.SelectedIndex=Read(8);bool allowed=Read(9)!=0;enabled.IsEnabled=allowed;mirror.IsEnabled=allowed;((FrameworkElement)root.FindName("Values")).IsHitTestVisible=allowed;if(!allowed){var status=(InfoBar)root.FindName("Status");status.Message=UiLanguage.Text("Общий PBR выключен в лаунчере. Включите его перед следующим запуском игры.");status.IsOpen=true;}}finally{updating=false;}}
+    void Refresh(){updating=true;try{enabled.IsOn=Read(0)!=0;mirror.IsOn=Read(1)!=0;for(int i=0;i<6;i++){sliders[i].Value=Read(i+2);percentages[i].Text=$"{(int)sliders[i].Value}%";}view.SelectedIndex=Read(8);bool allowed=Read(9)!=0;enabled.IsEnabled=allowed;bool editable=allowed&&enabled.IsOn;mirror.IsEnabled=editable;foreach(var slider in sliders)slider.IsEnabled=editable;view.IsEnabled=editable;if(!allowed){var status=(InfoBar)root.FindName("Status");status.Message=UiLanguage.Text("Общий PBR выключен в лаунчере. Включите его перед следующим запуском игры.");status.IsOpen=true;}}finally{updating=false;}}
     const string Layout="""
     <Grid xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
       <Grid.Resources><Style x:Key="Label" TargetType="TextBlock"><Setter Property="FontSize" Value="12"/><Setter Property="VerticalAlignment" Value="Center"/></Style></Grid.Resources>

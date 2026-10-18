@@ -65,8 +65,8 @@ sealed class EditorWindow:Window
  async Task RunCommand(Func<Task> action){if(busy)return;busy=true;UpdateControls();try{await action();}catch(Exception ex){status.Text=UiLanguage.Text(ex.Message);}finally{busy=false;UpdateControls();}}
  void SelectLod(string path){selectedLod=path;lodChoice.SelectedItem=lodChoice.Items.OfType<ComboBoxItem>().First(x=>string.Equals(x.Tag as string,path,StringComparison.OrdinalIgnoreCase));}
  void AddLodChoice(string path){if(lodChoice.Items.OfType<ComboBoxItem>().Any(x=>string.Equals(x.Tag as string,path,StringComparison.OrdinalIgnoreCase)))return;var item=new ComboBoxItem{Content=Path.GetFileName(path),Tag=path};ToolTipService.SetToolTip(item,path);lodChoice.Items.Add(item);}
- async Task<string?> Pick(params string[] extensions){var picker=new Microsoft.Windows.Storage.Pickers.FileOpenPicker(AppWindow.Id);foreach(var ext in extensions)picker.FileTypeFilter.Add(ext);return(await picker.PickSingleFileAsync())?.Path;}
- async Task<string?> Folder(){var picker=new Microsoft.Windows.Storage.Pickers.FolderPicker(AppWindow.Id);return(await picker.PickSingleFolderAsync())?.Path;}
+ async Task<string?> Pick(params string[] extensions){var picker=new Windows.Storage.Pickers.FileOpenPicker();foreach(var ext in extensions)picker.FileTypeFilter.Add(ext);WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));return(await picker.PickSingleFileAsync())?.Path;}
+ async Task<string?> Folder(){var picker=new Windows.Storage.Pickers.FolderPicker();picker.FileTypeFilter.Add("*");WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));return(await picker.PickSingleFolderAsync())?.Path;}
  async Task AddModel(string path){var model=await Task.Run(()=>new NativeModel(File.ReadAllBytes(path)));lods[path]=model;glassObjects.TryAdd(path,[]);AddLodChoice(path);}
  async Task Load(string path)
  {
