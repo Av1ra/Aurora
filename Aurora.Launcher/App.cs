@@ -37,7 +37,6 @@ sealed class MainWindow:Window
  readonly string stateRoot=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Aurora");
  Preferences prefs;
  List<VerifiedMod> mods=[];
- List<DetectedWorkshopMod> registeredWorkshop=[];
  List<WorkshopUpdateOffer> workshopOffers=[];
  bool workshopPromptActive;
  readonly UpdateService updates=new();
@@ -67,9 +66,9 @@ sealed class MainWindow:Window
  }
  void Save(){File.WriteAllText(Path.Combine(stateRoot,"settings.json"),JsonSerializer.Serialize(prefs));File.WriteAllText(Path.Combine(stateRoot,"game-path.txt"),prefs.Game);}
  void Discover(){_=DiscoverAsync();}
- void ApplyDiscovery(List<VerifiedMod> found,List<string> errors,List<DetectedWorkshopMod> workshop,List<WorkshopUpdateOffer> offers)
+ void ApplyDiscovery(List<VerifiedMod> found,List<string> errors,List<WorkshopUpdateOffer> offers)
  {
-  mods=found;registeredWorkshop=workshop;workshopOffers=offers;navigation.MenuItems.Clear();navigation.MenuItems.Add(new NavigationViewItem{Content=UiLanguage.Text("Главная"),Icon=new SymbolIcon(Symbol.Home)});
+  mods=found;workshopOffers=offers;navigation.MenuItems.Clear();navigation.MenuItems.Add(new NavigationViewItem{Content=UiLanguage.Text("Главная"),Icon=new SymbolIcon(Symbol.Home)});
   foreach(var mod in mods.Where(m=>m.Manifest.Placement=="navigation"))navigation.MenuItems.Add(new NavigationViewItem{Content=UiLanguage.Text(mod.Manifest.Name),Tag=mod,Icon=new FontIcon{Glyph=mod.Manifest.Category=="graphics"?"\uE790":mod.Manifest.Category=="camera"?"\uE722":"\uE8F1"}});
   status.Text=string.Join("\n",errors);navigation.SelectedItem=navigation.MenuItems[0];Home();
  }
@@ -103,43 +102,39 @@ sealed class MainWindow:Window
   var moduleState=new StackPanel{Spacing=8};moduleState.Children.Add(RowTitle("Модули"));
   moduleState.Children.Add(new TextBlock{Text=mods.Count==0?UiLanguage.Text("Совместимые модули не найдены."):string.Join("\n",mods.Select(x=>UiLanguage.Text(x.Manifest.Name))),TextWrapping=TextWrapping.Wrap,Opacity=.75});
   moduleState.Children.Add(AsyncButton("Проверить обновления модулей",DiscoverAsync));body.Children.Add(Card(moduleState));
-  var workshopState=new StackPanel{Spacing=8};workshopState.Children.Add(RowTitle("Идентификаторы Workshop"));
-  foreach(var registration in SteamDiscovery.RegisteredMods)
+  // A registered ID is an internal source filter, not a permanent home-screen item.
+  // Display a Workshop card only when an install or update is actually available.
+  if(workshopOffers.Count>0)
   {
-   var detected=registeredWorkshop.FirstOrDefault(x=>x.Registration.SteamId==registration.SteamId);
-   var entry=new StackPanel{Spacing=3};
-   entry.Children.Add(new TextBlock{Text=registration.Name+"  #"+registration.SteamId,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});
-   string state=detected==null?"Не найден в Workshop":detected.Complete?"Найден в Workshop":"Отсутствуют файлы";
-   if(detected!=null&&!detected.Complete)state+=": "+string.Join(", ",detected.MissingFiles);
-   entry.Children.Add(new TextBlock{Text=UiLanguage.Text(state),FontSize=12,TextWrapping=TextWrapping.Wrap,Opacity=.75});
-   if(detected!=null)entry.Children.Add(new TextBlock{Text=detected.Folder,FontSize=11,TextWrapping=TextWrapping.Wrap,Opacity=.65});
-   var offer=workshopOffers.FirstOrDefault(x=>x.Registration.SteamId==registration.SteamId);
-   if(offer!=null)
+   var workshopState=new StackPanel{Spacing=8};
+   workshopState.Children.Add(RowTitle("Обновления Workshop"));
+   foreach(var offer in workshopOffers)
    {
+    var entry=new StackPanel{Spacing=5};
+    entry.Children.Add(new TextBlock{Text=offer.Release.Name,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});
     string local=offer.Installed==null?UiLanguage.Text("Не установлен"):offer.Installed.Version+" ("+offer.Installed.ReleaseDate+")";
     entry.Children.Add(new TextBlock{Text=UiLanguage.Text("Установлено")+": "+local+"  →  "+UiLanguage.Text("Доступно")+": "+offer.Release.Version+" ("+offer.Release.ReleaseDate+")",TextWrapping=TextWrapping.Wrap,FontSize=12});
     entry.Children.Add(AsyncButton(offer.FirstInstall?"Установить модуль":"Обновить модуль",()=>ShowWorkshopUpdatesAsync([offer])));
+    workshopState.Children.Add(entry);
    }
-   workshopState.Children.Add(entry);
+   body.Children.Add(Card(workshopState));
   }
-  body.Children.Add(Card(workshopState));
   var editor=new StackPanel{Orientation=Orientation.Horizontal,Spacing=12};editor.Children.Add(new TextBlock{Text=UiLanguage.Text("Мастер моделей"),VerticalAlignment=VerticalAlignment.Center,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});
   editor.Children.Add(AsyncButton(File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","acode.lnchr"))?"Открыть редактор":"Скачать редактор",OpenEditor));body.Children.Add(Card(editor));
   body.Children.Add(status);versionText=new TextBlock{Text=UiLanguage.Text(versionMessage),Opacity=.65};body.Children.Add(versionText);UiLanguage.Apply(body);
  }
  async Task DiscoverAsync()
  {
-  if(!Directory.Exists(prefs.Game)){ApplyDiscovery([],[],[],[]);return;}
+  if(!Directory.Exists(prefs.Game)){ApplyDiscovery([],[],[]);return;}
   status.Text=UiLanguage.Text("Поиск модулей…");
   try
   {
    var result=await Task.Run(()=>{
     var modules=new ModCatalog(publicKey).Discover(new[]{Path.Combine(AppContext.BaseDirectory,"Modules")}.Concat(SteamDiscovery.FindRoots(prefs.Game)));
-    var workshop=SteamDiscovery.FindRegisteredWorkshop(prefs.Game);
     var updates=WorkshopUpdates.Scan(prefs.Game);
-    return (modules.Mods,Errors:modules.Errors.Concat(updates.Errors).ToList(),workshop,updates.Offers);
+    return (modules.Mods,Errors:modules.Errors.Concat(updates.Errors).ToList(),updates.Offers);
    });
-   ApplyDiscovery(result.Mods,result.Errors,result.workshop,result.Offers);
+   ApplyDiscovery(result.Mods,result.Errors,result.Offers);
    if(result.Offers.Count>0)await ShowWorkshopUpdatesAsync(result.Offers);
   }
   catch(Exception ex){Notice(ex.Message);}

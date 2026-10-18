@@ -30,8 +30,8 @@ Only the updated files listed in `Files` are retained under `SovietRepublic/mods
 ### Detection and update decisions
 
 1. Aurora startup scans registered Steam IDs only, at Steam `workshop/content/784150/<SteamId>/` and in `media_soviet/workshop_wip/<SteamId>/`.
-2. If the folder or `aurora-module.json` is absent, offer nothing. If a JSON file is present but invalid or listed files are missing, report the error but do not touch the game.
-3. Read `Version`, `ReleaseDate`, `Files`; read the installed receipt (if any), compare versions and compute actual file hashes. Downgrades are never offered. Newer versions, a changed file list or changed file content prompt a comparison dialog.
+2. If the folder or `aurora-module.json` is absent, offer nothing. If a JSON file is present but listed files have not arrived, silently wait for the completed Steam download. Malformed metadata may be reported in the launcher, without touching the game.
+3. Read `Version`, `ReleaseDate`, `Files`; read the installed receipt (if any), compare versions, dates and compute actual file hashes. Downgrades are never offered. Newer versions, a changed date, a changed file list or changed file content prompt a comparison dialog. Registered IDs without a ready update are not shown as permanent cards on Home.
 4. Player confirms installation. Aurora refuses if the game is running, validates the source again, and stages new files. It replaces allowed destinations under `mods`, removes only its own unchanged retired destinations, then atomically writes the new receipt.
 5. Temporary rollback files are deleted. On the next scan, a matching installed receipt and matching actual game files produce no update offer.
 

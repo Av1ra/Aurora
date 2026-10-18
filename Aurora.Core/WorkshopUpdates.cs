@@ -93,6 +93,10 @@ public static class WorkshopUpdates
                 {
                     var release = ReadRelease(folder, registration);
                     if (release == null) continue; // Empty Workshop folder: no update notice.
+                    // Steam may still be downloading the update: silently wait for all
+                    // explicitly listed files rather than offering an incomplete package.
+                    if (release.Files.Any(relative => !File.Exists(ModCatalog.SafePath(folder, relative))))
+                        continue;
                     var hashes = SourceHashes(folder, release);
                     var installed = ReadInstalled(game, registration.SteamId);
                     if (installed != null)
@@ -103,7 +107,7 @@ public static class WorkshopUpdates
                             hashes.All(x => installed.Files.Any(y => y.Path.Equals(x.Path, StringComparison.OrdinalIgnoreCase) &&
                                                       y.Sha256.Equals(x.Sha256, StringComparison.OrdinalIgnoreCase)));
                         // Recheck installed files as well, so deleted/tampered payloads can be repaired.
-                        if (relation == 0 && filesMatch &&
+                        if (relation == 0 && release.ReleaseDate == installed.ReleaseDate && filesMatch &&
                             hashes.All(x => File.Exists(ModCatalog.SafePath(game, x.Path)) &&
                                             Hash(ModCatalog.SafePath(game, x.Path)).Equals(x.Sha256, StringComparison.OrdinalIgnoreCase)))
                             continue;

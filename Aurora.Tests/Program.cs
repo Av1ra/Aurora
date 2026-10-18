@@ -82,6 +82,12 @@ Check(WorkshopUpdates.Scan(steamGame).Offers.Count==0,"no popup while aurora-mod
 var releaseFile=Path.Combine(subscribed,WorkshopUpdates.MetadataName);
 var release=new WorkshopRelease(1,"3822550289","PBR","1.0.0","2026-10-18",["mods/m.dll","mods/pbr.dll","mods/glass_default.dds"]);
 File.WriteAllText(releaseFile,JsonSerializer.Serialize(release));
+// An incomplete upload should be ignored quietly until Steam finishes copying it.
+File.Delete(Path.Combine(subscribed,"mods","pbr.dll"));
+var incomplete=WorkshopUpdates.Scan(steamGame);
+Check(incomplete.Offers.Count==0 && incomplete.Errors.Count==0,
+      "incomplete registered Workshop release triggers no prompt");
+File.WriteAllText(Path.Combine(subscribed,"mods","pbr.dll"),"fixture");
 var pending=WorkshopUpdates.Scan(steamGame);
 Check(pending.Offers.Count==1 && pending.Offers[0].FirstInstall &&
       pending.Offers[0].Release.ReleaseDate=="2026-10-18","first installation offered with exact declared release date");
@@ -89,6 +95,14 @@ Check(WorkshopUpdates.ReadInstalled(steamGame,"3822550289")==null,"first install
 WorkshopUpdates.Install(steamGame,pending.Offers[0]);
 Check(WorkshopUpdates.Scan(steamGame).Offers.Count==0,"installed matching Workshop payload produces no repeat popup");
 Check(WorkshopUpdates.ReadInstalled(steamGame,"3822550289")?.Version=="1.0.0","installed version recorded separately from release");
+// A release date change is a legitimate metadata update even without a version bump.
+File.WriteAllText(releaseFile,JsonSerializer.Serialize(release with{ReleaseDate="2026-10-19"}));
+pending=WorkshopUpdates.Scan(steamGame);
+Check(pending.Offers.Count==1 && pending.Offers[0].Release.ReleaseDate=="2026-10-19",
+      "release date change alone triggers a comparison prompt");
+WorkshopUpdates.Install(steamGame,pending.Offers[0]);
+Check(WorkshopUpdates.ReadInstalled(steamGame,"3822550289")?.ReleaseDate=="2026-10-19" &&
+      WorkshopUpdates.Scan(steamGame).Offers.Count==0,"date-only change is recorded and not offered again");
 File.WriteAllText(Path.Combine(subscribed,"mods","pbr.dll"),"changed-without-version-bump");
 pending=WorkshopUpdates.Scan(steamGame);
 Check(pending.Offers.Count==1 && !pending.Offers[0].FirstInstall,"changed DLL triggers update even when version unchanged");
