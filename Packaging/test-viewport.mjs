@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+﻿import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
 // Exercise the actual viewport script with a deterministic GPU boundary.
@@ -36,6 +36,8 @@ api.texture('body', 'first-map'); images[1].onload();
 api.texture('body', 'replacement-map'); images[2].onload();
 assert.equal(created, 2);
 assert.equal(deleted.length, 1, 'replaced GPU texture must be released');
+api.texture('body', 'slow-map'); api.texture('body', 'newer-map'); images[4].onload(); images[3].onload();
+assert.equal(created, 3, 'late map in the same scene must not replace a newer request');
 canvas.onpointerdown({clientX:20, clientY:30, pointerId:1});
 canvas.onpointerup({clientX:20, clientY:30, offsetX:20, offsetY:30});
 assert.deepEqual(reads.at(-1), [40,139,1,1]);
@@ -46,5 +48,5 @@ canvas.onpointerup({clientX:20, clientY:30, offsetX:20, offsetY:30});
 assert.equal(api.selected(), -1, 'background click clears the object selection');
 assert.deepEqual(messages.at(-1), {selected:-1});
 api.load(scene());
-assert.equal(deleted.length, 2, 'scene replacement releases remaining GPU textures');
+assert.equal(deleted.length, 3, 'scene replacement releases remaining GPU textures');
 console.log('PASS viewport scene ownership, texture lifetime, DPI picking and background deselection');

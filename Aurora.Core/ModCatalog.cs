@@ -15,6 +15,15 @@ public record VerifiedMod(string Folder, ModManifest Manifest);
 public sealed class ModCatalog(string publicKeyPem)
 {
     public static string LauncherVersion => typeof(ModCatalog).Assembly.GetName().Version!.ToString(3);
+    public ModManifest VerifySnapshot(VerifiedMod module)
+    {
+        var current = Verify(module.Folder);
+        // Public version 0.2 is intentionally fixed across development builds.
+        // Identity/version alone cannot detect a same-version content refresh.
+        if (!JsonSerializer.Serialize(current).Equals(JsonSerializer.Serialize(module.Manifest), StringComparison.Ordinal))
+            throw new InvalidDataException("The module has changed. Scan again.");
+        return current;
+    }
     public ModManifest Verify(string folder)
     {
         var marker = SafePath(folder, "acode.lnchr");

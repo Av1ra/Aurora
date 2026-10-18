@@ -47,7 +47,7 @@ sealed class MainWindow:Window
  [DllImport("kernel32.dll",CharSet=CharSet.Unicode,SetLastError=true)]static extern bool WritePrivateProfileString(string section,string key,string value,string file);
  public MainWindow()
  {
-  Title="Aurora Launcher";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(1000,720));
+  Title="Aurora Launcher";SystemBackdrop=new MicaBackdrop();WindowChrome.ResizeLogical(this,1000,720);
   Directory.CreateDirectory(stateRoot);
   try{prefs=JsonSerializer.Deserialize<Preferences>(File.ReadAllText(Path.Combine(stateRoot,"settings.json")))??new();}catch{prefs=new();}
   string gamePath=Path.Combine(stateRoot,"game-path.txt");if(File.Exists(gamePath)){string selected=File.ReadAllText(gamePath).Trim();if(File.Exists(Path.Combine(selected,"SOVIET64.exe")))prefs=prefs with{Game=selected};}
@@ -236,7 +236,7 @@ sealed class MainWindow:Window
  {
   var controls=new StackPanel{Spacing=8};controls.Children.Add(RowTitle(module.Manifest.Name,module.Manifest.Stage=="alpha"?"Альфа":module.Manifest.Stage=="beta"?"Бета":null));AddOptionRows(controls,module,false);return Card(controls);
  }
- void VerifyCurrent(VerifiedMod mod){var current=new ModCatalog(publicKey).Verify(mod.Folder);if(current.Id!=mod.Manifest.Id||current.Version!=mod.Manifest.Version)throw new InvalidDataException("Модуль обновился. Повторите поиск.");}
+ void VerifyCurrent(VerifiedMod mod){_=new ModCatalog(publicKey).VerifySnapshot(mod);}
  void Install(VerifiedMod mod)
  {
   VerifyCurrent(mod);
@@ -308,7 +308,20 @@ sealed class MainWindow:Window
 }
 sealed class AlphaConsole:Window
 {
- public AlphaConsole(){Title="Aurora — Console";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(520,260));var panel=new StackPanel{Margin=new Thickness(14),Spacing=8};var log=new TextBox{IsReadOnly=true,AcceptsReturn=true,Height=80,Text="In development"};var input=new TextBox{PlaceholderText="Message"};void Reply(){if(string.IsNullOrWhiteSpace(input.Text))return;log.Text+="\r\n> "+input.Text+"\r\nIn development";input.Text="";}input.KeyDown+=(_,e)=>{if(e.Key==Windows.System.VirtualKey.Enter){Reply();e.Handled=true;}};var send=new Button{Content="Send"};send.Click+=(_,_)=>Reply();var heading=new StackPanel{Orientation=Orientation.Horizontal,Spacing=10};heading.Children.Add(new TextBlock{Text=UiLanguage.Text("Консоль"),FontSize=20});heading.Children.Add(MainWindow.Badge("Альфа"));panel.Children.Add(heading);panel.Children.Add(log);panel.Children.Add(input);panel.Children.Add(send);WindowChrome.Attach(this,panel,Title);}
+ public AlphaConsole()
+ {
+  Title="Aurora Console";SystemBackdrop=new MicaBackdrop();WindowChrome.ResizeLogical(this,520,260);
+  var panel=new Grid{Margin=new Thickness(14),RowSpacing=8};panel.RowDefinitions.Add(new(){Height=GridLength.Auto});panel.RowDefinitions.Add(new(){Height=new GridLength(1,GridUnitType.Star)});panel.RowDefinitions.Add(new(){Height=GridLength.Auto});
+  var log=new TextBox{IsReadOnly=true,AcceptsReturn=true,TextWrapping=TextWrapping.Wrap,Text="In development",MinHeight=40};Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(log,UiLanguage.Text("Вывод консоли"));
+  var input=new TextBox{PlaceholderText=UiLanguage.Text("Сообщение")};Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(input,UiLanguage.Text("Сообщение"));
+  void Reply(){if(string.IsNullOrWhiteSpace(input.Text))return;log.Text+="\r\n> "+input.Text+"\r\nIn development";log.SelectionStart=log.Text.Length;input.Text="";input.Focus(FocusState.Programmatic);}
+  input.KeyDown+=(_,e)=>{if(e.Key==Windows.System.VirtualKey.Enter){Reply();e.Handled=true;}};
+  var send=new Button{Content=UiLanguage.Text("Отправить"),VerticalAlignment=VerticalAlignment.Stretch};send.Click+=(_,_)=>Reply();
+  var heading=new StackPanel{Orientation=Orientation.Horizontal,Spacing=10};heading.Children.Add(new TextBlock{Text=UiLanguage.Text("Консоль"),FontSize=20});heading.Children.Add(MainWindow.Badge("Альфа"));
+  var entry=new Grid{ColumnSpacing=8};entry.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});entry.ColumnDefinitions.Add(new(){Width=GridLength.Auto});entry.Children.Add(input);Grid.SetColumn(send,1);entry.Children.Add(send);
+  panel.Children.Add(heading);Grid.SetRow(log,1);panel.Children.Add(log);Grid.SetRow(entry,2);panel.Children.Add(entry);WindowChrome.Attach(this,panel,Title);
+ }
+
 }
 
 

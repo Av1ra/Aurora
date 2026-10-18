@@ -5,6 +5,15 @@ using Microsoft.UI.Xaml.Media;
 namespace Aurora.Shared;
 static class WindowChrome
 {
+ [System.Runtime.InteropServices.DllImport("user32.dll")]static extern uint GetDpiForWindow(nint hwnd);
+ public static void ResizeLogical(Window window,int width,int height)
+ {
+  var area=Microsoft.UI.Windowing.DisplayArea.GetFromWindowId(window.AppWindow.Id,Microsoft.UI.Windowing.DisplayAreaFallback.Primary).WorkArea;
+  var size=WindowSizing.Fit(width,height,GetDpiForWindow(WinRT.Interop.WindowNative.GetWindowHandle(window)),area.Width,area.Height);
+  window.AppWindow.Resize(new(size.Width,size.Height));
+  var position=window.AppWindow.Position;
+  window.AppWindow.Move(new(Math.Clamp(position.X,area.X,area.X+area.Width-size.Width),Math.Clamp(position.Y,area.Y,area.Y+area.Height-size.Height)));
+ }
  public static void Attach(Window window,FrameworkElement content,string title)
  {
   var root=new Grid();root.RowDefinitions.Add(new(){Height=new GridLength(40)});root.RowDefinitions.Add(new(){Height=new GridLength(1,GridUnitType.Star)});

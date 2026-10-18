@@ -5,8 +5,7 @@ public static class ModuleInstaller
 {
  public static void Install(VerifiedMod mod,string game,string key)
  {
-  var verified=new ModCatalog(key).Verify(mod.Folder);
-  if(verified.Id!=mod.Manifest.Id||verified.Version!=mod.Manifest.Version)throw new InvalidDataException("Module changed during installation");
+  var verified=new ModCatalog(key).VerifySnapshot(mod);
   if(!File.Exists(Path.Combine(game,"SOVIET64.exe")))throw new InvalidDataException("Game folder missing");
   var receiptRoot=Path.Combine(game,"mods","aurora-backups",DateTime.UtcNow.ToString("yyyyMMddHHmmss")+"-"+Guid.NewGuid().ToString("N"));
   Directory.CreateDirectory(receiptRoot);

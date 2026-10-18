@@ -37,7 +37,7 @@ sealed class EditorWindow:Window
  string? startupModel=Environment.GetCommandLineArgs().Skip(1).FirstOrDefault(x=>x.EndsWith(".nmf",StringComparison.OrdinalIgnoreCase));
  public EditorWindow()
  {
-  Title="Aurora Editor";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(1250,850));
+  Title="Aurora Editor";SystemBackdrop=new MicaBackdrop();WindowChrome.ResizeLogical(this,1250,850);
   var grid=new Grid();grid.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});grid.ColumnDefinitions.Add(new(){Width=new GridLength(350)});grid.Children.Add(view);
   emptyView.Children.Add(new TextBlock{Text=UiLanguage.Text("Откройте модель"),FontSize=22,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});
   emptyView.Children.Add(new TextBlock{Text=UiLanguage.Text("Откройте NMF или перетащите его сюда. Затем выберите MTL для настройки PBR и стекла."),TextWrapping=TextWrapping.Wrap,Opacity=.7});

@@ -197,3 +197,18 @@ Check(ModuleRuntimeCompatibility.OfferMatchesSignedRuntime(compatibilityOffer,[s
 Check(!ModuleRuntimeCompatibility.OfferMatchesSignedRuntime(compatibilityOffer,[]),"Workshop offer cannot promise a missing signed runtime");
 Check(!ModuleRuntimeCompatibility.OfferMatchesSignedRuntime(compatibilityOffer with{SourceFiles=compatibilityOffer.SourceFiles.Select(f=>f.Path=="mods/pbr.dll"?f with{Sha256=updatedHash}:f).ToArray()},[signedRuntime]),"changed Workshop bytes need a matching signed package");
 Check(!ModuleRuntimeCompatibility.OfferMatchesSignedRuntime(compatibilityOffer with{SourceFiles=compatibilityOffer.SourceFiles.Where(f=>f.Path!="mods/m.dll").ToArray()},[signedRuntime]),"retired Workshop files cannot be silently restored by an install offer");
+
+// A fixed public 0.2 version must not let an already open UI act on a changed descriptor.
+Sign(manifest);var snapshot=new VerifiedMod(root,catalog.Verify(root));
+Check(catalog.VerifySnapshot(snapshot).Id==manifest.Id,"unchanged signed module snapshot accepted");
+Sign(manifest with{Name="Same-version refreshed module"});
+Reject(()=>catalog.VerifySnapshot(snapshot),"same-version signed metadata refresh requires rescan");
+var untouchedGame=Path.Combine(root,"snapshot-game");Directory.CreateDirectory(untouchedGame);File.WriteAllText(Path.Combine(untouchedGame,"SOVIET64.exe"),"fixture");
+Reject(()=>ModuleInstaller.Install(snapshot,untouchedGame,pem),"stale module install plan rejected before writes");
+Check(!Directory.Exists(Path.Combine(untouchedGame,"mods")),"stale install leaves game files untouched");
+
+Check(Aurora.Shared.WindowSizing.Fit(520,260,96,1920,1080)==(520,260),"100-percent window size retains logical dimensions");
+Check(Aurora.Shared.WindowSizing.Fit(520,260,144,1920,1080)==(780,390),"150-percent window scales with WinUI controls");
+Check(Aurora.Shared.WindowSizing.Fit(1250,850,144,1920,1040)==(1872,992),"large editor fits the monitor work area at high DPI");
+Check(Aurora.Shared.WindowSizing.Fit(520,260,0,1920,1080)==(520,260),"unknown DPI falls back to standard scale");
+Check(Aurora.Shared.WindowSizing.Fit(520,260,192,20,20)==(1,1),"small work area never produces negative dimensions");

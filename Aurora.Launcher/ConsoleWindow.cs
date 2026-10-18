@@ -38,7 +38,7 @@ sealed class ConsoleWindow : Window
         ExtendsContentIntoTitleBar=true;SetTitleBar((UIElement)root.FindName("TitleBar"));
         Aurora.Shared.WindowChrome.MatchCaption(this,root);
         var area=Microsoft.UI.Windowing.DisplayArea.GetFromWindowId(AppWindow.Id,Microsoft.UI.Windowing.DisplayAreaFallback.Primary).WorkArea;
-        AppWindow.Resize(new Windows.Graphics.SizeInt32(Math.Min(540,area.Width-32),Math.Min(440,area.Height-32)));
+        Aurora.Shared.WindowChrome.ResizeLogical(this,540,440);
         AppWindow.Move(new Windows.Graphics.PointInt32(area.X+32,area.Y+32));
         enabled=(ToggleSwitch)root.FindName("Enabled");mirror=(ToggleSwitch)root.FindName("Mirror");
         sliders=Enumerable.Range(0,6).Select(i=>(Slider)root.FindName("Slider"+i)).ToArray();
