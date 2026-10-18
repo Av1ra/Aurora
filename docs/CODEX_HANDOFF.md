@@ -91,3 +91,5 @@ After Steam entry acceptance, audit Aurora Launcher and Aurora Editor workflows 
 ## Checkpoint discipline
 
 This file is a factual handoff, not a claim of a successful real-world Steam test. Before any further work, re-read `main` HEAD, confirm all code paths and the most recent Actions run, then work on top of the latest commit. If a previous session supplied a temporary Actions link, verify it is not expired. Append verified results and remaining limitations to `docs/STATUS.md`, update this handoff only when architecture/tests change, and push the work to `main`.
+
+Current functional WinUI audit and its verified/pending checks: [UI_AUDIT.md](UI_AUDIT.md). Latest implemented UI pass is 1874bcb; permanent-key packaging checks and empty-editor smoke passed. Continue from its pending model-loaded and constrained-width matrix; do not treat source review as GUI acceptance.
