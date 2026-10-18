@@ -57,3 +57,7 @@ Version remains 0.2. Launch game exists only on Home; removed from Graphics. Fea
 The Home action checks module updates by rescanning signed acode.lnchr manifests in Steam Workshop content/784150 across detected Steam libraries. Steam itself downloads subscriptions; Aurora does not impersonate the Steam updater. Workshop wins an equal-version tie against the bundled fallback; newer valid versions win normally. Before launching, Aurora repeats this scan and installs changed verified payloads while preserving INI settings. Signature and SHA checks remain mandatory. FOV remains a separate module.
 
 Continue from PROJECT_MAP.md. Source changes are pushed to main for the next chat. Do not confuse earlier local package builds with this latest source revision; rebuild before publishing a binary. The owner authorized a preliminary v0.2 release, but no claim of publication is made by these notes.
+
+## Installer browse folder correction
+
+The launcher installation Browse button now interprets a selected directory as the parent and automatically appends `\\Aurora`. Selecting an existing directory named Aurora (case-insensitive) does not produce `Aurora\\Aurora`. The game-folder picker continues to set the selected game directory and suggests its Aurora subfolder for the launcher. The Windows native installer test includes path suffix and duplication checks. Keep version 0.2; rebuild and validate the GitHub Actions artifact for this commit before sending a new installer.

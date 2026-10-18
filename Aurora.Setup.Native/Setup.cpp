@@ -420,6 +420,13 @@ static std::wstring ChooseFolder(HWND parent) {
   }
   return value;
 }
+// Browsing selects a parent folder. Aurora always gets its own subfolder.
+static fs::path LauncherFolder(const fs::path &selected) {
+  auto folder = Canonical(selected);
+  if (_wcsicmp(folder.filename().c_str(), L"Aurora") == 0)
+    return folder;
+  return folder / L"Aurora";
+}
 static HWND Control(HWND parent, const wchar_t *type, const wchar_t *text,
                     int x, int y, int width, int height, int id,
                     DWORD style = 0) {
@@ -446,7 +453,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM w,
       Control(window, L"STATIC", L"Папка лаунчера", 24, 104, 500, 24, 0);
       auto detected = FindGame();
       auto initial = detected.empty() ? ReadPath(Local() / L"install-root.txt")
-                                      : (detected / L"Aurora").wstring();
+                                      : LauncherFolder(detected).wstring();
       appEdit = Control(window, L"EDIT", initial.c_str(), 24, 132, 485, 28, 10,
                         ES_AUTOHSCROLL | WS_TABSTOP);
       Control(window, L"BUTTON", L"Обзор…", 520, 132, 90, 28, 11, WS_TABSTOP);
@@ -473,9 +480,9 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM w,
       if (id == 11 || id == 13) {
         auto path = ChooseFolder(window);
         if (!path.empty()) {
-          SetWindowTextW(id == 11 ? appEdit : gameEdit, path.c_str());
           if (id == 13)
-            SetWindowTextW(appEdit, (fs::path(path) / L"Aurora").c_str());
+            SetWindowTextW(gameEdit, path.c_str());
+          SetWindowTextW(appEdit, LauncherFolder(path).c_str());
         }
       }
       if (id == 15)
@@ -558,6 +565,19 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int) {
   try {
     int count = 0;
     auto args = CommandLineToArgvW(GetCommandLineW(), &count);
+    if (count == 2 && !wcscmp(args[1], L"--test-launcher-folder")) {
+      cliMode = true;
+      const fs::path parent = L"C:\\Aurora-tests\\SovietRepublic";
+      const fs::path expected = parent / L"Aurora";
+      const bool pass =
+          LauncherFolder(parent) == expected &&
+          LauncherFolder(fs::path(parent.wstring() + L"\\")) == expected &&
+          LauncherFolder(expected) == expected &&
+          LauncherFolder(parent / L"aUrOrA") == parent / L"aUrOrA";
+      LocalFree(args);
+      CoUninitialize();
+      return pass ? 0 : 1;
+    }
     if (count == 2 && !wcscmp(args[1], L"--unpack-test")) {
       cliMode = true;
       Unpack();

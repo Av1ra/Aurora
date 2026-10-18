@@ -2,6 +2,8 @@ import tempfile,subprocess,zipfile,hashlib,pathlib,json
 root=pathlib.Path(tempfile.mkdtemp(prefix='Aurora-native-tests-'))
 import sys
 exe=pathlib.Path(sys.argv[1]).resolve()
+assert subprocess.run([exe, '--test-launcher-folder'], timeout=15).returncode == 0
+print('PASS parent folder appends Aurora, trailing slash and existing Aurora folder do not duplicate it')
 src=root/'source'; dst=root/'Другая папка'; src.mkdir();dst.mkdir()
 (src/'app').mkdir();(src/'app'/'Aurora.Launcher.exe').write_bytes(b'fixture-host');(src/'Aurora.exe').write_bytes(b'new');(src/'keep.txt').write_text('new');(dst/'keep.txt').write_text('old');(dst/'custom.txt').write_text('user');(dst/'legacy.dll').write_bytes(b'old');(dst/'changed.dll').write_bytes(b'user')
 (src/'app'/'retired-files.tsv').write_text('legacy.dll\t'+hashlib.sha256(b'old').hexdigest()+'\nchanged.dll\t'+hashlib.sha256(b'old').hexdigest()+'\nkeep.txt\t'+hashlib.sha256(b'new').hexdigest()+'\n')
