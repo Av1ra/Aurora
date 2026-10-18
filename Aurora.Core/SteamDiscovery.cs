@@ -60,7 +60,9 @@ public static class SteamDiscovery
                 {
                     // Skip linked Workshop roots and payloads, and never trust manifest.json
                     // or workshopconfig.ini as executable authorization.
-                    var missing = registration.RequiredFiles
+                    var release = WorkshopUpdates.ReadRelease(folder, registration);
+                    var expected = release?.Files ?? registration.RequiredFiles;
+                    var missing = expected
                         .Where(relative =>
                         {
                             try { return !File.Exists(ModCatalog.SafePath(folder, relative)); }
@@ -69,7 +71,8 @@ public static class SteamDiscovery
                     var match = new DetectedWorkshopMod(registration, folder, missing);
                     if (best == null || (!best.Complete && match.Complete)) best = match;
                 }
-                catch (InvalidDataException) { /* Unsafe or linked workshop item. */ }
+                catch (Exception ex) when (ex is InvalidDataException or IOException or UnauthorizedAccessException or System.Text.Json.JsonException)
+                { /* Unsafe or malformed Workshop item. The update scanner reports details. */ }
             }
             if (best != null) detected.Add(best);
         }

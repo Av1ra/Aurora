@@ -39,8 +39,9 @@ public static class WorkshopUpdates
             !Version.TryParse(release.Version, out var version) || version.Major < 0 ||
             !DateOnly.TryParseExact(release.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _) ||
             string.IsNullOrWhiteSpace(release.Name) || release.Name.Length > 100 ||
-            release.Files is null || release.Files.Length != registration.RequiredFiles.Length ||
-            !release.Files.ToHashSet(StringComparer.OrdinalIgnoreCase).SetEquals(registration.RequiredFiles))
+            release.Files is null || release.Files.Length is < 1 or > 100 ||
+            release.Files.Distinct(StringComparer.OrdinalIgnoreCase).Count() != release.Files.Length ||
+            release.Files.Any(path => !registration.RequiredFiles.Contains(path, StringComparer.OrdinalIgnoreCase)))
             throw new InvalidDataException("Workshop version, date, Steam ID or file list is invalid");
         // A registry entry controls which exact destinations this item is allowed to replace.
         return release;
@@ -64,10 +65,10 @@ public static class WorkshopUpdates
         }
     }
 
-    static WorkshopFileHash[] SourceHashes(string folder, RegisteredWorkshopMod registration)
+    static WorkshopFileHash[] SourceHashes(string folder, WorkshopRelease release)
     {
         var hashes = new List<WorkshopFileHash>();
-        foreach (var relative in registration.RequiredFiles)
+        foreach (var relative in release.Files)
         {
             var file = ModCatalog.SafePath(folder, relative);
             if (!File.Exists(file)) throw new FileNotFoundException("Incomplete Workshop payload", file);
@@ -92,7 +93,7 @@ public static class WorkshopUpdates
                 {
                     var release = ReadRelease(folder, registration);
                     if (release == null) continue; // Empty Workshop folder: no update notice.
-                    var hashes = SourceHashes(folder, registration);
+                    var hashes = SourceHashes(folder, release);
                     var installed = ReadInstalled(game, registration.SteamId);
                     if (installed != null)
                     {
@@ -123,62 +124,107 @@ public static class WorkshopUpdates
 
     public static void Install(string game, WorkshopUpdateOffer selected)
     {
-        if (!File.Exists(Path.Combine(game, "SOVIET64.exe"))) throw new InvalidDataException("Game folder is missing");
-        // Re-read both metadata and hashes immediately before copying.
-        var current = ReadRelease(selected.Folder, selected.Registration) ??
-            throw new InvalidDataException("Workshop release disappeared");
-        var sourceHashes = SourceHashes(selected.Folder, selected.Registration);
-        if (current.Version != selected.Release.Version || current.ReleaseDate != selected.Release.ReleaseDate ||
+        if (!File.Exists(Path.Combine(game, "SOVIET64.exe")))
+            throw new InvalidDataException("Game folder is missing");
+
+        var registration = selected.Registration;
+        // Workshop metadata does not authorize arbitrary deletions: only the
+        // source-code allowlist and previously tracked files are eligible.
+        var current = ReadRelease(selected.Folder, registration)
+            ?? throw new InvalidDataException("Workshop release disappeared");
+        var sourceHashes = SourceHashes(selected.Folder, current);
+        if (current.Version != selected.Release.Version ||
+            current.ReleaseDate != selected.Release.ReleaseDate ||
             sourceHashes.Length != selected.SourceFiles.Length ||
-            sourceHashes.Any(x => !selected.SourceFiles.Any(y => y.Path == x.Path && y.Sha256 == x.Sha256)))
+            sourceHashes.Any(x => !selected.SourceFiles.Any(y =>
+                y.Path.Equals(x.Path, StringComparison.OrdinalIgnoreCase) &&
+                y.Sha256.Equals(x.Sha256, StringComparison.OrdinalIgnoreCase))))
             throw new InvalidDataException("Workshop files changed during the update check; refresh the launcher");
-        var receipt = ReceiptPath(game, selected.Registration.SteamId);
-        var backupDir = ModCatalog.SafePath(game, "mods/aurora-backups/workshop-" + selected.Registration.SteamId + "-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(backupDir);
-        var changes = new List<(string Destination, string? Backup)>();
+
+        var receipt = ReceiptPath(game, registration.SteamId);
+        var installed = ReadInstalled(game, registration.SteamId);
+        if (installed != null && Version.Parse(current.Version) < Version.Parse(installed.Version))
+            throw new InvalidDataException("Workshop downgrade refused");
+
+        // Never delete unknown game files, even if someone edited the receipt.
+        // An old file is retired only when it is in this ID's allowlist, was
+        // recorded as installed by Aurora, and still matches the recorded hash.
+        var retired = installed?.Files
+            .Where(old => registration.RequiredFiles.Contains(old.Path, StringComparer.OrdinalIgnoreCase) &&
+                          !sourceHashes.Any(newFile => newFile.Path.Equals(old.Path, StringComparison.OrdinalIgnoreCase)))
+            .Where(old => old.Sha256.Length == 64 && old.Sha256.All(Uri.IsHexDigit))
+            .Where(old =>
+            {
+                var destination = ModCatalog.SafePath(game, old.Path);
+                return File.Exists(destination) && Hash(destination).Equals(old.Sha256, StringComparison.OrdinalIgnoreCase);
+            }).ToArray() ?? [];
+
+        // Transaction files exist only while updating. No lasting backups or
+        // duplicate DLLs are kept after a successful installation.
+        string transaction = ModCatalog.SafePath(game, "mods/.aurora-workshop/.transaction-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(transaction);
+        var applied = new List<(string Destination, string? PriorFile)>();
         try
         {
-            foreach (var item in sourceHashes)
+            // Prepare the entire new payload before touching the installed one.
+            for (int i = 0; i < sourceHashes.Length; i++)
             {
+                var item = sourceHashes[i];
                 var source = ModCatalog.SafePath(selected.Folder, item.Path);
-                var destination = ModCatalog.SafePath(game, item.Path);
-                if (Directory.Exists(destination)) throw new IOException("Destination is a folder: " + item.Path);
-                Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
-                var staged = destination + ".aurora-new-" + Guid.NewGuid().ToString("N");
-                try
-                {
-                    File.Copy(source, staged);
-                    if (!Hash(staged).Equals(item.Sha256, StringComparison.OrdinalIgnoreCase))
-                        throw new InvalidDataException("Workshop file changed while copying: " + item.Path);
-                    string? old = null;
-                    if (File.Exists(destination))
-                    {
-                        old = Path.Combine(backupDir, changes.Count.ToString(CultureInfo.InvariantCulture) + ".bak");
-                        File.Copy(destination, old);
-                    }
-                    File.Move(staged, destination, true);
-                    changes.Add((destination, old));
-                }
-                finally { if (File.Exists(staged)) File.Delete(staged); }
+                var staged = Path.Combine(transaction, "new-" + i.ToString(CultureInfo.InvariantCulture));
+                File.Copy(source, staged);
+                if (!Hash(staged).Equals(item.Sha256, StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidDataException("Workshop file changed while copying: " + item.Path);
             }
-            Directory.CreateDirectory(Path.GetDirectoryName(receipt)!);
-            var temp = receipt + ".new-" + Guid.NewGuid().ToString("N");
-            try
+
+            // Snapshot only destinations about to be changed for immediate
+            // rollback if Windows reports a locked file or another I/O error.
+            int number = 0;
+            foreach (var relative in sourceHashes.Select(x => x.Path).Concat(retired.Select(x => x.Path))
+                                                .Distinct(StringComparer.OrdinalIgnoreCase))
             {
-                File.WriteAllText(temp, JsonSerializer.Serialize(
-                    new WorkshopInstalled(current.SteamId, current.Version, current.ReleaseDate, sourceHashes), JsonOptions));
-                File.Move(temp, receipt, true);
+                var destination = ModCatalog.SafePath(game, relative);
+                if (Directory.Exists(destination)) throw new IOException("Destination is a folder: " + relative);
+                string? prior = null;
+                if (File.Exists(destination))
+                {
+                    prior = Path.Combine(transaction, "old-" + (number++).ToString(CultureInfo.InvariantCulture));
+                    File.Copy(destination, prior);
+                }
+                applied.Add((destination, prior));
             }
-            finally { if (File.Exists(temp)) File.Delete(temp); }
+
+            foreach (var item in retired)
+                File.Delete(ModCatalog.SafePath(game, item.Path));
+
+            for (int i = 0; i < sourceHashes.Length; i++)
+            {
+                var destination = ModCatalog.SafePath(game, sourceHashes[i].Path);
+                Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
+                File.Move(Path.Combine(transaction, "new-" + i.ToString(CultureInfo.InvariantCulture)),
+                          destination, true);
+            }
+
+            // Receipt is the one persistent ledger, not a copy of the DLLs.
+            Directory.CreateDirectory(Path.GetDirectoryName(receipt)!);
+            string pending = Path.Combine(transaction, "installed.json");
+            File.WriteAllText(pending, JsonSerializer.Serialize(
+                new WorkshopInstalled(current.SteamId, current.Version, current.ReleaseDate, sourceHashes), JsonOptions));
+            File.Move(pending, receipt, true);
         }
         catch
         {
-            foreach (var (destination, old) in changes.AsEnumerable().Reverse())
+            foreach (var (destination, prior) in applied.AsEnumerable().Reverse())
             {
-                if (old != null) File.Copy(old, destination, true);
+                if (prior != null) File.Copy(prior, destination, true);
                 else if (File.Exists(destination)) File.Delete(destination);
             }
             throw;
+        }
+        finally
+        {
+            // Old files are temporary only; no mods/aurora-backups directory.
+            Directory.Delete(transaction, recursive: true);
         }
     }
 }

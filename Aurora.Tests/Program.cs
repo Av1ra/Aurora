@@ -114,3 +114,37 @@ Check(WorkshopUpdates.Scan(steamGame).Offers.Count==0 && WorkshopUpdates.Scan(st
       "metadata cannot impersonate a different registered ID");
 File.Delete(releaseFile);
 Check(WorkshopUpdates.Scan(steamGame).Offers.Count==0,"empty registered Workshop folder never triggers a popup");
+
+// No persistent backups. Removed files must disappear only if this launcher owns them.
+var otherGameFile=Path.Combine(steamGame,"mods","player-settings.ini");
+File.WriteAllText(otherGameFile,"keep-user-settings");
+File.WriteAllText(releaseFile,JsonSerializer.Serialize(release with{
+    Version="1.2.0",ReleaseDate="2026-10-20",
+    Files=["mods/pbr.dll","mods/glass_default.dds"]}));
+pending=WorkshopUpdates.Scan(steamGame);
+Check(pending.Offers.Count==1 && pending.Offers[0].SourceFiles.Length==2,
+      "manifest can retire one previously registered DLL");
+WorkshopUpdates.Install(steamGame,pending.Offers[0]);
+Check(!File.Exists(Path.Combine(steamGame,"mods","m.dll")),
+      "obsolete previously tracked DLL removed from the game");
+Check(File.ReadAllText(otherGameFile)=="keep-user-settings",
+      "untracked files and user settings remain untouched");
+Check(!Directory.Exists(Path.Combine(steamGame,"mods","aurora-backups")) &&
+      !Directory.EnumerateDirectories(Path.Combine(steamGame,"mods",".aurora-workshop"),".transaction-*").Any(),
+      "no persistent or temporary backup directories remain after successful update");
+
+// A player-customized tracked file must not be deleted simply because metadata
+// stops listing it: the receipt's original hash must still match.
+File.WriteAllText(releaseFile,JsonSerializer.Serialize(release with{Version="1.3.0",ReleaseDate="2026-10-21"}));
+pending=WorkshopUpdates.Scan(steamGame);WorkshopUpdates.Install(steamGame,pending.Offers[0]);
+File.WriteAllText(Path.Combine(steamGame,"mods","m.dll"),"user-customized-binary");
+File.WriteAllText(releaseFile,JsonSerializer.Serialize(release with{
+    Version="1.4.0",ReleaseDate="2026-10-22",
+    Files=["mods/pbr.dll","mods/glass_default.dds"]}));
+pending=WorkshopUpdates.Scan(steamGame);WorkshopUpdates.Install(steamGame,pending.Offers[0]);
+Check(File.ReadAllText(Path.Combine(steamGame,"mods","m.dll"))=="user-customized-binary" &&
+      WorkshopUpdates.ReadInstalled(steamGame,"3822550289")!.Files.Length==2,
+      "modified files are preserved and removed from the managed inventory");
+Check(!Directory.EnumerateDirectories(Path.Combine(steamGame,"mods",".aurora-workshop"),".transaction-*").Any(),
+      "temporary rollback staging removed after preserving user edits");
+
