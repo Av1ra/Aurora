@@ -1,6 +1,17 @@
 param([ValidateSet('0.2')][string]$Version='0.2',[string]$Python='python',[string]$PythonDependencyDirectory='', [switch]$Development,[string]$NativeDist='')
 $ErrorActionPreference='Stop'
 $root=$PSScriptRoot
+if(!$Development){
+ $publisherSecret=if($env:AURORA_SIGNING_KEY){$env:AURORA_SIGNING_KEY}else{Join-Path $env:LOCALAPPDATA 'Aurora/publisher/publisher.pk8'}
+ if(!(Test-Path -LiteralPath $publisherSecret)){throw 'Production publisher key missing. Restore the existing key; do not generate a replacement.'}
+ $signingIdentity=[Security.Cryptography.ECDsa]::Create()
+ $trustedIdentity=[Security.Cryptography.ECDsa]::Create()
+ try{
+  $signingIdentity.ImportPkcs8PrivateKey([IO.File]::ReadAllBytes($publisherSecret),[ref]0)
+  $trustedIdentity.ImportFromPem([IO.File]::ReadAllText("$root/Aurora.Launcher/Assets/publisher.pem"))
+  if([Convert]::ToBase64String($signingIdentity.ExportSubjectPublicKeyInfo()) -ne [Convert]::ToBase64String($trustedIdentity.ExportSubjectPublicKeyInfo())){throw 'Signing key does not match the pinned production publisher. Build aborted.'}
+ }finally{$signingIdentity.Dispose();$trustedIdentity.Dispose()}
+}
 $buildRoot="$root/artifacts/build-$([guid]::NewGuid().ToString('N'))"
 $stage="$buildRoot/package"
 $app="$stage/app"

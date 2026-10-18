@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Security.Cryptography;
 using System.Text.Json;
 
@@ -77,7 +77,7 @@ public static class WorkshopUpdates
         return hashes.ToArray();
     }
 
-    public static (List<WorkshopUpdateOffer> Offers, List<string> Errors) Scan(string game)
+    public static (List<WorkshopUpdateOffer> Offers, List<string> Errors) Scan(string game, IEnumerable<string>? workshopRoots = null)
     {
         var offers = new List<WorkshopUpdateOffer>();
         var errors = new List<string>();
@@ -85,7 +85,7 @@ public static class WorkshopUpdates
         foreach (var registration in SteamDiscovery.RegisteredMods)
         {
             WorkshopUpdateOffer? best = null;
-            foreach (var root in SteamDiscovery.FindWorkshopRoots(game))
+            foreach (var root in workshopRoots ?? SteamDiscovery.FindWorkshopRoots(game))
             {
                 var folder = Path.Combine(root, registration.SteamId);
                 if (!Directory.Exists(folder)) continue;

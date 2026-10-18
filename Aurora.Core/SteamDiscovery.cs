@@ -1,4 +1,4 @@
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace Aurora.Core;
 
@@ -45,10 +45,10 @@ public static class SteamDiscovery
         return roots;
     }
 
-    public static List<DetectedWorkshopMod> FindRegisteredWorkshop(string game)
+    public static List<DetectedWorkshopMod> FindRegisteredWorkshop(string game, IEnumerable<string>? workshopRoots = null)
     {
         var detected = new List<DetectedWorkshopMod>();
-        var roots = FindWorkshopRoots(game);
+        var roots = workshopRoots ?? FindWorkshopRoots(game);
         foreach (var registration in RegisteredMods)
         {
             DetectedWorkshopMod? best = null;

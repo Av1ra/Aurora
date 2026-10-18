@@ -1,4 +1,4 @@
-using Aurora.Core;
+﻿using Aurora.Core;
 using System.Security.Cryptography;
 using System.Text.Json;
 static void Check(bool value,string label){if(!value)throw new Exception("FAIL "+label);Console.WriteLine("PASS "+label);}
@@ -62,72 +62,73 @@ Directory.CreateDirectory(Path.Combine(creator,"mods"));
 File.WriteAllText(Path.Combine(creator,"manifest.json"),"{}");
 File.WriteAllText(Path.Combine(creator,"workshopconfig.ini"),"fixture");
 foreach(var name in new[]{"m.dll","pbr.dll","glass_default.dds"})File.WriteAllText(Path.Combine(creator,"mods",name),"fixture");
-var foundWorkshop=SteamDiscovery.FindRegisteredWorkshop(steamGame);
+string[] fixtureRoots=[Path.Combine(root,"steam-fixture","steamapps","workshop","content","784150"),Path.Combine(steamGame,"media_soviet","workshop_wip")];
+var foundWorkshop=SteamDiscovery.FindRegisteredWorkshop(steamGame,fixtureRoots);
 Check(foundWorkshop.Count==1&&foundWorkshop[0].Complete&&foundWorkshop[0].Folder==creator,"registered Steam ID locates complete workshop_wip payload");
 File.Delete(Path.Combine(creator,"mods","pbr.dll"));
-foundWorkshop=SteamDiscovery.FindRegisteredWorkshop(steamGame);
+foundWorkshop=SteamDiscovery.FindRegisteredWorkshop(steamGame,fixtureRoots);
 Check(foundWorkshop.Count==1&&!foundWorkshop[0].Complete&&foundWorkshop[0].MissingFiles.SequenceEqual(["mods/pbr.dll"]),"incomplete Workshop source is reported, never treated as complete");
 var subscribed=Path.Combine(root,"steam-fixture","steamapps","workshop","content","784150","3822550289");
 Directory.CreateDirectory(Path.Combine(subscribed,"mods"));
 foreach(var name in new[]{"m.dll","pbr.dll","glass_default.dds"})File.WriteAllText(Path.Combine(subscribed,"mods",name),"fixture");
-foundWorkshop=SteamDiscovery.FindRegisteredWorkshop(steamGame);
+foundWorkshop=SteamDiscovery.FindRegisteredWorkshop(steamGame,fixtureRoots);
 Check(foundWorkshop.Count==1&&foundWorkshop[0].Complete&&foundWorkshop[0].Folder==subscribed,"complete Steam subscription wins over incomplete workshop_wip");
 Directory.CreateDirectory(Path.Combine(root,"steam-fixture","steamapps","workshop","content","784150","9999999999"));
-Check(SteamDiscovery.FindRegisteredWorkshop(steamGame).Count==1,"unregistered Steam IDs are ignored");
+Check(SteamDiscovery.FindRegisteredWorkshop(steamGame,fixtureRoots).Count==1,"unregistered Steam IDs are ignored");
 
 
 // Unsigned Workshop release metadata is a trigger only for explicitly registered Steam IDs.
 File.WriteAllText(Path.Combine(steamGame,"SOVIET64.exe"),"test-game");
-Check(WorkshopUpdates.Scan(steamGame).Offers.Count==0,"no popup while aurora-module.json is missing");
+Check(WorkshopUpdates.Scan(steamGame,fixtureRoots).Offers.Count==0,"no popup while aurora-module.json is missing");
 var releaseFile=Path.Combine(subscribed,WorkshopUpdates.MetadataName);
 var release=new WorkshopRelease(1,"3822550289","PBR","1.0.0","2026-10-18",["mods/m.dll","mods/pbr.dll","mods/glass_default.dds"]);
 File.WriteAllText(releaseFile,JsonSerializer.Serialize(release));
 // An incomplete upload should be ignored quietly until Steam finishes copying it.
 File.Delete(Path.Combine(subscribed,"mods","pbr.dll"));
-var incomplete=WorkshopUpdates.Scan(steamGame);
+var incomplete=WorkshopUpdates.Scan(steamGame,fixtureRoots);
 Check(incomplete.Offers.Count==0 && incomplete.Errors.Count==0,
       "incomplete registered Workshop release triggers no prompt");
 File.WriteAllText(Path.Combine(subscribed,"mods","pbr.dll"),"fixture");
-var pending=WorkshopUpdates.Scan(steamGame);
+var pending=WorkshopUpdates.Scan(steamGame,fixtureRoots);
 Check(pending.Offers.Count==1 && pending.Offers[0].FirstInstall &&
       pending.Offers[0].Release.ReleaseDate=="2026-10-18","first installation offered with exact declared release date");
 Check(WorkshopUpdates.ReadInstalled(steamGame,"3822550289")==null,"first installation does not invent a previous version");
 WorkshopUpdates.Install(steamGame,pending.Offers[0]);
-Check(WorkshopUpdates.Scan(steamGame).Offers.Count==0,"installed matching Workshop payload produces no repeat popup");
+Check(WorkshopUpdates.Scan(steamGame,fixtureRoots).Offers.Count==0,"installed matching Workshop payload produces no repeat popup");
 Check(WorkshopUpdates.ReadInstalled(steamGame,"3822550289")?.Version=="1.0.0","installed version recorded separately from release");
 // A release date change is a legitimate metadata update even without a version bump.
 File.WriteAllText(releaseFile,JsonSerializer.Serialize(release with{ReleaseDate="2026-10-19"}));
-pending=WorkshopUpdates.Scan(steamGame);
+pending=WorkshopUpdates.Scan(steamGame,fixtureRoots);
 Check(pending.Offers.Count==1 && pending.Offers[0].Release.ReleaseDate=="2026-10-19",
       "release date change alone triggers a comparison prompt");
 WorkshopUpdates.Install(steamGame,pending.Offers[0]);
 Check(WorkshopUpdates.ReadInstalled(steamGame,"3822550289")?.ReleaseDate=="2026-10-19" &&
-      WorkshopUpdates.Scan(steamGame).Offers.Count==0,"date-only change is recorded and not offered again");
+      WorkshopUpdates.Scan(steamGame,fixtureRoots).Offers.Count==0,"date-only change is recorded and not offered again");
 File.WriteAllText(Path.Combine(subscribed,"mods","pbr.dll"),"changed-without-version-bump");
-pending=WorkshopUpdates.Scan(steamGame);
+pending=WorkshopUpdates.Scan(steamGame,fixtureRoots);
 Check(pending.Offers.Count==1 && !pending.Offers[0].FirstInstall,"changed DLL triggers update even when version unchanged");
 WorkshopUpdates.Install(steamGame,pending.Offers[0]);
 Check(File.ReadAllText(Path.Combine(steamGame,"mods","pbr.dll"))=="changed-without-version-bump" &&
-      WorkshopUpdates.Scan(steamGame).Offers.Count==0,"changed DLL copied and receipt updated");
+      WorkshopUpdates.Scan(steamGame,fixtureRoots).Offers.Count==0,"changed DLL copied and receipt updated");
 File.WriteAllText(releaseFile,JsonSerializer.Serialize(release with{Version="1.1.0",ReleaseDate="2026-10-19"}));
-pending=WorkshopUpdates.Scan(steamGame);
+pending=WorkshopUpdates.Scan(steamGame,fixtureRoots);
 Check(pending.Offers.Count==1 && pending.Offers[0].Installed?.Version=="1.0.0" &&
       pending.Offers[0].Release.Version=="1.1.0" && pending.Offers[0].Release.ReleaseDate=="2026-10-19",
       "popup compares installed and available versions and release dates");
 File.WriteAllText(Path.Combine(subscribed,"mods","m.dll"),"changed-after-scan");
 Reject(()=>WorkshopUpdates.Install(steamGame,pending.Offers[0]),"changed files between scan and install");
 Check(WorkshopUpdates.ReadInstalled(steamGame,"3822550289")?.Version=="1.0.0","stale update did not overwrite installed state");
-pending=WorkshopUpdates.Scan(steamGame);
+pending=WorkshopUpdates.Scan(steamGame,fixtureRoots);
 WorkshopUpdates.Install(steamGame,pending.Offers[0]);
 Check(WorkshopUpdates.ReadInstalled(steamGame,"3822550289")?.Version=="1.1.0" &&
-      WorkshopUpdates.Scan(steamGame).Offers.Count==0,"new release installed and no longer offered");
+      WorkshopUpdates.Scan(steamGame,fixtureRoots).Offers.Count==0,"new release installed and no longer offered");
 File.WriteAllText(releaseFile,JsonSerializer.Serialize(release with{Version="0.9.0"}));
-Check(WorkshopUpdates.Scan(steamGame).Offers.Count==0,"older Workshop release does not downgrade installed game");
+Check(WorkshopUpdates.Scan(steamGame,fixtureRoots).Offers.Count==0,"older Workshop release does not downgrade installed game");
 File.WriteAllText(releaseFile,JsonSerializer.Serialize(release with{SteamId="9999999999",Version="2.0.0"}));
-Check(WorkshopUpdates.Scan(steamGame).Offers.Count==0 && WorkshopUpdates.Scan(steamGame).Errors.Count>0,
+Check(WorkshopUpdates.Scan(steamGame,fixtureRoots).Offers.Count==0 && WorkshopUpdates.Scan(steamGame,fixtureRoots).Errors.Count>0,
       "metadata cannot impersonate a different registered ID");
 File.Delete(releaseFile);
-Check(WorkshopUpdates.Scan(steamGame).Offers.Count==0,"empty registered Workshop folder never triggers a popup");
+Check(WorkshopUpdates.Scan(steamGame,fixtureRoots).Offers.Count==0,"empty registered Workshop folder never triggers a popup");
 
 // No persistent backups. Removed files must disappear only if this launcher owns them.
 var otherGameFile=Path.Combine(steamGame,"mods","player-settings.ini");
@@ -135,7 +136,7 @@ File.WriteAllText(otherGameFile,"keep-user-settings");
 File.WriteAllText(releaseFile,JsonSerializer.Serialize(release with{
     Version="1.2.0",ReleaseDate="2026-10-20",
     Files=["mods/pbr.dll","mods/glass_default.dds"]}));
-pending=WorkshopUpdates.Scan(steamGame);
+pending=WorkshopUpdates.Scan(steamGame,fixtureRoots);
 Check(pending.Offers.Count==1 && pending.Offers[0].SourceFiles.Length==2,
       "manifest can retire one previously registered DLL");
 WorkshopUpdates.Install(steamGame,pending.Offers[0]);
@@ -150,12 +151,12 @@ Check(!Directory.Exists(Path.Combine(steamGame,"mods","aurora-backups")) &&
 // A player-customized tracked file must not be deleted simply because metadata
 // stops listing it: the receipt's original hash must still match.
 File.WriteAllText(releaseFile,JsonSerializer.Serialize(release with{Version="1.3.0",ReleaseDate="2026-10-21"}));
-pending=WorkshopUpdates.Scan(steamGame);WorkshopUpdates.Install(steamGame,pending.Offers[0]);
+pending=WorkshopUpdates.Scan(steamGame,fixtureRoots);WorkshopUpdates.Install(steamGame,pending.Offers[0]);
 File.WriteAllText(Path.Combine(steamGame,"mods","m.dll"),"user-customized-binary");
 File.WriteAllText(releaseFile,JsonSerializer.Serialize(release with{
     Version="1.4.0",ReleaseDate="2026-10-22",
     Files=["mods/pbr.dll","mods/glass_default.dds"]}));
-pending=WorkshopUpdates.Scan(steamGame);WorkshopUpdates.Install(steamGame,pending.Offers[0]);
+pending=WorkshopUpdates.Scan(steamGame,fixtureRoots);WorkshopUpdates.Install(steamGame,pending.Offers[0]);
 Check(File.ReadAllText(Path.Combine(steamGame,"mods","m.dll"))=="user-customized-binary" &&
       WorkshopUpdates.ReadInstalled(steamGame,"3822550289")!.Files.Length==2,
       "modified files are preserved and removed from the managed inventory");
