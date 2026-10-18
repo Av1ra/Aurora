@@ -79,19 +79,66 @@ sealed class MainWindow:Window
   body.Children.Add(Button("Мастер моделей",()=>{var editor=Path.Combine(AppContext.BaseDirectory,"Editor","Aurora.Editor.exe");Process.Start(new ProcessStartInfo(editor){UseShellExecute=true});}));
   UiLanguage.Apply(body);
  }
+ Border StageBadge(string stage)
+ {
+  bool alpha=stage.Equals("alpha",StringComparison.OrdinalIgnoreCase);
+  var stroke=new SolidColorBrush(alpha?Windows.UI.Color.FromArgb(135,190,135,67):Windows.UI.Color.FromArgb(125,121,142,161));
+  var fill=new SolidColorBrush(alpha?Windows.UI.Color.FromArgb(35,190,135,67):Windows.UI.Color.FromArgb(31,121,142,161));
+  var text=new TextBlock{Text=UiLanguage.Text(alpha?"Альфа":"Бета"),FontSize=11,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold};
+  return new Border{Child=text,Background=fill,BorderBrush=stroke,BorderThickness=new Thickness(1),CornerRadius=new CornerRadius(3),Padding=new Thickness(7,2,7,2),VerticalAlignment=VerticalAlignment.Center};
+ }
+ Border FeatureSurface(UIElement content)
+ {
+  return new Border{
+   Child=content,Padding=new Thickness(16,13,16,13),CornerRadius=new CornerRadius(4),
+   Background=(Brush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"],
+   BorderBrush=(Brush)Application.Current.Resources["CardStrokeColorDefaultBrush"],
+   BorderThickness=new Thickness(1),HorizontalAlignment=HorizontalAlignment.Stretch};
+ }
  void ShowMod(VerifiedMod mod)
  {
   body.Children.Clear();body.Children.Add(Heading(mod.Manifest.Name));
   body.Children.Add(new TextBlock{Text="Изменения применяются при следующем запуске игры.",TextWrapping=TextWrapping.Wrap});
-  var beta=new StackPanel{Spacing=12};
+  var experimental=new StackPanel{Spacing=9};
   string config=ModCatalog.SafePath(prefs.Game,"mods/"+mod.Manifest.Config);
   foreach(var option in mod.Manifest.Options)
   {
-   var toggle=new ToggleSwitch{Header=option.Label,IsOn=GetPrivateProfileInt(option.Section,option.Key,option.Default?1:0,config)!=0,OnContent="Вкл.",OffContent="Выкл."};
-   toggle.Toggled+=(_,_)=>{try{VerifyCurrent(mod);Directory.CreateDirectory(Path.GetDirectoryName(config)!);if(!WritePrivateProfileString(option.Section,option.Key,toggle.IsOn?"1":"0",config))throw new System.ComponentModel.Win32Exception();}catch(Exception ex){Notice(ex.Message);}};
-   if(option.Beta)beta.Children.Add(toggle);else body.Children.Add(toggle);
+   bool isAlpha=option.Stage.Equals("alpha",StringComparison.OrdinalIgnoreCase);
+   bool isBeta=option.Beta || option.Stage.Equals("beta",StringComparison.OrdinalIgnoreCase);
+   var row=new Grid{ColumnSpacing=20};
+   row.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(1,GridUnitType.Star)});
+   row.ColumnDefinitions.Add(new ColumnDefinition{Width=GridLength.Auto});
+   var copy=new StackPanel{Spacing=5,VerticalAlignment=VerticalAlignment.Center};
+   var line=new StackPanel{Orientation=Orientation.Horizontal,Spacing=10};
+   line.Children.Add(new TextBlock{Text=UiLanguage.Text(option.Label),FontSize=14,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold,TextWrapping=TextWrapping.Wrap});
+   if(isAlpha||isBeta)line.Children.Add(StageBadge(isAlpha?"alpha":"beta"));
+   copy.Children.Add(line);
+   if(!string.IsNullOrWhiteSpace(option.Description))
+    copy.Children.Add(new TextBlock{Text=UiLanguage.Text(option.Description),FontSize=12,TextWrapping=TextWrapping.Wrap,Opacity=0.78});
+   row.Children.Add(copy);
+   bool oldValue=GetPrivateProfileInt(option.Section,option.Key,option.Default?1:0,config)!=0;
+   var toggle=new ToggleSwitch{IsOn=oldValue,OnContent=UiLanguage.Text("Вкл."),OffContent=UiLanguage.Text("Выкл."),VerticalAlignment=VerticalAlignment.Center,MinWidth=94};
+   Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(toggle,UiLanguage.Text(option.Label));
+   Grid.SetColumn(toggle,1);row.Children.Add(toggle);
+   bool writing=false;
+   toggle.Toggled+=async(_,_)=>{
+    if(writing)return;
+    bool next=toggle.IsOn;
+    writing=true;toggle.IsEnabled=false;
+    try{
+     await Task.Run(()=>VerifyCurrent(mod));
+     Directory.CreateDirectory(Path.GetDirectoryName(config)!);
+     if(!WritePrivateProfileString(option.Section,option.Key,next?"1":"0",config))
+      throw new System.ComponentModel.Win32Exception();
+    }
+    catch(Exception ex){toggle.IsOn=!next;Notice(ex.Message);}
+    finally{toggle.IsEnabled=true;writing=false;}
+   };
+   if(isAlpha||isBeta)experimental.Children.Add(FeatureSurface(row));
+   else body.Children.Add(FeatureSurface(row));
   }
-  if(beta.Children.Count>0)body.Children.Add(new Expander{Header="Бета-функции",Content=beta,IsExpanded=false,HorizontalAlignment=HorizontalAlignment.Stretch,HorizontalContentAlignment=HorizontalAlignment.Stretch});
+  if(experimental.Children.Count>0)
+   body.Children.Add(new Expander{Header="Экспериментальные функции",Content=experimental,IsExpanded=false,HorizontalAlignment=HorizontalAlignment.Stretch,HorizontalContentAlignment=HorizontalAlignment.Stretch});
   body.Children.Add(Button("Установить / обновить мод",()=>Install(mod)));
   body.Children.Add(Button("Запустить игру",LaunchGame));
   UiLanguage.Apply(body);
@@ -127,7 +174,18 @@ sealed class MainWindow:Window
   var path=new TextBox{Header="Папка SovietRepublic",Text=prefs.Game};body.Children.Add(path);
   body.Children.Add(AsyncButton("Выбрать папку…",async()=>{var picker=new Windows.Storage.Pickers.FolderPicker();picker.FileTypeFilter.Add("*");WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));var folder=await picker.PickSingleFolderAsync();if(folder!=null)path.Text=folder.Path;}));
   body.Children.Add(Button("Найти моды",()=>{if(!File.Exists(Path.Combine(path.Text,"SOVIET64.exe")))throw new InvalidDataException("В выбранной папке нет SOVIET64.exe.");prefs=prefs with{Game=Path.GetFullPath(path.Text)};Save();Discover();}));
-  var console=new ToggleSwitch{Header="Консоль — альфа",IsOn=prefs.Console};console.Toggled+=(_,_)=>{prefs=prefs with{Console=console.IsOn};Save();};body.Children.Add(console);
+  var consoleRow=new Grid{ColumnSpacing=20};
+  consoleRow.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(1,GridUnitType.Star)});
+  consoleRow.ColumnDefinitions.Add(new ColumnDefinition{Width=GridLength.Auto});
+  var consoleHeading=new StackPanel{Orientation=Orientation.Horizontal,Spacing=10};
+  consoleHeading.Children.Add(new TextBlock{Text=UiLanguage.Text("Консоль"),FontSize=14,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});
+  consoleHeading.Children.Add(StageBadge("alpha"));
+  consoleRow.Children.Add(consoleHeading);
+  var console=new ToggleSwitch{IsOn=prefs.Console,OnContent=UiLanguage.Text("Вкл."),OffContent=UiLanguage.Text("Выкл.")};
+  Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(console,UiLanguage.Text("Консоль"));
+  Grid.SetColumn(console,1);consoleRow.Children.Add(console);
+  console.Toggled+=(_,_)=>{prefs=prefs with{Console=console.IsOn};Save();};
+  body.Children.Add(FeatureSurface(consoleRow));
   body.Children.Add(Button("Открыть консоль",()=>{var w=new AlphaConsole();w.Activate();}));
   body.Children.Add(Button("Проверить обновления",()=>_=CheckUpdates()));
   body.Children.Add(AsyncButton("Установить обновление",async()=>{var folder=await updates.DownloadVerified(publicKey);if(folder==null){Notice("Обновлений нет.");return;}updates.StartReplacement(folder);Application.Current.Exit();}));
