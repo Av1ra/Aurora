@@ -41,6 +41,8 @@ Console.WriteLine("AURORA_TESTS_PASS");
 // Schema 2 numeric controls are data owned by independent modules.
 var numeric=manifest with{Schema=2,Placement="settings",Options=[new("degrees","FOV","camera","degrees",Kind:"slider",Minimum:20,Maximum:100,DefaultValue:45)]};
 Sign(numeric);Check(catalog.Verify(root).Options[0].DefaultValue==45,"signed numeric module metadata");
+Sign(numeric with{Stage="alpha"});Check(catalog.Verify(root).Stage=="alpha","signed alpha module stage");
+Sign(numeric with{Stage="unknown"});Reject(()=>catalog.Verify(root),"invalid module stage");
 Sign(numeric with{Schema=1});Reject(()=>catalog.Verify(root),"numeric control in old schema");
 Sign(numeric with{Options=[new("degrees","FOV","camera","degrees",Kind:"slider",Minimum:20,Maximum:100,DefaultValue:150)]});Reject(()=>catalog.Verify(root),"invalid numeric bounds");
 // Workshop content wins an equal-version tie against the bundled fallback.
@@ -52,3 +54,23 @@ Check(catalog.Discover([bundled,Path.GetDirectoryName(workshop)!]).Mods.Single()
 File.AppendAllText(Path.Combine(workshop,"module.dll"),"tampered-update");
 var fallback=catalog.Discover([bundled,Path.GetDirectoryName(workshop)!]);
 Check(fallback.Mods.Single().Folder==bundled&&fallback.Errors.Count==1,"tampered Workshop update rejected with fallback");
+
+// Registered Workshop items use the declared Steam ID, including creator's workshop_wip layout.
+var steamGame=Path.Combine(root,"steam-fixture","steamapps","common","SovietRepublic");
+var creator=Path.Combine(steamGame,"media_soviet","workshop_wip","3822550289");
+Directory.CreateDirectory(Path.Combine(creator,"mods"));
+File.WriteAllText(Path.Combine(creator,"manifest.json"),"{}");
+File.WriteAllText(Path.Combine(creator,"workshopconfig.ini"),"fixture");
+foreach(var name in new[]{"m.dll","pbr.dll","glass_default.dds"})File.WriteAllText(Path.Combine(creator,"mods",name),"fixture");
+var foundWorkshop=SteamDiscovery.FindRegisteredWorkshop(steamGame);
+Check(foundWorkshop.Count==1&&foundWorkshop[0].Complete&&foundWorkshop[0].Folder==creator,"registered Steam ID locates complete workshop_wip payload");
+File.Delete(Path.Combine(creator,"mods","pbr.dll"));
+foundWorkshop=SteamDiscovery.FindRegisteredWorkshop(steamGame);
+Check(foundWorkshop.Count==1&&!foundWorkshop[0].Complete&&foundWorkshop[0].MissingFiles.SequenceEqual(["mods/pbr.dll"]),"incomplete Workshop source is reported, never treated as complete");
+var subscribed=Path.Combine(root,"steam-fixture","steamapps","workshop","content","784150","3822550289");
+Directory.CreateDirectory(Path.Combine(subscribed,"mods"));
+foreach(var name in new[]{"m.dll","pbr.dll","glass_default.dds"})File.WriteAllText(Path.Combine(subscribed,"mods",name),"fixture");
+foundWorkshop=SteamDiscovery.FindRegisteredWorkshop(steamGame);
+Check(foundWorkshop.Count==1&&foundWorkshop[0].Complete&&foundWorkshop[0].Folder==subscribed,"complete Steam subscription wins over incomplete workshop_wip");
+Directory.CreateDirectory(Path.Combine(root,"steam-fixture","steamapps","workshop","content","784150","9999999999"));
+Check(SteamDiscovery.FindRegisteredWorkshop(steamGame).Count==1,"unregistered Steam IDs are ignored");

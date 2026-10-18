@@ -28,3 +28,5 @@
 All launcher/editor sources are in this repository. Private PBR renderer internals are a separate game module and are not required to build Aurora. Do not depend on a local drive path or a private game install for the basic CI build.
 
 
+
+| Code-defined Steam Workshop ID registry and location checks | Aurora.Core/SteamDiscovery.cs |

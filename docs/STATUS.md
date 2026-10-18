@@ -61,3 +61,9 @@ Continue from PROJECT_MAP.md. Source changes are pushed to main for the next cha
 ## Installer browse folder correction
 
 The launcher installation Browse button now interprets a selected directory as the parent and automatically appends `\\Aurora`. Selecting an existing directory named Aurora (case-insensitive) does not produce `Aurora\\Aurora`. The game-folder picker continues to set the selected game directory and suggests its Aurora subfolder for the launcher. The Windows native installer test includes path suffix and duplication checks. Keep version 0.2; rebuild and validate the GitHub Actions artifact for this commit before sending a new installer.
+
+## Workshop ID discovery and FOV UI update
+
+Version remains 0.2. The independent signed FOV module now uses the visible name `Изменение угла обзора`, a separate `Включить` switch, the original angle slider and a signed metadata `Stage=alpha` badge. All settings-only modules support an optional stage badge.
+
+Workshop IDs can now be registered directly in `Aurora.Core/SteamDiscovery.cs`. ID `3822550289` (PBR) declares `mods/m.dll`, `mods/pbr.dll`, `mods/glass_default.dds`. On launch, Aurora checks both published Steam content directories and the shown `media_soviet/workshop_wip/<ID>` creator layout, reports complete or incomplete detection on Home and keeps signed Aurora module discovery separate. Raw Workshop DLLs are not installed or launched without the existing signature verification. Added tests cover the registered ID, missing files, published-source preference and unknown IDs. Rebuild on Windows and validate the CI package; no real-game PBR verification is claimed.

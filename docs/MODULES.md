@@ -1,4 +1,4 @@
-# Модули Авроры · протокол 1
+# Модули Авроры: протокол 1
 
 Папка мода в Workshop либо `mods/library/<id>` содержит `acode.lnchr` и подписанный набор `Payload`. Пример **до подписания**:
 
@@ -53,3 +53,15 @@ Packaging/legacy-files.tsv содержит хеши старого пакета
 Schema 2 extends ModOption with Kind (toggle/slider), Minimum, Maximum and DefaultValue. ModManifest Placement can be navigation (default) or settings. The launcher renders these controls generically and does not execute module code. The FOV Changer implementation and executable compatibility guard live entirely in Modules/FovChanger/fov.dll, packaged by Prepare-Fov.ps1. Its Config is fov.ini; options are camera.enabled and camera.degrees. Settings apply at next launch. Payload destinations remain subject to ModuleInstaller's allowlist.
 
 The complete preview embeds signed module catalogs under app/Modules. They are discoverable alongside Workshop libraries. Launch verifies installed payloads and installs a missing/different signed payload before starting the game's own bootstrap. Existing user INI values are preserved.
+
+## Workshop ID registry (discovery only)
+
+Register Steam Workshop items in `Aurora.Core/SteamDiscovery.cs` under `SteamDiscovery.RegisteredMods`. Example: `new("3822550289", "PBR", ["mods/m.dll", "mods/pbr.dll", "mods/glass_default.dds"])`.
+
+Aurora checks both `steamapps/workshop/content/784150/<SteamId>/` across detected Steam libraries and the creator staging layout `SovietRepublic/media_soviet/workshop_wip/<SteamId>/`. The files shown in the Workshop item, such as `manifest.json` and `workshopconfig.ini`, are Steam metadata, not signed Aurora manifests. A source is reported as found only when its declared files are present; incomplete sources list missing files. If multiple locations exist, a complete subscribed copy is preferred to an incomplete staging copy.
+
+**Important:** Adding an ID lets the launcher discover and report the Workshop item. It does not grant permission to execute, inject, copy or auto-update its unsigned DLLs. Actual Aurora runtime modules still require a signed `acode.lnchr` and SHA-256 verification, including before launching the game. Register additional IDs and explicit expected files in source rather than trusting arbitrary folder contents.
+
+## Signed module UI stage
+
+Optional `Stage` in `ModManifest` may be `alpha`, `beta` or omitted (stable/default). The Settings renderer shows the corresponding badge next to the signed module name. Unknown values are rejected by manifest verification. The independent FOV module declares `Stage: alpha` and its UI title is `Изменение угла обзора`.

@@ -7,7 +7,7 @@ public record ModFile(string Path, string Sha256);
 public record ModOption(string Id, string Label, string Section, string Key, bool Beta = false, bool Default = true,
     string Kind="toggle",int Minimum=0,int Maximum=100,int DefaultValue=0);
 public record ModManifest(int Schema, string Id, string Name, string Category, string Version,
-    string MinimumLauncher, string Config, ModFile[] Files, ModOption[] Options,string Placement="navigation");
+    string MinimumLauncher, string Config, ModFile[] Files, ModOption[] Options,string Placement="navigation",string Stage="");
 public record SignedEnvelope(string Payload, string Signature);
 public record VerifiedMod(string Folder, ModManifest Manifest);
 
@@ -43,6 +43,7 @@ public sealed class ModCatalog(string publicKeyPem)
             if (!hash.Equals(item.Sha256, StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException("File changed: " + item.Path);
         }
         if(mod.Placement is not ("navigation" or "settings"))throw new InvalidDataException("Invalid module placement");
+        if(mod.Stage is not ("" or "alpha" or "beta"))throw new InvalidDataException("Invalid module stage");
         foreach(var option in mod.Options)
         {
             if(option.Kind is not ("toggle" or "slider") || (option.Kind=="slider"&&(mod.Schema<2||option.Minimum>=option.Maximum||option.DefaultValue<option.Minimum||option.DefaultValue>option.Maximum)))throw new InvalidDataException("Invalid module control");
