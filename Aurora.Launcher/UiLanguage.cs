@@ -86,22 +86,21 @@ static class UiLanguage
     public static void Apply(DependencyObject node){ApplyNode(node,new HashSet<DependencyObject>());}
     static void ApplyNode(DependencyObject node,HashSet<DependencyObject> visited){
       if(!visited.Add(node))return;
-      // Navigation content is translated by its owner. Writing presenter TextBlocks
-      // would replace the template binding and pin the previous language label.
+      // Translate application-owned values, never template presenters: setting a
+      // presenter's Text locally destroys its binding (InfoBar, ComboBox, navigation).
       if(node is NavigationViewItem)return;
-      if(node is InfoBar info){info.Title=Text(info.Title);info.Message=Text(info.Message);}
-      if(node is TextBlock text)text.Text=Text(text.Text);
-      if(node is TextBox box&&box.Header is string boxHeader)box.Header=Text(boxHeader);
-      if(node is ContentControl content&&content.Content is string value)content.Content=Text(value);
-      if(node is Expander expander&&expander.Header is string header)expander.Header=Text(header);
-      if(node is ToggleSwitch toggle){if(toggle.Header is string toggleHeader)toggle.Header=Text(toggleHeader);toggle.OnContent=Text("Вкл.");toggle.OffContent=Text("Выкл.");}
-      if(node is Slider slider&&slider.Header is string sliderHeader)slider.Header=Text(sliderHeader);
-      if(node is ComboBox headerCombo&&headerCombo.Header is string comboHeader)headerCombo.Header=Text(comboHeader);
-      if(node is ComboBox combo)foreach(var item in combo.Items.OfType<ComboBoxItem>())if(item.Content is string label)item.Content=Text(label);
-      // Collapsed beta/advanced content still needs the selected language.
-      if(node is Panel panel)foreach(var child in panel.Children)ApplyNode(child,visited);
-      if(node is Border border&&border.Child is DependencyObject borderChild)ApplyNode(borderChild,visited);
-      if(node is ContentControl logical&&logical.Content is DependencyObject contentChild)ApplyNode(contentChild,visited);
+      void Header(object? value,Action<string> set){if(value is string label)set(Text(label));else if(value is DependencyObject child)ApplyNode(child,visited);}
+      if(node is InfoBar info){info.Title=Text(info.Title);info.Message=Text(info.Message);return;}
+      if(node is TextBlock text){text.Text=Text(text.Text);return;}
+      if(node is TextBox box){Header(box.Header,x=>box.Header=x);box.PlaceholderText=Text(box.PlaceholderText);return;}
+      if(node is ToggleSwitch toggle){Header(toggle.Header,x=>toggle.Header=x);toggle.OnContent=Text("Вкл.");toggle.OffContent=Text("Выкл.");return;}
+      if(node is Slider slider){Header(slider.Header,x=>slider.Header=x);return;}
+      if(node is ComboBox combo){Header(combo.Header,x=>combo.Header=x);combo.PlaceholderText=Text(combo.PlaceholderText);foreach(var item in combo.Items.OfType<ComboBoxItem>())if(item.Content is string label)item.Content=Text(label);return;}
+      if(node is Expander expander)Header(expander.Header,x=>expander.Header=x);
+      if(node is ContentControl content){if(content.Content is string value)content.Content=Text(value);else if(content.Content is DependencyObject child)ApplyNode(child,visited);return;}
+      if(node is Panel panel){foreach(var child in panel.Children)ApplyNode(child,visited);return;}
+      if(node is Border border){if(border.Child is DependencyObject child)ApplyNode(child,visited);return;}
+      if(node is Control)return;
       for(int i=0;i<VisualTreeHelper.GetChildrenCount(node);i++)ApplyNode(VisualTreeHelper.GetChild(node,i),visited);
     }
     public static void Bind(ComboBox selector,FrameworkElement root,Action changed){
