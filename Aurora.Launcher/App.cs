@@ -64,7 +64,7 @@ sealed class MainWindow:Window
   navigation.Loaded+=(_,_)=>ChangeLanguage(UiLanguage.English);
   navigation.SelectionChanged+=(_,e)=>{if(applyingDiscovery)return;if(ReferenceEquals(e.SelectedItem,settingsItem))Settings();else if(e.SelectedItem is NavigationViewItem item&&item.Tag is VerifiedMod mod)ShowMod(mod);else Home();};
   Home();navigation.Loaded+=(_,_)=>Discover();
-  Activated+=(_,_)=>RefreshLaunchState();
+  Activated+=(_,e)=>{if(e.WindowActivationState!=WindowActivationState.Deactivated&&UiLanguage.Reload())ChangeLanguage(UiLanguage.English);RefreshLaunchState();};
   _=CheckUpdates();
  }
  void Save(){File.WriteAllText(Path.Combine(stateRoot,"settings.json"),JsonSerializer.Serialize(prefs));File.WriteAllText(Path.Combine(stateRoot,"game-path.txt"),prefs.Game);}

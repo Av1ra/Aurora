@@ -7,6 +7,7 @@ static class UiLanguage
     static readonly string path=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"PBR.dll","ui-language.txt");
     public static bool English {get;private set;}=Read();
     static bool Read(){try{return File.ReadAllText(path).Trim()=="en";}catch{return false;}}
+    public static bool Reload(){try{string value=File.ReadAllText(path).Trim();if(value is not ("en" or "ru"))return false;bool english=value=="en";if(english==English)return false;English=english;return true;}catch{return false;}}
     static readonly Dictionary<string,string> words=new()
     {
       ["Сила normal"]="Normal strength",
@@ -100,6 +101,7 @@ static class UiLanguage
       // presenter's Text locally destroys its binding (InfoBar, ComboBox, navigation).
       if(node is NavigationViewItem)return;
       void Header(object? value,Action<string> set){if(value is string label)set(Text(label));else if(value is DependencyObject child)ApplyNode(child,visited);}
+      if(node is ContentDialog dialog){Header(dialog.Title,x=>dialog.Title=x);dialog.PrimaryButtonText=Text(dialog.PrimaryButtonText);dialog.SecondaryButtonText=Text(dialog.SecondaryButtonText);dialog.CloseButtonText=Text(dialog.CloseButtonText);Header(dialog.Content,x=>dialog.Content=x);return;}
       if(node is InfoBar info){info.Title=Text(info.Title);info.Message=Text(info.Message);return;}
       if(node is TextBlock text){text.Text=Text(text.Text);return;}
       if(node is TextBox box){Header(box.Header,x=>box.Header=x);box.PlaceholderText=Text(box.PlaceholderText);return;}

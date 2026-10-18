@@ -4,6 +4,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.Web.WebView2.Core;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Globalization;
@@ -29,6 +30,7 @@ sealed class EditorWindow:Window
  readonly Dictionary<string,NativeModel> lods=[];readonly Dictionary<string,HashSet<string>> glassObjects=[];
  readonly Dictionary<string,MaterialSettings> settings=[];
  string? selectedLod,mtl,mask,maskMaterial;bool ready,busy,processing,dirty,closeApproved,closePrompt;
+ ContentDialog? activeDialog;
  readonly TextBlock dirtyText=new(){Text=UiLanguage.Text("Есть несохранённые изменения"),FontSize=12,Opacity=.75,Visibility=Visibility.Collapsed};
  readonly ProgressBar busyIndicator=new(){IsIndeterminate=true,Visibility=Visibility.Collapsed};
  readonly List<(Button Button,Func<bool> CanExecute)> commandButtons=[];
@@ -63,10 +65,20 @@ sealed class EditorWindow:Window
   controls.Children.Add(Button("Сохранить мод…",Export,()=>HasModel&&mtl!=null));controls.Children.Add(busyIndicator);controls.Children.Add(dirtyText);controls.Children.Add(status);
   view.CoreWebView2Initialized+=(_,_)=>{view.CoreWebView2.NavigationStarting+=(_,e)=>{if(!string.Equals(e.Uri,"about:blank",StringComparison.OrdinalIgnoreCase))e.Cancel=true;};view.CoreWebView2.Settings.AreDevToolsEnabled=false;view.CoreWebView2.Settings.AreDefaultContextMenusEnabled=false;view.CoreWebView2.WebMessageReceived+=async(_,e)=>{try{using var json=JsonDocument.Parse(e.WebMessageAsJson);if(json.RootElement.TryGetProperty("error",out var viewportError))status.Text="Viewport: "+viewportError.GetString();if(json.RootElement.TryGetProperty("ready",out var readyProperty)){ready=true;await view.ExecuteScriptAsync("document.getElementById('hint').textContent="+JsonSerializer.Serialize(UiLanguage.Text("Перетаскивание: вращение. Колесо: масштаб. Щелчок: выбор объекта.")));if(startupModel is string path){startupModel=null;await RunCommand(()=>Load(path));}else await Display();}if(json.RootElement.TryGetProperty("selected",out var index)&&index.TryGetInt32(out int i)&&i>=-1&&i<objects.Items.Count)objects.SelectedIndex=i;}catch{}};};
   AppWindow.Closing+=async(_,e)=>{if(!dirty||closeApproved)return;e.Cancel=true;if(closePrompt||busy)return;closePrompt=true;try{if(await ConfirmDiscard(true)){closeApproved=true;Close();}}finally{closePrompt=false;}};
+  Activated+=async(_,e)=>{if(e.WindowActivationState==WindowActivationState.Deactivated||!UiLanguage.Reload())return;UiLanguage.Apply(grid);if(activeDialog!=null)UiLanguage.Apply(activeDialog);UpdateControls();if(ready)try{await UpdateViewportLanguage();}catch{}};
   UiLanguage.Apply(controls);UpdateControls();LoadedView();
  }
- async void LoadedView(){try{await view.EnsureCoreWebView2Async();string folder=File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","Assets","viewport.html"))?"Editor":"";view.NavigateToString(File.ReadAllText(Path.Combine(AppContext.BaseDirectory,folder,"Assets","viewport.html")));}catch(Exception ex){status.Text=UiLanguage.Text("Не удалось открыть viewport")+": "+ex.Message;}}
- async Task<bool> ConfirmDiscard(bool closing=false){if(!dirty)return true;return await new ContentDialog{Title=UiLanguage.Text(closing?"Закрыть редактор?":"Открыть другую модель?"),Content=UiLanguage.Text("Несохранённые настройки текущей модели будут потеряны."),PrimaryButtonText=UiLanguage.Text(closing?"Закрыть без сохранения":"Открыть"),CloseButtonText=UiLanguage.Text("Отмена"),DefaultButton=ContentDialogButton.Close,XamlRoot=((FrameworkElement)Content).XamlRoot}.ShowAsync()==ContentDialogResult.Primary;}
+ async void LoadedView(){try{
+  // Keep writable browser state outside the installation, including read-only installs.
+  string userData=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Aurora","Editor","WebView2");
+  Directory.CreateDirectory(userData);
+  var environment=await CoreWebView2Environment.CreateWithOptionsAsync(null,userData,new CoreWebView2EnvironmentOptions());
+  await view.EnsureCoreWebView2Async(environment);
+  string folder=File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","Assets","viewport.html"))?"Editor":"";view.NavigateToString(File.ReadAllText(Path.Combine(AppContext.BaseDirectory,folder,"Assets","viewport.html")));
+ }catch(Exception ex){status.Text=UiLanguage.Text("Не удалось открыть viewport")+": "+ex.Message;}}
+ Task UpdateViewportLanguage()=>view.ExecuteScriptAsync("document.getElementById('hint').textContent="+JsonSerializer.Serialize(UiLanguage.Text("Перетаскивание: вращение. Колесо: масштаб. Щелчок: выбор объекта."))).AsTask();
+ async Task<ContentDialogResult> ShowDialog(ContentDialog dialog){activeDialog=dialog;try{return await dialog.ShowAsync();}finally{activeDialog=null;}}
+ async Task<bool> ConfirmDiscard(bool closing=false){if(!dirty)return true;return await ShowDialog(new ContentDialog{Title=UiLanguage.Text(closing?"Закрыть редактор?":"Открыть другую модель?"),Content=UiLanguage.Text("Несохранённые настройки текущей модели будут потеряны."),PrimaryButtonText=UiLanguage.Text(closing?"Закрыть без сохранения":"Открыть"),CloseButtonText=UiLanguage.Text("Отмена"),DefaultButton=ContentDialogButton.Close,XamlRoot=((FrameworkElement)Content).XamlRoot})==ContentDialogResult.Primary;}
  NativeModel CurrentModel()=>lods[selectedLod??throw new InvalidOperationException("Выберите NMF")];
  void UpdateControls(){materialFile.Text=mtl==null?UiLanguage.Text("MTL не выбран"):Path.GetFileName(mtl);ToolTipService.SetToolTip(materialFile,mtl);dirtyText.Visibility=dirty?Visibility.Visible:Visibility.Collapsed;busyIndicator.Visibility=busy&&processing?Visibility.Visible:Visibility.Collapsed;view.IsHitTestVisible=!busy;foreach(var command in commandButtons)command.Button.IsEnabled=!busy&&command.CanExecute();lodChoice.IsEnabled=!busy&&HasModel;objects.IsEnabled=!busy&&HasModel;materialChoice.IsEnabled=!busy&&HasModel;emptyView.Visibility=selectedLod==null?Visibility.Visible:Visibility.Collapsed;}
  Button Button(string label,Func<Task> action,Func<bool>? canExecute=null){var b=new Button{Content=UiLanguage.Text(label),HorizontalAlignment=HorizontalAlignment.Stretch};commandButtons.Add((b,canExecute??(()=>true)));if(label is "Открыть NMF…" or "Сохранить мод…")b.KeyboardAccelerators.Add(new Microsoft.UI.Xaml.Input.KeyboardAccelerator{Key=label=="Открыть NMF…"?Windows.System.VirtualKey.O:Windows.System.VirtualKey.S,Modifiers=Windows.System.VirtualKeyModifiers.Control});b.Click+=async(_,_)=>await RunCommand(action);return b;}
@@ -153,7 +165,7 @@ sealed class EditorWindow:Window
   var dialogBody=new ScrollViewer{Content=panel,MinWidth=Math.Max(0,Math.Min(432,((FrameworkElement)Content).ActualWidth-96)),MaxHeight=Math.Min(520,Math.Max(180,((FrameworkElement)Content).ActualHeight-200)),HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled};
   var dialog=new ContentDialog{Title=name,Content=dialogBody,PrimaryButtonText=UiLanguage.Text("Применить"),CloseButtonText=UiLanguage.Text("Отмена"),XamlRoot=((FrameworkElement)Content).XamlRoot};
   UiLanguage.Apply(panel);
-  if(await dialog.ShowAsync()!=ContentDialogResult.Primary)return;
+  if(await ShowDialog(dialog)!=ContentDialogResult.Primary)return;
   dirty=true;settings[name]=new(baseMap,normal,orm,(float)metal.Value,(float)rough.Value,(float)ao.Value,(float)strength.Value,native.IsOn,metalMap,roughMap,aoMap,emissive,(float)emission.Value,(float)ibl.Value,normalY.SelectedIndex==0?-1:1);
   await Display();
  }
