@@ -17,3 +17,9 @@ Earlier .NET downloader stalled on an archive body; add bounded cancellation and
 Implemented and awaiting final verification: root entry EXEs + app folder, external archive installer, game/Aurora default via Steam detection, English title, 200px sidebar, actionable game home, plain language menu, editor description removed, version 0.2 messages, compact tilde-only alpha console host, bounded archive download. Editor rendering features were not redesigned. The cloud development workflow never publishes releases and uses an ephemeral test signing key.
 
 Downloads cleanup archived 25 known working items and wrote a local MOVE-MAP.json. Personal media, game downloads, unrelated installers and unknown archives were preserved. Old WinForms code is under legacy/. Old audit/handoff notes are under docs/archive/.
+
+## UI corrections from owner
+
+Language changes must update both footer items immediately (English/Settings or Русский/Настройки). Use an explicit Settings NavigationViewItem instead of the OS-localized built-in item. The language popup uses plain items without a radio dot.
+
+Keep Find mods on Home and do not tell the player to go to Settings to search. Remove Game folder and Mods folder home buttons. Console hint is Open in game: ~ / Открыть в игре: ~, without a separator dash. No Open console button.

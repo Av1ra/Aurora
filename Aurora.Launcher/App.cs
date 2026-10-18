@@ -29,7 +29,8 @@ sealed partial class AuroraApp:Application
 record Preferences(string Game="",bool Console=false);
 sealed class MainWindow:Window
 {
- readonly NavigationView navigation=new(){IsBackButtonVisible=NavigationViewBackButtonVisible.Collapsed,PaneDisplayMode=NavigationViewPaneDisplayMode.Left,OpenPaneLength=200,CompactPaneLength=48,IsSettingsVisible=true};
+ readonly NavigationView navigation=new(){IsBackButtonVisible=NavigationViewBackButtonVisible.Collapsed,PaneDisplayMode=NavigationViewPaneDisplayMode.Left,OpenPaneLength=200,CompactPaneLength=48,IsSettingsVisible=false};
+ readonly NavigationViewItem settingsItem=new(){Tag="settings",Icon=new SymbolIcon(Symbol.Setting)};
  readonly StackPanel body=new(){Spacing=14,Margin=new Thickness(28)};
  TextBlock status=new(){TextWrapping=TextWrapping.Wrap};
  TextBlock? versionText;string versionMessage="Установлена актуальная версия 0.2";
@@ -49,15 +50,15 @@ sealed class MainWindow:Window
   if(!File.Exists(Path.Combine(prefs.Game,"SOVIET64.exe"))&&File.Exists(Path.Combine(InstallationPaths.SuggestedGame,"SOVIET64.exe")))prefs=prefs with{Game=InstallationPaths.SuggestedGame};
   navigation.Content=new ScrollViewer{Content=body};WindowChrome.Attach(this,navigation,"Aurora");
   var language=new NavigationViewItem{Content=UiLanguage.English?"English":"Русский",Icon=new FontIcon{Glyph="\uE774"},SelectsOnInvoked=false};
-  ToolTipService.SetToolTip(language,"Язык / Language");navigation.FooterMenuItems.Add(language);
+  ToolTipService.SetToolTip(language,"Язык / Language");navigation.FooterMenuItems.Add(language);navigation.FooterMenuItems.Add(settingsItem);
   var languageMenu=new MenuFlyout();
   var russian=new MenuFlyoutItem{Text="Русский"};var english=new MenuFlyoutItem{Text="English"};
   languageMenu.Items.Add(russian);languageMenu.Items.Add(english);
-  void ChangeLanguage(bool en){UiLanguage.SetEnglish(en);UiLanguage.Apply((FrameworkElement)Content);language.Content=en?"English":"Русский";if(navigation.SettingsItem is NavigationViewItem settings)settings.Content=UiLanguage.Text("Настройки");foreach(var item in navigation.MenuItems.OfType<NavigationViewItem>())if(item.Content is string text)item.Content=UiLanguage.Text(text);}
+  void ChangeLanguage(bool en){UiLanguage.SetEnglish(en);UiLanguage.Apply((FrameworkElement)Content);language.Content=en?"English":"Русский";ToolTipService.SetToolTip(language,en?"Language":"Язык");settingsItem.Content=en?"Settings":"Настройки";ToolTipService.SetToolTip(settingsItem,en?"Settings":"Настройки");foreach(var item in navigation.MenuItems.OfType<NavigationViewItem>())if(item.Content is string text)item.Content=UiLanguage.Text(text);}
   russian.Click+=(_,_)=>ChangeLanguage(false);english.Click+=(_,_)=>ChangeLanguage(true);
   navigation.ItemInvoked+=(_,e)=>{if(e.InvokedItemContainer==language)languageMenu.ShowAt(language);};
   navigation.Loaded+=(_,_)=>ChangeLanguage(UiLanguage.English);
-  navigation.SelectionChanged+=(_,e)=>{if(e.IsSettingsSelected)Settings();else if(e.SelectedItem is NavigationViewItem item&&item.Tag is VerifiedMod mod)ShowMod(mod);else Home();};
+  navigation.SelectionChanged+=(_,e)=>{if(e.SelectedItem==settingsItem)Settings();else if(e.SelectedItem is NavigationViewItem item&&item.Tag is VerifiedMod mod)ShowMod(mod);else Home();};
   Home();Discover();
   _=CheckUpdates();
  }
@@ -67,7 +68,7 @@ sealed class MainWindow:Window
  {
   mods=found;navigation.MenuItems.Clear();navigation.MenuItems.Add(new NavigationViewItem{Content=UiLanguage.Text("Главная"),Icon=new SymbolIcon(Symbol.Home)});
   foreach(var mod in mods)navigation.MenuItems.Add(new NavigationViewItem{Content=UiLanguage.Text(mod.Manifest.Name),Tag=mod,Icon=new FontIcon{Glyph=mod.Manifest.Category=="graphics"?"\uE790":mod.Manifest.Category=="camera"?"\uE722":"\uE8F1"}});
-  navigation.SelectedItem=navigation.MenuItems[0];Home();if(errors.Count>0)status.Text=string.Join("\n",errors);
+  status.Text=string.Join("\n",errors);navigation.SelectedItem=navigation.MenuItems[0];Home();
  }
  TextBlock Heading(string text)=>new(){Text=UiLanguage.Text(text),FontSize=28,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold};
  void ClearBody(){string previous=status.Text;body.Children.Clear();status=new TextBlock{Text=previous,TextWrapping=TextWrapping.Wrap,Opacity=.8};}
@@ -99,17 +100,14 @@ sealed class MainWindow:Window
   var play=AsyncButton("Запустить игру",LaunchGame);play.IsEnabled=found;actions.Children.Add(play);
   actions.Children.Add(Button("Настройки игры и модов",Settings));body.Children.Add(actions);
   var tools=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
-  var gameFolder=Button("Папка игры",()=>OpenFolder(prefs.Game));gameFolder.IsEnabled=found;tools.Children.Add(gameFolder);
-  var modFolder=Button("Папка модов",()=>{var path=Path.Combine(prefs.Game,"mods");Directory.CreateDirectory(path);OpenFolder(path);});modFolder.IsEnabled=found;tools.Children.Add(modFolder);
   tools.Children.Add(Button("Workshop",()=>Process.Start(new ProcessStartInfo("https://steamcommunity.com/app/784150/workshop/"){UseShellExecute=true})));body.Children.Add(tools);
   var moduleState=new StackPanel{Spacing=8};moduleState.Children.Add(RowTitle("Модули"));
-  moduleState.Children.Add(new TextBlock{Text=mods.Count==0?UiLanguage.Text("Моды не найдены. Откройте настройки и выполните поиск."):string.Join("\n",mods.Select(x=>UiLanguage.Text(x.Manifest.Name))),TextWrapping=TextWrapping.Wrap,Opacity=.75});
+  moduleState.Children.Add(new TextBlock{Text=mods.Count==0?UiLanguage.Text("Совместимые моды не найдены."):string.Join("\n",mods.Select(x=>UiLanguage.Text(x.Manifest.Name))),TextWrapping=TextWrapping.Wrap,Opacity=.75});
   moduleState.Children.Add(AsyncButton("Найти моды",DiscoverAsync));body.Children.Add(Card(moduleState));
   var editor=new StackPanel{Orientation=Orientation.Horizontal,Spacing=12};editor.Children.Add(new TextBlock{Text=UiLanguage.Text("Мастер моделей"),VerticalAlignment=VerticalAlignment.Center,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});
   editor.Children.Add(AsyncButton(File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","acode.lnchr"))?"Открыть редактор":"Скачать редактор",OpenEditor));body.Children.Add(Card(editor));
   body.Children.Add(status);versionText=new TextBlock{Text=UiLanguage.Text(versionMessage),Opacity=.65};body.Children.Add(versionText);UiLanguage.Apply(body);
  }
- static void OpenFolder(string path){if(!Directory.Exists(path))throw new DirectoryNotFoundException(path);Process.Start(new ProcessStartInfo("explorer.exe"){UseShellExecute=false,ArgumentList={path}});}
  async Task DiscoverAsync(){if(!Directory.Exists(prefs.Game)){ApplyDiscovery([],[]);return;}status.Text=UiLanguage.Text("Поиск модов…");try{var result=await Task.Run(()=>new ModCatalog(publicKey).Discover(SteamDiscovery.FindRoots(prefs.Game)));ApplyDiscovery(result.Mods,result.Errors);}catch(Exception ex){Notice(ex.Message);}}
  void ShowMod(VerifiedMod mod)
  {
@@ -164,7 +162,7 @@ sealed class MainWindow:Window
   var locateButtons=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
   locateButtons.Children.Add(AsyncButton("Выбрать папку…",async()=>{var picker=new Windows.Storage.Pickers.FolderPicker();picker.FileTypeFilter.Add("*");WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));var folder=await picker.PickSingleFolderAsync();if(folder!=null)path.Text=folder.Path;}));
   locateButtons.Children.Add(Button("Найти моды",()=>{if(!File.Exists(Path.Combine(path.Text,"SOVIET64.exe")))throw new InvalidDataException("В выбранной папке нет SOVIET64.exe.");prefs=prefs with{Game=Path.GetFullPath(path.Text)};Save();Discover();}));locations.Children.Add(locateButtons);body.Children.Add(Card(locations));
-  var console=new ToggleSwitch{IsOn=prefs.Console};console.Toggled+=(_,_)=>{prefs=prefs with{Console=console.IsOn};Save();};body.Children.Add(FeatureCard("Консоль",console,"Альфа","~ — открыть в игре"));
+  var console=new ToggleSwitch{IsOn=prefs.Console};console.Toggled+=(_,_)=>{prefs=prefs with{Console=console.IsOn};Save();};body.Children.Add(FeatureCard("Консоль",console,"Альфа","Открыть в игре: ~"));
   var updater=new StackPanel{Spacing=10};updater.Children.Add(RowTitle("Приложение"));updater.Children.Add(new TextBox{Header=UiLanguage.Text("Папка лаунчера"),Text=InstallationPaths.Root,IsReadOnly=true});var updateButtons=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
   updateButtons.Children.Add(Button("Проверить обновления",()=>_=CheckUpdates()));
   updateButtons.Children.Add(AsyncButton("Установить обновление",async()=>{var folder=await updates.DownloadVerified(publicKey);if(folder==null){Notice("Обновлений нет.");return;}updates.StartReplacement(folder);Application.Current.Exit();}));updater.Children.Add(updateButtons);versionText=new TextBlock{Text=UiLanguage.Text(versionMessage),Opacity=.65};updater.Children.Add(versionText);updater.Children.Add(status);body.Children.Add(Card(updater));
@@ -184,4 +182,5 @@ sealed class AlphaConsole:Window
 {
  public AlphaConsole(){Title="Aurora — Console";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(520,260));var panel=new StackPanel{Margin=new Thickness(14),Spacing=8};var log=new TextBox{IsReadOnly=true,AcceptsReturn=true,Height=80,Text="In development"};var input=new TextBox{PlaceholderText="Message"};void Reply(){if(string.IsNullOrWhiteSpace(input.Text))return;log.Text+="\r\n> "+input.Text+"\r\nIn development";input.Text="";}input.KeyDown+=(_,e)=>{if(e.Key==Windows.System.VirtualKey.Enter){Reply();e.Handled=true;}};var send=new Button{Content="Send"};send.Click+=(_,_)=>Reply();var heading=new StackPanel{Orientation=Orientation.Horizontal,Spacing=10};heading.Children.Add(new TextBlock{Text=UiLanguage.Text("Консоль"),FontSize=20});heading.Children.Add(MainWindow.Badge("Альфа"));panel.Children.Add(heading);panel.Children.Add(log);panel.Children.Add(input);panel.Children.Add(send);WindowChrome.Attach(this,panel,Title);}
 }
+
 
