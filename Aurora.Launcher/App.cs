@@ -82,7 +82,6 @@ sealed class MainWindow:Window
  void ShowMod(VerifiedMod mod)
  {
   body.Children.Clear();body.Children.Add(Heading(mod.Manifest.Name));
-  body.Children.Add(new TextBlock{Text=mod.Manifest.Version+" · "+mod.Manifest.Category});
   body.Children.Add(new TextBlock{Text="Изменения применяются при следующем запуске игры.",TextWrapping=TextWrapping.Wrap});
   var beta=new StackPanel{Spacing=12};
   string config=ModCatalog.SafePath(prefs.Game,"mods/"+mod.Manifest.Config);
@@ -132,13 +131,13 @@ sealed class MainWindow:Window
   body.Children.Add(Button("Открыть консоль",()=>{var w=new AlphaConsole();w.Activate();}));
   body.Children.Add(Button("Проверить обновления",()=>_=CheckUpdates()));
   body.Children.Add(AsyncButton("Установить обновление",async()=>{var folder=await updates.DownloadVerified(publicKey);if(folder==null){Notice("Обновлений нет.");return;}updates.StartReplacement(folder);Application.Current.Exit();}));
-  body.Children.Add(new TextBlock{Text="Аврора "+ModCatalog.LauncherVersion});body.Children.Add(status);
+  body.Children.Add(status);
   UiLanguage.Apply(body);
  }
- async Task CheckUpdates(){try{var release=await updates.Check();status.Text=release==null?"Установлена актуальная версия.":"Доступна Аврора "+release.Version+". Установка — в настройках.";}catch(Exception ex){status.Text="Не удалось проверить обновления: "+ex.Message;}}
+ async Task CheckUpdates(){try{var release=await updates.Check();status.Text=release==null?"Установлена актуальная версия.":"Доступно обновление Авроры. Установка — в настройках.";}catch(Exception ex){status.Text="Не удалось проверить обновления: "+ex.Message;}}
  async void Notice(string message){await new ContentDialog{Title="Аврора",Content=message,CloseButtonText="ОК",XamlRoot=((FrameworkElement)Content).XamlRoot}.ShowAsync();}
 }
 sealed class AlphaConsole:Window
 {
- public AlphaConsole(){Title="Аврора · Console — alpha";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(640,440));var panel=new StackPanel{Margin=new Thickness(20),Spacing=12};var log=new TextBox{IsReadOnly=true,AcceptsReturn=true,Height=230,Text="In development"};var input=new TextBox{PlaceholderText="Message"};void Reply(){if(string.IsNullOrWhiteSpace(input.Text))return;log.Text+="\r\n> "+input.Text+"\r\nIn development";input.Text="";}input.KeyDown+=(_,e)=>{if(e.Key==Windows.System.VirtualKey.Enter){Reply();e.Handled=true;}};var send=new Button{Content="Send"};send.Click+=(_,_)=>Reply();panel.Children.Add(log);panel.Children.Add(input);panel.Children.Add(send);WindowChrome.Attach(this,panel,Title);}
+ public AlphaConsole(){Title="Аврора — Консоль";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(640,440));var panel=new StackPanel{Margin=new Thickness(20),Spacing=12};var log=new TextBox{IsReadOnly=true,AcceptsReturn=true,Height=230,Text="In development"};var input=new TextBox{PlaceholderText="Message"};void Reply(){if(string.IsNullOrWhiteSpace(input.Text))return;log.Text+="\r\n> "+input.Text+"\r\nIn development";input.Text="";}input.KeyDown+=(_,e)=>{if(e.Key==Windows.System.VirtualKey.Enter){Reply();e.Handled=true;}};var send=new Button{Content="Send"};send.Click+=(_,_)=>Reply();panel.Children.Add(log);panel.Children.Add(input);panel.Children.Add(send);WindowChrome.Attach(this,panel,Title);}
 }
