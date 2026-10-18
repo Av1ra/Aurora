@@ -4,7 +4,8 @@ using System.Text.Json;
 namespace Aurora.Core;
 
 public record ModFile(string Path, string Sha256);
-public record ModOption(string Id, string Label, string Section, string Key, bool Beta = false, bool Default = true);
+// Stage and Description are optional so previously signed module manifests remain readable.
+public record ModOption(string Id, string Label, string Section, string Key, bool Beta = false, bool Default = true, string Stage = "", string Description = "");
 public record ModManifest(int Schema, string Id, string Name, string Category, string Version,
     string MinimumLauncher, string Config, ModFile[] Files, ModOption[] Options);
 public record SignedEnvelope(string Payload, string Signature);
