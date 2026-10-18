@@ -1,4 +1,4 @@
-# Project map
+﻿# Project map
 
 | Area | Source / entry point |
 | --- | --- |
@@ -20,6 +20,10 @@
 | Reproducible package | build.ps1, build-native.cmd |
 | Module signing contract | docs/MODULES.md |
 | Core/export/update/native tests | Aurora.Tests/, Aurora.ExportTests/, Aurora.UpdateTests/, Packaging/test-native.py |
+| Current WinUI audit/checklist | docs/UI_AUDIT.md |
+| Viewport event/resource regression checks | Packaging/test-viewport.mjs |
+| Logical window sizing | Shared/WindowSizing.cs, Shared/WindowChrome.cs |
+| Workshop/signed-runtime consistency | Aurora.Core/ModuleRuntimeCompatibility.cs |
 | Cloud build (never publishes releases) | .github/workflows/build.yml |
 | Build and signing | docs/DEVELOPMENT.md |
 | Current verified state and remaining work | docs/STATUS.md |
@@ -34,8 +38,3 @@ All launcher/editor sources are in this repository. Private PBR renderer interna
 | Code-defined Steam Workshop ID registry and location checks | Aurora.Core/SteamDiscovery.cs |
 
 | Steam launch bridge and original executable restoration | Aurora.Setup.Native/Entry.cpp (AURORA_STEAM_ENTRY), Aurora.Setup.Native/Setup.cpp |
-
-| Current WinUI audit/checklist | docs/UI_AUDIT.md |
-| Viewport event/resource regression checks | Packaging/test-viewport.mjs |
-| Logical window sizing | Shared/WindowSizing.cs, Shared/WindowChrome.cs |
-| Workshop/signed-runtime consistency | Aurora.Core/ModuleRuntimeCompatibility.cs |
