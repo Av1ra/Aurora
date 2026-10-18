@@ -8,6 +8,9 @@ Run 'dotnet' @('publish',"$root/Aurora.Launcher/Aurora.Launcher.csproj",'-c','Re
 Run 'dotnet' @('publish',"$root/Aurora.Editor/Aurora.Editor.csproj",'-c','Release','-p:Platform=x64',"-p:Version=$Version",'-o',"$buildRoot/editor")
 Run "$root/build-native.cmd" @()
 Run 'dotnet' @('publish',"$root/Aurora.Installer/Aurora.Installer.csproj",'-c','Release','-o',"$buildRoot/updater",'-p:EmbedPayload=false')
+# Fail packaging early if core/module or installer regression tests fail.
+Run 'dotnet' @('run','--project',"$root/Aurora.Tests/Aurora.Tests.csproj",'-c','Release')
+Run 'dotnet' @('run','--project',"$root/Aurora.InstallerTests/Aurora.InstallerTests.csproj",'-c','Release')
 $backendArgs=@('--clean','--noconfirm','--onedir','--console','--exclude-module','tkinter','--exclude-module','matplotlib','--exclude-module','PyQt5','--exclude-module','PySide6','--name','Aurora.ModelBackend','--distpath',"$buildRoot/backend",'--workpath',"$buildRoot/backend-work",'--specpath',"$root/artifacts","$root/Backend/mask_backend.py")
 if($PythonDependencyDirectory){Run $Python (@('-c','import sys;sys.path.insert(0,sys.argv[1]);from PyInstaller.__main__ import run;run(sys.argv[2:])',$PythonDependencyDirectory)+$backendArgs)}else{Run $Python (@('-m','PyInstaller')+$backendArgs)}
 $stage="$root/artifacts/package-$([guid]::NewGuid().ToString('N'))"
