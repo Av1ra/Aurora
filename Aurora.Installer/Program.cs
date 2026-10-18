@@ -47,6 +47,18 @@ internal static class InstallationLocation
         finally { if (File.Exists(tmp)) File.Delete(tmp); }
     }
 
+    public static string SavedGame()
+    {
+        try
+        {
+            string filename = Path.Combine(StateRoot, "settings.json");
+            if (!File.Exists(filename)) return "";
+            using var json = JsonDocument.Parse(File.ReadAllText(filename));
+            return json.RootElement.TryGetProperty("Game", out var game) ? game.GetString() ?? "" : "";
+        }
+        catch { return ""; }
+    }
+
     public static void SaveGame(string game)
     {
         if (string.IsNullOrWhiteSpace(game)) return;
@@ -193,6 +205,7 @@ sealed class InstallWindow : Form
         root.Controls.Add(heading, 0, 0);
 
         installPath.Text = InstallationLocation.InstalledApp();
+        gamePath.Text = InstallationLocation.SavedGame();
         root.Controls.Add(FolderRow("Куда установить Аврору", installPath, true), 0, 1);
         root.Controls.Add(FolderRow("Папка игры (необязательно)", gamePath, false), 0, 2);
 
