@@ -8,7 +8,7 @@ Run 'dotnet' @('publish',"$root/Aurora.Launcher/Aurora.Launcher.csproj",'-c','Re
 Run 'dotnet' @('publish',"$root/Aurora.Editor/Aurora.Editor.csproj",'-c','Release','-p:Platform=x64',"-p:Version=$Version",'-o',"$buildRoot/editor")
 Run "$root/build-native.cmd" @()
 Run 'dotnet' @('publish',"$root/Aurora.Installer/Aurora.Installer.csproj",'-c','Release','-o',"$buildRoot/updater",'-p:EmbedPayload=false')
-$backendArgs=@('--noconfirm','--onedir','--console','--name','Aurora.ModelBackend','--distpath',"$buildRoot/backend",'--workpath',"$buildRoot/backend-work",'--specpath',"$root/artifacts","$root/Backend/mask_backend.py")
+$backendArgs=@('--clean','--noconfirm','--onedir','--console','--exclude-module','tkinter','--exclude-module','matplotlib','--exclude-module','PyQt5','--exclude-module','PySide6','--name','Aurora.ModelBackend','--distpath',"$buildRoot/backend",'--workpath',"$buildRoot/backend-work",'--specpath',"$root/artifacts","$root/Backend/mask_backend.py")
 if($PythonDependencyDirectory){Run $Python (@('-c','import sys;sys.path.insert(0,sys.argv[1]);from PyInstaller.__main__ import run;run(sys.argv[2:])',$PythonDependencyDirectory)+$backendArgs)}else{Run $Python (@('-m','PyInstaller')+$backendArgs)}
 $stage="$root/artifacts/package-$([guid]::NewGuid().ToString('N'))"
 New-Item -ItemType Directory -Path "$stage/Editor/Backend" -Force | Out-Null
@@ -18,6 +18,20 @@ Copy-Item -LiteralPath "$buildRoot/updater/Aurora.Installer.exe" -Destination $s
 Copy-Item -Path "$buildRoot/editor/*" -Destination "$stage/Editor" -Recurse -Force
 Copy-Item -Path "$buildRoot/backend/Aurora.ModelBackend/*" -Destination "$stage/Editor/Backend" -Recurse -Force
 Copy-Item -LiteralPath "$root/README.md","$root/MODULES.md","$root/VALIDATION.md" -Destination $stage
+# Symbols are for diagnostics, not the installed runtime. Preserve all PRI/XBF assets.
+Get-ChildItem -LiteralPath $stage -Recurse -File -Filter '*.pdb' | Remove-Item -Force
+$sizeRows = @(
+  @{Name='Launcher'; Path="$buildRoot/launcher"},
+  @{Name='Model editor'; Path="$buildRoot/editor"},
+  @{Name='Python backend'; Path="$buildRoot/backend/Aurora.ModelBackend"},
+  @{Name='Staged package'; Path=$stage}
+)
+$report = foreach($item in $sizeRows){
+  $total = (Get-ChildItem -LiteralPath $item.Path -Recurse -File | Measure-Object -Property Length -Sum).Sum
+  '{0}: {1:N1} MiB' -f $item.Name,($total/1MB)
+}
+[IO.File]::WriteAllLines("$root/artifacts/PACKAGE_SIZE.txt",[string[]]$report,[Text.UTF8Encoding]::new($false))
+Write-Output ($report -join [Environment]::NewLine)
 $zip="$root/artifacts/Aurora-$Version-win-x64.zip"
 if(Test-Path -LiteralPath $zip){throw 'Choose a new version or archive the previous local ZIP first.'}
 [IO.Compression.ZipFile]::CreateFromDirectory($stage,$zip,[IO.Compression.CompressionLevel]::Optimal,$false)
@@ -28,4 +42,6 @@ Copy-Item -LiteralPath "$buildRoot/setup/Aurora.Installer.exe" -Destination "$ro
 $files=@($zip,"$root/artifacts/Aurora-Setup.exe")
 $lines=$files|ForEach-Object{(Get-FileHash -LiteralPath $_ -Algorithm SHA256).Hash.ToLowerInvariant()+'  '+[IO.Path]::GetFileName($_)}
 [IO.File]::WriteAllLines("$root/artifacts/SHA256SUMS.txt",$lines,[Text.UTF8Encoding]::new($false))
+Add-Content -LiteralPath "$root/artifacts/PACKAGE_SIZE.txt" -Value ('ZIP: {0:N1} MiB' -f ((Get-Item -LiteralPath $zip).Length/1MB))
+Add-Content -LiteralPath "$root/artifacts/PACKAGE_SIZE.txt" -Value ('Setup: {0:N1} MiB' -f ((Get-Item -LiteralPath "$root/artifacts/Aurora-Setup.exe").Length/1MB))
 Write-Output "Built $zip"
