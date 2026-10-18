@@ -16,6 +16,7 @@ assert sorted(x.name for x in source.glob("*.zip")) == ["Aurora-0.2-win-x64.zip"
 with zipfile.ZipFile(archive) as bundle:
     names = set(bundle.namelist())
     assert {"Aurora Launcher.exe", "Aurora Editor.exe", "app/Editor/acode.lnchr", "app/Editor/Aurora.Editor.Module.dll"} <= names
+    assert "app/Aurora.Steam.exe" in names, "Missing Steam launcher bridge"
     assert "Aurora.exe" not in names and "Aurora.Editor.exe" not in names
     # PyInstaller needs an internal base_library.zip; this is not another Aurora distribution.
     assert not any(name.startswith("Aurora-") and name.lower().endswith(".zip") for name in names)

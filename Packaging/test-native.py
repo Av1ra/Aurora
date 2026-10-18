@@ -30,3 +30,31 @@ print('PASS locked file rollback; AURORA_NATIVE_INSTALLER_PASS')
 print(root)
 
 
+
+# Steam entry integration: preserve the official executable exactly once.
+steam_game=root/'steam-game'
+steam_game.mkdir()
+(steam_game/'SOVIET64.exe').write_bytes(b'game-fixture')
+official=steam_game/'SETUPAPPLICATION SOVIET.exe'
+backup=steam_game/'SETUPAPPLICATION SOVIET.exe_orig'
+official.write_bytes(b'official-steam-entry')
+bridge=src/'app'/'Aurora.Steam.exe'
+bridge.write_bytes(b'aurora-bridge-v1')
+assert subprocess.run([exe,'--steam-hook-test',src,steam_game],timeout=20).returncode==0
+assert backup.read_bytes()==b'official-steam-entry' and official.read_bytes()==b'aurora-bridge-v1'
+assert (src/'steam-entry.sha256').read_text().strip()==hashlib.sha256(b'aurora-bridge-v1').hexdigest()
+print('PASS Steam original renamed to exe_orig and bridge installed')
+bridge.write_bytes(b'aurora-bridge-v2')
+assert subprocess.run([exe,'--steam-hook-test',src,steam_game],timeout=20).returncode==0
+assert backup.read_bytes()==b'official-steam-entry' and official.read_bytes()==b'aurora-bridge-v2'
+assert not list(steam_game.glob('*.aurora-*'))
+print('PASS second install updates bridge, original preserved without duplicates')
+official.write_bytes(b'steam-repaired-different-entry')
+assert subprocess.run([exe,'--steam-hook-test',src,steam_game],timeout=20).returncode==1
+assert backup.read_bytes()==b'official-steam-entry' and official.read_bytes()==b'steam-repaired-different-entry'
+print('PASS unexpected Steam-modified game entry never overwritten')
+official.write_bytes(b'aurora-bridge-v2')
+assert subprocess.run([exe,'--steam-restore-test',src,steam_game],timeout=20).returncode==0
+assert official.read_bytes()==b'official-steam-entry' and not backup.exists()
+assert not (src/'steam-entry.sha256').exists()
+print('PASS original Steam executable restored explicitly')

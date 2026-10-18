@@ -21,6 +21,7 @@ try {
  if($NativeDist){& "$root/Prepare-Graphics.ps1" -NativeDist $NativeDist -Output "$app/Modules/aurora.graphics" -Version $Version -MinimumLauncher '0.2.0'}
  & "$root/build-setup.ps1" -Output "$app/Aurora.Installer.exe"
  Copy-Item -LiteralPath "$root/artifacts/native/Aurora.Bootstrap.exe" -Destination $app
+ Copy-Item -LiteralPath "$root/artifacts/native/Aurora.Steam.exe" -Destination $app
  Copy-Item -LiteralPath "$root/artifacts/native/Aurora Launcher.exe","$root/artifacts/native/Aurora Editor.exe" -Destination $stage
  New-Item -ItemType Directory "$app/docs" -Force | Out-Null
  Copy-Item -LiteralPath "$root/docs/RELEASE_DESCRIPTION.md" -Destination "$app/docs/Readme.md"

@@ -39,6 +39,7 @@ if (args.Length > 1)
        !File.Exists(Path.Combine(unpack,"Aurora Editor.exe"))||
        !File.Exists(Path.Combine(unpack,"app","Aurora.Launcher.exe"))||
        !File.Exists(Path.Combine(unpack,"app","Aurora.Bootstrap.exe"))||
+       !File.Exists(Path.Combine(unpack,"app","Aurora.Steam.exe"))||
        !File.Exists(Path.Combine(unpack,"app","Aurora.Installer.exe")))
         throw new Exception("Missing Launcher / Editor application entry points");
     var catalog=new ModCatalog(keyText);

@@ -31,3 +31,5 @@ All launcher/editor sources are in this repository. Private PBR renderer interna
 
 
 | Code-defined Steam Workshop ID registry and location checks | Aurora.Core/SteamDiscovery.cs |
+
+| Steam launch bridge and original executable restoration | Aurora.Setup.Native/Entry.cpp (AURORA_STEAM_ENTRY), Aurora.Setup.Native/Setup.cpp |

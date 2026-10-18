@@ -15,3 +15,7 @@ Keep **Aurora-Setup.exe** next to **Aurora-0.2-win-x64.zip**, then run Aurora-Se
 There is only **one** ZIP. No second Full archive, editor ZIP or duplicate embedded runtime. No texture packs are included; PBR content is distributed separately through the registered Steam Workshop module. FOV Changer remains an independently signed optional module but its packaged fallback may be included under app/Modules without an extra ZIP.
 
 This is a development/test build of 0.2, not a stable release. The FOV module requires an explicitly supported game executable; full visual acceptance in the actual game remains pending.
+
+## Steam launch bridge (test feature)
+
+The installer may replace the game's Steam entry filename `SETUPAPPLICATION SOVIET.exe` with Aurora's bridge. The original is preserved as `SETUPAPPLICATION SOVIET.exe_orig`; Aurora Launcher and Aurora Editor stay inside `SovietRepublic/Aurora` with one shared runtime. A missing Aurora installation falls back to the original. To revert, close Steam/game and run `Aurora-Setup.exe --restore-steam` using the installed setup and saved game path. Steam client behavior should be confirmed with a real-game smoke test. Do not manually delete `_orig`.

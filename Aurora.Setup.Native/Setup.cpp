@@ -396,6 +396,119 @@ static void Install(const fs::path &source, const fs::path &target,
     throw;
   }
 }
+// The official Steam entry is preserved verbatim as .exe_orig, exactly once.
+// Store only a hash of our installed proxy so future updates cannot overwrite
+// an unknown or Steam-restored game executable.
+static void InstallSteamEntry(const fs::path &application, const fs::path &game) {
+  if (!fs::exists(game / L"SOVIET64.exe"))
+    throw std::runtime_error("The selected SovietRepublic game folder is invalid");
+  if (Linked(game))
+    throw std::runtime_error("Linked game folder is not supported");
+  fs::path entry = game / L"SETUPAPPLICATION SOVIET.exe";
+  fs::path original = game / L"SETUPAPPLICATION SOVIET.exe_orig";
+  fs::path proxy = application / L"app" / L"Aurora.Steam.exe";
+  fs::path marker = application / L"steam-entry.sha256";
+  if (!fs::is_regular_file(proxy) || Linked(proxy))
+    throw std::runtime_error("Steam launcher bridge is missing from the Aurora package");
+  if (Linked(entry) || Linked(original))
+    throw std::runtime_error("Linked Steam entry is not supported");
+  if (!fs::exists(entry))
+    throw std::runtime_error("SETUPAPPLICATION SOVIET.exe not found in the game folder");
+
+  HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  if (snapshot == INVALID_HANDLE_VALUE)
+    throw std::runtime_error("Cannot check active game processes");
+  PROCESSENTRY32W process{sizeof(process)};
+  bool active = false;
+  if (Process32FirstW(snapshot, &process))
+    do {
+      if (process.th32ProcessID == GetCurrentProcessId())
+        continue;
+      if (!_wcsicmp(process.szExeFile, L"SOVIET64.exe") ||
+          !_wcsicmp(process.szExeFile, L"SETUPAPPLICATION SOVIET.exe"))
+        active = true;
+    } while (Process32NextW(snapshot, &process));
+  CloseHandle(snapshot);
+  if (active)
+    throw std::runtime_error("Close Soviet Republic and its Steam launcher first");
+
+  const std::string nextHash = pbr::Sha256File(proxy.wstring());
+  bool hasOriginal = fs::exists(original);
+  const std::string currentHash = pbr::Sha256File(entry.wstring());
+  if (hasOriginal) {
+    std::wstring previous = ReadPath(marker);
+    if (currentHash != nextHash &&
+        (previous.empty() || currentHash != Utf8(previous)))
+      throw std::runtime_error(
+          "Steam replaced or changed its game entry. The original _orig file "
+          "is preserved. Restore the Steam entry before retrying Aurora.");
+  }
+
+  auto staged = entry;
+  staged += L".aurora-new-" + std::to_wstring(GetCurrentProcessId());
+  auto previous = entry;
+  previous += L".aurora-old-" + std::to_wstring(GetCurrentProcessId());
+  bool renamedOriginal = false;
+  bool savedPrevious = false;
+  try {
+    fs::copy_file(proxy, staged, fs::copy_options::overwrite_existing);
+    if (pbr::Sha256File(staged.wstring()) != nextHash)
+      throw std::runtime_error("Steam launcher bridge failed integrity check");
+    if (!hasOriginal) {
+      // No overwrite flag: never replace the saved official executable.
+      if (!MoveFileExW(entry.c_str(), original.c_str(), MOVEFILE_WRITE_THROUGH))
+        throw std::runtime_error("Cannot preserve original Steam executable");
+      renamedOriginal = true;
+    } else {
+      fs::copy_file(entry, previous, fs::copy_options::overwrite_existing);
+      savedPrevious = true;
+    }
+    if (!MoveFileExW(staged.c_str(), entry.c_str(),
+                     MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
+      throw std::runtime_error("Cannot install Steam launcher bridge");
+    WritePath(marker, fs::u8path(nextHash));
+  } catch (...) {
+    std::error_code ignored;
+    if (renamedOriginal) {
+      fs::remove(entry, ignored);
+      MoveFileExW(original.c_str(), entry.c_str(), MOVEFILE_WRITE_THROUGH);
+    } else if (savedPrevious) {
+      fs::copy_file(previous, entry, fs::copy_options::overwrite_existing,
+                    ignored);
+    }
+    fs::remove(staged, ignored);
+    fs::remove(previous, ignored);
+    throw;
+  }
+  std::error_code ignored;
+  fs::remove(staged, ignored);
+  fs::remove(previous, ignored);
+}
+
+// Restore is explicit. Do not touch the official executable if Steam has
+// already replaced our bridge or somebody modified it independently.
+static void RestoreSteamEntry(const fs::path &application,
+                             const fs::path &game) {
+  fs::path entry = game / L"SETUPAPPLICATION SOVIET.exe";
+  fs::path original = game / L"SETUPAPPLICATION SOVIET.exe_orig";
+  fs::path marker = application / L"steam-entry.sha256";
+  if (!fs::is_regular_file(original) || !fs::is_regular_file(entry))
+    throw std::runtime_error("No managed Steam entry to restore");
+  auto hash = ReadPath(marker);
+  if (hash.empty() || pbr::Sha256File(entry.wstring()) != Utf8(hash))
+    throw std::runtime_error("Refusing to replace an unknown Steam entry");
+  auto temporary = entry;
+  temporary += L".aurora-restore-" + std::to_wstring(GetCurrentProcessId());
+  if (!MoveFileExW(entry.c_str(), temporary.c_str(), MOVEFILE_WRITE_THROUGH))
+    throw std::runtime_error("Close Steam and the game before restoring");
+  if (!MoveFileExW(original.c_str(), entry.c_str(), MOVEFILE_WRITE_THROUGH)) {
+    MoveFileExW(temporary.c_str(), entry.c_str(), MOVEFILE_WRITE_THROUGH);
+    throw std::runtime_error("Cannot restore original Steam executable");
+  }
+  std::error_code ignored;
+  fs::remove(temporary, ignored);
+  fs::remove(marker, ignored);
+}
 static std::wstring ChooseFolder(HWND parent) {
   IFileDialog *dialog = nullptr;
   std::wstring value;
@@ -505,8 +618,10 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM w,
           std::wstring error;
           try {
             Install(Unpack(), app);
-            if (!game.empty())
+            if (!game.empty()) {
               WritePath(Local() / L"game-path.txt", game);
+              InstallSteamEntry(app, game);
+            }
             CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
             Shortcut(app);
             CoUninitialize();
@@ -595,6 +710,31 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int) {
       CoUninitialize();
       return 0;
     }
+    if (count == 2 && !wcscmp(args[1], L"--restore-steam")) {
+      cliMode = true;
+      auto game = ReadPath(Local() / L"game-path.txt");
+      auto app = ReadPath(Local() / L"install-root.txt");
+      if (game.empty() || app.empty())
+        throw std::runtime_error("No registered Aurora Steam installation");
+      RestoreSteamEntry(app, game);
+      LocalFree(args);
+      CoUninitialize();
+      return 0;
+    }
+    if (count == 4 && !wcscmp(args[1], L"--steam-hook-test")) {
+      cliMode = true;
+      InstallSteamEntry(args[2], args[3]);
+      LocalFree(args);
+      CoUninitialize();
+      return 0;
+    }
+    if (count == 4 && !wcscmp(args[1], L"--steam-restore-test")) {
+      cliMode = true;
+      RestoreSteamEntry(args[2], args[3]);
+      LocalFree(args);
+      CoUninitialize();
+      return 0;
+    }
     if (count >= 3 && !wcscmp(args[1], L"--install-test")) {
       cliMode = true;
       if (count != 4)
@@ -626,6 +766,10 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int) {
       if (!fs::exists(source / L"Aurora Launcher.exe"))
         source = source.parent_path();
       Install(source, target);
+      auto game = ReadPath(Local() / L"game-path.txt");
+      if (!game.empty() && fs::exists(fs::path(game) / L"SOVIET64.exe") &&
+          fs::exists(fs::path(game) / L"SETUPAPPLICATION SOVIET.exe_orig"))
+        InstallSteamEntry(target, game);
       Start(target);
       LocalFree(args);
       CoUninitialize();

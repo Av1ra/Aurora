@@ -58,3 +58,11 @@ Use a narrow sidebar and an actionable game page (launch, modules, folders, Work
 
 
 Owner-authorized Aurora 0.2 preview is now distributed as one combined Launcher + Editor archive with its adjacent Setup executable. Packaging CI verifies one ZIP, signed embedded Editor and matching Setup payload digest. Future releases still require separate owner approval; do not publish releases automatically.
+
+## Optional Steam entry substitution
+
+During a normal install with a selected valid game folder, Setup preserves the game's original `SETUPAPPLICATION SOVIET.exe` under the exact suffix `SETUPAPPLICATION SOVIET.exe_orig` (only once) and puts Aurora's small `app/Aurora.Steam.exe` bridge at the original game-root name. This bridge delegates to Aurora Launcher while allowing Steam to track the running process. It prefers the normal game-local `Aurora/app` installation, and supports a saved custom Aurora location for the same configured game. If the launcher is missing, the preserved original is started instead.
+
+Do not overwrite or modify `_orig` during upgrades. An unexpected game EXE with a saved `_orig` causes setup to refuse the substitution rather than erase Steam's replacement. Restore through `Aurora-Setup.exe --restore-steam` from the corresponding installed setup (uses saved paths), with the game closed; it verifies the current Aurora bridge and moves `_orig` back into place. The Setup's `--steam-hook-test <app> <game>` and `--steam-restore-test <app> <game>` test fixtures do not change global preferences.
+
+Only the adjacent single Launcher + Editor archive is necessary. `Aurora.Steam.exe` lives under `app/` inside that archive, and is not a third user-facing application. Steam integration requires a real Steam test: it depends on Steam actually launching `SETUPAPPLICATION SOVIET.exe` for the selected game edition, and cannot be guaranteed from a headless CI run.
