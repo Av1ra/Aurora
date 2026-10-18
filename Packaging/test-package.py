@@ -9,7 +9,7 @@ import tempfile
 source = pathlib.Path(sys.argv[1]).resolve()
 folder = pathlib.Path(tempfile.mkdtemp(prefix="Aurora-package-check-"))
 setup = folder / "Aurora-Setup.exe"
-archive = folder / "Aurora-0.2-Full-win-x64.zip"
+archive = folder / "Aurora-0.2-win-x64.zip"
 shutil.copy2(source / setup.name, setup)
 shutil.copy2(source / archive.name, archive)
 assert sorted(x.name for x in source.glob("*.zip")) == ["Aurora-0.2-win-x64.zip"], "Duplicate ZIP archives"
