@@ -171,3 +171,29 @@ Sign(dependencyModule with{Options=[new("glass","Glass","features","glass",Requi
 Sign(dependencyModule with{Options=[new("master","PBR","features","enabled",Requires:["glass"]),new("glass","Glass","features","glass",Requires:["master"])]});Reject(()=>catalog.Verify(root),"cyclic control dependencies");
 Sign(dependencyModule with{Options=[new("master","PBR","features","enabled"),new("master","Glass","features","glass")]});Reject(()=>catalog.Verify(root),"duplicate control identity");
 Sign(manifest);Check(catalog.Verify(root).Options[0].Requires==null,"legacy manifest without dependencies still supported");
+
+// Launch synchronization must not undo a confirmed Workshop update or resurrect a retired DLL.
+Sign(installManifest);var signedRuntime=new VerifiedMod(root,catalog.Verify(root));
+var guardedGame=Path.Combine(root,"guarded-game");Directory.CreateDirectory(Path.Combine(guardedGame,"mods"));
+foreach(var file in installManifest.Files)File.Copy(Path.Combine(root,file.Path.Replace('/',Path.DirectorySeparatorChar)),Path.Combine(guardedGame,file.Path[8..].Replace('/',Path.DirectorySeparatorChar)));
+var guardedReceipt=new WorkshopInstalled("3822550289","2.0","2026-10-19",installManifest.Files.Select(f=>new WorkshopFileHash(f.Path[8..],f.Sha256)).ToArray());
+string guardedReceiptPath=WorkshopUpdates.ReceiptPath(guardedGame,"3822550289");Directory.CreateDirectory(Path.GetDirectoryName(guardedReceiptPath)!);File.WriteAllText(guardedReceiptPath,JsonSerializer.Serialize(guardedReceipt));
+ModuleRuntimeCompatibility.EnsureWorkshopCompatible(guardedGame,[signedRuntime]);Check(true,"matching Workshop runtime remains launch-compatible");
+string guardedPbr=Path.Combine(guardedGame,"mods","pbr.dll");File.WriteAllText(guardedPbr,"new-workshop-runtime");
+var updatedHash=Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(guardedPbr)));
+File.WriteAllText(guardedReceiptPath,JsonSerializer.Serialize(guardedReceipt with{Files=guardedReceipt.Files.Select(f=>f.Path=="mods/pbr.dll"?f with{Sha256=updatedHash}:f).ToArray()}));
+Reject(()=>ModuleRuntimeCompatibility.EnsureWorkshopCompatible(guardedGame,[signedRuntime]),"old signed fallback cannot replace newer Workshop runtime");
+Check(File.ReadAllText(guardedPbr)=="new-workshop-runtime","conflicting Workshop DLL preserved without mutation");
+File.WriteAllText(guardedReceiptPath,JsonSerializer.Serialize(guardedReceipt));
+Reject(()=>ModuleRuntimeCompatibility.EnsureWorkshopCompatible(guardedGame,[signedRuntime]),"user-modified Workshop runtime not silently overwritten");
+File.Copy(Path.Combine(root,"Payload","mods","pbr.dll"),guardedPbr,true);
+File.WriteAllText(guardedReceiptPath,JsonSerializer.Serialize(guardedReceipt with{Files=guardedReceipt.Files.Where(f=>f.Path!="mods/m.dll").ToArray()}));File.Delete(Path.Combine(guardedGame,"mods","m.dll"));
+Reject(()=>ModuleRuntimeCompatibility.EnsureWorkshopCompatible(guardedGame,[signedRuntime]),"old fallback cannot resurrect retired Workshop DLL");
+Check(!File.Exists(Path.Combine(guardedGame,"mods","m.dll")),"retired file remains absent");
+File.WriteAllText(guardedReceiptPath,JsonSerializer.Serialize(guardedReceipt));File.Delete(guardedPbr);
+ModuleRuntimeCompatibility.EnsureWorkshopCompatible(guardedGame,[signedRuntime]);Check(true,"matching signed package may repair missing exact runtime files");
+var compatibilityOffer=new WorkshopUpdateOffer(SteamDiscovery.RegisteredMods.Single(r=>r.SteamId=="3822550289"),root,new WorkshopRelease(1,"3822550289","PBR","2.0","2026-10-19",guardedReceipt.Files.Select(f=>f.Path).ToArray()),null,guardedReceipt.Files);
+Check(ModuleRuntimeCompatibility.OfferMatchesSignedRuntime(compatibilityOffer,[signedRuntime]),"matching Workshop offer is installable with its signed runtime");
+Check(!ModuleRuntimeCompatibility.OfferMatchesSignedRuntime(compatibilityOffer,[]),"Workshop offer cannot promise a missing signed runtime");
+Check(!ModuleRuntimeCompatibility.OfferMatchesSignedRuntime(compatibilityOffer with{SourceFiles=compatibilityOffer.SourceFiles.Select(f=>f.Path=="mods/pbr.dll"?f with{Sha256=updatedHash}:f).ToArray()},[signedRuntime]),"changed Workshop bytes need a matching signed package");
+Check(!ModuleRuntimeCompatibility.OfferMatchesSignedRuntime(compatibilityOffer with{SourceFiles=compatibilityOffer.SourceFiles.Where(f=>f.Path!="mods/m.dll").ToArray()},[signedRuntime]),"retired Workshop files cannot be silently restored by an install offer");

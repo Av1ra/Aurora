@@ -36,3 +36,7 @@ Only the updated files listed in `Files` are retained under `SovietRepublic/mods
 5. Temporary rollback files are deleted. On the next scan, a matching installed receipt and matching actual game files produce no update offer.
 
 Steam downloads Workshop subscription changes; Aurora does not fetch Workshop files directly from the network. A Steam ID is a discovery filter, not a cryptographic signature of the DLLs.
+
+### Signed runtime compatibility
+
+The launcher does not promise installation of a Workshop offer whose paths/bytes differ from the available verified runtime package. Such an offer opens Details with a compatibility explanation. Before launch or fallback installation, the launcher also compares managed Workshop receipts to the signed runtime. A mismatch or retired file stops synchronization before any copy; it never silently downgrades the Workshop DLLs or resurrects an obsolete file. Matching signed bytes may repair missing files. The updater's low-level copy API still stages registered files transactionally; the launcher supplies the signed-runtime eligibility check. A source descriptor/version/date alone is not a replacement for the publisher signature.
