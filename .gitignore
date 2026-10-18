@@ -1,0 +1,15 @@
+**/bin/
+**/obj/
+**/__pycache__/
+artifacts/
+*.log
+*.pk8
+*.pfx
+*.key
+*.spec
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.user
