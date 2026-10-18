@@ -25,6 +25,10 @@ static class Program
  public static void Start(string target)=>Process.Start(new ProcessStartInfo(Path.Combine(target,"Aurora.Launcher.exe")){UseShellExecute=true,WorkingDirectory=target});
  public static void Install(string source,string target)
  {
+  foreach(var name in new[]{"Aurora.Launcher","Aurora.Editor","Aurora.ModelBackend"})foreach(var process in Process.GetProcessesByName(name))
+  {
+   using(process){try{if(process.MainModule?.FileName is string running&&Path.GetFullPath(running).StartsWith(Path.GetFullPath(target).TrimEnd('\\')+"\\",StringComparison.OrdinalIgnoreCase))throw new IOException("Закройте остальные окна Авроры и редактора перед обновлением.");}catch(System.ComponentModel.Win32Exception){throw new IOException("Не удалось проверить запущенные окна Авроры. Закройте приложение перед установкой.");}}
+  }
   Directory.CreateDirectory(target);
   string backup=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Aurora","backups",DateTime.UtcNow.ToString("yyyyMMddHHmmss")+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(backup);
   var changed=new List<(string Path,string? Backup)>();
@@ -36,7 +40,9 @@ static class Program
     var relative=Path.GetRelativePath(source,file);if(relative=="Aurora.Installer.exe")continue;
     var destination=Path.GetFullPath(Path.Combine(target,relative));if(!destination.StartsWith(target.TrimEnd('\\')+"\\",StringComparison.OrdinalIgnoreCase))throw new IOException("Unsafe install path");
     Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
-    var previous=File.Exists(destination)?Path.Combine(backup,changed.Count+".bak"):null;if(previous!=null)File.Copy(destination,previous);changed.Add((destination,previous));File.Copy(file,destination,true);
+    var previous=File.Exists(destination)?Path.Combine(backup,changed.Count+".bak"):null;if(previous!=null)File.Copy(destination,previous);
+    string staged=destination+".aurora-new-"+Guid.NewGuid().ToString("N");
+    try{File.Copy(file,staged);File.Move(staged,destination,true);changed.Add((destination,previous));}finally{if(File.Exists(staged))File.Delete(staged);}
    }
    File.WriteAllText(Path.Combine(backup,"receipt.json"),JsonSerializer.Serialize(changed.Select(x=>new{x.Path,x.Backup})));
   }
