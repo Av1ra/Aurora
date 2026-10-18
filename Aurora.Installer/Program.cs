@@ -171,8 +171,8 @@ sealed class InstallWindow : Form
     {
         Text = "Установка Авроры";
         Font = new Font("Segoe UI", 10);
-        ClientSize = new Size(700, 400);
-        MinimumSize = new Size(640, 390);
+        ClientSize = new Size(700, 450);
+        MinimumSize = new Size(640, 440);
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false;
@@ -181,8 +181,8 @@ sealed class InstallWindow : Form
         var root = new TableLayoutPanel { Dock = DockStyle.Fill, Padding = new Padding(26, 22, 26, 18), ColumnCount = 1, RowCount = 6 };
         root.RowStyles.Add(new RowStyle(SizeType.Absolute, 75));
         root.RowStyles.Add(new RowStyle(SizeType.Absolute, 90));
-        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 98));
-        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 37));
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 90));
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 55));
         root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         root.RowStyles.Add(new RowStyle(SizeType.Absolute, 48));
         Controls.Add(root);
@@ -194,7 +194,7 @@ sealed class InstallWindow : Form
 
         installPath.Text = InstallationLocation.InstalledApp();
         root.Controls.Add(FolderRow("Куда установить Аврору", installPath, true), 0, 1);
-        root.Controls.Add(FolderRow("Папка Workers & Resources: Soviet Republic", gamePath, false), 0, 2);
+        root.Controls.Add(FolderRow("Папка игры (необязательно)", gamePath, false), 0, 2);
 
         var note = new Label {
             Text = "Моды устанавливаются в папку игры из настроек Авроры, а не в папку самого лаунчера. Папку игры можно указать позднее.",
@@ -232,25 +232,40 @@ sealed class InstallWindow : Form
         return group;
     }
 
-    void InstallClicked()
+    async void InstallClicked()
     {
         string? temp = null;
         install.Enabled = false;
+        installPath.ReadOnly = gamePath.ReadOnly = true;
         try
         {
             string target = InstallationLocation.Normalize(installPath.Text);
             string game = gamePath.Text.Trim();
-            if (game.Length > 0 && !File.Exists(Path.Combine(Path.GetFullPath(game), "SOVIET64.exe")))
-                throw new IOException("Выберите папку игры, содержащую SOVIET64.exe, либо оставьте поле пустым.");
-            using var embedded = Assembly.GetExecutingAssembly().GetManifestResourceStream("Aurora.Payload")
-                ?? throw new IOException("В установщике отсутствует пакет файлов Авроры.");
+            if (game.Length > 0)
+            {
+                game = Path.GetFullPath(game.Trim('"'));
+                if (!File.Exists(Path.Combine(game, "SOVIET64.exe")))
+                    throw new IOException("Выберите папку игры, содержащую SOVIET64.exe, либо оставьте поле пустым.");
+                if (target.Equals(game, StringComparison.OrdinalIgnoreCase) ||
+                    target.StartsWith(game.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                    throw new IOException("Аврору нужно устанавливать отдельно от папки самой игры.");
+            }
+
+            var progress = new Progress<string>(message => status.Text = message);
             temp = Path.Combine(Path.GetTempPath(), "Aurora-Setup-" + Guid.NewGuid().ToString("N"));
-            Directory.CreateDirectory(temp);
-            status.Text = "Распаковка и установка...";
-            using (var zip = new ZipArchive(embedded, ZipArchiveMode.Read)) zip.ExtractToDirectory(temp);
-            Program.Install(temp, target);
-            InstallationLocation.Save(target);
-            InstallationLocation.SaveGame(game);
+            string staged = temp;
+            await Task.Run(() =>
+            {
+                using var embedded = Assembly.GetExecutingAssembly().GetManifestResourceStream("Aurora.Payload")
+                    ?? throw new IOException("В установщике отсутствует пакет файлов Авроры.");
+                Directory.CreateDirectory(staged);
+                ((IProgress<string>)progress).Report("Распаковка файлов...");
+                using (var zip = new ZipArchive(embedded, ZipArchiveMode.Read)) zip.ExtractToDirectory(staged);
+                ((IProgress<string>)progress).Report("Установка Авроры...");
+                Program.Install(staged, target);
+                InstallationLocation.Save(target);
+                InstallationLocation.SaveGame(game);
+            });
 
             string programs = Environment.GetFolderPath(Environment.SpecialFolder.Programs);
             Directory.CreateDirectory(programs);
@@ -269,8 +284,10 @@ sealed class InstallWindow : Form
         finally
         {
             install.Enabled = true;
+            installPath.ReadOnly = gamePath.ReadOnly = false;
             if (temp != null && Directory.Exists(temp))
-                try { Directory.Delete(temp, true); } catch { /* Do not mask the installation outcome. */ }
+                try { await Task.Run(() => Directory.Delete(temp, true)); }
+                catch { /* Do not mask the installation outcome. */ }
         }
     }
 }
