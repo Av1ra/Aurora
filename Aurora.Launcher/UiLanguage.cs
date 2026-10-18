@@ -37,7 +37,7 @@ static class UiLanguage
       if(!visited.Add(node))return;
       if(node is TextBlock text)text.Text=Text(text.Text);
       if(node is ContentControl content&&content.Content is string value)content.Content=Text(value);
-      if(node is Expander expander&&expander.Header is string header)expander.Header=Text(header);
+      if(node is Expander expander){if(expander.Header is string header)expander.Header=Text(header);if(expander.Content is DependencyObject inside)ApplyNode(inside,visited);}
       if(node is ToggleSwitch toggle){if(toggle.Header is string toggleHeader)toggle.Header=Text(toggleHeader);toggle.OnContent=Text("Вкл.");toggle.OffContent=Text("Выкл.");}
       if(node is ComboBox combo)foreach(var item in combo.Items.OfType<ComboBoxItem>())if(item.Content is string label)item.Content=Text(label);
       // Collapsed beta/advanced content still needs the selected language.
