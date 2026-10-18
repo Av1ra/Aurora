@@ -1,4 +1,4 @@
-# Модули Авроры: протокол 1
+﻿# Модули Авроры: схемы 1 и 2
 
 Папка мода в Workshop либо `mods/library/<id>` содержит `acode.lnchr` и подписанный набор `Payload`. Пример **до подписания**:
 
@@ -20,7 +20,7 @@
 }
 ```
 
-Этот пример не является готовым FOV-модом. DLL реализуется отдельно; её опции должны читать указанные INI-ключи. Текущий протокол описывает булевы переключатели. Разделы/ключи INI ограничены буквами, цифрами и `_`; файл конфигурации — простой `.ini` внутри `mods`. Поле `Category` задаёт категорию; `Name` — пункт меню. Дубликаты ID разрешаются в пользу новой совместимой версии, при равных версиях — найденного позднее Workshop-источника.
+Этот пример не является готовым FOV-модом. DLL реализуется отдельно; её опции должны читать указанные INI-ключи. Схема 1 описывает булевы переключатели; схема 2 также поддерживает числовые ползунки. Разделы/ключи INI ограничены буквами, цифрами и `_`; файл конфигурации — простой `.ini` внутри `mods`. Поле `Category` задаёт категорию; `Name` — пункт меню. Дубликаты ID разрешаются в пользу новой совместимой версии, при равных версиях — найденного позднее Workshop-источника.
 
 Установщик разрешает только точные текущие runtime-пути `mods/pbr.dll`, `mods/m.dll`, `mods/glass_default.dds`, `pbr.exe` (совместимость), а для будущих модулей — `mods/library/...`. Каждому файлу соответствует SHA-256 в подписанном документе. После проверки мод устанавливается с резервными копиями; при ошибке копирования применённые изменения откатываются. Пользовательская INI не перезаписывается. При запуске проверяются и источники, и установленные DLL; bootstrap повторно сверяет SHA до загрузки в новый процесс игры. Разные хэши одного runtime-пути у найденных модов означают конфликт.
 
@@ -58,7 +58,7 @@ The complete preview embeds signed module catalogs under app/Modules. They are d
 
 Register Steam Workshop items in `Aurora.Core/SteamDiscovery.cs` under `SteamDiscovery.RegisteredMods`. Example: `new("3822550289", "PBR", ["mods/m.dll", "mods/pbr.dll", "mods/glass_default.dds"])`.
 
-Aurora checks both `steamapps/workshop/content/784150/<SteamId>/` across detected Steam libraries and the creator staging layout `SovietRepublic/media_soviet/workshop_wip/<SteamId>/`. The files shown in the Workshop item, such as `manifest.json` and `workshopconfig.ini`, are Steam metadata, not signed Aurora manifests. A source is reported as found only when its declared files are present; incomplete sources list missing files. If multiple locations exist, a complete subscribed copy is preferred to an incomplete staging copy.
+Aurora checks both `steamapps/workshop/content/784150/<SteamId>/` across detected Steam libraries and the creator staging layout `SovietRepublic/media_soviet/workshop_wip/<SteamId>/`. The files shown in the Workshop item, such as `manifest.json` and `workshopconfig.ini`, are ordinary unsigned metadata, not execution authorization; older Aurora packages also used manifest.json for their unsigned signing source. A source is reported as found only when its declared files are present; incomplete sources list missing files. If multiple locations exist, a complete subscribed copy is preferred to an incomplete staging copy.
 
 **Important:** Adding an ID lets the launcher discover and report the Workshop item. It does not grant permission to execute, inject, copy or auto-update its unsigned DLLs. Actual Aurora runtime modules still require a signed `acode.lnchr` and SHA-256 verification, including before launching the game. Register additional IDs and explicit expected files in source rather than trusting arbitrary folder contents.
 

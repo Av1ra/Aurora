@@ -1,6 +1,6 @@
-# Workshop module release file
+﻿# Workshop module release file
 
-Place `aurora-module.json` at the root of the registered Steam Workshop item, next to Steam's existing `manifest.json` and `workshopconfig.ini`. Do not replace Steam's files.
+Place `aurora-module.json` at the root of the registered Steam Workshop item, next to the item's existing files. Preserve the game's publishing metadata. In older Aurora packages, manifest.json is the unsigned Aurora signing source; the filename alone does not establish ownership or authorize execution.
 
 Example for registered Steam ID `3822550289`:
 

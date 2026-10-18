@@ -22,3 +22,5 @@ UI changes must follow the [GameData UI design standard](https://github.com/Av1r
 
 Start with docs/CODEX_HANDOFF.md, README.md and PROJECT_MAP.md. Read docs/DEVELOPMENT.md for building and unsigned CI validation. Read docs/STATUS.md for exact verified results and open issues. User-facing English release text belongs to docs/RELEASE_DESCRIPTION.md. No credentials/private publisher key may enter Git.
 
+
+Current autonomous WinUI checklist: [docs/UI_AUDIT.md](docs/UI_AUDIT.md). The owner approved ongoing UI analysis/fixes until stopped; keep game/Steam-only acceptance pending separately rather than blocking independent UI work. This UI pass saves code/checkpoints and verified local builds without publishing a release.
