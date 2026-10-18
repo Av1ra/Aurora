@@ -47,8 +47,8 @@ if (args.Length > 1)
        !File.Exists(Path.Combine(unpack,"app","Editor","Aurora.Editor.Module.dll")) ||
        !File.Exists(Path.Combine(unpack,"app","Editor","Assets","viewport.html")))
         throw new Exception("Bundled editor incomplete");
-    foreach(var folder in Directory.GetDirectories(Path.Combine(unpack,"app","Modules")))
-        _=catalog.Verify(folder);
+    foreach(var moduleFolder in Directory.GetDirectories(Path.Combine(unpack,"app","Modules")))
+        _=catalog.Verify(moduleFolder);
     if(Directory.EnumerateFiles(unpack,"*.pk8",SearchOption.AllDirectories).Any() ||
        Directory.GetFiles(unpack,"Aurora-*.zip",SearchOption.AllDirectories).Any())
         throw new Exception("Private signing key or nested Aurora installer ZIP shipped");
