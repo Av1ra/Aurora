@@ -2,11 +2,18 @@ using Aurora.Core;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+if(args[0]=="dev-key")
+{
+ if(File.Exists(args[1]))throw new IOException("Development key already exists");
+ using var developmentKey=ECDsa.Create(ECCurve.NamedCurves.nistP256);
+ File.WriteAllBytes(args[1],developmentKey.ExportPkcs8PrivateKey());
+ File.WriteAllText(args[2],developmentKey.ExportSubjectPublicKeyInfoPem());return;
+}
 if(args[0]=="install-local")
 {
  string pem=File.ReadAllText(args[1]);var manifest=new ModCatalog(pem).Verify(args[2]);ModuleInstaller.Install(new(args[2],manifest),args[3],pem);Console.WriteLine("Verified module installed with backup");return;
 }
-var secret=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Aurora","publisher","publisher.pk8");
+var secret=Environment.GetEnvironmentVariable("AURORA_SIGNING_KEY")??Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Aurora","publisher","publisher.pk8");
 Directory.CreateDirectory(Path.GetDirectoryName(secret)!);
 if(!File.Exists(secret)&&args[0]!="public")throw new InvalidOperationException("Publisher key missing. Restore the existing private key; do not silently create a replacement.");
 using var key=ECDsa.Create(ECCurve.NamedCurves.nistP256);

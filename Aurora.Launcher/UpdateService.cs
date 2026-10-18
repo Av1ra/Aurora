@@ -10,10 +10,12 @@ sealed class UpdateService
  const string Repo="Av1ra/Aurora";
  readonly HttpClient http=new();
  LauncherRelease? latest;
- public UpdateService(){http.DefaultRequestHeaders.UserAgent.ParseAdd("Aurora/0.1.0");http.Timeout=TimeSpan.FromMinutes(5);}
+ public UpdateService(){http.DefaultRequestHeaders.UserAgent.ParseAdd("Aurora/0.2");http.Timeout=TimeSpan.FromMinutes(5);}
  public async Task<LauncherRelease?> Check()
  {
-  using var json=JsonDocument.Parse(await http.GetStringAsync("https://api.github.com/repos/"+Repo+"/releases/latest"));
+  using var response=await http.GetAsync("https://api.github.com/repos/"+Repo+"/releases/latest");
+  if(response.StatusCode==System.Net.HttpStatusCode.NotFound){latest=null;return null;}
+  response.EnsureSuccessStatusCode();using var json=JsonDocument.Parse(await response.Content.ReadAsStringAsync());
   var assets=json.RootElement.GetProperty("assets").EnumerateArray().ToArray();
   string url=assets.Single(x=>x.GetProperty("name").GetString()=="aurora-update.json").GetProperty("browser_download_url").GetString()!;
   latest=JsonSerializer.Deserialize<LauncherRelease>(await http.GetStringAsync(url))??throw new InvalidDataException("Missing release metadata");
@@ -28,7 +30,9 @@ sealed class UpdateService
  }
  public async Task<string> DownloadEditor(string key)
  {
-  using var json=JsonDocument.Parse(await http.GetStringAsync("https://api.github.com/repos/"+Repo+"/releases/latest"));
+  using var response=await http.GetAsync("https://api.github.com/repos/"+Repo+"/releases/latest");
+  if(response.StatusCode==System.Net.HttpStatusCode.NotFound)throw new InvalidOperationException("Редактор пока не опубликован. Он появится после выпуска Aurora 0.2.");
+  response.EnsureSuccessStatusCode();using var json=JsonDocument.Parse(await response.Content.ReadAsStringAsync());
   string url=json.RootElement.GetProperty("assets").EnumerateArray().Single(x=>x.GetProperty("name").GetString()=="aurora-editor.json").GetProperty("browser_download_url").GetString()!;
   var release=JsonSerializer.Deserialize<LauncherRelease>(await http.GetStringAsync(url))??throw new InvalidDataException("Нет описания редактора.");
   if(!System.Text.RegularExpressions.Regex.IsMatch(release.Asset,@"^Aurora-Editor-[0-9.]+-win-x64\.zip$"))throw new InvalidDataException("Invalid editor asset");
@@ -41,14 +45,15 @@ sealed class UpdateService
   if(!signature.VerifyData(signed,Convert.FromBase64String(release.Signature),HashAlgorithmName.SHA256))throw new InvalidDataException("Invalid update signature");
   var root=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Aurora","updates",Guid.NewGuid().ToString("N"));Directory.CreateDirectory(root);
   var archive=Path.Combine(root,"update.zip");
-  await using(var input=await http.GetStreamAsync("https://github.com/"+Repo+"/releases/download/v"+release.Version+"/"+release.Asset))
-  await using(var output=File.Create(archive))await input.CopyToAsync(output);
+  using var timeout=new CancellationTokenSource(TimeSpan.FromMinutes(5));
+  using(var response=await http.GetAsync("https://github.com/"+Repo+"/releases/download/v"+release.Version+"/"+release.Asset,HttpCompletionOption.ResponseHeadersRead,timeout.Token))
+  {response.EnsureSuccessStatusCode();await using var input=await response.Content.ReadAsStreamAsync(timeout.Token);await using var output=File.Create(archive);await input.CopyToAsync(output,timeout.Token);}
   using(var input=File.OpenRead(archive))if(!Convert.ToHexString(SHA256.HashData(input)).Equals(release.Sha256,StringComparison.OrdinalIgnoreCase))throw new InvalidDataException("Update SHA-256 mismatch");
   var unpack=Path.Combine(root,"package");Directory.CreateDirectory(unpack);
   using var zip=ZipFile.OpenRead(archive);
   foreach(var entry in zip.Entries){if(entry.FullName.EndsWith('/'))continue;var target=ModCatalog.SafePath(unpack,entry.FullName);if(entry.ExternalAttributes>>16 is var attr && (attr&0xf000)==0xa000)throw new InvalidDataException("Linked ZIP entry");Directory.CreateDirectory(Path.GetDirectoryName(target)!);entry.ExtractToFile(target,false);}
   bool editor=release.Asset.StartsWith("Aurora-Editor-");
-  if(!File.Exists(Path.Combine(unpack,editor?"Editor/acode.lnchr":"Aurora.Launcher.exe")))throw new InvalidDataException("Incomplete update");return unpack;
+  if(!File.Exists(Path.Combine(unpack,editor?"Editor/acode.lnchr":"Aurora.exe")))throw new InvalidDataException("Incomplete update");return unpack;
  }
  public async Task InstallEditor(string key)
  {
@@ -63,7 +68,7 @@ sealed class UpdateService
  public void StartReplacement(string folder)
  {
   // Separate process waits for the current launcher; no shell, no downloaded scripts.
-  var info=new ProcessStartInfo(Path.Combine(folder,"Aurora.Installer.exe")){UseShellExecute=false};
-  info.ArgumentList.Add("--replace");info.ArgumentList.Add(AppContext.BaseDirectory);info.ArgumentList.Add(Environment.ProcessId.ToString());Process.Start(info);
+  var info=new ProcessStartInfo(Path.Combine(folder,"app","Aurora.Installer.exe")){UseShellExecute=false};
+  info.ArgumentList.Add("--replace");info.ArgumentList.Add(InstallationPaths.Root);info.ArgumentList.Add(Environment.ProcessId.ToString());Process.Start(info);
  }
 }

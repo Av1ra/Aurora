@@ -79,5 +79,7 @@ int WINAPI wWinMain(HINSTANCE,HINSTANCE,PWSTR,int){
   if(moduleReady&&moduleReady!=ready)CloseHandle(moduleReady);if(!ok)break;
  }
  if(!ok){TerminateProcess(pi.hProcess,1);CloseHandle(pi.hThread);CloseHandle(pi.hProcess);CloseHandle(ready);return Error(L"Unable to initialize verified module. The new game process was stopped.");}
- if(ResumeThread(pi.hThread)==DWORD(-1)){TerminateProcess(pi.hProcess,1);CloseHandle(pi.hThread);CloseHandle(pi.hProcess);CloseHandle(ready);return Error(L"Unable to resume game.");}CloseHandle(pi.hThread);CloseHandle(pi.hProcess);CloseHandle(ready);return 0;
+ if(ResumeThread(pi.hThread)==DWORD(-1)){TerminateProcess(pi.hProcess,1);CloseHandle(pi.hThread);CloseHandle(pi.hProcess);CloseHandle(ready);return Error(L"Unable to resume game.");}
+ const auto pid=std::to_string(pi.dwProcessId);DWORD written=0;WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),pid.data(),static_cast<DWORD>(pid.size()),&written,nullptr);
+ CloseHandle(pi.hThread);CloseHandle(pi.hProcess);CloseHandle(ready);return 0;
 }

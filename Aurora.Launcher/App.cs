@@ -18,20 +18,21 @@ internal static class Program
 }
 sealed partial class AuroraApp:Application
 {
- Window? window;
+ Window? window; GameConsoleHost? gameConsole;
  public AuroraApp(){InitializeComponent();}
  protected override void OnLaunched(LaunchActivatedEventArgs args)
  {
-  try{var command=Environment.GetCommandLineArgs();window=command.Contains("--console")?new ConsoleWindow():command.Contains("--editor")&&File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","acode.lnchr"))?EditorHost.Create():new MainWindow();window.Activate();}
+  try{var command=Environment.GetCommandLineArgs();if(command.Contains("--game-console")){int i=Array.IndexOf(command,"--pid");if(i<0||i+1>=command.Length||!int.TryParse(command[i+1],out int pid))throw new ArgumentException("Missing game PID");gameConsole=new GameConsoleHost(pid);return;}window=command.Contains("--console")?new ConsoleWindow():command.Contains("--editor")&&File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","acode.lnchr"))?EditorHost.Create():new MainWindow();window.Activate();if(command.Contains("--open-editor")&&window is MainWindow main)_=main.OpenEditorFromEntry();}
   catch(Exception ex){window=new MainWindow();window.Activate();File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Aurora","editor-startup-error.txt"),ex.ToString());}
  }
 }
 record Preferences(string Game="",bool Console=false);
 sealed class MainWindow:Window
 {
- readonly NavigationView navigation=new(){IsBackButtonVisible=NavigationViewBackButtonVisible.Collapsed,PaneDisplayMode=NavigationViewPaneDisplayMode.Left,IsSettingsVisible=true};
+ readonly NavigationView navigation=new(){IsBackButtonVisible=NavigationViewBackButtonVisible.Collapsed,PaneDisplayMode=NavigationViewPaneDisplayMode.Left,OpenPaneLength=200,CompactPaneLength=48,IsSettingsVisible=true};
  readonly StackPanel body=new(){Spacing=14,Margin=new Thickness(28)};
  TextBlock status=new(){TextWrapping=TextWrapping.Wrap};
+ TextBlock? versionText;string versionMessage="Установлена актуальная версия 0.2";
  readonly string stateRoot=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Aurora");
  Preferences prefs;
  List<VerifiedMod> mods=[];
@@ -41,36 +42,32 @@ sealed class MainWindow:Window
  [DllImport("kernel32.dll",CharSet=CharSet.Unicode,SetLastError=true)]static extern bool WritePrivateProfileString(string section,string key,string value,string file);
  public MainWindow()
  {
-  Title="Аврора";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(1000,720));
+  Title="Aurora";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(1000,720));
   Directory.CreateDirectory(stateRoot);
   try{prefs=JsonSerializer.Deserialize<Preferences>(File.ReadAllText(Path.Combine(stateRoot,"settings.json")))??new();}catch{prefs=new();}
   string gamePath=Path.Combine(stateRoot,"game-path.txt");if(File.Exists(gamePath)){string selected=File.ReadAllText(gamePath).Trim();if(File.Exists(Path.Combine(selected,"SOVIET64.exe")))prefs=prefs with{Game=selected};}
-  navigation.Content=new ScrollViewer{Content=body};WindowChrome.Attach(this,navigation,"Аврора");
+  if(!File.Exists(Path.Combine(prefs.Game,"SOVIET64.exe"))&&File.Exists(Path.Combine(InstallationPaths.SuggestedGame,"SOVIET64.exe")))prefs=prefs with{Game=InstallationPaths.SuggestedGame};
+  navigation.Content=new ScrollViewer{Content=body};WindowChrome.Attach(this,navigation,"Aurora");
   var language=new NavigationViewItem{Content=UiLanguage.English?"English":"Русский",Icon=new FontIcon{Glyph="\uE774"},SelectsOnInvoked=false};
   ToolTipService.SetToolTip(language,"Язык / Language");navigation.FooterMenuItems.Add(language);
   var languageMenu=new MenuFlyout();
-  var russian=new RadioMenuFlyoutItem{Text="Русский",IsChecked=!UiLanguage.English};var english=new RadioMenuFlyoutItem{Text="English",IsChecked=UiLanguage.English};
+  var russian=new MenuFlyoutItem{Text="Русский"};var english=new MenuFlyoutItem{Text="English"};
   languageMenu.Items.Add(russian);languageMenu.Items.Add(english);
   void ChangeLanguage(bool en){UiLanguage.SetEnglish(en);UiLanguage.Apply((FrameworkElement)Content);language.Content=en?"English":"Русский";if(navigation.SettingsItem is NavigationViewItem settings)settings.Content=UiLanguage.Text("Настройки");foreach(var item in navigation.MenuItems.OfType<NavigationViewItem>())if(item.Content is string text)item.Content=UiLanguage.Text(text);}
   russian.Click+=(_,_)=>ChangeLanguage(false);english.Click+=(_,_)=>ChangeLanguage(true);
   navigation.ItemInvoked+=(_,e)=>{if(e.InvokedItemContainer==language)languageMenu.ShowAt(language);};
   navigation.Loaded+=(_,_)=>ChangeLanguage(UiLanguage.English);
   navigation.SelectionChanged+=(_,e)=>{if(e.IsSettingsSelected)Settings();else if(e.SelectedItem is NavigationViewItem item&&item.Tag is VerifiedMod mod)ShowMod(mod);else Home();};
-  Discover();
+  Home();Discover();
   _=CheckUpdates();
  }
  void Save(){File.WriteAllText(Path.Combine(stateRoot,"settings.json"),JsonSerializer.Serialize(prefs));File.WriteAllText(Path.Combine(stateRoot,"game-path.txt"),prefs.Game);}
- void Discover()
+ void Discover(){_=DiscoverAsync();}
+ void ApplyDiscovery(List<VerifiedMod> found,List<string> errors)
  {
-  navigation.MenuItems.Clear();navigation.MenuItems.Add(new NavigationViewItem{Content="Главная",Icon=new SymbolIcon(Symbol.Home)});
-  if(Directory.Exists(prefs.Game))
-  {
-   var result=new ModCatalog(publicKey).Discover(SteamDiscovery.FindRoots(prefs.Game));mods=result.Mods;
-   foreach(var mod in mods)navigation.MenuItems.Add(new NavigationViewItem{Content=UiLanguage.Text(mod.Manifest.Name),Tag=mod,Icon=new FontIcon{Glyph=mod.Manifest.Category=="graphics"?"\uE790":mod.Manifest.Category=="camera"?"\uE722":"\uE8F1"}});
-   status.Text=result.Errors.Count==0?"":string.Join("\n",result.Errors);
-  }
-  else mods=[];
-  navigation.SelectedItem=navigation.MenuItems[0];Home();
+  mods=found;navigation.MenuItems.Clear();navigation.MenuItems.Add(new NavigationViewItem{Content=UiLanguage.Text("Главная"),Icon=new SymbolIcon(Symbol.Home)});
+  foreach(var mod in mods)navigation.MenuItems.Add(new NavigationViewItem{Content=UiLanguage.Text(mod.Manifest.Name),Tag=mod,Icon=new FontIcon{Glyph=mod.Manifest.Category=="graphics"?"\uE790":mod.Manifest.Category=="camera"?"\uE722":"\uE8F1"}});
+  navigation.SelectedItem=navigation.MenuItems[0];Home();if(errors.Count>0)status.Text=string.Join("\n",errors);
  }
  TextBlock Heading(string text)=>new(){Text=UiLanguage.Text(text),FontSize=28,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold};
  void ClearBody(){string previous=status.Text;body.Children.Clear();status=new TextBlock{Text=previous,TextWrapping=TextWrapping.Wrap,Opacity=.8};}
@@ -92,16 +89,28 @@ sealed class MainWindow:Window
  }
  void Home()
  {
-  ClearBody();body.Children.Add(Heading("Аврора"));
+  ClearBody();
   var image=Path.Combine(AppContext.BaseDirectory,"Assets","game.jpg");
-  if(File.Exists(image))body.Children.Add(new Image{Source=new BitmapImage(new Uri(image)),Width=560,Height=300,Stretch=Stretch.Uniform,HorizontalAlignment=HorizontalAlignment.Left});
-  body.Children.Add(new TextBlock{Text="Workers & Resources: Soviet Republic",FontSize=20});
-  body.Children.Add(new TextBlock{Text=mods.Count==0?"Моды не найдены. Откройте настройки и выполните поиск.":"Выберите мод в меню слева.",TextWrapping=TextWrapping.Wrap});
-  body.Children.Add(Button("Запустить игру",LaunchGame));body.Children.Add(status);
-  var editorCard=new StackPanel{Spacing=10};editorCard.Children.Add(RowTitle("Мастер моделей"));editorCard.Children.Add(new TextBlock{Text=UiLanguage.Text("Модели, материалы PBR и стекло. Устанавливается отдельно."),TextWrapping=TextWrapping.Wrap,Opacity=.72});
-  editorCard.Children.Add(AsyncButton(File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","acode.lnchr"))?"Открыть редактор":"Скачать редактор",OpenEditor));body.Children.Add(Card(editorCard));
-  UiLanguage.Apply(body);
+  if(File.Exists(image))body.Children.Add(new Image{Source=new BitmapImage(new Uri(image)),MaxWidth=900,Height=220,Stretch=Stretch.UniformToFill,HorizontalAlignment=HorizontalAlignment.Stretch});
+  body.Children.Add(new TextBlock{Text="Workers & Resources: Soviet Republic",FontSize=25,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold,TextWrapping=TextWrapping.Wrap});
+  bool found=File.Exists(Path.Combine(prefs.Game,"SOVIET64.exe"));
+  body.Children.Add(new TextBlock{Text=UiLanguage.Text(found?"Игра найдена":"Выберите папку игры в настройках"),Opacity=.75});
+  var actions=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
+  var play=AsyncButton("Запустить игру",LaunchGame);play.IsEnabled=found;actions.Children.Add(play);
+  actions.Children.Add(Button("Настройки игры и модов",Settings));body.Children.Add(actions);
+  var tools=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
+  var gameFolder=Button("Папка игры",()=>OpenFolder(prefs.Game));gameFolder.IsEnabled=found;tools.Children.Add(gameFolder);
+  var modFolder=Button("Папка модов",()=>{var path=Path.Combine(prefs.Game,"mods");Directory.CreateDirectory(path);OpenFolder(path);});modFolder.IsEnabled=found;tools.Children.Add(modFolder);
+  tools.Children.Add(Button("Workshop",()=>Process.Start(new ProcessStartInfo("https://steamcommunity.com/app/784150/workshop/"){UseShellExecute=true})));body.Children.Add(tools);
+  var moduleState=new StackPanel{Spacing=8};moduleState.Children.Add(RowTitle("Модули"));
+  moduleState.Children.Add(new TextBlock{Text=mods.Count==0?UiLanguage.Text("Моды не найдены. Откройте настройки и выполните поиск."):string.Join("\n",mods.Select(x=>UiLanguage.Text(x.Manifest.Name))),TextWrapping=TextWrapping.Wrap,Opacity=.75});
+  moduleState.Children.Add(AsyncButton("Найти моды",DiscoverAsync));body.Children.Add(Card(moduleState));
+  var editor=new StackPanel{Orientation=Orientation.Horizontal,Spacing=12};editor.Children.Add(new TextBlock{Text=UiLanguage.Text("Мастер моделей"),VerticalAlignment=VerticalAlignment.Center,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});
+  editor.Children.Add(AsyncButton(File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","acode.lnchr"))?"Открыть редактор":"Скачать редактор",OpenEditor));body.Children.Add(Card(editor));
+  body.Children.Add(status);versionText=new TextBlock{Text=UiLanguage.Text(versionMessage),Opacity=.65};body.Children.Add(versionText);UiLanguage.Apply(body);
  }
+ static void OpenFolder(string path){if(!Directory.Exists(path))throw new DirectoryNotFoundException(path);Process.Start(new ProcessStartInfo("explorer.exe"){UseShellExecute=false,ArgumentList={path}});}
+ async Task DiscoverAsync(){if(!Directory.Exists(prefs.Game)){ApplyDiscovery([],[]);return;}status.Text=UiLanguage.Text("Поиск модов…");try{var result=await Task.Run(()=>new ModCatalog(publicKey).Discover(SteamDiscovery.FindRoots(prefs.Game)));ApplyDiscovery(result.Mods,result.Errors);}catch(Exception ex){Notice(ex.Message);}}
  void ShowMod(VerifiedMod mod)
  {
   ClearBody();body.Children.Add(Heading(mod.Manifest.Name));
@@ -116,7 +125,7 @@ sealed class MainWindow:Window
   }
   if(beta.Children.Count>0)body.Children.Add(new Expander{Header=RowTitle("Экспериментальные функции","Бета"),Content=beta,IsExpanded=false,HorizontalAlignment=HorizontalAlignment.Stretch,HorizontalContentAlignment=HorizontalAlignment.Stretch});
   body.Children.Add(Button("Установить / обновить мод",()=>Install(mod)));
-  body.Children.Add(Button("Запустить игру",LaunchGame));
+  body.Children.Add(AsyncButton("Запустить игру",LaunchGame));
   UiLanguage.Apply(body);
  }
  void VerifyCurrent(VerifiedMod mod){var current=new ModCatalog(publicKey).Verify(mod.Folder);if(current.Id!=mod.Manifest.Id||current.Version!=mod.Manifest.Version)throw new InvalidDataException("Мод обновился. Повторите поиск.");}
@@ -127,11 +136,11 @@ sealed class MainWindow:Window
   ModuleInstaller.Install(mod,prefs.Game,publicKey);
   Notice("Мод установлен. Настройки сохранены.");
  }
- void LaunchGame()
+ async Task LaunchGame()
  {
   if(!File.Exists(Path.Combine(prefs.Game,"SOVIET64.exe")))throw new FileNotFoundException("Выберите папку игры в настройках.");
   foreach(var mod in mods)VerifyCurrent(mod);
-  var start=new ProcessStartInfo(Path.Combine(AppContext.BaseDirectory,"Aurora.Bootstrap.exe")){WorkingDirectory=prefs.Game,UseShellExecute=false};
+  var start=new ProcessStartInfo(Path.Combine(AppContext.BaseDirectory,"Aurora.Bootstrap.exe")){WorkingDirectory=prefs.Game,UseShellExecute=false,RedirectStandardOutput=true};
   start.ArgumentList.Add(prefs.Game);
   var libraries=mods.SelectMany(x=>x.Manifest.Files).Where(x=>x.Path.StartsWith("Payload/")&&x.Path.EndsWith(".dll",StringComparison.OrdinalIgnoreCase)).GroupBy(x=>x.Path,StringComparer.OrdinalIgnoreCase).ToArray();
   if(libraries.Any(x=>x.Select(f=>f.Sha256.ToLowerInvariant()).Distinct().Count()>1))throw new InvalidDataException("Конфликт библиотек модов. Установите совместимые версии.");
@@ -141,8 +150,10 @@ sealed class MainWindow:Window
    using var input=File.OpenRead(installed);if(!Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(input)).Equals(file.Sha256,StringComparison.OrdinalIgnoreCase))throw new InvalidDataException("Установленная библиотека отличается. Установите мод заново: "+file.Path);
    start.ArgumentList.Add(installed);start.ArgumentList.Add(file.Sha256.ToLowerInvariant());
   }
-  Process.Start(start);
-  if(prefs.Console){var console=new AlphaConsole();console.Activate();}
+  using var bootstrap=Process.Start(start)??throw new InvalidOperationException("Cannot start game bootstrap");
+  string output=await bootstrap.StandardOutput.ReadToEndAsync();await bootstrap.WaitForExitAsync();
+  if(bootstrap.ExitCode!=0)throw new InvalidOperationException("Game launch failed");
+  if(prefs.Console&&int.TryParse(output.Trim(),out int pid)){var host=new ProcessStartInfo(Environment.ProcessPath!){UseShellExecute=false};host.ArgumentList.Add("--game-console");host.ArgumentList.Add("--pid");host.ArgumentList.Add(pid.ToString());Process.Start(host);}
  }
  void Settings()
  {
@@ -153,22 +164,24 @@ sealed class MainWindow:Window
   var locateButtons=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
   locateButtons.Children.Add(AsyncButton("Выбрать папку…",async()=>{var picker=new Windows.Storage.Pickers.FolderPicker();picker.FileTypeFilter.Add("*");WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));var folder=await picker.PickSingleFolderAsync();if(folder!=null)path.Text=folder.Path;}));
   locateButtons.Children.Add(Button("Найти моды",()=>{if(!File.Exists(Path.Combine(path.Text,"SOVIET64.exe")))throw new InvalidDataException("В выбранной папке нет SOVIET64.exe.");prefs=prefs with{Game=Path.GetFullPath(path.Text)};Save();Discover();}));locations.Children.Add(locateButtons);body.Children.Add(Card(locations));
-  var console=new ToggleSwitch{IsOn=prefs.Console};console.Toggled+=(_,_)=>{prefs=prefs with{Console=console.IsOn};Save();};body.Children.Add(FeatureCard("Консоль",console,"Альфа","Команды пока недоступны.",Button("Открыть консоль",()=>{var w=new AlphaConsole();w.Activate();})));
-  var updater=new StackPanel{Spacing=10};updater.Children.Add(RowTitle("Приложение"));updater.Children.Add(new TextBox{Header=UiLanguage.Text("Папка лаунчера"),Text=AppContext.BaseDirectory,IsReadOnly=true});var updateButtons=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
+  var console=new ToggleSwitch{IsOn=prefs.Console};console.Toggled+=(_,_)=>{prefs=prefs with{Console=console.IsOn};Save();};body.Children.Add(FeatureCard("Консоль",console,"Альфа","~ — открыть в игре"));
+  var updater=new StackPanel{Spacing=10};updater.Children.Add(RowTitle("Приложение"));updater.Children.Add(new TextBox{Header=UiLanguage.Text("Папка лаунчера"),Text=InstallationPaths.Root,IsReadOnly=true});var updateButtons=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
   updateButtons.Children.Add(Button("Проверить обновления",()=>_=CheckUpdates()));
-  updateButtons.Children.Add(AsyncButton("Установить обновление",async()=>{var folder=await updates.DownloadVerified(publicKey);if(folder==null){Notice("Обновлений нет.");return;}updates.StartReplacement(folder);Application.Current.Exit();}));updater.Children.Add(updateButtons);updater.Children.Add(status);body.Children.Add(Card(updater));
+  updateButtons.Children.Add(AsyncButton("Установить обновление",async()=>{var folder=await updates.DownloadVerified(publicKey);if(folder==null){Notice("Обновлений нет.");return;}updates.StartReplacement(folder);Application.Current.Exit();}));updater.Children.Add(updateButtons);versionText=new TextBlock{Text=UiLanguage.Text(versionMessage),Opacity=.65};updater.Children.Add(versionText);updater.Children.Add(status);body.Children.Add(Card(updater));
   UiLanguage.Apply(body);
  }
+ internal async Task OpenEditorFromEntry(){try{await OpenEditor();}catch(Exception ex){Notice(ex.Message);}}
  async Task OpenEditor()
  {
   if(!File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","acode.lnchr"))){status.Text=UiLanguage.Text("Скачивание редактора…");await updates.InstallEditor(publicKey);status.Text="";Home();}
   _=new ModCatalog(publicKey).Verify(Path.Combine(AppContext.BaseDirectory,"Editor"));
-  var start=new ProcessStartInfo(Environment.ProcessPath!){UseShellExecute=false};start.ArgumentList.Add("--editor");Process.Start(start);
+  var start=new ProcessStartInfo(Path.Combine(AppContext.BaseDirectory,"Aurora.Launcher.exe")){UseShellExecute=false};start.ArgumentList.Add("--editor");Process.Start(start);
  }
- async Task CheckUpdates(){try{var release=await updates.Check();status.Text=release==null?"Установлена актуальная версия.":"Доступно обновление. Установка — в настройках.";}catch(Exception ex){status.Text="Не удалось проверить обновления: "+ex.Message;}}
- async void Notice(string message){await new ContentDialog{Title="Аврора",Content=message,CloseButtonText="ОК",XamlRoot=((FrameworkElement)Content).XamlRoot}.ShowAsync();}
+ async Task CheckUpdates(){try{var release=await updates.Check();versionMessage=release==null?"Установлена актуальная версия 0.2":"Устаревшая версия 0.2";if(versionText!=null)versionText.Text=UiLanguage.Text(versionMessage);}catch(Exception ex){status.Text="Не удалось проверить обновления: "+ex.Message;}}
+ async void Notice(string message){await new ContentDialog{Title="Aurora",Content=message,CloseButtonText="ОК",XamlRoot=((FrameworkElement)Content).XamlRoot}.ShowAsync();}
 }
 sealed class AlphaConsole:Window
 {
- public AlphaConsole(){Title="Аврора — Консоль";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(640,490));var panel=new StackPanel{Margin=new Thickness(20),Spacing=12};var log=new TextBox{IsReadOnly=true,AcceptsReturn=true,Height=230,Text="In development"};var input=new TextBox{PlaceholderText="Message"};void Reply(){if(string.IsNullOrWhiteSpace(input.Text))return;log.Text+="\r\n> "+input.Text+"\r\nIn development";input.Text="";}input.KeyDown+=(_,e)=>{if(e.Key==Windows.System.VirtualKey.Enter){Reply();e.Handled=true;}};var send=new Button{Content="Send"};send.Click+=(_,_)=>Reply();var heading=new StackPanel{Orientation=Orientation.Horizontal,Spacing=10};heading.Children.Add(new TextBlock{Text=UiLanguage.Text("Консоль"),FontSize=20});heading.Children.Add(MainWindow.Badge("Альфа"));panel.Children.Add(heading);panel.Children.Add(log);panel.Children.Add(input);panel.Children.Add(send);WindowChrome.Attach(this,panel,Title);}
+ public AlphaConsole(){Title="Aurora — Console";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(520,260));var panel=new StackPanel{Margin=new Thickness(14),Spacing=8};var log=new TextBox{IsReadOnly=true,AcceptsReturn=true,Height=80,Text="In development"};var input=new TextBox{PlaceholderText="Message"};void Reply(){if(string.IsNullOrWhiteSpace(input.Text))return;log.Text+="\r\n> "+input.Text+"\r\nIn development";input.Text="";}input.KeyDown+=(_,e)=>{if(e.Key==Windows.System.VirtualKey.Enter){Reply();e.Handled=true;}};var send=new Button{Content="Send"};send.Click+=(_,_)=>Reply();var heading=new StackPanel{Orientation=Orientation.Horizontal,Spacing=10};heading.Children.Add(new TextBlock{Text=UiLanguage.Text("Консоль"),FontSize=20});heading.Children.Add(MainWindow.Badge("Альфа"));panel.Children.Add(heading);panel.Children.Add(log);panel.Children.Add(input);panel.Children.Add(send);WindowChrome.Attach(this,panel,Title);}
 }
+
