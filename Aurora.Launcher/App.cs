@@ -109,9 +109,11 @@ sealed class MainWindow:Window
    row.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(1,GridUnitType.Star)});
    row.ColumnDefinitions.Add(new ColumnDefinition{Width=GridLength.Auto});
    var copy=new StackPanel{Spacing=5,VerticalAlignment=VerticalAlignment.Center};
-   var line=new StackPanel{Orientation=Orientation.Horizontal,Spacing=10};
-   line.Children.Add(new TextBlock{Text=UiLanguage.Text(option.Label),FontSize=14,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold,TextWrapping=TextWrapping.Wrap});
-   if(isAlpha||isBeta)line.Children.Add(StageBadge(isAlpha?"alpha":"beta"));
+   var line=new Grid{ColumnSpacing=10};
+   line.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(1,GridUnitType.Star)});
+   line.ColumnDefinitions.Add(new ColumnDefinition{Width=GridLength.Auto});
+   line.Children.Add(new TextBlock{Text=UiLanguage.Text(option.Label),FontSize=14,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold,TextWrapping=TextWrapping.Wrap,VerticalAlignment=VerticalAlignment.Center});
+   if(isAlpha||isBeta){var badge=StageBadge(isAlpha?"alpha":"beta");Grid.SetColumn(badge,1);line.Children.Add(badge);}
    copy.Children.Add(line);
    if(!string.IsNullOrWhiteSpace(option.Description))
     copy.Children.Add(new TextBlock{Text=UiLanguage.Text(option.Description),FontSize=12,TextWrapping=TextWrapping.Wrap,Opacity=0.78});
