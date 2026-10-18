@@ -17,3 +17,10 @@ Windows Authenticode сертификата пока нет. Криптогра�
 Обычный upload Workshop средствами игры не выполнялся: подготовлена подписанная папка. Дополнительная игровая проверка автора нужна перед массовой публикацией. Не подменять это фиктивными скриншотами/обещанием полной поддержки всех NMF.
 
 Локально: D:/PBR-Development/Aurora ; релизы D:/PBR-Release/Aurora ; архив старых релизов D:/PBR-Release/Aurora/legacy-releases. Текущее рабочее окружение игры D:/SteamLibrary/steamapps/common/SovietRepublic. Установленные пользовательские INI сохранены. Старый пользовательский pbr.exe остаётся для отката; новый основной вход — Аврора.
+## Обновление упаковки 0.1.2
+
+Основной лаунчер отделён от необязательного мастера моделей. Native Win32 setup вместо WinForms self-contained; выбор папки лаунчера и игры, сохранение install-root/game-path. WinUI granular package без AI/ML. Editor.Module загружается только после проверки официальной подписи и хешей; backend/viewport отдельным asset + aurora-editor.json. Общий runtime повторно не поставляется.
+
+UI: функции в карточках, отдельные Beta/Alpha badge; бета в свёрнутом Expander; настройки сгруппированы по игре/модам, консоли, приложению. В названии приложения нет версии. Разделитель middle dot удалён из UI.
+
+Новый build.ps1 собирает main и addon раздельно, build-setup.ps1 упаковывает основной ZIP в компактный native EXE. Packaging/test-native.py принимает путь к native Aurora.Installer.exe. Packaging/legacy-files.tsv позволяет архивировать только совпадающие старые файлы, оставляя пользовательские изменения и новый подписанный Editor.

@@ -43,7 +43,8 @@ static class ModelExport
     File.WriteAllBytes(Path.Combine(staging,"glass.dds"),DdsImage.Encode(rgba));
     var request=new{Models=lods.Keys.ToArray(),Material=maskMaterial,Mask=Path.Combine(staging,"glass.dds"),Output=staging};
     string requestFile=Path.Combine(staging,"mask-request.json");File.WriteAllText(requestFile,JsonSerializer.Serialize(request));
-    var start=new ProcessStartInfo(Path.Combine(AppContext.BaseDirectory,"Backend","Aurora.ModelBackend.exe")){UseShellExecute=false,CreateNoWindow=true,RedirectStandardError=true,RedirectStandardOutput=true};start.ArgumentList.Add(requestFile);
+    string backend=Path.Combine(AppContext.BaseDirectory,"Editor","Backend","Aurora.ModelBackend.exe");if(!File.Exists(backend))backend=Path.Combine(AppContext.BaseDirectory,"Backend","Aurora.ModelBackend.exe");
+    var start=new ProcessStartInfo(backend){UseShellExecute=false,CreateNoWindow=true,RedirectStandardError=true,RedirectStandardOutput=true};start.ArgumentList.Add(requestFile);
     using var process=Process.Start(start)??throw new IOException("Backend failed to start");var error=process.StandardError.ReadToEndAsync();var result=process.StandardOutput.ReadToEndAsync();await process.WaitForExitAsync();if(process.ExitCode!=0)throw new InvalidDataException(await error);string glassName=(await result).Trim();
     outputMtl=AddMaterial(outputMtl,maskMaterial,glassName);
     // One material block per identifier: augment a configured block rather than shadow it.

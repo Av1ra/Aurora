@@ -9,6 +9,7 @@ static class UiLanguage
     static bool Read(){try{return File.ReadAllText(path).Trim()=="en";}catch{return false;}}
     static readonly Dictionary<string,string> words=new()
     {
+      ["Игра и моды"]="Game and mods",["Приложение"]="Application",["Альфа"]="Alpha",["Консоль"]="Console",["Команды пока недоступны."]="Commands are not available yet.",["Экспериментальные функции"]="Experimental features",["Папка установки модов"]="Mod installation folder",["Папка лаунчера"]="Launcher folder",["Модели, материалы PBR и стекло. Устанавливается отдельно."]="Models, PBR materials and glass. Installed separately.",["Скачать редактор"]="Download editor",["Открыть редактор"]="Open editor",["Скачивание редактора…"]="Downloading editor…",
       ["Главная"]="Home",["Настройки"]="Settings",["Запустить игру"]="Launch game",["Мастер моделей"]="Model editor",["Папка SovietRepublic"]="SovietRepublic folder",["Выбрать папку…"]="Browse…",["Найти моды"]="Find mods",["Консоль — альфа"]="Console — alpha",["Открыть консоль"]="Open console",["Проверить обновления"]="Check for updates",["Установить обновление"]="Install update",["Установить / обновить мод"]="Install / update mod",["Изменения применяются при следующем запуске игры."]="Changes apply on the next game launch.",["Моды не найдены. Откройте настройки и выполните поиск."]="No mods found. Open Settings and search for mods.",["Выберите мод в меню слева."]="Select a mod in the left menu.",
       ["Бета-функции"]="Beta features",["Экспериментальные эффекты. Раскройте раздел, чтобы настроить их отдельно."]="Experimental effects. Expand to configure them individually.",["Инструкция"]="Guide",["Не удалось открыть инструкцию: "]="Could not open the guide: ",["Пример"]="Example",["Мелкая трава"]="Small grass",["Вариант травы из полной версии. Применяется при запуске игры."]="Grass from the full version. Applied when the game starts.",["Цветовые текстуры земли и дорог остаются исходными."]="Original terrain and road colour textures are retained",
       ["Русский"]="Русский",["English"]="English",["Графика"]="Graphics",["Эффекты"]="Effects",
@@ -36,6 +37,7 @@ static class UiLanguage
     static void ApplyNode(DependencyObject node,HashSet<DependencyObject> visited){
       if(!visited.Add(node))return;
       if(node is TextBlock text)text.Text=Text(text.Text);
+      if(node is TextBox box&&box.Header is string boxHeader)box.Header=Text(boxHeader);
       if(node is ContentControl content&&content.Content is string value)content.Content=Text(value);
       if(node is Expander expander&&expander.Header is string header)expander.Header=Text(header);
       if(node is ToggleSwitch toggle){if(toggle.Header is string toggleHeader)toggle.Header=Text(toggleHeader);toggle.OnContent=Text("Вкл.");toggle.OffContent=Text("Выкл.");}

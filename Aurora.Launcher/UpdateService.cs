@@ -24,7 +24,19 @@ sealed class UpdateService
  public async Task<string?> DownloadVerified(string key)
  {
   if(await Check()==null)return null;
-  var release=latest!;using var signature=ECDsa.Create();signature.ImportFromPem(key);
+  return await Download(latest!,key);
+ }
+ public async Task<string> DownloadEditor(string key)
+ {
+  using var json=JsonDocument.Parse(await http.GetStringAsync("https://api.github.com/repos/"+Repo+"/releases/latest"));
+  string url=json.RootElement.GetProperty("assets").EnumerateArray().Single(x=>x.GetProperty("name").GetString()=="aurora-editor.json").GetProperty("browser_download_url").GetString()!;
+  var release=JsonSerializer.Deserialize<LauncherRelease>(await http.GetStringAsync(url))??throw new InvalidDataException("Нет описания редактора.");
+  if(!System.Text.RegularExpressions.Regex.IsMatch(release.Asset,@"^Aurora-Editor-[0-9.]+-win-x64\.zip$"))throw new InvalidDataException("Invalid editor asset");
+  return await Download(release,key);
+ }
+ async Task<string> Download(LauncherRelease release,string key)
+ {
+  using var signature=ECDsa.Create();signature.ImportFromPem(key);
   var signed=System.Text.Encoding.UTF8.GetBytes(release.Version+"\n"+release.Asset+"\n"+release.Sha256);
   if(!signature.VerifyData(signed,Convert.FromBase64String(release.Signature),HashAlgorithmName.SHA256))throw new InvalidDataException("Invalid update signature");
   var root=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Aurora","updates",Guid.NewGuid().ToString("N"));Directory.CreateDirectory(root);
@@ -35,7 +47,18 @@ sealed class UpdateService
   var unpack=Path.Combine(root,"package");Directory.CreateDirectory(unpack);
   using var zip=ZipFile.OpenRead(archive);
   foreach(var entry in zip.Entries){if(entry.FullName.EndsWith('/'))continue;var target=ModCatalog.SafePath(unpack,entry.FullName);if(entry.ExternalAttributes>>16 is var attr && (attr&0xf000)==0xa000)throw new InvalidDataException("Linked ZIP entry");Directory.CreateDirectory(Path.GetDirectoryName(target)!);entry.ExtractToFile(target,false);}
-  if(!File.Exists(Path.Combine(unpack,"Aurora.Launcher.exe")))throw new InvalidDataException("Incomplete update");return unpack;
+  bool editor=release.Asset.StartsWith("Aurora-Editor-");
+  if(!File.Exists(Path.Combine(unpack,editor?"Editor/acode.lnchr":"Aurora.Launcher.exe")))throw new InvalidDataException("Incomplete update");return unpack;
+ }
+ public async Task InstallEditor(string key)
+ {
+  string package=await DownloadEditor(key),source=Path.Combine(package,"Editor");
+  var manifest=new ModCatalog(key).Verify(source);if(manifest.Id!="aurora.editor")throw new InvalidDataException("Неверный редактор.");
+  string root=AppContext.BaseDirectory,staging=Path.Combine(root,".editor-new-"+Guid.NewGuid().ToString("N")),target=Path.Combine(root,"Editor"),backup=Path.Combine(root,".editor-backup-"+Guid.NewGuid().ToString("N"));
+  Directory.CreateDirectory(staging);
+  foreach(string file in Directory.EnumerateFiles(source,"*",SearchOption.AllDirectories)){string relative=Path.GetRelativePath(source,file).Replace('\\','/');string destination=ModCatalog.SafePath(staging,relative);Directory.CreateDirectory(Path.GetDirectoryName(destination)!);File.Copy(file,destination);}
+  _=new ModCatalog(key).Verify(staging);
+  bool moved=false;try{if(Directory.Exists(target)){Directory.Move(target,backup);moved=true;}Directory.Move(staging,target);}catch{if(moved&&!Directory.Exists(target))Directory.Move(backup,target);throw;}
  }
  public void StartReplacement(string folder)
  {

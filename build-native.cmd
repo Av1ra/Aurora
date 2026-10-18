@@ -8,4 +8,8 @@ if errorlevel 1 exit /b 21
 if not exist artifacts\native mkdir artifacts\native
 cd artifacts\native
 cl /nologo /std:c++20 /utf-8 /EHsc /O2 /MT /W4 /DUNICODE /D_UNICODE /I"..\..\Native" "..\..\Aurora.Bootstrap\Bootstrap.cpp" "..\..\Native\Common.cpp" "..\..\Native\Sha256.cpp" /Fe:Aurora.Bootstrap.exe /link /SUBSYSTEM:WINDOWS /INCREMENTAL:NO bcrypt.lib user32.lib gdi32.lib shell32.lib
+if errorlevel 1 exit /b 22
+cl /nologo /std:c++20 /utf-8 /EHsc /O2 /MT /W4 /DUNICODE /D_UNICODE /I"..\..\Native" /c "..\..\Aurora.Setup.Native\Setup.cpp" /Fo:Setup.obj
+if errorlevel 1 exit /b 23
+cl /nologo /std:c++20 /utf-8 /EHsc /O2 /MT /DUNICODE /D_UNICODE "..\..\Aurora.Setup.Native\EditorEntry.cpp" /Fe:Aurora.ModelEditor.exe /link /SUBSYSTEM:WINDOWS /INCREMENTAL:NO user32.lib
 exit /b %errorlevel%

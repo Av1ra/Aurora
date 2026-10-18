@@ -1,0 +1,5 @@
+#include <windows.h>
+#ifdef INCLUDE_PAYLOAD
+101 RCDATA PAYLOAD_FILE
+#endif
+1 RT_MANIFEST "setup.manifest"
