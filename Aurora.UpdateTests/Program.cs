@@ -2,7 +2,7 @@ using Aurora.Launcher;
 if(args.Length>1)
 {
  var keyText=File.ReadAllText(args[0]);
- foreach(var name in new[]{"aurora-update.json","aurora-editor.json"})
+ foreach(var name in new[]{"aurora-update.json","aurora-editor.json","aurora-full.json"})
  {
   var releaseData=System.Text.Json.JsonSerializer.Deserialize<LauncherRelease>(File.ReadAllText(Path.Combine(args[1],name)))!;
   using var key=System.Security.Cryptography.ECDsa.Create();key.ImportFromPem(keyText);
@@ -11,7 +11,13 @@ if(args.Length>1)
   using(var file=File.OpenRead(archive))if(!Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(file)).Equals(releaseData.Sha256,StringComparison.OrdinalIgnoreCase))throw new Exception("Hash mismatch");
   var unpack=Path.Combine(Path.GetTempPath(),"Aurora-release-test-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(unpack);
   using(var zip=System.IO.Compression.ZipFile.OpenRead(archive))foreach(var entry in zip.Entries){if(entry.FullName.EndsWith('/'))continue;var path=Aurora.Core.ModCatalog.SafePath(unpack,entry.FullName);Directory.CreateDirectory(Path.GetDirectoryName(path)!);System.IO.Compression.ZipFileExtensions.ExtractToFile(entry,path);}
-  if(name=="aurora-editor.json")_ =new Aurora.Core.ModCatalog(keyText).Verify(Path.Combine(unpack,"Editor"));
+  if(name=="aurora-full.json"){
+   var catalog=new Aurora.Core.ModCatalog(keyText);_=catalog.Verify(Path.Combine(unpack,"app","Editor"));
+   foreach(var module in Directory.GetDirectories(Path.Combine(unpack,"app","Modules")))_=catalog.Verify(module);
+   if(!File.Exists(Path.Combine(unpack,"Aurora.exe"))||!File.Exists(Path.Combine(unpack,"Aurora.Editor.exe")))throw new Exception("Missing full package entries");
+   if(Directory.EnumerateFiles(unpack,"*.pk8",SearchOption.AllDirectories).Any())throw new Exception("Private key in package");
+  }
+  else if(name=="aurora-editor.json")_ =new Aurora.Core.ModCatalog(keyText).Verify(Path.Combine(unpack,"Editor"));
   else if(Directory.Exists(Path.Combine(unpack,"app","Editor"))||!File.Exists(Path.Combine(unpack,"Aurora.exe")))throw new Exception("Unexpected main payload");
   Console.WriteLine("PASS release signature, hash and extracted contents: "+releaseData.Asset);
  }

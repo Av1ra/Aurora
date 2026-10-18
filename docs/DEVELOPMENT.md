@@ -56,3 +56,5 @@ After the owner approves a public release, publish the signed addon and aurora-e
 
 Use a narrow sidebar and an actionable game page (launch, modules, folders, Workshop), inspired by the game-hub pattern shown in the official Xbox PC app: https://www.xbox.com/en-us/apps/xbox-app-on-pc. Do not copy branding or add invented performance settings.
 
+
+The owner authorized test prerelease v0.2. English player text and explicit preliminary/compatibility notes must be first in the release. Provide matching setup + Full ZIP, separate editor addon, standalone PBR/FOV module ZIPs, signed metadata and hashes. Keep version 0.2; do not call this stable. The full ZIP contains the editor already, while the slim launcher can download the signed addon. The downloader supports the public prerelease when no stable release is available.

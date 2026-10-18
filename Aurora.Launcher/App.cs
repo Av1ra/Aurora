@@ -54,7 +54,7 @@ sealed class MainWindow:Window
   var languageMenu=new MenuFlyout();
   var russian=new MenuFlyoutItem{Text="Русский"};var english=new MenuFlyoutItem{Text="English"};
   languageMenu.Items.Add(russian);languageMenu.Items.Add(english);
-  void ChangeLanguage(bool en){UiLanguage.SetEnglish(en);UiLanguage.Apply((FrameworkElement)Content);language.Content=en?"English":"Русский";ToolTipService.SetToolTip(language,en?"Language":"Язык");settingsItem.Content=en?"Settings":"Настройки";ToolTipService.SetToolTip(settingsItem,en?"Settings":"Настройки");foreach(var item in navigation.MenuItems.OfType<NavigationViewItem>())if(item.Content is string text)item.Content=UiLanguage.Text(text);}
+  void ChangeLanguage(bool en){UiLanguage.SetEnglish(en);UiLanguage.Apply((FrameworkElement)Content);language.Content=en?"English":"Русский";ToolTipService.SetToolTip(language,en?"Language":"Язык");settingsItem.Content=en?"Settings":"Настройки";ToolTipService.SetToolTip(settingsItem,en?"Settings":"Настройки");foreach(var item in navigation.MenuItems.OfType<NavigationViewItem>())if(item.Content is string text)item.Content=UiLanguage.Text(text);if(navigation.SelectedItem==settingsItem)Settings();else if(navigation.SelectedItem is NavigationViewItem selected&&selected.Tag is VerifiedMod module)ShowMod(module);else Home();}
   russian.Click+=(_,_)=>ChangeLanguage(false);english.Click+=(_,_)=>ChangeLanguage(true);
   navigation.ItemInvoked+=(_,e)=>{if(e.InvokedItemContainer==language)languageMenu.ShowAt(language);};
   navigation.Loaded+=(_,_)=>ChangeLanguage(UiLanguage.English);
@@ -129,7 +129,7 @@ sealed class MainWindow:Window
   var toggle=new ToggleSwitch{IsOn=GetPrivateProfileInt(enabled.Section,enabled.Key,enabled.Default?1:0,file)!=0};
   void Write(ModOption option,int value){VerifyCurrent(module);Directory.CreateDirectory(Path.GetDirectoryName(file)!);if(!WritePrivateProfileString(option.Section,option.Key,value.ToString(System.Globalization.CultureInfo.InvariantCulture),file))throw new System.ComponentModel.Win32Exception();}
   toggle.Toggled+=(_,_)=>{try{Write(enabled,toggle.IsOn?1:0);}catch(Exception ex){Notice(ex.Message);}};
-  var controls=new StackPanel{Spacing=4};
+  var controls=new StackPanel{Spacing=8,Orientation=Orientation.Horizontal};
   foreach(var option in module.Manifest.Options.Where(x=>x.Kind=="slider")){
    var value=new TextBlock();var label=new StackPanel{Orientation=Orientation.Horizontal,Spacing=6};label.Children.Add(new TextBlock{Text=UiLanguage.Text(option.Label)});label.Children.Add(value);
    var slider=new Slider{Minimum=option.Minimum,Maximum=option.Maximum,StepFrequency=1,Value=GetPrivateProfileInt(option.Section,option.Key,option.DefaultValue,file),Width=230,HorizontalAlignment=HorizontalAlignment.Left};
@@ -197,6 +197,7 @@ sealed class AlphaConsole:Window
 {
  public AlphaConsole(){Title="Aurora — Console";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(520,260));var panel=new StackPanel{Margin=new Thickness(14),Spacing=8};var log=new TextBox{IsReadOnly=true,AcceptsReturn=true,Height=80,Text="In development"};var input=new TextBox{PlaceholderText="Message"};void Reply(){if(string.IsNullOrWhiteSpace(input.Text))return;log.Text+="\r\n> "+input.Text+"\r\nIn development";input.Text="";}input.KeyDown+=(_,e)=>{if(e.Key==Windows.System.VirtualKey.Enter){Reply();e.Handled=true;}};var send=new Button{Content="Send"};send.Click+=(_,_)=>Reply();var heading=new StackPanel{Orientation=Orientation.Horizontal,Spacing=10};heading.Children.Add(new TextBlock{Text=UiLanguage.Text("Консоль"),FontSize=20});heading.Children.Add(MainWindow.Badge("Альфа"));panel.Children.Add(heading);panel.Children.Add(log);panel.Children.Add(input);panel.Children.Add(send);WindowChrome.Attach(this,panel,Title);}
 }
+
 
 
 
