@@ -11,11 +11,17 @@ sealed class UpdateService
  readonly HttpClient http=new();
  LauncherRelease? latest;
  public UpdateService(){http.DefaultRequestHeaders.UserAgent.ParseAdd("Aurora/0.2");http.Timeout=TimeSpan.FromMinutes(5);}
- public async Task<LauncherRelease?> Check()
+ async Task<JsonDocument?> PublishedRelease()
  {
   using var response=await http.GetAsync("https://api.github.com/repos/"+Repo+"/releases/latest");
-  if(response.StatusCode==System.Net.HttpStatusCode.NotFound){latest=null;return null;}
-  response.EnsureSuccessStatusCode();using var json=JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+  if(response.StatusCode!=System.Net.HttpStatusCode.NotFound){response.EnsureSuccessStatusCode();return JsonDocument.Parse(await response.Content.ReadAsStringAsync());}
+  using var list=JsonDocument.Parse(await http.GetStringAsync("https://api.github.com/repos/"+Repo+"/releases"));
+  foreach(var item in list.RootElement.EnumerateArray())if(!item.GetProperty("draft").GetBoolean())return JsonDocument.Parse(item.GetRawText());
+  return null;
+ }
+ public async Task<LauncherRelease?> Check()
+ {
+  using var json=await PublishedRelease();if(json==null){latest=null;return null;}
   var assets=json.RootElement.GetProperty("assets").EnumerateArray().ToArray();
   string url=assets.Single(x=>x.GetProperty("name").GetString()=="aurora-update.json").GetProperty("browser_download_url").GetString()!;
   latest=JsonSerializer.Deserialize<LauncherRelease>(await http.GetStringAsync(url))??throw new InvalidDataException("Missing release metadata");
@@ -30,9 +36,7 @@ sealed class UpdateService
  }
  public async Task<string> DownloadEditor(string key)
  {
-  using var response=await http.GetAsync("https://api.github.com/repos/"+Repo+"/releases/latest");
-  if(response.StatusCode==System.Net.HttpStatusCode.NotFound)throw new InvalidOperationException("Редактор пока не опубликован. Он появится после выпуска Aurora 0.2.");
-  response.EnsureSuccessStatusCode();using var json=JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+  using var json=await PublishedRelease()??throw new InvalidOperationException("Редактор пока не опубликован. Он появится после выпуска Aurora 0.2.");
   string url=json.RootElement.GetProperty("assets").EnumerateArray().Single(x=>x.GetProperty("name").GetString()=="aurora-editor.json").GetProperty("browser_download_url").GetString()!;
   var release=JsonSerializer.Deserialize<LauncherRelease>(await http.GetStringAsync(url))??throw new InvalidDataException("Нет описания редактора.");
   if(!System.Text.RegularExpressions.Regex.IsMatch(release.Asset,@"^Aurora-Editor-[0-9.]+-win-x64\.zip$"))throw new InvalidDataException("Invalid editor asset");

@@ -37,3 +37,9 @@ if(args.Length>0)
  Console.WriteLine($"NMF_CORPUS accepted={passed} rejected={rejected}");Check(passed>0,"native corpus has supported models");
 }
 Console.WriteLine("AURORA_TESTS_PASS");
+
+// Schema 2 numeric controls are data owned by independent modules.
+var numeric=manifest with{Schema=2,Placement="settings",Options=[new("degrees","FOV","camera","degrees",Kind:"slider",Minimum:20,Maximum:100,DefaultValue:45)]};
+Sign(numeric);Check(catalog.Verify(root).Options[0].DefaultValue==45,"signed numeric module metadata");
+Sign(numeric with{Schema=1});Reject(()=>catalog.Verify(root),"numeric control in old schema");
+Sign(numeric with{Options=[new("degrees","FOV","camera","degrees",Kind:"slider",Minimum:20,Maximum:100,DefaultValue:150)]});Reject(()=>catalog.Verify(root),"invalid numeric bounds");

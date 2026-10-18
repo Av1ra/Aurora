@@ -1,4 +1,4 @@
-param([ValidateSet('0.2')][string]$Version='0.2',[string]$Python='python',[string]$PythonDependencyDirectory='', [switch]$Development)
+param([ValidateSet('0.2')][string]$Version='0.2',[string]$Python='python',[string]$PythonDependencyDirectory='', [switch]$Development,[string]$NativeDist='')
 $ErrorActionPreference='Stop'
 $root=$PSScriptRoot
 $buildRoot="$root/artifacts/build-$([guid]::NewGuid().ToString('N'))"
@@ -17,6 +17,8 @@ try {
  Run 'dotnet' @('build',"$root/Aurora.Editor.Module/Aurora.Editor.Module.csproj",'-c','Release','-p:DebugType=None','-p:DebugSymbols=false','-o',"$buildRoot/module")
  if($Development){Copy-Item "$buildRoot/development.pem" "$app/Assets/publisher.pem" -Force}
  Run "$root/build-native.cmd" @()
+ & "$root/Prepare-Fov.ps1" -Dll "$root/artifacts/native/fov.dll" -Output "$app/Modules/aurora.fov"
+ if($NativeDist){& "$root/Prepare-Graphics.ps1" -NativeDist $NativeDist -Output "$app/Modules/aurora.graphics" -Version $Version -MinimumLauncher '0.2.0'}
  & "$root/build-setup.ps1" -Output "$app/Aurora.Installer.exe"
  Copy-Item -LiteralPath "$root/artifacts/native/Aurora.Bootstrap.exe" -Destination $app
  Copy-Item -LiteralPath "$root/artifacts/native/Aurora.exe","$root/artifacts/native/Aurora.Editor.exe" -Destination $stage
@@ -40,10 +42,15 @@ try {
  $editorZip="$output/Aurora-Editor-$Version-win-x64.zip"
  [IO.Compression.ZipFile]::CreateFromDirectory($stage,$zip,[IO.Compression.CompressionLevel]::Optimal,$false)
  [IO.Compression.ZipFile]::CreateFromDirectory("$buildRoot/addon",$editorZip,[IO.Compression.CompressionLevel]::Optimal,$false)
+ foreach($module in Get-ChildItem "$app/Modules" -Directory){[IO.Compression.ZipFile]::CreateFromDirectory($module.FullName,"$output/$($module.Name)-0.2.zip",[IO.Compression.CompressionLevel]::Optimal,$false)}
+ Copy-Item -LiteralPath "$buildRoot/addon/Editor" -Destination $app -Recurse
+ $fullZip="$output/Aurora-$Version-Full-win-x64.zip"
+ [IO.Compression.ZipFile]::CreateFromDirectory($stage,$fullZip,[IO.Compression.CompressionLevel]::Optimal,$false)
+ Run 'dotnet' @('run','--project',"$root/Aurora.Publisher/Aurora.Publisher.csproj",'--','release',$Version,$fullZip,"$output/aurora-full.json")
  Run 'dotnet' @('run','--project',"$root/Aurora.Publisher/Aurora.Publisher.csproj",'--','release',$Version,$zip,"$output/aurora-update.json")
  Run 'dotnet' @('run','--project',"$root/Aurora.Publisher/Aurora.Publisher.csproj",'--','release',$Version,$editorZip,"$output/aurora-editor.json")
- & "$root/build-setup.ps1" -Output "$output/Aurora-Setup.exe" -Payload $zip
- $lines=@($zip,$editorZip,"$output/Aurora-Setup.exe","$output/aurora-update.json","$output/aurora-editor.json")|ForEach-Object{(Get-FileHash -LiteralPath $_ -Algorithm SHA256).Hash.ToLowerInvariant()+'  '+[IO.Path]::GetFileName($_)}
+ & "$root/build-setup.ps1" -Output "$output/Aurora-Setup.exe" -Payload $fullZip
+ $lines=Get-ChildItem -LiteralPath $output -File | Where-Object {$_.Name -ne "SHA256SUMS.txt"} | ForEach-Object{(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()+"  "+$_.Name}
  [IO.File]::WriteAllLines("$output/SHA256SUMS.txt",$lines,[Text.UTF8Encoding]::new($false))
  [IO.File]::WriteAllText("$root/artifacts/latest-build.txt",$buildRoot,[Text.UTF8Encoding]::new($false))
  Write-Output "Development package: $output (not published)"
@@ -51,3 +58,4 @@ try {
  $env:AURORA_SIGNING_KEY=$previousSigningKey
  if($Development -and (Test-Path -LiteralPath "$buildRoot/development.pk8")){Remove-Item -LiteralPath "$buildRoot/development.pk8"}
 }
+

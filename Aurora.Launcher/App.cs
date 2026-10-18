@@ -67,7 +67,7 @@ sealed class MainWindow:Window
  void ApplyDiscovery(List<VerifiedMod> found,List<string> errors)
  {
   mods=found;navigation.MenuItems.Clear();navigation.MenuItems.Add(new NavigationViewItem{Content=UiLanguage.Text("Главная"),Icon=new SymbolIcon(Symbol.Home)});
-  foreach(var mod in mods)navigation.MenuItems.Add(new NavigationViewItem{Content=UiLanguage.Text(mod.Manifest.Name),Tag=mod,Icon=new FontIcon{Glyph=mod.Manifest.Category=="graphics"?"\uE790":mod.Manifest.Category=="camera"?"\uE722":"\uE8F1"}});
+  foreach(var mod in mods.Where(m=>m.Manifest.Placement=="navigation"))navigation.MenuItems.Add(new NavigationViewItem{Content=UiLanguage.Text(mod.Manifest.Name),Tag=mod,Icon=new FontIcon{Glyph=mod.Manifest.Category=="graphics"?"\uE790":mod.Manifest.Category=="camera"?"\uE722":"\uE8F1"}});
   status.Text=string.Join("\n",errors);navigation.SelectedItem=navigation.MenuItems[0];Home();
  }
  TextBlock Heading(string text)=>new(){Text=UiLanguage.Text(text),FontSize=28,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold};
@@ -91,24 +91,20 @@ sealed class MainWindow:Window
  void Home()
  {
   ClearBody();
-  var image=Path.Combine(AppContext.BaseDirectory,"Assets","game.jpg");
-  if(File.Exists(image))body.Children.Add(new Image{Source=new BitmapImage(new Uri(image)),MaxWidth=900,Height=220,Stretch=Stretch.UniformToFill,HorizontalAlignment=HorizontalAlignment.Stretch});
   body.Children.Add(new TextBlock{Text="Workers & Resources: Soviet Republic",FontSize=25,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold,TextWrapping=TextWrapping.Wrap});
   bool found=File.Exists(Path.Combine(prefs.Game,"SOVIET64.exe"));
   body.Children.Add(new TextBlock{Text=UiLanguage.Text(found?"Игра найдена":"Выберите папку игры в настройках"),Opacity=.75});
   var actions=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
   var play=AsyncButton("Запустить игру",LaunchGame);play.IsEnabled=found;actions.Children.Add(play);
-  actions.Children.Add(Button("Настройки игры и модов",Settings));body.Children.Add(actions);
-  var tools=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
-  tools.Children.Add(Button("Workshop",()=>Process.Start(new ProcessStartInfo("https://steamcommunity.com/app/784150/workshop/"){UseShellExecute=true})));body.Children.Add(tools);
+  actions.Children.Add(Button("Настройки игры и модулей",Settings));body.Children.Add(actions);
   var moduleState=new StackPanel{Spacing=8};moduleState.Children.Add(RowTitle("Модули"));
-  moduleState.Children.Add(new TextBlock{Text=mods.Count==0?UiLanguage.Text("Совместимые моды не найдены."):string.Join("\n",mods.Select(x=>UiLanguage.Text(x.Manifest.Name))),TextWrapping=TextWrapping.Wrap,Opacity=.75});
-  moduleState.Children.Add(AsyncButton("Найти моды",DiscoverAsync));body.Children.Add(Card(moduleState));
+  moduleState.Children.Add(new TextBlock{Text=mods.Count==0?UiLanguage.Text("Совместимые модули не найдены."):string.Join("\n",mods.Select(x=>UiLanguage.Text(x.Manifest.Name))),TextWrapping=TextWrapping.Wrap,Opacity=.75});
+  moduleState.Children.Add(AsyncButton("Найти модули",DiscoverAsync));body.Children.Add(Card(moduleState));
   var editor=new StackPanel{Orientation=Orientation.Horizontal,Spacing=12};editor.Children.Add(new TextBlock{Text=UiLanguage.Text("Мастер моделей"),VerticalAlignment=VerticalAlignment.Center,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});
   editor.Children.Add(AsyncButton(File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","acode.lnchr"))?"Открыть редактор":"Скачать редактор",OpenEditor));body.Children.Add(Card(editor));
   body.Children.Add(status);versionText=new TextBlock{Text=UiLanguage.Text(versionMessage),Opacity=.65};body.Children.Add(versionText);UiLanguage.Apply(body);
  }
- async Task DiscoverAsync(){if(!Directory.Exists(prefs.Game)){ApplyDiscovery([],[]);return;}status.Text=UiLanguage.Text("Поиск модов…");try{var result=await Task.Run(()=>new ModCatalog(publicKey).Discover(SteamDiscovery.FindRoots(prefs.Game)));ApplyDiscovery(result.Mods,result.Errors);}catch(Exception ex){Notice(ex.Message);}}
+ async Task DiscoverAsync(){if(!Directory.Exists(prefs.Game)){ApplyDiscovery([],[]);return;}status.Text=UiLanguage.Text("Поиск модулей…");try{var result=await Task.Run(()=>new ModCatalog(publicKey).Discover(SteamDiscovery.FindRoots(prefs.Game).Append(Path.Combine(AppContext.BaseDirectory,"Modules"))));ApplyDiscovery(result.Mods,result.Errors);}catch(Exception ex){Notice(ex.Message);}}
  void ShowMod(VerifiedMod mod)
  {
   ClearBody();body.Children.Add(Heading(mod.Manifest.Name));
@@ -122,17 +118,33 @@ sealed class MainWindow:Window
    var card=FeatureCard(option.Label,toggle,option.Beta?"Бета":null);if(option.Beta)beta.Children.Add(card);else body.Children.Add(card);
   }
   if(beta.Children.Count>0)body.Children.Add(new Expander{Header=RowTitle("Экспериментальные функции","Бета"),Content=beta,IsExpanded=false,HorizontalAlignment=HorizontalAlignment.Stretch,HorizontalContentAlignment=HorizontalAlignment.Stretch});
-  body.Children.Add(Button("Установить / обновить мод",()=>Install(mod)));
+  body.Children.Add(Button("Установить / обновить модуль",()=>Install(mod)));
   body.Children.Add(AsyncButton("Запустить игру",LaunchGame));
   UiLanguage.Apply(body);
  }
- void VerifyCurrent(VerifiedMod mod){var current=new ModCatalog(publicKey).Verify(mod.Folder);if(current.Id!=mod.Manifest.Id||current.Version!=mod.Manifest.Version)throw new InvalidDataException("Мод обновился. Повторите поиск.");}
+ Border SettingsModuleCard(VerifiedMod module)
+ {
+  string file=ModCatalog.SafePath(prefs.Game,"mods/"+module.Manifest.Config);
+  var enabled=module.Manifest.Options.First(x=>x.Kind=="toggle");
+  var toggle=new ToggleSwitch{IsOn=GetPrivateProfileInt(enabled.Section,enabled.Key,enabled.Default?1:0,file)!=0};
+  void Write(ModOption option,int value){VerifyCurrent(module);Directory.CreateDirectory(Path.GetDirectoryName(file)!);if(!WritePrivateProfileString(option.Section,option.Key,value.ToString(System.Globalization.CultureInfo.InvariantCulture),file))throw new System.ComponentModel.Win32Exception();}
+  toggle.Toggled+=(_,_)=>{try{Write(enabled,toggle.IsOn?1:0);}catch(Exception ex){Notice(ex.Message);}};
+  var controls=new StackPanel{Spacing=4};
+  foreach(var option in module.Manifest.Options.Where(x=>x.Kind=="slider")){
+   var value=new TextBlock();var label=new StackPanel{Orientation=Orientation.Horizontal,Spacing=6};label.Children.Add(new TextBlock{Text=UiLanguage.Text(option.Label)});label.Children.Add(value);
+   var slider=new Slider{Minimum=option.Minimum,Maximum=option.Maximum,StepFrequency=1,Value=GetPrivateProfileInt(option.Section,option.Key,option.DefaultValue,file),Width=230,HorizontalAlignment=HorizontalAlignment.Left};
+   slider.ValueChanged+=(_,e)=>{value.Text=((int)e.NewValue).ToString();try{Write(option,(int)e.NewValue);}catch(Exception ex){Notice(ex.Message);}};
+   value.Text=((int)slider.Value).ToString();controls.Children.Add(label);controls.Children.Add(slider);
+  }
+  return FeatureCard(module.Manifest.Name,toggle,null,null,controls);
+ }
+ void VerifyCurrent(VerifiedMod mod){var current=new ModCatalog(publicKey).Verify(mod.Folder);if(current.Id!=mod.Manifest.Id||current.Version!=mod.Manifest.Version)throw new InvalidDataException("Модуль обновился. Повторите поиск.");}
  void Install(VerifiedMod mod)
  {
   VerifyCurrent(mod);
   if(Process.GetProcessesByName("SOVIET64").Length>0)throw new InvalidOperationException("Закройте игру перед установкой.");
   ModuleInstaller.Install(mod,prefs.Game,publicKey);
-  Notice("Мод установлен. Настройки сохранены.");
+  Notice("Модуль установлен. Настройки сохранены.");
  }
  async Task LaunchGame()
  {
@@ -142,10 +154,11 @@ sealed class MainWindow:Window
   start.ArgumentList.Add(prefs.Game);
   var libraries=mods.SelectMany(x=>x.Manifest.Files).Where(x=>x.Path.StartsWith("Payload/")&&x.Path.EndsWith(".dll",StringComparison.OrdinalIgnoreCase)).GroupBy(x=>x.Path,StringComparer.OrdinalIgnoreCase).ToArray();
   if(libraries.Any(x=>x.Select(f=>f.Sha256.ToLowerInvariant()).Distinct().Count()>1))throw new InvalidDataException("Конфликт библиотек модов. Установите совместимые версии.");
+  await Task.Run(()=>{foreach(var module in mods){bool installed=module.Manifest.Files.Where(f=>f.Path.StartsWith("Payload/")).All(f=>{string path=ModCatalog.SafePath(prefs.Game,f.Path[8..]);if(!File.Exists(path))return false;using var stream=File.OpenRead(path);return Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(stream)).Equals(f.Sha256,StringComparison.OrdinalIgnoreCase);});if(!installed)ModuleInstaller.Install(module,prefs.Game,publicKey);}});
   foreach(var file in libraries.Select(x=>x.First()).OrderBy(x=>x.Path.EndsWith("/m.dll")?0:1))
   {
    string installed=ModCatalog.SafePath(prefs.Game,file.Path[8..]);
-   using var input=File.OpenRead(installed);if(!Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(input)).Equals(file.Sha256,StringComparison.OrdinalIgnoreCase))throw new InvalidDataException("Установленная библиотека отличается. Установите мод заново: "+file.Path);
+   using var input=File.OpenRead(installed);if(!Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(input)).Equals(file.Sha256,StringComparison.OrdinalIgnoreCase))throw new InvalidDataException("Установленная библиотека отличается. Установите модуль заново: "+file.Path);
    start.ArgumentList.Add(installed);start.ArgumentList.Add(file.Sha256.ToLowerInvariant());
   }
   using var bootstrap=Process.Start(start)??throw new InvalidOperationException("Cannot start game bootstrap");
@@ -156,14 +169,16 @@ sealed class MainWindow:Window
  void Settings()
  {
   ClearBody();body.Children.Add(Heading("Настройки"));
-  var locations=new StackPanel{Spacing=12};locations.Children.Add(RowTitle("Игра и моды"));
+  var locations=new StackPanel{Spacing=12};locations.Children.Add(RowTitle("Игра и модули"));
   var path=new TextBox{Header="Папка SovietRepublic",Text=prefs.Game};locations.Children.Add(path);
-  var destination=new TextBox{Header=UiLanguage.Text("Папка установки модов"),IsReadOnly=true,Text=string.IsNullOrWhiteSpace(path.Text)?"":Path.Combine(path.Text,"mods")};path.TextChanged+=(_,_)=>{try{destination.Text=string.IsNullOrWhiteSpace(path.Text)?"":Path.Combine(path.Text,"mods");}catch{destination.Text="";}};locations.Children.Add(destination);
+  var destination=new TextBox{Header=UiLanguage.Text("Папка установки модулей"),IsReadOnly=true,Text=string.IsNullOrWhiteSpace(path.Text)?"":Path.Combine(path.Text,"mods")};path.TextChanged+=(_,_)=>{try{destination.Text=string.IsNullOrWhiteSpace(path.Text)?"":Path.Combine(path.Text,"mods");}catch{destination.Text="";}};locations.Children.Add(destination);
   var locateButtons=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
   locateButtons.Children.Add(AsyncButton("Выбрать папку…",async()=>{var picker=new Windows.Storage.Pickers.FolderPicker();picker.FileTypeFilter.Add("*");WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));var folder=await picker.PickSingleFolderAsync();if(folder!=null)path.Text=folder.Path;}));
-  locateButtons.Children.Add(Button("Найти моды",()=>{if(!File.Exists(Path.Combine(path.Text,"SOVIET64.exe")))throw new InvalidDataException("В выбранной папке нет SOVIET64.exe.");prefs=prefs with{Game=Path.GetFullPath(path.Text)};Save();Discover();}));locations.Children.Add(locateButtons);body.Children.Add(Card(locations));
+  locateButtons.Children.Add(Button("Сохранить папку",()=>{if(!File.Exists(Path.Combine(path.Text,"SOVIET64.exe")))throw new InvalidDataException("В выбранной папке нет SOVIET64.exe.");prefs=prefs with{Game=Path.GetFullPath(path.Text)};Save();Notice(UiLanguage.Text("Папка сохранена."));}));
+  locateButtons.Children.Add(Button("Workshop",()=>Process.Start(new ProcessStartInfo("https://steamcommunity.com/app/784150/workshop/"){UseShellExecute=true})));locations.Children.Add(locateButtons);body.Children.Add(Card(locations));
+  foreach(var module in mods.Where(x=>x.Manifest.Placement=="settings"))body.Children.Add(SettingsModuleCard(module));
   var console=new ToggleSwitch{IsOn=prefs.Console};console.Toggled+=(_,_)=>{prefs=prefs with{Console=console.IsOn};Save();};body.Children.Add(FeatureCard("Консоль",console,"Альфа","Открыть в игре: ~"));
-  var updater=new StackPanel{Spacing=10};updater.Children.Add(RowTitle("Приложение"));updater.Children.Add(new TextBox{Header=UiLanguage.Text("Папка лаунчера"),Text=InstallationPaths.Root,IsReadOnly=true});var updateButtons=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
+  var updater=new StackPanel{Spacing=10};updater.Children.Add(new TextBox{Header=UiLanguage.Text("Папка лаунчера"),Text=InstallationPaths.Root,IsReadOnly=true});var updateButtons=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
   updateButtons.Children.Add(Button("Проверить обновления",()=>_=CheckUpdates()));
   updateButtons.Children.Add(AsyncButton("Установить обновление",async()=>{var folder=await updates.DownloadVerified(publicKey);if(folder==null){Notice("Обновлений нет.");return;}updates.StartReplacement(folder);Application.Current.Exit();}));updater.Children.Add(updateButtons);versionText=new TextBlock{Text=UiLanguage.Text(versionMessage),Opacity=.65};updater.Children.Add(versionText);updater.Children.Add(status);body.Children.Add(Card(updater));
   UiLanguage.Apply(body);
@@ -182,5 +197,7 @@ sealed class AlphaConsole:Window
 {
  public AlphaConsole(){Title="Aurora — Console";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(520,260));var panel=new StackPanel{Margin=new Thickness(14),Spacing=8};var log=new TextBox{IsReadOnly=true,AcceptsReturn=true,Height=80,Text="In development"};var input=new TextBox{PlaceholderText="Message"};void Reply(){if(string.IsNullOrWhiteSpace(input.Text))return;log.Text+="\r\n> "+input.Text+"\r\nIn development";input.Text="";}input.KeyDown+=(_,e)=>{if(e.Key==Windows.System.VirtualKey.Enter){Reply();e.Handled=true;}};var send=new Button{Content="Send"};send.Click+=(_,_)=>Reply();var heading=new StackPanel{Orientation=Orientation.Horizontal,Spacing=10};heading.Children.Add(new TextBlock{Text=UiLanguage.Text("Консоль"),FontSize=20});heading.Children.Add(MainWindow.Badge("Альфа"));panel.Children.Add(heading);panel.Children.Add(log);panel.Children.Add(input);panel.Children.Add(send);WindowChrome.Attach(this,panel,Title);}
 }
+
+
 
 

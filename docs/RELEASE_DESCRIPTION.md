@@ -12,6 +12,7 @@ Aurora does not include texture packs. Graphics modules are distributed separate
 
 ## Installation (when a release is approved)
 
-Place Aurora-Setup.exe next to Aurora-0.2-win-x64.zip. Run the installer, choose the game folder and installation location, then open Aurora.exe. The default location is the Aurora folder inside SovietRepublic. Keep the app folder beside the two entry-point EXEs; it contains the shared application libraries. Download the editor from Aurora when needed.
+Place Aurora-Setup.exe next to Aurora-0.2-Full-win-x64.zip. Run the installer, choose the game folder and installation location, then open Aurora.exe. The default location is the Aurora folder inside SovietRepublic. Keep the app folder beside the two entry-point EXEs; it contains the shared application libraries. Download the editor from Aurora when needed.
 
-Version 0.2 is currently in development. This text is prepared for the future release; it does not announce one. Update notes will be added after the owner approves publication.
+Version 0.2 is a preliminary test build. The full archive includes the Model Editor and two separately signed modules: PBR and FOV Changer. FOV Changer appears in Settings only when its module is discovered. Its current executable compatibility is pinned; unsupported builds are refused without changing memory. Real-game visual FOV acceptance remains pending. No texture packs are included.
+

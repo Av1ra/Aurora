@@ -39,3 +39,11 @@
 - Private graphics-runtime internals are separate from Aurora and are not required to build launcher/editor source in this repository.
 
 Start the next task from ../PROJECT_MAP.md, then DEVELOPMENT.md and the code for the relevant area. Work directly in this repository; local drive paths and old chat history are not prerequisites.
+
+## Authorized preliminary release 0.2
+
+The owner explicitly approved publishing test GitHub Release v0.2. Full package includes the editor plus separate PBR and FOV Changer modules; no texture packs. FOV is not embedded in the launcher: only generic schema-2 slider/toggle rendering is in the UI. The signed FOV module asks for Settings placement. Without that module, no FOV controls appear.
+
+Fixed language root cause: translating the internal NavigationViewItem presenter TextBlock replaced its template binding. Navigation labels now remain owned by their content controls and are translated explicitly. Home image removed; Workshop moved to Game and modules; only Home searches for modules; Settings saves the game folder without searching; Application heading removed.
+
+FOV uses the researched SovietCDK table but requires exact executable SHA-256 296644a9f207d609031fc2ae73fed2dcb34619a1d55a35d1c7b51965ce6841b8 and a unique matching read-only table. Offline current executable match and synthetic ambiguity/truncation tests pass. Real-game visual acceptance is pending and must remain stated in prerelease notes. Unsupported executables are not modified.

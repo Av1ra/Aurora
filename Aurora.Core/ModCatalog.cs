@@ -4,9 +4,10 @@ using System.Text.Json;
 namespace Aurora.Core;
 
 public record ModFile(string Path, string Sha256);
-public record ModOption(string Id, string Label, string Section, string Key, bool Beta = false, bool Default = true);
+public record ModOption(string Id, string Label, string Section, string Key, bool Beta = false, bool Default = true,
+    string Kind="toggle",int Minimum=0,int Maximum=100,int DefaultValue=0);
 public record ModManifest(int Schema, string Id, string Name, string Category, string Version,
-    string MinimumLauncher, string Config, ModFile[] Files, ModOption[] Options);
+    string MinimumLauncher, string Config, ModFile[] Files, ModOption[] Options,string Placement="navigation");
 public record SignedEnvelope(string Payload, string Signature);
 public record VerifiedMod(string Folder, ModManifest Manifest);
 
@@ -24,7 +25,7 @@ public sealed class ModCatalog(string publicKeyPem)
         if (!key.VerifyData(payload, Convert.FromBase64String(envelope.Signature), HashAlgorithmName.SHA256))
             throw new InvalidDataException("Invalid publisher signature");
         var mod = JsonSerializer.Deserialize<ModManifest>(payload) ?? throw new InvalidDataException("Missing manifest");
-        if (mod.Schema != 1 || !System.Text.RegularExpressions.Regex.IsMatch(mod.Id, @"^[a-z0-9][a-z0-9.-]{1,95}$"))
+        if (mod.Schema is not (1 or 2) || !System.Text.RegularExpressions.Regex.IsMatch(mod.Id, @"^[a-z0-9][a-z0-9.-]{1,95}$"))
             throw new InvalidDataException("Unsupported module identity/schema");
         if(!Version.TryParse(mod.Version,out _)) throw new InvalidDataException("Invalid module version");
         if (!Version.TryParse(mod.MinimumLauncher, out var minimum) || minimum > Version.Parse(LauncherVersion))
@@ -41,9 +42,13 @@ public sealed class ModCatalog(string publicKeyPem)
             var hash = Convert.ToHexString(SHA256.HashData(stream));
             if (!hash.Equals(item.Sha256, StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException("File changed: " + item.Path);
         }
+        if(mod.Placement is not ("navigation" or "settings"))throw new InvalidDataException("Invalid module placement");
         foreach(var option in mod.Options)
+        {
+            if(option.Kind is not ("toggle" or "slider") || (option.Kind=="slider"&&(mod.Schema<2||option.Minimum>=option.Maximum||option.DefaultValue<option.Minimum||option.DefaultValue>option.Maximum)))throw new InvalidDataException("Invalid module control");
             if(new[]{option.Section,option.Key}.Any(x=>!System.Text.RegularExpressions.Regex.IsMatch(x,@"^[a-zA-Z0-9_]{1,64}$")))
                 throw new InvalidDataException("Invalid setting key");
+        }
         return mod;
     }
 

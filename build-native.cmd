@@ -14,4 +14,11 @@ if errorlevel 1 exit /b 23
 cl /nologo /std:c++20 /utf-8 /EHsc /O2 /MT /DUNICODE /D_UNICODE "..\..\Aurora.Setup.Native\Entry.cpp" /Fe:Aurora.exe /link /SUBSYSTEM:WINDOWS /INCREMENTAL:NO user32.lib
 if errorlevel 1 exit /b 24
 cl /nologo /std:c++20 /utf-8 /EHsc /O2 /MT /DUNICODE /D_UNICODE /DAURORA_EDITOR_ENTRY "..\..\Aurora.Setup.Native\Entry.cpp" /Fe:Aurora.Editor.exe /link /SUBSYSTEM:WINDOWS /INCREMENTAL:NO user32.lib
+if errorlevel 1 exit /b 25
+cl /nologo /std:c++20 /utf-8 /EHsc /O2 /MT /LD /I"..\..\Native" "..\..\Modules\FovChanger\FovChanger.cpp" "..\..\Native\Sha256.cpp" /Fe:fov.dll /link /INCREMENTAL:NO bcrypt.lib user32.lib
+if errorlevel 1 exit /b 26
+cl /nologo /std:c++20 /utf-8 /EHsc /O2 /MT "..\..\Modules\FovChanger\ResolverTests.cpp" /Fe:FovResolverTests.exe
+if errorlevel 1 exit /b 27
+FovResolverTests.exe
 exit /b %errorlevel%
+

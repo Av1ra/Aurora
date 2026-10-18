@@ -47,3 +47,9 @@
 Редактор распространяется отдельным Aurora-Editor-<version>-win-x64.zip и подписанным aurora-editor.json. В Editor находится собственная подписанная acode.lnchr, Aurora.Editor.Module.dll, viewport и backend. Общие WinUI/.NET/WebView2 библиотеки берутся из лаунчера. При поиске игровых модов загрузки кода нет; EditorHost отдельно проверяет официальный подписанный addon и только после проверки загружает его сборку. Метаданные редактора задают MinimumLauncher.
 
 Packaging/legacy-files.tsv содержит хеши старого пакета. Установщик переносит в резервную копию только совпадающие лишние файлы, отсутствующие в новом пакете. Пользовательские изменения остаются. Подписанный новый Editor не удаляется при обновлении приложения.
+
+## Schema 2 settings modules
+
+Schema 2 extends ModOption with Kind (toggle/slider), Minimum, Maximum and DefaultValue. ModManifest Placement can be navigation (default) or settings. The launcher renders these controls generically and does not execute module code. The FOV Changer implementation and executable compatibility guard live entirely in Modules/FovChanger/fov.dll, packaged by Prepare-Fov.ps1. Its Config is fov.ini; options are camera.enabled and camera.degrees. Settings apply at next launch. Payload destinations remain subject to ModuleInstaller's allowlist.
+
+The complete preview embeds signed module catalogs under app/Modules. They are discoverable alongside Workshop libraries. Launch verifies installed payloads and installs a missing/different signed payload before starting the game's own bootstrap. Existing user INI values are preserved.

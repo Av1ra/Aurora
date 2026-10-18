@@ -1,6 +1,6 @@
 # Aurora 0.2 — working checkpoint
 
-Aurora 0.2 is in development. Do not create or publish a GitHub release until the owner explicitly requests it. Keep the product version at 0.2 (assembly 0.2.0); identify work by commit SHA and CI run.
+Aurora 0.2 is in development. The owner has now explicitly authorized the test prerelease v0.2 with launcher, editor, PBR and independent FOV Changer. Keep it marked preliminary; subsequent releases still require owner approval. Keep the product version at 0.2 (assembly 0.2.0); identify work by commit SHA and CI run.
 
 ## Current task
 
@@ -15,3 +15,4 @@ Aurora 0.2 is in development. Do not create or publish a GitHub release until th
 ## Entry points
 
 Start with README.md and PROJECT_MAP.md. Read docs/DEVELOPMENT.md for building and unsigned CI validation. Read docs/STATUS.md for exact verified results and open issues. User-facing English release text belongs to docs/RELEASE_DESCRIPTION.md. No credentials/private publisher key may enter Git.
+
