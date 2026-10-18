@@ -74,3 +74,43 @@ foundWorkshop=SteamDiscovery.FindRegisteredWorkshop(steamGame);
 Check(foundWorkshop.Count==1&&foundWorkshop[0].Complete&&foundWorkshop[0].Folder==subscribed,"complete Steam subscription wins over incomplete workshop_wip");
 Directory.CreateDirectory(Path.Combine(root,"steam-fixture","steamapps","workshop","content","784150","9999999999"));
 Check(SteamDiscovery.FindRegisteredWorkshop(steamGame).Count==1,"unregistered Steam IDs are ignored");
+
+
+// Unsigned Workshop release metadata is a trigger only for explicitly registered Steam IDs.
+File.WriteAllText(Path.Combine(steamGame,"SOVIET64.exe"),"test-game");
+Check(WorkshopUpdates.Scan(steamGame).Offers.Count==0,"no popup while aurora-module.json is missing");
+var releaseFile=Path.Combine(subscribed,WorkshopUpdates.MetadataName);
+var release=new WorkshopRelease(1,"3822550289","PBR","1.0.0","2026-10-18",["mods/m.dll","mods/pbr.dll","mods/glass_default.dds"]);
+File.WriteAllText(releaseFile,JsonSerializer.Serialize(release));
+var pending=WorkshopUpdates.Scan(steamGame);
+Check(pending.Offers.Count==1 && pending.Offers[0].FirstInstall &&
+      pending.Offers[0].Release.ReleaseDate=="2026-10-18","first installation offered with exact declared release date");
+Check(WorkshopUpdates.ReadInstalled(steamGame,"3822550289")==null,"first installation does not invent a previous version");
+WorkshopUpdates.Install(steamGame,pending.Offers[0]);
+Check(WorkshopUpdates.Scan(steamGame).Offers.Count==0,"installed matching Workshop payload produces no repeat popup");
+Check(WorkshopUpdates.ReadInstalled(steamGame,"3822550289")?.Version=="1.0.0","installed version recorded separately from release");
+File.WriteAllText(Path.Combine(subscribed,"mods","pbr.dll"),"changed-without-version-bump");
+pending=WorkshopUpdates.Scan(steamGame);
+Check(pending.Offers.Count==1 && !pending.Offers[0].FirstInstall,"changed DLL triggers update even when version unchanged");
+WorkshopUpdates.Install(steamGame,pending.Offers[0]);
+Check(File.ReadAllText(Path.Combine(steamGame,"mods","pbr.dll"))=="changed-without-version-bump" &&
+      WorkshopUpdates.Scan(steamGame).Offers.Count==0,"changed DLL copied and receipt updated");
+File.WriteAllText(releaseFile,JsonSerializer.Serialize(release with{Version="1.1.0",ReleaseDate="2026-10-19"}));
+pending=WorkshopUpdates.Scan(steamGame);
+Check(pending.Offers.Count==1 && pending.Offers[0].Installed?.Version=="1.0.0" &&
+      pending.Offers[0].Release.Version=="1.1.0" && pending.Offers[0].Release.ReleaseDate=="2026-10-19",
+      "popup compares installed and available versions and release dates");
+File.WriteAllText(Path.Combine(subscribed,"mods","m.dll"),"changed-after-scan");
+Reject(()=>WorkshopUpdates.Install(steamGame,pending.Offers[0]),"changed files between scan and install");
+Check(WorkshopUpdates.ReadInstalled(steamGame,"3822550289")?.Version=="1.0.0","stale update did not overwrite installed state");
+pending=WorkshopUpdates.Scan(steamGame);
+WorkshopUpdates.Install(steamGame,pending.Offers[0]);
+Check(WorkshopUpdates.ReadInstalled(steamGame,"3822550289")?.Version=="1.1.0" &&
+      WorkshopUpdates.Scan(steamGame).Offers.Count==0,"new release installed and no longer offered");
+File.WriteAllText(releaseFile,JsonSerializer.Serialize(release with{Version="0.9.0"}));
+Check(WorkshopUpdates.Scan(steamGame).Offers.Count==0,"older Workshop release does not downgrade installed game");
+File.WriteAllText(releaseFile,JsonSerializer.Serialize(release with{SteamId="9999999999",Version="2.0.0"}));
+Check(WorkshopUpdates.Scan(steamGame).Offers.Count==0 && WorkshopUpdates.Scan(steamGame).Errors.Count>0,
+      "metadata cannot impersonate a different registered ID");
+File.Delete(releaseFile);
+Check(WorkshopUpdates.Scan(steamGame).Offers.Count==0,"empty registered Workshop folder never triggers a popup");

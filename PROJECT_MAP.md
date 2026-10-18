@@ -9,6 +9,7 @@
 | Optional signed editor host | Aurora.Launcher/EditorHost.cs |
 | Download, verification, editor installation | Aurora.Launcher/UpdateService.cs |
 | Manifest, safe paths, module installation, NMF | Aurora.Core/ |
+| Registered Workshop release detection and transactional updates | Aurora.Core/WorkshopUpdates.cs, docs/WORKSHOP_UPDATES.md |
 | Existing Model Editor (no redesign requested) | Aurora.Editor/ and Aurora.Editor.Module/ |
 | Alpha mask backend | Backend/ |
 | Independent FOV Changer DLL | Modules/FovChanger/, Prepare-Fov.ps1 |

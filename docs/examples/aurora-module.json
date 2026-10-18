@@ -1,0 +1,12 @@
+{
+  "Schema": 1,
+  "SteamId": "3822550289",
+  "Name": "PBR",
+  "Version": "0.2.0",
+  "ReleaseDate": "2026-10-18",
+  "Files": [
+    "mods/m.dll",
+    "mods/pbr.dll",
+    "mods/glass_default.dds"
+  ]
+}
