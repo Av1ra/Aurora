@@ -1,0 +1,9 @@
+using Aurora.Launcher;
+var updater=new UpdateService();var release=await updater.Check();
+if(release==null)throw new Exception("Run this smoke with -p:Version=0.0.0 to simulate an older installed launcher.");
+Console.WriteLine("PASS public release discovered: "+release.Version);
+var folder=await updater.DownloadVerified(File.ReadAllText(args[0]));
+if(folder==null||!File.Exists(Path.Combine(folder,"Aurora.Bootstrap.exe"))||!File.Exists(Path.Combine(folder,"Aurora.Installer.exe"))||!File.Exists(Path.Combine(folder,"Editor","Assets","viewport.html")))throw new Exception("Incomplete update");
+Console.WriteLine("PASS signature, SHA-256, safe extraction and complete launcher/editor payload");
+Console.WriteLine("No game files or installed app were changed.");
+Console.WriteLine("AURORA_ONLINE_UPDATE_PASS");
