@@ -99,7 +99,8 @@ sealed class MainWindow:Window
  {
   body.Children.Clear();body.Children.Add(Heading(mod.Manifest.Name));
   body.Children.Add(new TextBlock{Text="Изменения применяются при следующем запуске игры.",TextWrapping=TextWrapping.Wrap});
-  var experimental=new StackPanel{Spacing=9};
+  var standard=new StackPanel{Spacing=0};
+  var experimental=new StackPanel{Spacing=0};
   string config=ModCatalog.SafePath(prefs.Game,"mods/"+mod.Manifest.Config);
   foreach(var option in mod.Manifest.Options)
   {
@@ -136,11 +137,15 @@ sealed class MainWindow:Window
     catch(Exception ex){toggle.IsOn=!next;Notice(ex.Message);}
     finally{toggle.IsEnabled=true;writing=false;}
    };
-   if(isAlpha||isBeta)experimental.Children.Add(FeatureSurface(row));
-   else body.Children.Add(FeatureSurface(row));
+   var item=new Border{Child=row,Padding=new Thickness(14,12,14,12),
+    BorderBrush=(Brush)Application.Current.Resources["CardStrokeColorDefaultBrush"],
+    BorderThickness=new Thickness(0,0,0,1)};
+   if(isAlpha||isBeta)experimental.Children.Add(item);
+   else standard.Children.Add(item);
   }
+  if(standard.Children.Count>0)body.Children.Add(FeatureSurface(standard));
   if(experimental.Children.Count>0)
-   body.Children.Add(new Expander{Header="Экспериментальные функции",Content=experimental,IsExpanded=false,HorizontalAlignment=HorizontalAlignment.Stretch,HorizontalContentAlignment=HorizontalAlignment.Stretch});
+   body.Children.Add(new Expander{Header="Экспериментальные функции",Content=FeatureSurface(experimental),IsExpanded=false,HorizontalAlignment=HorizontalAlignment.Stretch,HorizontalContentAlignment=HorizontalAlignment.Stretch});
   body.Children.Add(Button("Установить / обновить мод",()=>Install(mod)));
   body.Children.Add(Button("Запустить игру",LaunchGame));
   UiLanguage.Apply(body);
