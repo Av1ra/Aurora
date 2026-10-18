@@ -25,9 +25,9 @@ sealed class EditorWindow:Window
  string? selectedLod,mtl,mask,maskMaterial;bool ready;
  public EditorWindow()
  {
-  Title="Аврора · Мастер моделей";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(1250,850));
+  Title="Аврора — Мастер моделей";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(1250,850));
   var grid=new Grid();grid.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});grid.ColumnDefinitions.Add(new(){Width=new GridLength(350)});grid.Children.Add(view);
-  var scroll=new ScrollViewer{Content=controls};Grid.SetColumn(scroll,1);grid.Children.Add(scroll);WindowChrome.Attach(this,grid,"Аврора · Мастер моделей");
+  var scroll=new ScrollViewer{Content=controls};Grid.SetColumn(scroll,1);grid.Children.Add(scroll);WindowChrome.Attach(this,grid,"Аврора — Мастер моделей");
   controls.Children.Add(new TextBlock{Text="Мастер моделей",FontSize=24});
   controls.Children.Add(Button("Открыть NMF…",async()=>{var path=await Pick(".nmf");if(path!=null)await Load(path);}));
   controls.Children.Add(Button("Добавить LOD…",async()=>{var path=await Pick(".nmf");if(path!=null){AddModel(path);lodChoice.SelectedItem=path;await Display();}}));
@@ -37,7 +37,7 @@ sealed class EditorWindow:Window
   objects.SelectionChanged+=async(_,_)=>{if(ready&&objects.SelectedIndex>=0)await view.ExecuteScriptAsync("select("+objects.SelectedIndex+")");};
   controls.Children.Add(Button("Настроить PBR",ConfigurePbr));
   controls.Children.Add(Button("Сделать объект стеклом",async()=>{if(selectedLod==null||objects.SelectedItem is not string name)throw new InvalidOperationException("Выберите объект.");glassObjects[selectedLod].Add(name);await view.ExecuteScriptAsync("glassObject("+objects.SelectedIndex+",true)");status.Text="Стекло: "+name+". Отметьте соответствующий объект в каждом LOD.";}));
-  controls.Children.Add(Button("Стекло через альфа-маску…",async()=>{if(materialChoice.SelectedItem is not string name)throw new InvalidOperationException("Выберите материал кузова.");mask=await Pick(".dds",".png");if(mask!=null){maskMaterial=name;status.Text="Альфа-маска: "+Path.GetFileName(mask)+" · "+name;}}));
+  controls.Children.Add(Button("Стекло через альфа-маску…",async()=>{if(materialChoice.SelectedItem is not string name)throw new InvalidOperationException("Выберите материал кузова.");mask=await Pick(".dds",".png");if(mask!=null){maskMaterial=name;status.Text="Альфа-маска: " + Path.GetFileName(mask) + ": " + name;}}));
   controls.Children.Add(Button("Сбросить стекло",async()=>{if(selectedLod!=null)glassObjects[selectedLod].Clear();mask=null;maskMaterial=null;await Display();}));
   controls.Children.Add(Button("Сохранить мод…",Export));controls.Children.Add(status);
   view.CoreWebView2Initialized+=(_,_)=>{view.CoreWebView2.Settings.AreDevToolsEnabled=false;view.CoreWebView2.Settings.AreDefaultContextMenusEnabled=false;view.CoreWebView2.WebMessageReceived+=async(_,e)=>{try{using var json=JsonDocument.Parse(e.WebMessageAsJson);if(json.RootElement.TryGetProperty("error",out var viewportError))status.Text="Viewport: "+viewportError.GetString();if(json.RootElement.TryGetProperty("ready",out var readyProperty)){ready=true;await Display();}if(json.RootElement.TryGetProperty("selected",out var index)&&index.TryGetInt32(out int i)&&i>=0&&i<objects.Items.Count)objects.SelectedIndex=i;}catch{}};};
@@ -58,7 +58,7 @@ sealed class EditorWindow:Window
   foreach(var pair in parsed){lods[pair.Key]=pair.Value;glassObjects[pair.Key]=[];lodChoice.Items.Add(pair.Key);}
   selectedLod=path;lodChoice.SelectedItem=path;
   var candidate=Path.ChangeExtension(path,"mtl");var common=Path.Combine(Path.GetDirectoryName(path)!,"material.mtl");mtl=File.Exists(candidate)?candidate:File.Exists(common)?common:null;
-  status.Text=$"NMF: {lods.Count} · LOD загружены";await Display();
+  status.Text=$"Загружено моделей NMF: {lods.Count}";await Display();
  }
  async Task Display()
  {
