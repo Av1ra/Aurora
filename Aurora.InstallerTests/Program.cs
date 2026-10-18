@@ -9,6 +9,9 @@ static class InstallerTest
   using(var locked=File.Open(Path.Combine(target,"z.txt"),FileMode.Open,FileAccess.Read,FileShare.None))
   {bool rejected=false;try{Program.Install(source,target);}catch(IOException){rejected=true;}Check(rejected,"locked destination fails safely");}
   foreach(var name in new[]{"a.txt","z.txt"})Check(File.ReadAllText(Path.Combine(target,name))=="old-"+name,"rollback restores "+name);
+  Check(InstallationLocation.Normalize(target)==Path.GetFullPath(target),"custom install directory is accepted");
+  bool rootRejected=false;try{InstallationLocation.Normalize(Path.GetPathRoot(target)!);}catch(IOException){rootRejected=true;}
+  Check(rootRejected,"installing into disk root is rejected");
   Program.Install(source,target);foreach(var name in new[]{"a.txt","z.txt"})Check(File.ReadAllText(Path.Combine(target,name))=="new-"+name,"successful atomic replacement "+name);
   string live=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Aurora","app");
   if(System.Diagnostics.Process.GetProcessesByName("Aurora.Launcher").Any(p=>p.MainModule?.FileName?.StartsWith(live,StringComparison.OrdinalIgnoreCase)==true))
