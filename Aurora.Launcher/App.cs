@@ -125,18 +125,36 @@ sealed class MainWindow:Window
  Border SettingsModuleCard(VerifiedMod module)
  {
   string file=ModCatalog.SafePath(prefs.Game,"mods/"+module.Manifest.Config);
-  var enabled=module.Manifest.Options.First(x=>x.Kind=="toggle");
-  var toggle=new ToggleSwitch{IsOn=GetPrivateProfileInt(enabled.Section,enabled.Key,enabled.Default?1:0,file)!=0};
   void Write(ModOption option,int value){VerifyCurrent(module);Directory.CreateDirectory(Path.GetDirectoryName(file)!);if(!WritePrivateProfileString(option.Section,option.Key,value.ToString(System.Globalization.CultureInfo.InvariantCulture),file))throw new System.ComponentModel.Win32Exception();}
-  toggle.Toggled+=(_,_)=>{try{Write(enabled,toggle.IsOn?1:0);}catch(Exception ex){Notice(ex.Message);}};
-  var controls=new StackPanel{Spacing=8,Orientation=Orientation.Horizontal};
-  foreach(var option in module.Manifest.Options.Where(x=>x.Kind=="slider")){
-   var value=new TextBlock();var label=new StackPanel{Orientation=Orientation.Horizontal,Spacing=6};label.Children.Add(new TextBlock{Text=UiLanguage.Text(option.Label)});label.Children.Add(value);
-   var slider=new Slider{Minimum=option.Minimum,Maximum=option.Maximum,StepFrequency=1,Value=GetPrivateProfileInt(option.Section,option.Key,option.DefaultValue,file),Width=230,HorizontalAlignment=HorizontalAlignment.Left};
-   slider.ValueChanged+=(_,e)=>{value.Text=((int)e.NewValue).ToString();try{Write(option,(int)e.NewValue);}catch(Exception ex){Notice(ex.Message);}};
-   value.Text=((int)slider.Value).ToString();controls.Children.Add(label);controls.Children.Add(slider);
+  var controls=new StackPanel{Spacing=8};
+  controls.Children.Add(RowTitle(module.Manifest.Name));
+  // Settings modules may contain only sliders, only toggles, or both.
+  foreach(var option in module.Manifest.Options)
+  {
+   var row=new Grid{ColumnSpacing=12};
+   row.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});
+   row.ColumnDefinitions.Add(new(){Width=GridLength.Auto});
+   row.Children.Add(new TextBlock{Text=UiLanguage.Text(option.Label),VerticalAlignment=VerticalAlignment.Center,TextWrapping=TextWrapping.Wrap});
+   if(option.Kind=="toggle")
+   {
+    var toggle=new ToggleSwitch{IsOn=GetPrivateProfileInt(option.Section,option.Key,option.Default?1:0,file)!=0,VerticalAlignment=VerticalAlignment.Center,OnContent=UiLanguage.Text("Вкл."),OffContent=UiLanguage.Text("Выкл.")};
+    Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(toggle,option.Label);
+    toggle.Toggled+=(_,_)=>{try{Write(option,toggle.IsOn?1:0);}catch(Exception ex){Notice(ex.Message);}};
+    Grid.SetColumn(toggle,1);row.Children.Add(toggle);
+   }
+   else if(option.Kind=="slider")
+   {
+    var right=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
+    var slider=new Slider{Minimum=option.Minimum,Maximum=option.Maximum,StepFrequency=1,Value=GetPrivateProfileInt(option.Section,option.Key,option.DefaultValue,file),Width=230};
+    Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(slider,option.Label);
+    var value=new TextBlock{Text=((int)slider.Value).ToString(),Width=34,VerticalAlignment=VerticalAlignment.Center};
+    slider.ValueChanged+=(_,e)=>{value.Text=((int)e.NewValue).ToString();try{Write(option,(int)e.NewValue);}catch(Exception ex){Notice(ex.Message);}};
+    right.Children.Add(slider);right.Children.Add(value);
+    Grid.SetColumn(right,1);row.Children.Add(right);
+   }
+   controls.Children.Add(row);
   }
-  return FeatureCard(module.Manifest.Name,toggle,null,null,controls);
+  return Card(controls);
  }
  void VerifyCurrent(VerifiedMod mod){var current=new ModCatalog(publicKey).Verify(mod.Folder);if(current.Id!=mod.Manifest.Id||current.Version!=mod.Manifest.Version)throw new InvalidDataException("Модуль обновился. Повторите поиск.");}
  void Install(VerifiedMod mod)
