@@ -30,6 +30,29 @@ static class UiLanguage
       ["Закрыть без сохранения"]="Close without saving",
       ["Не выбрана"]="Not selected",
       ["Требуется включить"]="Requires enabled",
+      ["Открыть модель"]="Open model",
+      ["Откройте NMF или перетащите его сюда. Затем выберите MTL для настройки PBR и стекла."]="Open an NMF or drop it here, then choose an MTL for PBR and glass.",
+      ["Перетащите один основной NMF. Файлы LOD загрузятся из той же папки."]="Drop one main NMF. LOD files will load from the same folder.",
+      ["Не удалось выполнить действие"]="Could not complete the action",
+      ["Модуль установлен. Настройки сохранены."]="Module installed. Settings preserved.",
+      ["Выберите NMF"]="Choose an NMF",
+      ["Выберите NMF и MTL."]="Choose an NMF and MTL.",
+      ["Выберите материал кузова."]="Select a body material.",
+      ["Выберите материал."]="Select a material.",
+      ["Выберите объект."]="Select an object.",
+      ["Aurora Editor отсутствует. Переустановите полный комплект Aurora."]="Aurora Editor is missing. Reinstall the complete Aurora package.",
+      ["В выбранной папке нет SOVIET64.exe."]="The selected folder does not contain SOVIET64.exe.",
+      ["Выберите папку игры в настройках."]="Choose the game folder in Settings.",
+      ["Конфликт библиотек модов. Установите совместимые версии."]="Module library conflict. Install compatible versions.",
+      ["Модуль обновился. Повторите поиск."]="The module has changed. Scan again.",
+      ["Неверный модуль Aurora Editor."]="Invalid Aurora Editor module.",
+      ["Обновлений нет."]="No updates available.",
+      ["Обновления Workshop"]="Workshop updates",
+      ["Базовый цвет…"]="Base colour…",
+      ["Normal-карта…"]="Normal map…",
+      ["Металличность…"]="Metallic…",
+      ["Шероховатость…"]="Roughness…",
+      ["Свечение…"]="Emissive…",
       ["Проверка обновлений…"]="Checking for updates…",["Не удалось проверить обновления."]="Could not check for updates.",
       ["Откройте модель"]="Open a model",["Выберите NMF. Затем добавьте материал MTL, чтобы настроить PBR и стекло."]="Choose an NMF, then add an MTL material to configure PBR and glass.",
       ["Сначала откройте NMF"]="Open an NMF first",["Выберите объект"]="Select an object",["Выберите материал"]="Select a material",["Модель / LOD"]="Model / LOD",["Объект"]="Object",["Материал"]="Material",
@@ -64,6 +87,7 @@ static class UiLanguage
       // Navigation content is translated by its owner. Writing presenter TextBlocks
       // would replace the template binding and pin the previous language label.
       if(node is NavigationViewItem)return;
+      if(node is InfoBar info){info.Title=Text(info.Title);info.Message=Text(info.Message);}
       if(node is TextBlock text)text.Text=Text(text.Text);
       if(node is TextBox box&&box.Header is string boxHeader)box.Header=Text(boxHeader);
       if(node is ContentControl content&&content.Content is string value)content.Content=Text(value);

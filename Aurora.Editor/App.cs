@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
+using Windows.ApplicationModel.DataTransfer;
 using Aurora.Shared;
 namespace Aurora.Editor;
 #if !AURORA_EDITOR_MODULE
@@ -32,13 +33,17 @@ sealed class EditorWindow:Window
  readonly List<(Button Button,Func<bool> CanExecute)> commandButtons=[];
  readonly StackPanel emptyView=new(){Spacing=8,HorizontalAlignment=HorizontalAlignment.Center,VerticalAlignment=VerticalAlignment.Center,MaxWidth=320};
  bool HasModel=>ready&&selectedLod!=null;
+ string? startupModel=Environment.GetCommandLineArgs().Skip(1).FirstOrDefault(x=>x.EndsWith(".nmf",StringComparison.OrdinalIgnoreCase));
  public EditorWindow()
  {
   Title="Aurora Editor";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(1250,850));
   var grid=new Grid();grid.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});grid.ColumnDefinitions.Add(new(){Width=new GridLength(350)});grid.Children.Add(view);
   emptyView.Children.Add(new TextBlock{Text=UiLanguage.Text("Откройте модель"),FontSize=22,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});
-  emptyView.Children.Add(new TextBlock{Text=UiLanguage.Text("Выберите NMF. Затем добавьте материал MTL, чтобы настроить PBR и стекло."),TextWrapping=TextWrapping.Wrap,Opacity=.7});
+  emptyView.Children.Add(new TextBlock{Text=UiLanguage.Text("Откройте NMF или перетащите его сюда. Затем выберите MTL для настройки PBR и стекла."),TextWrapping=TextWrapping.Wrap,Opacity=.7});
   emptyView.IsHitTestVisible=false;grid.Children.Add(emptyView);
+  grid.AllowDrop=true;
+  grid.DragOver+=(_,e)=>{if(!busy&&e.DataView.Contains(StandardDataFormats.StorageItems)){e.AcceptedOperation=DataPackageOperation.Copy;e.DragUIOverride.Caption=UiLanguage.Text("Открыть модель");}e.Handled=true;};
+  grid.Drop+=async(_,e)=>{e.Handled=true;if(busy||!e.DataView.Contains(StandardDataFormats.StorageItems))return;try{var files=(await e.DataView.GetStorageItemsAsync()).OfType<Windows.Storage.StorageFile>().Where(x=>x.FileType.Equals(".nmf",StringComparison.OrdinalIgnoreCase)).ToArray();if(files.Length!=1){status.Text=UiLanguage.Text("Перетащите один основной NMF. Файлы LOD загрузятся из той же папки.");return;}await RunCommand(async()=>{if(await ConfirmDiscard())await Load(files[0].Path);});}catch(Exception ex){status.Text=ex.Message;}};
   var scroll=new ScrollViewer{Content=controls};Grid.SetColumn(scroll,1);grid.Children.Add(scroll);WindowChrome.Attach(this,grid,"Aurora Editor");
   controls.Children.Add(new TextBlock{Text="Мастер моделей",FontSize=24});
   controls.Children.Add(Button("Открыть NMF…",async()=>{var path=await Pick(".nmf");if(path!=null&&await ConfirmDiscard())await Load(path);}));
@@ -53,7 +58,7 @@ sealed class EditorWindow:Window
   controls.Children.Add(Button("Стекло через альфа-маску…",async()=>{if(materialChoice.SelectedItem is not string name)throw new InvalidOperationException("Выберите материал кузова.");var chosen=await Pick(".dds",".png");if(chosen!=null){mask=chosen;maskMaterial=name;dirty=true;status.Text=UiLanguage.Text("Альфа-маска")+": "+Path.GetFileName(mask)+" — "+name;}},()=>HasModel&&materialChoice.SelectedItem!=null));
   controls.Children.Add(Button("Сбросить стекло",async()=>{if(selectedLod!=null)glassObjects[selectedLod].Clear();mask=null;maskMaterial=null;dirty=true;await Display();},()=>HasModel&&(mask!=null||(selectedLod!=null&&glassObjects[selectedLod].Count>0))));
   controls.Children.Add(Button("Сохранить мод…",Export,()=>HasModel&&mtl!=null));controls.Children.Add(busyIndicator);controls.Children.Add(dirtyText);controls.Children.Add(status);
-  view.CoreWebView2Initialized+=(_,_)=>{view.CoreWebView2.Settings.AreDevToolsEnabled=false;view.CoreWebView2.Settings.AreDefaultContextMenusEnabled=false;view.CoreWebView2.WebMessageReceived+=async(_,e)=>{try{using var json=JsonDocument.Parse(e.WebMessageAsJson);if(json.RootElement.TryGetProperty("error",out var viewportError))status.Text="Viewport: "+viewportError.GetString();if(json.RootElement.TryGetProperty("ready",out var readyProperty)){ready=true;await view.ExecuteScriptAsync("document.getElementById('hint').textContent="+JsonSerializer.Serialize(UiLanguage.Text("Перетаскивание: вращение. Колесо: масштаб. Щелчок: выбор объекта.")));await Display();}if(json.RootElement.TryGetProperty("selected",out var index)&&index.TryGetInt32(out int i)&&i>=0&&i<objects.Items.Count)objects.SelectedIndex=i;}catch{}};};
+  view.CoreWebView2Initialized+=(_,_)=>{view.CoreWebView2.Settings.AreDevToolsEnabled=false;view.CoreWebView2.Settings.AreDefaultContextMenusEnabled=false;view.CoreWebView2.WebMessageReceived+=async(_,e)=>{try{using var json=JsonDocument.Parse(e.WebMessageAsJson);if(json.RootElement.TryGetProperty("error",out var viewportError))status.Text="Viewport: "+viewportError.GetString();if(json.RootElement.TryGetProperty("ready",out var readyProperty)){ready=true;await view.ExecuteScriptAsync("document.getElementById('hint').textContent="+JsonSerializer.Serialize(UiLanguage.Text("Перетаскивание: вращение. Колесо: масштаб. Щелчок: выбор объекта.")));if(startupModel is string path){startupModel=null;await RunCommand(()=>Load(path));}else await Display();}if(json.RootElement.TryGetProperty("selected",out var index)&&index.TryGetInt32(out int i)&&i>=0&&i<objects.Items.Count)objects.SelectedIndex=i;}catch{}};};
   AppWindow.Closing+=async(_,e)=>{if(!dirty||closeApproved)return;e.Cancel=true;if(closePrompt||busy)return;closePrompt=true;try{if(await ConfirmDiscard(true)){closeApproved=true;Close();}}finally{closePrompt=false;}};
   UiLanguage.Apply(controls);UpdateControls();LoadedView();
  }
@@ -124,7 +129,7 @@ sealed class EditorWindow:Window
   async Task<string?> PickMap(string? current)=>await Pick(".dds")??current;
   var s=settings.GetValueOrDefault(name)??new();var panel=new StackPanel{Spacing=12};panel.Children.Add(dialogError);
   var mapRefresh=new List<Action>();
-  Slider Slider(string label,double value,double max=1){var slider=new Slider{Header=label,Minimum=0,Maximum=max,Value=value,StepFrequency=.01};panel.Children.Add(slider);return slider;}
+  Slider Slider(string label,double value,double max=1){var header=new Grid{ColumnSpacing=12};header.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});header.ColumnDefinitions.Add(new(){Width=GridLength.Auto});header.Children.Add(new TextBlock{Text=UiLanguage.Text(label),TextWrapping=TextWrapping.Wrap});var number=new TextBlock{Text=value.ToString("0.00",CultureInfo.InvariantCulture),Opacity=.75};Grid.SetColumn(number,1);header.Children.Add(number);var slider=new Slider{Header=header,Minimum=0,Maximum=max,Value=value,StepFrequency=.01};Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(slider,UiLanguage.Text(label));slider.ValueChanged+=(_,e)=>number.Text=e.NewValue.ToString("0.00",CultureInfo.InvariantCulture);panel.Children.Add(slider);return slider;}
   var metal=Slider("Металличность",s.Metallic);var rough=Slider("Шероховатость",s.Roughness);var ao=Slider("AO",s.Ao);var strength=Slider("Сила normal",s.NormalStrength,3);
   var native=new ToggleSwitch{Header="Сохранять штатную цветовую текстуру",IsOn=s.Native};panel.Children.Add(native);
   string? baseMap=s.Base,normal=s.Normal,orm=s.Orm,metalMap=s.MetalMap,roughMap=s.RoughMap,aoMap=s.AoMap,emissive=s.Emissive;
@@ -134,8 +139,8 @@ sealed class EditorWindow:Window
    void Refresh(){filename.Text=current()==null?UiLanguage.Text("Не выбрана"):Path.GetFileName(current());ToolTipService.SetToolTip(filename,current());}
    mapRefresh.Add(Refresh);Refresh();row.Children.Add(DialogButton(label,async()=>{assign(await PickMap(current()));Refresh();}));Grid.SetColumn(filename,1);row.Children.Add(filename);panel.Children.Add(row);
   }
-  MapRow("Base color…",()=>baseMap,v=>baseMap=v);MapRow("Normal…",()=>normal,v=>normal=v);MapRow("ORM…",()=>orm,v=>orm=v);
-  MapRow("Metallic…",()=>metalMap,v=>metalMap=v);MapRow("Roughness…",()=>roughMap,v=>roughMap=v);MapRow("AO…",()=>aoMap,v=>aoMap=v);MapRow("Emissive…",()=>emissive,v=>emissive=v);
+  MapRow("Базовый цвет…",()=>baseMap,v=>baseMap=v);MapRow("Normal-карта…",()=>normal,v=>normal=v);MapRow("ORM…",()=>orm,v=>orm=v);
+  MapRow("Металличность…",()=>metalMap,v=>metalMap=v);MapRow("Шероховатость…",()=>roughMap,v=>roughMap=v);MapRow("AO…",()=>aoMap,v=>aoMap=v);MapRow("Свечение…",()=>emissive,v=>emissive=v);
   var emission=Slider("Сила свечения",s.EmissiveStrength,8);var ibl=Slider("Свет окружения",s.Ibl,3);var normalY=new ComboBox{Header="Normal-карта",ItemsSource=new[]{"DirectX","OpenGL"},SelectedIndex=s.NormalY<0?0:1};panel.Children.Add(normalY);
   panel.Children.Add(DialogButton("Убрать загруженные карты",()=>{baseMap=normal=orm=metalMap=roughMap=aoMap=emissive=null;foreach(var refresh in mapRefresh)refresh();return Task.CompletedTask;}));
   var dialog=new ContentDialog{Title=name,Content=new ScrollViewer{Content=panel,MaxHeight=520},PrimaryButtonText=UiLanguage.Text("Применить"),CloseButtonText=UiLanguage.Text("Отмена"),XamlRoot=((FrameworkElement)Content).XamlRoot};

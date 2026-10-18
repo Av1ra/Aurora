@@ -33,6 +33,7 @@ sealed class MainWindow:Window
  readonly NavigationViewItem settingsItem=new(){Tag="settings",Icon=new SymbolIcon(Symbol.Setting)};
  readonly StackPanel body=new(){Spacing=14,Margin=new Thickness(28)};
  TextBlock status=new(){TextWrapping=TextWrapping.Wrap};
+ readonly InfoBar notice=new(){IsOpen=false,IsClosable=true,Margin=new Thickness(24,12,24,0)};
  TextBlock? versionText;Button? installUpdateButton;bool updateAvailable;string versionMessage="Проверка обновлений…";
  readonly string stateRoot=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Aurora");
  Preferences prefs;
@@ -50,7 +51,7 @@ sealed class MainWindow:Window
   try{prefs=JsonSerializer.Deserialize<Preferences>(File.ReadAllText(Path.Combine(stateRoot,"settings.json")))??new();}catch{prefs=new();}
   string gamePath=Path.Combine(stateRoot,"game-path.txt");if(File.Exists(gamePath)){string selected=File.ReadAllText(gamePath).Trim();if(File.Exists(Path.Combine(selected,"SOVIET64.exe")))prefs=prefs with{Game=selected};}
   if(!File.Exists(Path.Combine(prefs.Game,"SOVIET64.exe"))&&File.Exists(Path.Combine(InstallationPaths.SuggestedGame,"SOVIET64.exe")))prefs=prefs with{Game=InstallationPaths.SuggestedGame};
-  navigation.Content=new ScrollViewer{Content=body};WindowChrome.Attach(this,navigation,"Aurora Launcher");
+  var page=new Grid();page.RowDefinitions.Add(new(){Height=GridLength.Auto});page.RowDefinitions.Add(new(){Height=new GridLength(1,GridUnitType.Star)});page.Children.Add(notice);var pageScroll=new ScrollViewer{Content=body,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled};Grid.SetRow(pageScroll,1);page.Children.Add(pageScroll);navigation.Content=page;WindowChrome.Attach(this,navigation,"Aurora Launcher");
   var language=new NavigationViewItem{Content=UiLanguage.English?"English":"Русский",Icon=new FontIcon{Glyph="\uE774"},SelectsOnInvoked=false};
   ToolTipService.SetToolTip(language,"Язык / Language");navigation.FooterMenuItems.Add(language);navigation.FooterMenuItems.Add(settingsItem);
   var languageMenu=new MenuFlyout();
@@ -251,7 +252,7 @@ sealed class MainWindow:Window
   VerifyCurrent(mod);
   if(Process.GetProcessesByName("SOVIET64").Length>0)throw new InvalidOperationException("Закройте игру перед установкой.");
   ModuleInstaller.Install(mod,prefs.Game,publicKey);
-  Notice("Модуль установлен. Настройки сохранены.");
+  Notice("Модуль установлен. Настройки сохранены.",InfoBarSeverity.Success);
  }
  async Task LaunchGame()
  {
@@ -306,7 +307,7 @@ sealed class MainWindow:Window
   return Task.CompletedTask;
  }
  async Task CheckUpdates(){versionMessage="Проверка обновлений…";if(versionText!=null)versionText.Text=UiLanguage.Text(versionMessage);try{var release=await updates.Check();updateAvailable=release!=null;if(installUpdateButton!=null)installUpdateButton.IsEnabled=updateAvailable;versionMessage=release==null?"Установлена актуальная версия 0.2":"Устаревшая версия 0.2";if(versionText!=null)versionText.Text=UiLanguage.Text(versionMessage);}catch(Exception ex){updateAvailable=false;if(installUpdateButton!=null)installUpdateButton.IsEnabled=false;versionMessage="Не удалось проверить обновления.";if(versionText!=null)versionText.Text=UiLanguage.Text(versionMessage);status.Text=UiLanguage.Text(versionMessage)+" "+ex.Message;}}
- async void Notice(string message){await new ContentDialog{Title="Aurora Launcher",Content=UiLanguage.Text(message),CloseButtonText="ОК",XamlRoot=((FrameworkElement)Content).XamlRoot}.ShowAsync();}
+ void Notice(string message,InfoBarSeverity severity=InfoBarSeverity.Error){notice.Severity=severity;notice.Title=UiLanguage.Text(severity==InfoBarSeverity.Success?"Готово":"Не удалось выполнить действие");notice.Message=UiLanguage.Text(message);notice.IsOpen=true;}
 }
 sealed class AlphaConsole:Window
 {
