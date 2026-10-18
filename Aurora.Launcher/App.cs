@@ -33,7 +33,7 @@ sealed class MainWindow:Window
  readonly NavigationViewItem settingsItem=new(){Tag="settings",Icon=new SymbolIcon(Symbol.Setting)};
  readonly StackPanel body=new(){Spacing=14,Margin=new Thickness(28)};
  TextBlock status=new(){TextWrapping=TextWrapping.Wrap};
- TextBlock? versionText;string versionMessage="Установлена актуальная версия 0.2";
+ TextBlock? versionText;Button? installUpdateButton;bool updateAvailable;string versionMessage="Проверка обновлений…";
  readonly string stateRoot=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Aurora");
  Preferences prefs;
  List<VerifiedMod> mods=[];
@@ -56,11 +56,11 @@ sealed class MainWindow:Window
   var languageMenu=new MenuFlyout();
   var russian=new MenuFlyoutItem{Text="Русский"};var english=new MenuFlyoutItem{Text="English"};
   languageMenu.Items.Add(russian);languageMenu.Items.Add(english);
-  void ChangeLanguage(bool en){UiLanguage.SetEnglish(en);UiLanguage.Apply((FrameworkElement)Content);language.Content=en?"English":"Русский";ToolTipService.SetToolTip(language,en?"Language":"Язык");settingsItem.Content=en?"Settings":"Настройки";ToolTipService.SetToolTip(settingsItem,en?"Settings":"Настройки");foreach(var item in navigation.MenuItems.OfType<NavigationViewItem>())if(item.Content is string text)item.Content=UiLanguage.Text(text);if(navigation.SelectedItem==settingsItem)Settings();else if(navigation.SelectedItem is NavigationViewItem selected&&selected.Tag is VerifiedMod module)ShowMod(module);else Home();}
+  void ChangeLanguage(bool en){UiLanguage.SetEnglish(en);UiLanguage.Apply((FrameworkElement)Content);language.Content=en?"English":"Русский";ToolTipService.SetToolTip(language,en?"Language":"Язык");settingsItem.Content=en?"Settings":"Настройки";ToolTipService.SetToolTip(settingsItem,en?"Settings":"Настройки");foreach(var item in navigation.MenuItems.OfType<NavigationViewItem>())if(item.Content is string text)item.Content=UiLanguage.Text(text);if(ReferenceEquals(navigation.SelectedItem,settingsItem))Settings();else if(navigation.SelectedItem is NavigationViewItem selected&&selected.Tag is VerifiedMod module)ShowMod(module);else Home();}
   russian.Click+=(_,_)=>ChangeLanguage(false);english.Click+=(_,_)=>ChangeLanguage(true);
   navigation.ItemInvoked+=(_,e)=>{if(e.InvokedItemContainer==language)languageMenu.ShowAt(language);};
   navigation.Loaded+=(_,_)=>ChangeLanguage(UiLanguage.English);
-  navigation.SelectionChanged+=(_,e)=>{if(e.SelectedItem==settingsItem)Settings();else if(e.SelectedItem is NavigationViewItem item&&item.Tag is VerifiedMod mod)ShowMod(mod);else Home();};
+  navigation.SelectionChanged+=(_,e)=>{if(ReferenceEquals(e.SelectedItem,settingsItem))Settings();else if(e.SelectedItem is NavigationViewItem item&&item.Tag is VerifiedMod mod)ShowMod(mod);else Home();};
   Home();navigation.Loaded+=(_,_)=>Discover();
   _=CheckUpdates();
  }
@@ -211,12 +211,13 @@ sealed class MainWindow:Window
    }
    else if(option.Kind=="slider")
    {
-    var right=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
-    var slider=new Slider{Minimum=option.Minimum,Maximum=option.Maximum,StepFrequency=1,Value=GetPrivateProfileInt(option.Section,option.Key,option.DefaultValue,file),Width=230};
+    row.ColumnDefinitions[1].Width=new GridLength(1,GridUnitType.Star);
+    var right=new Grid{ColumnSpacing=8};right.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});right.ColumnDefinitions.Add(new(){Width=GridLength.Auto});
+    var slider=new Slider{Minimum=option.Minimum,Maximum=option.Maximum,StepFrequency=1,Value=GetPrivateProfileInt(option.Section,option.Key,option.DefaultValue,file),MaxWidth=230,HorizontalAlignment=HorizontalAlignment.Stretch};
     Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(slider,option.Label);
     var value=new TextBlock{Text=((int)slider.Value).ToString(),Width=34,VerticalAlignment=VerticalAlignment.Center};
     slider.ValueChanged+=(_,e)=>{value.Text=((int)e.NewValue).ToString();try{Write(option,(int)e.NewValue);}catch(Exception ex){Notice(ex.Message);}};
-    right.Children.Add(slider);right.Children.Add(value);
+    Grid.SetColumn(value,1);right.Children.Add(slider);right.Children.Add(value);
     Grid.SetColumn(right,1);row.Children.Add(right);
    }
    controls.Children.Add(row);
@@ -262,13 +263,13 @@ sealed class MainWindow:Window
   var destination=new TextBox{Header=UiLanguage.Text("Папка установки модулей"),IsReadOnly=true,Text=string.IsNullOrWhiteSpace(path.Text)?"":Path.Combine(path.Text,"mods")};path.TextChanged+=(_,_)=>{try{destination.Text=string.IsNullOrWhiteSpace(path.Text)?"":Path.Combine(path.Text,"mods");}catch{destination.Text="";}};locations.Children.Add(destination);
   var locateButtons=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
   locateButtons.Children.Add(AsyncButton("Выбрать папку…",async()=>{var picker=new Windows.Storage.Pickers.FolderPicker();picker.FileTypeFilter.Add("*");WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));var folder=await picker.PickSingleFolderAsync();if(folder!=null)path.Text=folder.Path;}));
-  locateButtons.Children.Add(Button("Сохранить папку",()=>{if(!File.Exists(Path.Combine(path.Text,"SOVIET64.exe")))throw new InvalidDataException("В выбранной папке нет SOVIET64.exe.");prefs=prefs with{Game=Path.GetFullPath(path.Text)};Save();Notice(UiLanguage.Text("Папка сохранена."));}));
+  locateButtons.Children.Add(Button("Сохранить папку",()=>{if(!File.Exists(Path.Combine(path.Text,"SOVIET64.exe")))throw new InvalidDataException("В выбранной папке нет SOVIET64.exe.");prefs=prefs with{Game=Path.GetFullPath(path.Text)};Save();Discover();}));
   locateButtons.Children.Add(Button("Workshop",()=>Process.Start(new ProcessStartInfo("https://steamcommunity.com/app/784150/workshop/"){UseShellExecute=true})));locations.Children.Add(locateButtons);body.Children.Add(Card(locations));
   foreach(var module in mods.Where(x=>x.Manifest.Placement=="settings"))body.Children.Add(SettingsModuleCard(module));
   var console=new ToggleSwitch{IsOn=prefs.Console};console.Toggled+=(_,_)=>{prefs=prefs with{Console=console.IsOn};Save();};body.Children.Add(FeatureCard("Консоль",console,"Альфа","Открыть в игре: ~"));
   var updater=new StackPanel{Spacing=10};updater.Children.Add(new TextBox{Header=UiLanguage.Text("Папка лаунчера"),Text=InstallationPaths.Root,IsReadOnly=true});var updateButtons=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
-  updateButtons.Children.Add(Button("Проверить обновления",()=>_=CheckUpdates()));
-  updateButtons.Children.Add(AsyncButton("Установить обновление",async()=>{var folder=await updates.DownloadVerified(publicKey);if(folder==null){Notice("Обновлений нет.");return;}updates.StartReplacement(folder);Application.Current.Exit();}));updater.Children.Add(updateButtons);versionText=new TextBlock{Text=UiLanguage.Text(versionMessage),Opacity=.65};updater.Children.Add(versionText);updater.Children.Add(status);body.Children.Add(Card(updater));
+  updateButtons.Children.Add(AsyncButton("Проверить обновления",CheckUpdates));
+  installUpdateButton=AsyncButton("Установить обновление",async()=>{var folder=await updates.DownloadVerified(publicKey);if(folder==null){Notice("Обновлений нет.");return;}updates.StartReplacement(folder);Application.Current.Exit();});installUpdateButton.IsEnabled=updateAvailable;updateButtons.Children.Add(installUpdateButton);updater.Children.Add(updateButtons);versionText=new TextBlock{Text=UiLanguage.Text(versionMessage),Opacity=.65};updater.Children.Add(versionText);updater.Children.Add(status);body.Children.Add(Card(updater));
   UiLanguage.Apply(body);
  }
  internal async Task OpenEditorFromEntry(){try{await OpenEditor();}catch(Exception ex){Notice(ex.Message);}}
@@ -283,8 +284,8 @@ sealed class MainWindow:Window
   start.ArgumentList.Add("--editor");Process.Start(start);
   return Task.CompletedTask;
  }
- async Task CheckUpdates(){try{var release=await updates.Check();versionMessage=release==null?"Установлена актуальная версия 0.2":"Устаревшая версия 0.2";if(versionText!=null)versionText.Text=UiLanguage.Text(versionMessage);}catch(Exception ex){status.Text="Не удалось проверить обновления: "+ex.Message;}}
- async void Notice(string message){await new ContentDialog{Title="Aurora",Content=message,CloseButtonText="ОК",XamlRoot=((FrameworkElement)Content).XamlRoot}.ShowAsync();}
+ async Task CheckUpdates(){versionMessage="Проверка обновлений…";if(versionText!=null)versionText.Text=UiLanguage.Text(versionMessage);try{var release=await updates.Check();updateAvailable=release!=null;if(installUpdateButton!=null)installUpdateButton.IsEnabled=updateAvailable;versionMessage=release==null?"Установлена актуальная версия 0.2":"Устаревшая версия 0.2";if(versionText!=null)versionText.Text=UiLanguage.Text(versionMessage);}catch(Exception ex){updateAvailable=false;if(installUpdateButton!=null)installUpdateButton.IsEnabled=false;versionMessage="Не удалось проверить обновления.";if(versionText!=null)versionText.Text=UiLanguage.Text(versionMessage);status.Text=UiLanguage.Text(versionMessage)+" "+ex.Message;}}
+ async void Notice(string message){await new ContentDialog{Title="Aurora Launcher",Content=UiLanguage.Text(message),CloseButtonText="ОК",XamlRoot=((FrameworkElement)Content).XamlRoot}.ShowAsync();}
 }
 sealed class AlphaConsole:Window
 {
