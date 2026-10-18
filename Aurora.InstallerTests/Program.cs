@@ -13,6 +13,11 @@ static class InstallerTest
   bool rootRejected=false;try{InstallationLocation.Normalize(Path.GetPathRoot(target)!);}catch(IOException){rootRejected=true;}
   Check(rootRejected,"installing into disk root is rejected");
   Program.Install(source,target);foreach(var name in new[]{"a.txt","z.txt"})Check(File.ReadAllText(Path.Combine(target,name))=="new-"+name,"successful atomic replacement "+name);
+  var marker=DateTime.UtcNow.AddDays(-2);
+  File.SetLastWriteTimeUtc(Path.Combine(target,"a.txt"),marker);
+  var before=File.GetLastWriteTimeUtc(Path.Combine(target,"a.txt"));
+  Program.Install(source,target);
+  Check(File.GetLastWriteTimeUtc(Path.Combine(target,"a.txt"))==before,"identical files are not rewritten on reinstall");
   string live=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Aurora","app");
   if(System.Diagnostics.Process.GetProcessesByName("Aurora.Launcher").Any(p=>p.MainModule?.FileName?.StartsWith(live,StringComparison.OrdinalIgnoreCase)==true))
   {bool rejected=false;try{Program.Install(source,live);}catch(IOException ex){rejected=ex.Message.Contains("Закройте");}Check(rejected,"running installed instance rejected before writes");}
