@@ -31,6 +31,7 @@ static class UiLanguage
       ["Не удалось сохранить настройки: "]="Could not save settings: "
     };
     public static string Text(string value){if(English)return words.GetValueOrDefault(value,value);foreach(var pair in words)if(pair.Value==value)return pair.Key;return value;}
+    public static void SetEnglish(bool english){English=english;try{Directory.CreateDirectory(Path.GetDirectoryName(path)!);File.WriteAllText(path,English?"en":"ru");}catch{}}
     public static void Apply(DependencyObject node){ApplyNode(node,new HashSet<DependencyObject>());}
     static void ApplyNode(DependencyObject node,HashSet<DependencyObject> visited){
       if(!visited.Add(node))return;

@@ -36,6 +36,7 @@ sealed class ConsoleWindow : Window
         host=found;if(host==0||Read(10)!=1)throw new InvalidOperationException("PBR runtime console protocol unavailable. Update the complete package.");
         Title="PBR — эффекты в игре";SystemBackdrop=new MicaBackdrop();root=(Grid)XamlReader.Load(Layout);Content=root;
         ExtendsContentIntoTitleBar=true;SetTitleBar((UIElement)root.FindName("TitleBar"));
+        Aurora.Shared.WindowChrome.MatchCaption(this,root);
         var area=Microsoft.UI.Windowing.DisplayArea.GetFromWindowId(AppWindow.Id,Microsoft.UI.Windowing.DisplayAreaFallback.Primary).WorkArea;
         AppWindow.Resize(new Windows.Graphics.SizeInt32(Math.Min(540,area.Width-32),Math.Min(440,area.Height-32)));
         AppWindow.Move(new Windows.Graphics.PointInt32(area.X+32,area.Y+32));

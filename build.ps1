@@ -1,4 +1,4 @@
-param([string]$Version='0.1.0',[string]$Python='python',[string]$PythonDependencyDirectory='')
+param([string]$Version='0.1.1',[string]$Python='python',[string]$PythonDependencyDirectory='')
 $ErrorActionPreference='Stop'
 $root=$PSScriptRoot
 $buildRoot="$root/artifacts/build-$([guid]::NewGuid().ToString('N'))"

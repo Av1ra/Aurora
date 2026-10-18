@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
+using Aurora.Shared;
 namespace Aurora.Editor;
 static class Program{[STAThread]static void Main(){WinRT.ComWrappersSupport.InitializeComWrappers();Application.Start(parameters=>{SynchronizationContext.SetSynchronizationContext(new DispatcherQueueSynchronizationContext(DispatcherQueue.GetForCurrentThread()));_=new EditorApp();});}}
 sealed partial class EditorApp:Application{Window? window;public EditorApp(){InitializeComponent();}protected override void OnLaunched(LaunchActivatedEventArgs args){window=new EditorWindow();window.Activate();}}
@@ -26,7 +27,7 @@ sealed class EditorWindow:Window
  {
   Title="Аврора · Мастер моделей";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(1250,850));
   var grid=new Grid();grid.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});grid.ColumnDefinitions.Add(new(){Width=new GridLength(350)});grid.Children.Add(view);
-  var scroll=new ScrollViewer{Content=controls};Grid.SetColumn(scroll,1);grid.Children.Add(scroll);Content=grid;
+  var scroll=new ScrollViewer{Content=controls};Grid.SetColumn(scroll,1);grid.Children.Add(scroll);WindowChrome.Attach(this,grid,"Аврора · Мастер моделей");
   controls.Children.Add(new TextBlock{Text="Мастер моделей",FontSize=24});
   controls.Children.Add(Button("Открыть NMF…",async()=>{var path=await Pick(".nmf");if(path!=null)await Load(path);}));
   controls.Children.Add(Button("Добавить LOD…",async()=>{var path=await Pick(".nmf");if(path!=null){AddModel(path);lodChoice.SelectedItem=path;await Display();}}));

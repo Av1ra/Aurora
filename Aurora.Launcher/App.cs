@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.Json;
+using Aurora.Shared;
 
 namespace Aurora.Launcher;
 internal static class Program
@@ -37,10 +38,16 @@ sealed class MainWindow:Window
   Title="Аврора";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(1000,720));
   Directory.CreateDirectory(stateRoot);
   try{prefs=JsonSerializer.Deserialize<Preferences>(File.ReadAllText(Path.Combine(stateRoot,"settings.json")))??new();}catch{prefs=new();}
-  navigation.Content=new ScrollViewer{Content=body};Content=navigation;
-  var language=new ComboBox{Width=130,Margin=new Thickness(12)};
-  language.Items.Add(new ComboBoxItem{Content="Русский"});language.Items.Add(new ComboBoxItem{Content="English"});navigation.PaneFooter=language;
-  UiLanguage.Bind(language,navigation,()=>{if(navigation.SettingsItem is NavigationViewItem settings)settings.Content=UiLanguage.Text("Настройки");});
+  navigation.Content=new ScrollViewer{Content=body};WindowChrome.Attach(this,navigation,"Аврора");
+  var language=new NavigationViewItem{Content=UiLanguage.English?"English":"Русский",Icon=new FontIcon{Glyph="\uE774"},SelectsOnInvoked=false};
+  ToolTipService.SetToolTip(language,"Язык / Language");navigation.FooterMenuItems.Add(language);
+  var languageMenu=new MenuFlyout();
+  var russian=new RadioMenuFlyoutItem{Text="Русский",IsChecked=!UiLanguage.English};var english=new RadioMenuFlyoutItem{Text="English",IsChecked=UiLanguage.English};
+  languageMenu.Items.Add(russian);languageMenu.Items.Add(english);
+  void ChangeLanguage(bool en){UiLanguage.SetEnglish(en);UiLanguage.Apply((FrameworkElement)Content);language.Content=en?"English":"Русский";if(navigation.SettingsItem is NavigationViewItem settings)settings.Content=UiLanguage.Text("Настройки");foreach(var item in navigation.MenuItems.OfType<NavigationViewItem>())if(item.Content is string text)item.Content=UiLanguage.Text(text);}
+  russian.Click+=(_,_)=>ChangeLanguage(false);english.Click+=(_,_)=>ChangeLanguage(true);
+  navigation.ItemInvoked+=(_,e)=>{if(e.InvokedItemContainer==language)languageMenu.ShowAt(language);};
+  navigation.Loaded+=(_,_)=>ChangeLanguage(UiLanguage.English);
   navigation.SelectionChanged+=(_,e)=>{if(e.IsSettingsSelected)Settings();else if(e.SelectedItem is NavigationViewItem item&&item.Tag is VerifiedMod mod)ShowMod(mod);else Home();};
   Discover();
   _=CheckUpdates();
@@ -65,7 +72,7 @@ sealed class MainWindow:Window
  {
   body.Children.Clear();body.Children.Add(Heading("Аврора"));
   var image=Path.Combine(AppContext.BaseDirectory,"Assets","game.jpg");
-  if(File.Exists(image))body.Children.Add(new Image{Source=new BitmapImage(new Uri(image)),Height=240,Stretch=Stretch.UniformToFill});
+  if(File.Exists(image))body.Children.Add(new Image{Source=new BitmapImage(new Uri(image)),Width=560,Height=300,Stretch=Stretch.Uniform,HorizontalAlignment=HorizontalAlignment.Left});
   body.Children.Add(new TextBlock{Text="Workers & Resources: Soviet Republic",FontSize=20});
   body.Children.Add(new TextBlock{Text=mods.Count==0?"Моды не найдены. Откройте настройки и выполните поиск.":"Выберите мод в меню слева.",TextWrapping=TextWrapping.Wrap});
   body.Children.Add(Button("Запустить игру",LaunchGame));body.Children.Add(status);
@@ -133,5 +140,5 @@ sealed class MainWindow:Window
 }
 sealed class AlphaConsole:Window
 {
- public AlphaConsole(){Title="Аврора · Console — alpha";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(640,400));var panel=new StackPanel{Margin=new Thickness(20),Spacing=12};var log=new TextBox{IsReadOnly=true,AcceptsReturn=true,Height=230,Text="In development"};var input=new TextBox{PlaceholderText="Message"};void Reply(){if(string.IsNullOrWhiteSpace(input.Text))return;log.Text+="\r\n> "+input.Text+"\r\nIn development";input.Text="";}input.KeyDown+=(_,e)=>{if(e.Key==Windows.System.VirtualKey.Enter){Reply();e.Handled=true;}};var send=new Button{Content="Send"};send.Click+=(_,_)=>Reply();panel.Children.Add(log);panel.Children.Add(input);panel.Children.Add(send);Content=panel;}
+ public AlphaConsole(){Title="Аврора · Console — alpha";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(640,440));var panel=new StackPanel{Margin=new Thickness(20),Spacing=12};var log=new TextBox{IsReadOnly=true,AcceptsReturn=true,Height=230,Text="In development"};var input=new TextBox{PlaceholderText="Message"};void Reply(){if(string.IsNullOrWhiteSpace(input.Text))return;log.Text+="\r\n> "+input.Text+"\r\nIn development";input.Text="";}input.KeyDown+=(_,e)=>{if(e.Key==Windows.System.VirtualKey.Enter){Reply();e.Handled=true;}};var send=new Button{Content="Send"};send.Click+=(_,_)=>Reply();panel.Children.Add(log);panel.Children.Add(input);panel.Children.Add(send);WindowChrome.Attach(this,panel,Title);}
 }
