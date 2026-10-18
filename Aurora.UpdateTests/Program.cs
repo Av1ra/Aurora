@@ -50,8 +50,8 @@ if (args.Length > 1)
     foreach(var folder in Directory.GetDirectories(Path.Combine(unpack,"app","Modules")))
         _=catalog.Verify(folder);
     if(Directory.EnumerateFiles(unpack,"*.pk8",SearchOption.AllDirectories).Any() ||
-       Directory.GetFiles(unpack,"*.zip",SearchOption.AllDirectories).Any())
-        throw new Exception("Private signing key or duplicate archives shipped");
+       Directory.GetFiles(unpack,"Aurora-*.zip",SearchOption.AllDirectories).Any())
+        throw new Exception("Private signing key or nested Aurora installer ZIP shipped");
     if(File.Exists(Path.Combine(unpack,"Aurora.exe")) || File.Exists(Path.Combine(unpack,"Aurora.Editor.exe")))
         throw new Exception("Legacy launcher entry points duplicated");
     Console.WriteLine("PASS signed Aurora 0.2: exactly one Launcher + Editor archive");

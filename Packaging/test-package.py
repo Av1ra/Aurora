@@ -17,7 +17,8 @@ with zipfile.ZipFile(archive) as bundle:
     names = set(bundle.namelist())
     assert {"Aurora Launcher.exe", "Aurora Editor.exe", "app/Editor/acode.lnchr", "app/Editor/Aurora.Editor.Module.dll"} <= names
     assert "Aurora.exe" not in names and "Aurora.Editor.exe" not in names
-    assert not any(name.lower().endswith(".zip") for name in names)
+    # PyInstaller needs an internal base_library.zip; this is not another Aurora distribution.
+    assert not any(name.startswith("Aurora-") and name.lower().endswith(".zip") for name in names)
 print("PASS exactly one archive contains Launcher and Editor with shared runtime")
 assert subprocess.run([str(setup), "--unpack-test"], timeout=60).returncode == 0
 print("PASS matching adjacent ZIP verified and extracted")
