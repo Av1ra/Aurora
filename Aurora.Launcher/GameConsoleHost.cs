@@ -9,7 +9,7 @@ sealed class GameConsoleHost
  readonly int gamePid;
  readonly Process game;
  readonly AlphaConsole console=new();
- readonly DispatcherTimer timer=new(){Interval=TimeSpan.FromMilliseconds(35)};
+ readonly Microsoft.UI.Dispatching.DispatcherQueueTimer timer=Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread().CreateTimer();
  bool wasDown,visible;
  [DllImport("user32.dll")]static extern short GetAsyncKeyState(int key);
  [DllImport("user32.dll")]static extern nint GetForegroundWindow();
@@ -19,14 +19,14 @@ sealed class GameConsoleHost
   game=Process.GetProcessById(pid);gamePid=pid;
   if(!game.ProcessName.Equals("SOVIET64",StringComparison.OrdinalIgnoreCase))throw new ArgumentException("Expected game process");
   console.AppWindow.Closing+=(_,e)=>{e.Cancel=true;console.AppWindow.Hide();visible=false;};
-  timer.Tick+=(_,_)=>Tick();timer.Start();
+  timer.IsRepeating=true;timer.Interval=TimeSpan.FromMilliseconds(35);timer.Tick+=(_,_)=>Tick();timer.Start();
  }
  void Tick()
  {
   if(game.HasExited){timer.Stop();game.Dispose();Application.Current.Exit();return;}
-  bool down=(GetAsyncKeyState(0xc0)&0x8000)!=0;
+  short key=GetAsyncKeyState(0xc0);bool down=(key&0x8000)!=0;
   GetWindowThreadProcessId(GetForegroundWindow(),out uint foreground);
-  if(down&&!wasDown&&(foreground==gamePid||(visible&&foreground==Environment.ProcessId)))
+  if(!wasDown&&(down||(key&1)!=0)&&(foreground==gamePid||(visible&&foreground==Environment.ProcessId)))
   {
    if(visible){console.AppWindow.Hide();visible=false;}else{console.Activate();visible=true;}
   }

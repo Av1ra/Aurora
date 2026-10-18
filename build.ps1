@@ -23,6 +23,9 @@ try {
  New-Item -ItemType Directory "$app/docs" -Force | Out-Null
  Copy-Item -LiteralPath "$root/docs/RELEASE_DESCRIPTION.md" -Destination "$app/docs/Readme.md"
  Copy-Item -LiteralPath "$root/Packaging/legacy-files.tsv" -Destination "$app/retired-files.tsv"
+ $revision=(& git -C $root rev-parse HEAD).Trim()
+ $buildInfo=@{Version=$Version;Commit=$revision;ModifiedSources=[bool](& git -C $root status --porcelain);DevelopmentSigning=[bool]$Development}
+ [IO.File]::WriteAllText("$app/build-info.json",($buildInfo|ConvertTo-Json),[Text.UTF8Encoding]::new($false))
  $backendArgs=@('--noconfirm','--onedir','--console','--name','Aurora.ModelBackend','--distpath',"$buildRoot/backend",'--workpath',"$buildRoot/backend-work",'--specpath',"$root/artifacts","$root/Backend/mask_backend.py")
  if($PythonDependencyDirectory){Run $Python (@('-c','import sys;sys.path.insert(0,sys.argv[1]);from PyInstaller.__main__ import run;run(sys.argv[2:])',$PythonDependencyDirectory)+$backendArgs)}else{Run $Python (@('-m','PyInstaller')+$backendArgs)}
  Copy-Item -LiteralPath "$buildRoot/module/Aurora.Editor.Module.dll" -Destination "$buildRoot/addon/Editor"

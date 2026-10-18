@@ -31,6 +31,8 @@ jobs:
           $build = Get-Content artifacts/latest-build.txt -Raw
           python Packaging/test-native.py "$build/package/app/Aurora.Installer.exe"
           if ($LASTEXITCODE -ne 0) { throw 'Native installer test failed' }
+          python Packaging/test-package.py "$build/output"
+          if ($LASTEXITCODE -ne 0) { throw 'Adjacent archive test failed' }
           dotnet run --project Aurora.UpdateTests -c Release -- "$build/package/app/Assets/publisher.pem" "$build/output"
           if ($LASTEXITCODE -ne 0) { throw 'Package verification failed' }
       - uses: actions/upload-artifact@v4

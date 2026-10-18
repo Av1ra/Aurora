@@ -42,6 +42,7 @@ The runtime is not packed into a self-extracting single EXE. This keeps native W
 ```powershell
 dotnet run --project Aurora.Tests -c Release
 python Packaging/test-native.py <build>/package/app/Aurora.Installer.exe
+python Packaging/test-package.py <build>/output
 dotnet run --project Aurora.UpdateTests -c Release -- <build>/package/app/Assets/publisher.pem <build>/output
 ```
 
@@ -54,3 +55,4 @@ After the owner approves a public release, publish the signed addon and aurora-e
 ## UI reference
 
 Use a narrow sidebar and an actionable game page (launch, modules, folders, Workshop), inspired by the game-hub pattern shown in the official Xbox PC app: https://www.xbox.com/en-us/apps/xbox-app-on-pc. Do not copy branding or add invented performance settings.
+
