@@ -38,7 +38,7 @@ sealed class MainWindow:Window
  Preferences prefs;
  List<VerifiedMod> mods=[];
  List<WorkshopUpdateOffer> workshopOffers=[];
- bool workshopPromptActive;
+ bool workshopPromptActive,applyingDiscovery,discovering,discoverAgain;
  readonly UpdateService updates=new();
  readonly string publicKey=File.ReadAllText(Path.Combine(AppContext.BaseDirectory,"Assets","publisher.pem"));
  [DllImport("kernel32.dll",CharSet=CharSet.Unicode)]static extern uint GetPrivateProfileInt(string section,string key,int fallback,string file);
@@ -60,7 +60,7 @@ sealed class MainWindow:Window
   russian.Click+=(_,_)=>ChangeLanguage(false);english.Click+=(_,_)=>ChangeLanguage(true);
   navigation.ItemInvoked+=(_,e)=>{if(e.InvokedItemContainer==language)languageMenu.ShowAt(language);};
   navigation.Loaded+=(_,_)=>ChangeLanguage(UiLanguage.English);
-  navigation.SelectionChanged+=(_,e)=>{if(ReferenceEquals(e.SelectedItem,settingsItem))Settings();else if(e.SelectedItem is NavigationViewItem item&&item.Tag is VerifiedMod mod)ShowMod(mod);else Home();};
+  navigation.SelectionChanged+=(_,e)=>{if(applyingDiscovery)return;if(ReferenceEquals(e.SelectedItem,settingsItem))Settings();else if(e.SelectedItem is NavigationViewItem item&&item.Tag is VerifiedMod mod)ShowMod(mod);else Home();};
   Home();navigation.Loaded+=(_,_)=>Discover();
   _=CheckUpdates();
  }
@@ -68,9 +68,15 @@ sealed class MainWindow:Window
  void Discover(){_=DiscoverAsync();}
  void ApplyDiscovery(List<VerifiedMod> found,List<string> errors,List<WorkshopUpdateOffer> offers)
  {
+  bool wasSettings=ReferenceEquals(navigation.SelectedItem,settingsItem);
+  string? selectedId=(navigation.SelectedItem as NavigationViewItem)?.Tag is VerifiedMod previous?previous.Manifest.Id:null;
+  applyingDiscovery=true;
   mods=found;workshopOffers=offers;navigation.MenuItems.Clear();navigation.MenuItems.Add(new NavigationViewItem{Content=UiLanguage.Text("Главная"),Icon=new SymbolIcon(Symbol.Home)});
   foreach(var mod in mods.Where(m=>m.Manifest.Placement=="navigation"))navigation.MenuItems.Add(new NavigationViewItem{Content=UiLanguage.Text(mod.Manifest.Name),Tag=mod,Icon=new FontIcon{Glyph=mod.Manifest.Category=="graphics"?"\uE790":mod.Manifest.Category=="camera"?"\uE722":"\uE8F1"}});
-  status.Text=string.Join("\n",errors);navigation.SelectedItem=navigation.MenuItems[0];Home();
+  status.Text=string.Join("\n",errors);
+  navigation.SelectedItem=wasSettings?settingsItem:navigation.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(x=>x.Tag is VerifiedMod m&&m.Manifest.Id==selectedId)??navigation.MenuItems[0];
+  applyingDiscovery=false;
+  if(wasSettings)Settings();else if(navigation.SelectedItem is NavigationViewItem current&&current.Tag is VerifiedMod module)ShowMod(module);else Home();
  }
  TextBlock Heading(string text)=>new(){Text=UiLanguage.Text(text),FontSize=28,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold};
  void ClearBody(){body.Spacing=14;string previous=status.Text;body.Children.Clear();status=new TextBlock{Text=previous,TextWrapping=TextWrapping.Wrap,Opacity=.8};}
@@ -125,19 +131,23 @@ sealed class MainWindow:Window
  }
  async Task DiscoverAsync()
  {
-  if(!Directory.Exists(prefs.Game)){ApplyDiscovery([],[],[]);return;}
+  if(discovering){discoverAgain=true;return;}
+  discovering=true;string gamePath=prefs.Game;
   status.Text=UiLanguage.Text("Поиск модулей…");
   try
   {
+   if(!Directory.Exists(gamePath)){ApplyDiscovery([],[],[]);return;}
    var result=await Task.Run(()=>{
-    var modules=new ModCatalog(publicKey).Discover(new[]{Path.Combine(AppContext.BaseDirectory,"Modules")}.Concat(SteamDiscovery.FindRoots(prefs.Game)));
-    var updates=WorkshopUpdates.Scan(prefs.Game);
+    var modules=new ModCatalog(publicKey).Discover(new[]{Path.Combine(AppContext.BaseDirectory,"Modules")}.Concat(SteamDiscovery.FindRoots(gamePath)));
+    var updates=WorkshopUpdates.Scan(gamePath);
     return (modules.Mods,Errors:modules.Errors.Concat(updates.Errors).ToList(),updates.Offers);
    });
+   if(!string.Equals(gamePath,prefs.Game,StringComparison.OrdinalIgnoreCase)){discoverAgain=true;return;}
    ApplyDiscovery(result.Mods,result.Errors,result.Offers);
    if(result.Offers.Count>0)await ShowWorkshopUpdatesAsync(result.Offers);
   }
   catch(Exception ex){Notice(ex.Message);}
+  finally{discovering=false;if(discoverAgain){discoverAgain=false;_=DiscoverAsync();}}
  }
  async Task ShowWorkshopUpdatesAsync(List<WorkshopUpdateOffer> offers)
  {
@@ -262,7 +272,7 @@ sealed class MainWindow:Window
   var path=new TextBox{Header="Папка SovietRepublic",Text=prefs.Game};locations.Children.Add(path);
   var destination=new TextBox{Header=UiLanguage.Text("Папка установки модулей"),IsReadOnly=true,Text=string.IsNullOrWhiteSpace(path.Text)?"":Path.Combine(path.Text,"mods")};path.TextChanged+=(_,_)=>{try{destination.Text=string.IsNullOrWhiteSpace(path.Text)?"":Path.Combine(path.Text,"mods");}catch{destination.Text="";}};locations.Children.Add(destination);
   var locateButtons=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
-  locateButtons.Children.Add(AsyncButton("Выбрать папку…",async()=>{var picker=new Windows.Storage.Pickers.FolderPicker();picker.FileTypeFilter.Add("*");WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));var folder=await picker.PickSingleFolderAsync();if(folder!=null)path.Text=folder.Path;}));
+  locateButtons.Children.Add(AsyncButton("Выбрать папку…",async()=>{var picker=new Microsoft.Windows.Storage.Pickers.FolderPicker(AppWindow.Id);var folder=await picker.PickSingleFolderAsync();if(folder!=null)path.Text=folder.Path;}));
   locateButtons.Children.Add(Button("Сохранить папку",()=>{if(!File.Exists(Path.Combine(path.Text,"SOVIET64.exe")))throw new InvalidDataException("В выбранной папке нет SOVIET64.exe.");prefs=prefs with{Game=Path.GetFullPath(path.Text)};Save();Discover();}));
   locateButtons.Children.Add(Button("Workshop",()=>Process.Start(new ProcessStartInfo("https://steamcommunity.com/app/784150/workshop/"){UseShellExecute=true})));locations.Children.Add(locateButtons);body.Children.Add(Card(locations));
   foreach(var module in mods.Where(x=>x.Manifest.Placement=="settings"))body.Children.Add(SettingsModuleCard(module));
