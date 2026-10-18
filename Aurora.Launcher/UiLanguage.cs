@@ -55,6 +55,8 @@ static class UiLanguage
       ["Свечение…"]="Emissive…",
       ["Карты текстур"]="Texture maps",
       ["MTL не выбран"]="No MTL selected",
+      ["Версия модуля"]="Module version",
+      ["Режим отображения"]="Display mode",
       ["Проверка обновлений…"]="Checking for updates…",["Не удалось проверить обновления."]="Could not check for updates.",
       ["Откройте модель"]="Open a model",["Выберите NMF. Затем добавьте материал MTL, чтобы настроить PBR и стекло."]="Choose an NMF, then add an MTL material to configure PBR and glass.",
       ["Сначала откройте NMF"]="Open an NMF first",["Выберите объект"]="Select an object",["Выберите материал"]="Select a material",["Модель / LOD"]="Model / LOD",["Объект"]="Object",["Материал"]="Material",

@@ -150,7 +150,8 @@ sealed class EditorWindow:Window
   maps.Children.Add(DialogButton("Убрать загруженные карты",()=>{baseMap=normal=orm=metalMap=roughMap=aoMap=emissive=null;foreach(var refresh in mapRefresh)refresh();return Task.CompletedTask;}));
   panel.Children.Add(new Expander{Header=UiLanguage.Text("Карты текстур"),Content=maps,HorizontalAlignment=HorizontalAlignment.Stretch,HorizontalContentAlignment=HorizontalAlignment.Stretch});
   panel.Children.Add(new Expander{Header=UiLanguage.Text("Дополнительно"),Content=advanced,HorizontalAlignment=HorizontalAlignment.Stretch,HorizontalContentAlignment=HorizontalAlignment.Stretch});
-  var dialog=new ContentDialog{Title=name,MinWidth=Math.Min(480,Math.Max(280,((FrameworkElement)Content).ActualWidth-48)),Content=new ScrollViewer{Content=panel,MaxHeight=520},PrimaryButtonText=UiLanguage.Text("Применить"),CloseButtonText=UiLanguage.Text("Отмена"),XamlRoot=((FrameworkElement)Content).XamlRoot};
+  var dialogBody=new ScrollViewer{Content=panel,MinWidth=Math.Max(0,Math.Min(432,((FrameworkElement)Content).ActualWidth-96)),MaxHeight=Math.Min(520,Math.Max(180,((FrameworkElement)Content).ActualHeight-200)),HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled};
+  var dialog=new ContentDialog{Title=name,Content=dialogBody,PrimaryButtonText=UiLanguage.Text("Применить"),CloseButtonText=UiLanguage.Text("Отмена"),XamlRoot=((FrameworkElement)Content).XamlRoot};
   UiLanguage.Apply(panel);
   if(await dialog.ShowAsync()!=ContentDialogResult.Primary)return;
   dirty=true;settings[name]=new(baseMap,normal,orm,(float)metal.Value,(float)rough.Value,(float)ao.Value,(float)strength.Value,native.IsOn,metalMap,roughMap,aoMap,emissive,(float)emission.Value,(float)ibl.Value,normalY.SelectedIndex==0?-1:1);

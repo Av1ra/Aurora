@@ -96,7 +96,7 @@ sealed class MainWindow:Window
   var grid=new Grid{ColumnSpacing=18};grid.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});grid.ColumnDefinitions.Add(new(){Width=GridLength.Auto});
   var text=new StackPanel{Spacing=5};text.Children.Add(RowTitle(title,badge));if(description!=null)text.Children.Add(new TextBlock{Text=UiLanguage.Text(description),FontSize=12,Opacity=.72,TextWrapping=TextWrapping.Wrap});
   if(action!=null)text.Children.Add(action);
-  toggle.VerticalAlignment=VerticalAlignment.Center;toggle.OnContent=UiLanguage.Text("Вкл.");toggle.OffContent=UiLanguage.Text("Выкл.");Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(toggle,title);Grid.SetColumn(toggle,1);grid.Children.Add(text);grid.Children.Add(toggle);return Card(grid);
+  toggle.VerticalAlignment=VerticalAlignment.Center;toggle.OnContent=UiLanguage.Text("Вкл.");toggle.OffContent=UiLanguage.Text("Выкл.");Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(toggle,UiLanguage.Text(title));Grid.SetColumn(toggle,1);grid.Children.Add(text);grid.Children.Add(toggle);return Card(grid);
  }
  void Home()
  {
@@ -108,7 +108,8 @@ sealed class MainWindow:Window
   var play=AsyncButton("Запустить игру",LaunchGame);play.IsEnabled=found;actions.Children.Add(play);
   actions.Children.Add(Button("Настройки игры и модулей",Settings));body.Children.Add(actions);
   var moduleState=new StackPanel{Spacing=8};moduleState.Children.Add(RowTitle("Модули"));
-  moduleState.Children.Add(new TextBlock{Text=mods.Count==0?UiLanguage.Text("Совместимые модули не найдены."):string.Join("\n",mods.Select(x=>UiLanguage.Text(x.Manifest.Name))),TextWrapping=TextWrapping.Wrap,Opacity=.75});
+  if(mods.Count==0)moduleState.Children.Add(new TextBlock{Text=UiLanguage.Text("Совместимые модули не найдены."),TextWrapping=TextWrapping.Wrap,Opacity=.75});
+  foreach(var module in mods){var line=new Grid{ColumnSpacing=12};line.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});line.ColumnDefinitions.Add(new(){Width=GridLength.Auto});var link=new HyperlinkButton{Content=UiLanguage.Text(module.Manifest.Name),HorizontalAlignment=HorizontalAlignment.Left,Padding=new Thickness(0,3,0,3)};link.Click+=(_,_)=>{navigation.SelectedItem=module.Manifest.Placement=="settings"?settingsItem:navigation.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(x=>x.Tag is VerifiedMod m&&m.Manifest.Id==module.Manifest.Id);};line.Children.Add(link);var version=new TextBlock{Text=module.Manifest.Version,Opacity=.6,VerticalAlignment=VerticalAlignment.Center};ToolTipService.SetToolTip(version,UiLanguage.Text("Версия модуля"));Grid.SetColumn(version,1);line.Children.Add(version);moduleState.Children.Add(line);}
   moduleState.Children.Add(AsyncButton("Проверить обновления модулей",DiscoverAsync));body.Children.Add(Card(moduleState));
   // A registered ID is an internal source filter, not a permanent home-screen item.
   // Display a Workshop card only when an install or update is actually available.
@@ -187,7 +188,7 @@ sealed class MainWindow:Window
  static void RefreshDependencies(ModManifest manifest,Dictionary<string,(Control Control,Func<bool> Value)> controls){
   var options=manifest.Options.ToDictionary(x=>x.Id,StringComparer.Ordinal);
   bool Active(string id)=>controls.TryGetValue(id,out var state)&&state.Value()&&(options[id].Requires??[]).All(Active);
-  foreach(var option in manifest.Options){if(!controls.TryGetValue(option.Id,out var state))continue;var required=option.Requires??[];state.Control.IsEnabled=required.All(Active);ToolTipService.SetToolTip(state.Control,required.Length==0?null:UiLanguage.Text("Требуется включить")+": "+string.Join(", ",required.Select(x=>UiLanguage.Text(options[x].Label))));}
+  foreach(var option in manifest.Options){if(!controls.TryGetValue(option.Id,out var state))continue;var required=option.Requires??[];state.Control.IsEnabled=required.All(Active);string hint=required.Length==0?"":UiLanguage.Text("Требуется включить")+": "+string.Join(", ",required.Select(x=>UiLanguage.Text(options[x].Label)));ToolTipService.SetToolTip(state.Control,hint.Length==0?null:hint);Microsoft.UI.Xaml.Automation.AutomationProperties.SetHelpText(state.Control,hint);}
  }
  void ShowMod(VerifiedMod mod)
  {
@@ -226,7 +227,7 @@ sealed class MainWindow:Window
    if(option.Kind=="toggle")
    {
     var toggle=new ToggleSwitch{IsOn=GetPrivateProfileInt(option.Section,option.Key,option.Default?1:0,file)!=0,VerticalAlignment=VerticalAlignment.Center,OnContent=UiLanguage.Text("Вкл."),OffContent=UiLanguage.Text("Выкл.")};
-    Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(toggle,option.Label);
+    Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(toggle,UiLanguage.Text(option.Label));
     toggle.Toggled+=(_,_)=>{try{Write(option,toggle.IsOn?1:0);RefreshDependencies(module.Manifest,states);}catch(Exception ex){Notice(ex.Message);}};
     states[option.Id]=(toggle,()=>toggle.IsOn);Grid.SetColumn(toggle,1);row.Children.Add(toggle);
    }
@@ -235,7 +236,7 @@ sealed class MainWindow:Window
     row.ColumnDefinitions[1].Width=new GridLength(1,GridUnitType.Star);
     var right=new Grid{ColumnSpacing=8};right.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});right.ColumnDefinitions.Add(new(){Width=GridLength.Auto});
     var slider=new Slider{Minimum=option.Minimum,Maximum=option.Maximum,StepFrequency=1,Value=GetPrivateProfileInt(option.Section,option.Key,option.DefaultValue,file),MaxWidth=230,HorizontalAlignment=HorizontalAlignment.Stretch};
-    Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(slider,option.Label);
+    Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(slider,UiLanguage.Text(option.Label));
     var value=new TextBlock{Text=((int)slider.Value).ToString(),Width=34,VerticalAlignment=VerticalAlignment.Center};
     slider.ValueChanged+=(_,e)=>{value.Text=((int)e.NewValue).ToString();try{Write(option,(int)e.NewValue);}catch(Exception ex){Notice(ex.Message);}};
     states[option.Id]=(slider,()=>true);Grid.SetColumn(value,1);right.Children.Add(slider);right.Children.Add(value);
