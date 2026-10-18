@@ -27,7 +27,7 @@ sealed class EditorWindow:Window
  readonly TextBlock status=new(){Text="Выберите NMF и MTL",TextWrapping=TextWrapping.Wrap,IsTextSelectionEnabled=true};
  readonly Dictionary<string,NativeModel> lods=[];readonly Dictionary<string,HashSet<string>> glassObjects=[];
  readonly Dictionary<string,MaterialSettings> settings=[];
- string? selectedLod,mtl,mask,maskMaterial;bool ready,busy,dirty,closeApproved,closePrompt;
+ string? selectedLod,mtl,mask,maskMaterial;bool ready,busy,processing,dirty,closeApproved,closePrompt;
  readonly TextBlock dirtyText=new(){Text=UiLanguage.Text("Есть несохранённые изменения"),FontSize=12,Opacity=.75,Visibility=Visibility.Collapsed};
  readonly ProgressBar busyIndicator=new(){IsIndeterminate=true,Visibility=Visibility.Collapsed};
  readonly List<(Button Button,Func<bool> CanExecute)> commandButtons=[];
@@ -65,9 +65,9 @@ sealed class EditorWindow:Window
  async void LoadedView(){try{await view.EnsureCoreWebView2Async();string folder=File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","Assets","viewport.html"))?"Editor":"";view.NavigateToString(File.ReadAllText(Path.Combine(AppContext.BaseDirectory,folder,"Assets","viewport.html")));}catch(Exception ex){status.Text=UiLanguage.Text("Не удалось открыть viewport")+": "+ex.Message;}}
  async Task<bool> ConfirmDiscard(bool closing=false){if(!dirty)return true;return await new ContentDialog{Title=UiLanguage.Text(closing?"Закрыть редактор?":"Открыть другую модель?"),Content=UiLanguage.Text("Несохранённые настройки текущей модели будут потеряны."),PrimaryButtonText=UiLanguage.Text(closing?"Закрыть без сохранения":"Открыть"),CloseButtonText=UiLanguage.Text("Отмена"),DefaultButton=ContentDialogButton.Close,XamlRoot=((FrameworkElement)Content).XamlRoot}.ShowAsync()==ContentDialogResult.Primary;}
  NativeModel CurrentModel()=>lods[selectedLod??throw new InvalidOperationException("Выберите NMF")];
- void UpdateControls(){dirtyText.Visibility=dirty?Visibility.Visible:Visibility.Collapsed;busyIndicator.Visibility=busy?Visibility.Visible:Visibility.Collapsed;view.IsHitTestVisible=!busy;foreach(var command in commandButtons)command.Button.IsEnabled=!busy&&command.CanExecute();lodChoice.IsEnabled=!busy&&HasModel;objects.IsEnabled=!busy&&HasModel;materialChoice.IsEnabled=!busy&&HasModel;emptyView.Visibility=selectedLod==null?Visibility.Visible:Visibility.Collapsed;}
+ void UpdateControls(){dirtyText.Visibility=dirty?Visibility.Visible:Visibility.Collapsed;busyIndicator.Visibility=busy&&processing?Visibility.Visible:Visibility.Collapsed;view.IsHitTestVisible=!busy;foreach(var command in commandButtons)command.Button.IsEnabled=!busy&&command.CanExecute();lodChoice.IsEnabled=!busy&&HasModel;objects.IsEnabled=!busy&&HasModel;materialChoice.IsEnabled=!busy&&HasModel;emptyView.Visibility=selectedLod==null?Visibility.Visible:Visibility.Collapsed;}
  Button Button(string label,Func<Task> action,Func<bool>? canExecute=null){var b=new Button{Content=UiLanguage.Text(label),HorizontalAlignment=HorizontalAlignment.Stretch};commandButtons.Add((b,canExecute??(()=>true)));b.Click+=async(_,_)=>await RunCommand(action);return b;}
- async Task RunCommand(Func<Task> action){if(busy)return;busy=true;UpdateControls();try{await action();}catch(Exception ex){status.Text=UiLanguage.Text(ex.Message);}finally{busy=false;UpdateControls();}}
+ async Task RunCommand(Func<Task> action){if(busy)return;busy=true;processing=false;UpdateControls();try{await action();}catch(Exception ex){status.Text=UiLanguage.Text(ex.Message);}finally{busy=false;processing=false;UpdateControls();}}
  void SelectLod(string path){selectedLod=path;lodChoice.SelectedItem=lodChoice.Items.OfType<ComboBoxItem>().First(x=>string.Equals(x.Tag as string,path,StringComparison.OrdinalIgnoreCase));}
  void AddLodChoice(string path){if(lodChoice.Items.OfType<ComboBoxItem>().Any(x=>string.Equals(x.Tag as string,path,StringComparison.OrdinalIgnoreCase)))return;var item=new ComboBoxItem{Content=Path.GetFileName(path),Tag=path};ToolTipService.SetToolTip(item,path);lodChoice.Items.Add(item);}
  async Task<string?> Pick(params string[] extensions){var picker=new Windows.Storage.Pickers.FileOpenPicker();foreach(var ext in extensions)picker.FileTypeFilter.Add(ext);WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));return(await picker.PickSingleFileAsync())?.Path;}
@@ -75,6 +75,7 @@ sealed class EditorWindow:Window
  async Task AddModel(string path){var model=await Task.Run(()=>new NativeModel(File.ReadAllBytes(path)));lods[path]=model;glassObjects.TryAdd(path,[]);AddLodChoice(path);}
  async Task Load(string path)
  {
+  processing=true;UpdateControls();
   // Load siblings so LOD files cannot silently disappear from an export.
   var siblings=Directory.GetFiles(Path.GetDirectoryName(path)!,"*.nmf").Where(p=>p.Equals(path,StringComparison.OrdinalIgnoreCase)||Regex.IsMatch(Path.GetFileName(p),@"^lod.*\.nmf$",RegexOptions.IgnoreCase)).ToArray();
   var parsed=await Task.Run(()=>siblings.ToDictionary(x=>x,x=>new NativeModel(File.ReadAllBytes(x))));
@@ -86,7 +87,7 @@ sealed class EditorWindow:Window
  }
  async Task Display()
  {
-  UpdateControls();if(!ready||selectedLod==null)return;var model=CurrentModel();objects.Items.Clear();foreach(var node in model.Nodes)objects.Items.Add(node.Name);materialChoice.Items.Clear();foreach(var name in model.Materials)materialChoice.Items.Add(name);if(objects.Items.Count>0)objects.SelectedIndex=0;if(materialChoice.Items.Count>0)materialChoice.SelectedIndex=0;
+  processing=true;UpdateControls();if(!ready||selectedLod==null)return;var model=CurrentModel();objects.Items.Clear();foreach(var node in model.Nodes)objects.Items.Add(node.Name);materialChoice.Items.Clear();foreach(var name in model.Materials)materialChoice.Items.Add(name);if(objects.Items.Count>0)objects.SelectedIndex=0;if(materialChoice.Items.Count>0)materialChoice.SelectedIndex=0;
   var scene=new{model.Materials,Nodes=model.Nodes.Select(n=>new{n.Name,n.Positions,n.Normals,n.Uv,Indices=n.Indices.Select(x=>(int)x).ToArray(),n.Groups})};
   string sceneJson=await Task.Run(()=>JsonSerializer.Serialize(scene));
   await view.ExecuteScriptAsync("load("+sceneJson+")");await LoadTextures();
@@ -95,7 +96,7 @@ sealed class EditorWindow:Window
  }
  async Task LoadTextures()
  {
-  if(!ready||mtl==null||!File.Exists(mtl))return;
+  if(!ready||mtl==null||!File.Exists(mtl))return;processing=true;UpdateControls();
   string text=File.ReadAllText(mtl);string? name=null;
   foreach(var line in text.Split('\n'))
   {
@@ -129,21 +130,24 @@ sealed class EditorWindow:Window
   async Task<string?> PickMap(string? current)=>await Pick(".dds")??current;
   var s=settings.GetValueOrDefault(name)??new();var panel=new StackPanel{Spacing=12};panel.Children.Add(dialogError);
   var mapRefresh=new List<Action>();
-  Slider Slider(string label,double value,double max=1){var header=new Grid{ColumnSpacing=12};header.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});header.ColumnDefinitions.Add(new(){Width=GridLength.Auto});header.Children.Add(new TextBlock{Text=UiLanguage.Text(label),TextWrapping=TextWrapping.Wrap});var number=new TextBlock{Text=value.ToString("0.00",CultureInfo.InvariantCulture),Opacity=.75};Grid.SetColumn(number,1);header.Children.Add(number);var slider=new Slider{Header=header,Minimum=0,Maximum=max,Value=value,StepFrequency=.01};Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(slider,UiLanguage.Text(label));slider.ValueChanged+=(_,e)=>number.Text=e.NewValue.ToString("0.00",CultureInfo.InvariantCulture);panel.Children.Add(slider);return slider;}
+  Slider Slider(string label,double value,double max=1,Panel? target=null){var row=new Grid{ColumnSpacing=10};row.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});row.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});row.ColumnDefinitions.Add(new(){Width=new GridLength(40)});row.Children.Add(new TextBlock{Text=UiLanguage.Text(label),TextWrapping=TextWrapping.Wrap,VerticalAlignment=VerticalAlignment.Center});var number=new TextBlock{Text=value.ToString("0.00",CultureInfo.InvariantCulture),Opacity=.75,VerticalAlignment=VerticalAlignment.Center,HorizontalAlignment=HorizontalAlignment.Right};Grid.SetColumn(number,2);row.Children.Add(number);var slider=new Slider{Minimum=0,Maximum=max,Value=value,StepFrequency=.01,MinHeight=32};Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(slider,UiLanguage.Text(label));slider.ValueChanged+=(_,e)=>number.Text=e.NewValue.ToString("0.00",CultureInfo.InvariantCulture);Grid.SetColumn(slider,1);row.Children.Add(slider);(target??panel).Children.Add(row);return slider;}
   var metal=Slider("Металличность",s.Metallic);var rough=Slider("Шероховатость",s.Roughness);var ao=Slider("AO",s.Ao);var strength=Slider("Сила normal",s.NormalStrength,3);
   var native=new ToggleSwitch{Header="Сохранять штатную цветовую текстуру",IsOn=s.Native};panel.Children.Add(native);
   string? baseMap=s.Base,normal=s.Normal,orm=s.Orm,metalMap=s.MetalMap,roughMap=s.RoughMap,aoMap=s.AoMap,emissive=s.Emissive;
+  var maps=new StackPanel{Spacing=8};var advanced=new StackPanel{Spacing=8};
   void MapRow(string label,Func<string?> current,Action<string?> assign){
    var row=new Grid{ColumnSpacing=12};row.ColumnDefinitions.Add(new(){Width=new GridLength(140)});row.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});
    var filename=new TextBlock{VerticalAlignment=VerticalAlignment.Center,TextTrimming=TextTrimming.CharacterEllipsis,Opacity=.75};
    void Refresh(){filename.Text=current()==null?UiLanguage.Text("Не выбрана"):Path.GetFileName(current());ToolTipService.SetToolTip(filename,current());}
-   mapRefresh.Add(Refresh);Refresh();row.Children.Add(DialogButton(label,async()=>{assign(await PickMap(current()));Refresh();}));Grid.SetColumn(filename,1);row.Children.Add(filename);panel.Children.Add(row);
+   mapRefresh.Add(Refresh);Refresh();row.Children.Add(DialogButton(label,async()=>{assign(await PickMap(current()));Refresh();}));Grid.SetColumn(filename,1);row.Children.Add(filename);maps.Children.Add(row);
   }
   MapRow("Базовый цвет…",()=>baseMap,v=>baseMap=v);MapRow("Normal-карта…",()=>normal,v=>normal=v);MapRow("ORM…",()=>orm,v=>orm=v);
   MapRow("Металличность…",()=>metalMap,v=>metalMap=v);MapRow("Шероховатость…",()=>roughMap,v=>roughMap=v);MapRow("AO…",()=>aoMap,v=>aoMap=v);MapRow("Свечение…",()=>emissive,v=>emissive=v);
-  var emission=Slider("Сила свечения",s.EmissiveStrength,8);var ibl=Slider("Свет окружения",s.Ibl,3);var normalY=new ComboBox{Header="Normal-карта",ItemsSource=new[]{"DirectX","OpenGL"},SelectedIndex=s.NormalY<0?0:1};panel.Children.Add(normalY);
-  panel.Children.Add(DialogButton("Убрать загруженные карты",()=>{baseMap=normal=orm=metalMap=roughMap=aoMap=emissive=null;foreach(var refresh in mapRefresh)refresh();return Task.CompletedTask;}));
-  var dialog=new ContentDialog{Title=name,Content=new ScrollViewer{Content=panel,MaxHeight=520},PrimaryButtonText=UiLanguage.Text("Применить"),CloseButtonText=UiLanguage.Text("Отмена"),XamlRoot=((FrameworkElement)Content).XamlRoot};
+  var emission=Slider("Сила свечения",s.EmissiveStrength,8,advanced);var ibl=Slider("Свет окружения",s.Ibl,3,advanced);var normalY=new ComboBox{Header="Normal-карта",ItemsSource=new[]{"DirectX","OpenGL"},SelectedIndex=s.NormalY<0?0:1};advanced.Children.Add(normalY);
+  maps.Children.Add(DialogButton("Убрать загруженные карты",()=>{baseMap=normal=orm=metalMap=roughMap=aoMap=emissive=null;foreach(var refresh in mapRefresh)refresh();return Task.CompletedTask;}));
+  panel.Children.Add(new Expander{Header=UiLanguage.Text("Карты текстур"),Content=maps,HorizontalAlignment=HorizontalAlignment.Stretch,HorizontalContentAlignment=HorizontalAlignment.Stretch});
+  panel.Children.Add(new Expander{Header=UiLanguage.Text("Дополнительно"),Content=advanced,HorizontalAlignment=HorizontalAlignment.Stretch,HorizontalContentAlignment=HorizontalAlignment.Stretch});
+  var dialog=new ContentDialog{Title=name,MinWidth=Math.Min(480,Math.Max(280,((FrameworkElement)Content).ActualWidth-48)),Content=new ScrollViewer{Content=panel,MaxHeight=520},PrimaryButtonText=UiLanguage.Text("Применить"),CloseButtonText=UiLanguage.Text("Отмена"),XamlRoot=((FrameworkElement)Content).XamlRoot};
   UiLanguage.Apply(panel);
   if(await dialog.ShowAsync()!=ContentDialogResult.Primary)return;
   dirty=true;settings[name]=new(baseMap,normal,orm,(float)metal.Value,(float)rough.Value,(float)ao.Value,(float)strength.Value,native.IsOn,metalMap,roughMap,aoMap,emissive,(float)emission.Value,(float)ibl.Value,normalY.SelectedIndex==0?-1:1);
