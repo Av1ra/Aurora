@@ -17,7 +17,7 @@ static class UiLanguage
       ["Включить PBR"]="Enable PBR",["Общий переключатель эффектов мода"]="Master switch for mod effects",
       ["PBR автомобилей"]="Vehicle PBR",["Материалы, normal-карты, AO и отражения"]="Materials, normal maps, AO and reflections",
       ["PBR зданий и объектов"]="Building and object PBR",["Материалы и normal-карты поддерживаемых объектов"]="Materials and normal maps for supported objects",
-      ["Бета"]="Beta",["PBR дорог"]="Road PBR",["Normal-карты и PBR дорожных материалов"]="Normal maps and PBR road materials",
+      ["Бета"]="Beta",["Альфа"]="Alpha",["Консоль"]="Console",["Экспериментальные функции"]="Experimental features",["PBR дорог"]="Road PBR",["Normal-карты и PBR дорожных материалов"]="Normal maps and PBR road materials",
       ["Дополнительные тени"]="Additional shadows",["Самотень автомобилей. Контактные тени требуют PBR дорог. Штатные тени сохраняются."]="Vehicle self-shadowing. Contact shadows require road PBR. Native shadows remain enabled.",
       ["Стекло"]="Glass",["Прозрачность и отражения стёкол. Требует PBR автомобилей."]="Glass transparency and reflections. Requires vehicle PBR.",
       ["Полный комплект текстур земли, дорог и растительности."]="Full terrain, road and vegetation texture set.",
