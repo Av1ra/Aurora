@@ -1,4 +1,4 @@
-using Aurora.Core;
+﻿using Aurora.Core;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -71,7 +71,7 @@ sealed class MainWindow:Window
   status.Text=string.Join("\n",errors);navigation.SelectedItem=navigation.MenuItems[0];Home();
  }
  TextBlock Heading(string text)=>new(){Text=UiLanguage.Text(text),FontSize=28,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold};
- void ClearBody(){string previous=status.Text;body.Children.Clear();status=new TextBlock{Text=previous,TextWrapping=TextWrapping.Wrap,Opacity=.8};}
+ void ClearBody(){body.Spacing=14;string previous=status.Text;body.Children.Clear();status=new TextBlock{Text=previous,TextWrapping=TextWrapping.Wrap,Opacity=.8};}
  Button Button(string label,Action action){var button=new Button{Content=UiLanguage.Text(label)};button.Click+=(_,_)=>{try{action();}catch(Exception ex){Notice(ex.Message);}};return button;}
  Button AsyncButton(string label,Func<Task> action){var button=new Button{Content=UiLanguage.Text(label)};button.Click+=async(_,_)=>{button.IsEnabled=false;try{await action();}catch(Exception ex){Notice(ex.Message);}finally{button.IsEnabled=true;}};return button;}
  internal static Border Badge(string text)
@@ -80,7 +80,7 @@ sealed class MainWindow:Window
   border.Child=new TextBlock{Text=UiLanguage.Text(text),FontSize=11,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold};return border;
  }
  static StackPanel RowTitle(string title,string? badge=null){var panel=new StackPanel{Orientation=Orientation.Horizontal,Spacing=10};panel.Children.Add(new TextBlock{Text=UiLanguage.Text(title),FontWeight=Microsoft.UI.Text.FontWeights.SemiBold,VerticalAlignment=VerticalAlignment.Center});if(badge!=null)panel.Children.Add(Badge(badge));return panel;}
- static Border Card(UIElement content){var border=(Border)XamlReader.Load("<Border xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" Background=\"{ThemeResource CardBackgroundFillColorDefaultBrush}\" BorderBrush=\"{ThemeResource CardStrokeColorDefaultBrush}\" BorderThickness=\"1\" CornerRadius=\"8\" Padding=\"18,14\" HorizontalAlignment=\"Stretch\"/>");border.Child=content;return border;}
+ static Border Card(UIElement content){var border=(Border)XamlReader.Load("<Border xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" Background=\"{ThemeResource CardBackgroundFillColorDefaultBrush}\" BorderBrush=\"{ThemeResource CardStrokeColorDefaultBrush}\" BorderThickness=\"1\" CornerRadius=\"8\" Padding=\"14,6\" HorizontalAlignment=\"Stretch\"/>");border.Child=content;return border;}
  static Border FeatureCard(string title,ToggleSwitch toggle,string? badge=null,string? description=null,UIElement? action=null)
  {
   var grid=new Grid{ColumnSpacing=18};grid.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});grid.ColumnDefinitions.Add(new(){Width=GridLength.Auto});
@@ -99,17 +99,18 @@ sealed class MainWindow:Window
   actions.Children.Add(Button("Настройки игры и модулей",Settings));body.Children.Add(actions);
   var moduleState=new StackPanel{Spacing=8};moduleState.Children.Add(RowTitle("Модули"));
   moduleState.Children.Add(new TextBlock{Text=mods.Count==0?UiLanguage.Text("Совместимые модули не найдены."):string.Join("\n",mods.Select(x=>UiLanguage.Text(x.Manifest.Name))),TextWrapping=TextWrapping.Wrap,Opacity=.75});
-  moduleState.Children.Add(AsyncButton("Найти модули",DiscoverAsync));body.Children.Add(Card(moduleState));
+  moduleState.Children.Add(AsyncButton("Проверить обновления модулей",DiscoverAsync));body.Children.Add(Card(moduleState));
   var editor=new StackPanel{Orientation=Orientation.Horizontal,Spacing=12};editor.Children.Add(new TextBlock{Text=UiLanguage.Text("Мастер моделей"),VerticalAlignment=VerticalAlignment.Center,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});
   editor.Children.Add(AsyncButton(File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","acode.lnchr"))?"Открыть редактор":"Скачать редактор",OpenEditor));body.Children.Add(Card(editor));
   body.Children.Add(status);versionText=new TextBlock{Text=UiLanguage.Text(versionMessage),Opacity=.65};body.Children.Add(versionText);UiLanguage.Apply(body);
  }
- async Task DiscoverAsync(){if(!Directory.Exists(prefs.Game)){ApplyDiscovery([],[]);return;}status.Text=UiLanguage.Text("Поиск модулей…");try{var result=await Task.Run(()=>new ModCatalog(publicKey).Discover(SteamDiscovery.FindRoots(prefs.Game).Append(Path.Combine(AppContext.BaseDirectory,"Modules"))));ApplyDiscovery(result.Mods,result.Errors);}catch(Exception ex){Notice(ex.Message);}}
+ async Task DiscoverAsync(){if(!Directory.Exists(prefs.Game)){ApplyDiscovery([],[]);return;}status.Text=UiLanguage.Text("Поиск модулей…");try{var result=await Task.Run(()=>new ModCatalog(publicKey).Discover(new[]{Path.Combine(AppContext.BaseDirectory,"Modules")}.Concat(SteamDiscovery.FindRoots(prefs.Game))));ApplyDiscovery(result.Mods,result.Errors);}catch(Exception ex){Notice(ex.Message);}}
  void ShowMod(VerifiedMod mod)
  {
   ClearBody();body.Children.Add(Heading(mod.Manifest.Name));
   body.Children.Add(new TextBlock{Text="Изменения применяются при следующем запуске игры.",TextWrapping=TextWrapping.Wrap});
-  var beta=new StackPanel{Spacing=12};
+  body.Spacing=8;
+  var beta=new StackPanel{Spacing=6};
   string config=ModCatalog.SafePath(prefs.Game,"mods/"+mod.Manifest.Config);
   foreach(var option in mod.Manifest.Options)
   {
@@ -119,7 +120,6 @@ sealed class MainWindow:Window
   }
   if(beta.Children.Count>0)body.Children.Add(new Expander{Header=RowTitle("Экспериментальные функции","Бета"),Content=beta,IsExpanded=false,HorizontalAlignment=HorizontalAlignment.Stretch,HorizontalContentAlignment=HorizontalAlignment.Stretch});
   body.Children.Add(Button("Установить / обновить модуль",()=>Install(mod)));
-  body.Children.Add(AsyncButton("Запустить игру",LaunchGame));
   UiLanguage.Apply(body);
  }
  Border SettingsModuleCard(VerifiedMod module)
@@ -149,6 +149,9 @@ sealed class MainWindow:Window
  async Task LaunchGame()
  {
   if(!File.Exists(Path.Combine(prefs.Game,"SOVIET64.exe")))throw new FileNotFoundException("Выберите папку игры в настройках.");
+  // Steam owns Workshop downloads; re-read signed Workshop manifests before each launch.
+  var refreshed=await Task.Run(()=>new ModCatalog(publicKey).Discover(new[]{Path.Combine(AppContext.BaseDirectory,"Modules")}.Concat(SteamDiscovery.FindRoots(prefs.Game))));
+  mods=refreshed.Mods;
   foreach(var mod in mods)VerifyCurrent(mod);
   var start=new ProcessStartInfo(Path.Combine(AppContext.BaseDirectory,"Aurora.Bootstrap.exe")){WorkingDirectory=prefs.Game,UseShellExecute=false,RedirectStandardOutput=true};
   start.ArgumentList.Add(prefs.Game);

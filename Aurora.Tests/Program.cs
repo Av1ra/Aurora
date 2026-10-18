@@ -43,3 +43,12 @@ var numeric=manifest with{Schema=2,Placement="settings",Options=[new("degrees","
 Sign(numeric);Check(catalog.Verify(root).Options[0].DefaultValue==45,"signed numeric module metadata");
 Sign(numeric with{Schema=1});Reject(()=>catalog.Verify(root),"numeric control in old schema");
 Sign(numeric with{Options=[new("degrees","FOV","camera","degrees",Kind:"slider",Minimum:20,Maximum:100,DefaultValue:150)]});Reject(()=>catalog.Verify(root),"invalid numeric bounds");
+// Workshop content wins an equal-version tie against the bundled fallback.
+var bundled=Path.Combine(root,"bundled");var workshop=Path.Combine(root,"workshop","12345");
+Directory.CreateDirectory(bundled);Directory.CreateDirectory(workshop);
+Sign(manifest);
+foreach(var destination in new[]{bundled,workshop})foreach(var name in new[]{"acode.lnchr","module.dll"})File.Copy(Path.Combine(root,name),Path.Combine(destination,name));
+Check(catalog.Discover([bundled,Path.GetDirectoryName(workshop)!]).Mods.Single().Folder==workshop,"Workshop overrides bundled equal-version module");
+File.AppendAllText(Path.Combine(workshop,"module.dll"),"tampered-update");
+var fallback=catalog.Discover([bundled,Path.GetDirectoryName(workshop)!]);
+Check(fallback.Mods.Single().Folder==bundled&&fallback.Errors.Count==1,"tampered Workshop update rejected with fallback");

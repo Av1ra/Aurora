@@ -49,3 +49,11 @@ Fixed language root cause: translating the internal NavigationViewItem presenter
 FOV uses the researched SovietCDK table but requires exact executable SHA-256 296644a9f207d609031fc2ae73fed2dcb34619a1d55a35d1c7b51965ce6841b8 and a unique matching read-only table. Offline current executable match and synthetic ambiguity/truncation tests pass. Real-game visual acceptance is pending and must remain stated in prerelease notes. Unsupported executables are not modified.
 
 Preview verification: Home now shows both signed modules without a screenshot; the editor is already available in the full package. Settings has no Application heading or duplicate search, and Workshop is in Game and modules. Forward English/Settings was visually inspected, and returning Русский/Настройки was observed in the same running window. Numeric controls remain generic; only a discovered settings-placement module creates them. Pending: actual in-game visual FOV acceptance.
+
+## Latest handoff: compact rows and Workshop refresh
+
+Version remains 0.2. Launch game exists only on Home; removed from Graphics. Feature cards use smaller padding, and Graphics/beta lists have tighter spacing.
+
+The Home action checks module updates by rescanning signed acode.lnchr manifests in Steam Workshop content/784150 across detected Steam libraries. Steam itself downloads subscriptions; Aurora does not impersonate the Steam updater. Workshop wins an equal-version tie against the bundled fallback; newer valid versions win normally. Before launching, Aurora repeats this scan and installs changed verified payloads while preserving INI settings. Signature and SHA checks remain mandatory. FOV remains a separate module.
+
+Continue from PROJECT_MAP.md. Source changes are pushed to main for the next chat. Do not confuse earlier local package builds with this latest source revision; rebuild before publishing a binary. The owner authorized a preliminary v0.2 release, but no claim of publication is made by these notes.
