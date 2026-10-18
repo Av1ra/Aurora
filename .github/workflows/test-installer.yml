@@ -1,0 +1,94 @@
+name: Aurora Windows Installer Test
+on:
+  push:
+    branches:
+      - fix/installer-paths-compact-ui
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: windows-2025
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: x64
+
+      - name: Install Python packaging requirements
+        run: python -m pip install --disable-pip-version-check pyinstaller numpy pillow
+
+      - name: Run core tests
+        shell: pwsh
+        run: dotnet run --project Aurora.Tests/Aurora.Tests.csproj -c Release
+
+      - name: Run installer regression tests
+        shell: pwsh
+        run: dotnet run --project Aurora.InstallerTests/Aurora.InstallerTests.csproj -c Release
+
+      - name: Compile launcher and editor
+        shell: pwsh
+        run: |
+          dotnet publish Aurora.Launcher/Aurora.Launcher.csproj -c Release -p:Platform=x64 -o artifacts/ci/launcher
+          if ($LASTEXITCODE -ne 0) { throw "Launcher build failed" }
+          dotnet publish Aurora.Editor/Aurora.Editor.csproj -c Release -p:Platform=x64 -o artifacts/ci/editor
+          if ($LASTEXITCODE -ne 0) { throw "Editor build failed" }
+
+      - name: Compile bootstrap
+        shell: cmd
+        run: call build-native.cmd
+
+      - name: Package model backend
+        shell: pwsh
+        run: |
+          python -m PyInstaller --clean --noconfirm --onedir --console --exclude-module tkinter --exclude-module matplotlib --exclude-module PyQt5 --exclude-module PySide6 --name Aurora.ModelBackend --distpath artifacts/ci/backend --workpath artifacts/ci/backend-work --specpath artifacts/ci Backend/mask_backend.py
+          if ($LASTEXITCODE -ne 0) { throw "Backend build failed" }
+
+      - name: Prepare unsigned test installer
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          dotnet publish Aurora.Installer/Aurora.Installer.csproj -c Release -p:EmbedPayload=false -o artifacts/ci/updater
+          if ($LASTEXITCODE -ne 0) { throw "Updater build failed" }
+          $stage = Join-Path $pwd 'artifacts/ci/package'
+          New-Item -ItemType Directory -Path "$stage/Editor/Backend" -Force | Out-Null
+          Copy-Item -Path 'artifacts/ci/launcher/*' -Destination $stage -Recurse -Force
+          Copy-Item -LiteralPath 'artifacts/native/Aurora.Bootstrap.exe' -Destination $stage
+          Copy-Item -LiteralPath 'artifacts/ci/updater/Aurora.Installer.exe' -Destination $stage
+          Copy-Item -Path 'artifacts/ci/editor/*' -Destination "$stage/Editor" -Recurse -Force
+          Copy-Item -Path 'artifacts/ci/backend/Aurora.ModelBackend/*' -Destination "$stage/Editor/Backend" -Recurse -Force
+          Get-ChildItem -LiteralPath $stage -Recurse -File -Filter '*.pdb' | Remove-Item -Force
+          $parts = @(
+            @{Name='Launcher';Path='artifacts/ci/launcher'},
+            @{Name='Editor';Path='artifacts/ci/editor'},
+            @{Name='Backend';Path='artifacts/ci/backend/Aurora.ModelBackend'},
+            @{Name='Package';Path='artifacts/ci/package'}
+          )
+          $rows = foreach ($part in $parts) {
+            $size = (Get-ChildItem -LiteralPath $part.Path -Recurse -File | Measure-Object Length -Sum).Sum
+            '{0}: {1:N1} MiB' -f $part.Name,($size / 1MB)
+          }
+          [IO.File]::WriteAllLines('artifacts/ci/PACKAGE_SIZE.txt',[string[]]$rows)
+          [IO.Compression.ZipFile]::CreateFromDirectory($stage,(Join-Path $pwd 'artifacts/Aurora-payload.zip'),[IO.Compression.CompressionLevel]::Optimal,$false)
+          dotnet publish Aurora.Installer/Aurora.Installer.csproj -c Release -p:EmbedPayload=true -o artifacts/ci/setup
+          if ($LASTEXITCODE -ne 0) { throw "Installer build failed" }
+          Copy-Item -LiteralPath 'artifacts/ci/setup/Aurora.Installer.exe' -Destination 'artifacts/ci/Aurora-Setup.exe'
+          Get-FileHash -Algorithm SHA256 'artifacts/ci/Aurora-Setup.exe' | Format-List | Out-String | Add-Content 'artifacts/ci/PACKAGE_SIZE.txt'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Aurora-Installer-Test
+          path: |
+            artifacts/ci/Aurora-Setup.exe
+            artifacts/ci/PACKAGE_SIZE.txt
+          retention-days: 7
+          if-no-files-found: error
