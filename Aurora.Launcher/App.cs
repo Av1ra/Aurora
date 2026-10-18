@@ -171,7 +171,7 @@ sealed class MainWindow:Window
  void Settings()
  {
   body.Children.Clear();body.Children.Add(Heading("Настройки"));
-  var path=new TextBox{Header="Папка SovietRepublic",Text=prefs.Game};body.Children.Add(path);
+  var path=new TextBox{Header="Папка игры SovietRepublic",Text=prefs.Game};body.Children.Add(path);
   body.Children.Add(AsyncButton("Выбрать папку…",async()=>{var picker=new Windows.Storage.Pickers.FolderPicker();picker.FileTypeFilter.Add("*");WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));var folder=await picker.PickSingleFolderAsync();if(folder!=null)path.Text=folder.Path;}));
   body.Children.Add(Button("Найти моды",()=>{if(!File.Exists(Path.Combine(path.Text,"SOVIET64.exe")))throw new InvalidDataException("В выбранной папке нет SOVIET64.exe.");prefs=prefs with{Game=Path.GetFullPath(path.Text)};Save();Discover();}));
   var consoleRow=new Grid{ColumnSpacing=20};
