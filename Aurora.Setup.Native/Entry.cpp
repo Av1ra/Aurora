@@ -9,7 +9,7 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR args, int) {
   std::wstring executable = root + L"\\app\\Aurora.Launcher.exe",
                command = L"\"" + executable + L"\"";
 #ifdef AURORA_EDITOR_ENTRY
-  command += L" --open-editor";
+  command += L" --editor";
 #endif
   // Forward only application-owned arguments used by the console host and
   // editor.

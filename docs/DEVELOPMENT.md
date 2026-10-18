@@ -13,7 +13,7 @@ python -m pip install numpy Pillow pyinstaller
 ./build.ps1 -Development
 ```
 
-The output directory is written to artifacts/latest-build.txt. Each build uses a new directory so repeated improvements remain version 0.2. Output contains adjacent Aurora-Setup.exe and Aurora-0.2-win-x64.zip, optional Aurora-Editor-0.2-win-x64.zip, metadata and SHA256SUMS.txt. Do not publish them as a release yet.
+The output directory is written to artifacts/latest-build.txt. Each build uses a new directory so repeated improvements remain version 0.2. Output contains **one** Aurora-0.2-win-x64.zip with both Aurora Launcher and Aurora Editor, adjacent Aurora-Setup.exe, signed aurora-update.json and SHA256SUMS.txt. No Full ZIP, separate Editor archive, separate module ZIPs or duplicate runtime are generated. Do not publish them as a release yet.
 
 Development mode generates an ephemeral ECDSA key, replaces only the staged public key and removes the private key after packaging. It does not modify the pinned publisher key in source. These packages trust only that one development build and are not compatible with production Workshop signatures. No developer private key is uploaded as a CI artifact.
 
@@ -23,19 +23,19 @@ For a future approved production build, omit -Development and provide the existi
 
 ```text
 Aurora/
-  Aurora.exe                  launcher entry
-  Aurora.Editor.exe           editor entry; downloads optional editor if absent
+  Aurora Launcher.exe         launcher entry
+  Aurora Editor.exe           direct editor entry
   app/
-    Aurora.Launcher.exe        WinUI host
+    Aurora.Launcher.exe        shared WinUI host
     Aurora.Bootstrap.exe       game startup helper
     Aurora.Installer.exe       update helper
-    Assets/                   image and public verification key
-    docs/                     player readme
-    Editor/                   optional signed editor module + viewport + backend
-    ...                       shared .NET, WinUI and localization resources
+    Assets/                   public signing key and assets
+    Editor/                   bundled signed editor + viewport + backend
+    Modules/                  independently signed module fallbacks
+    ...                       shared .NET / WinUI libraries
 ```
 
-The runtime is not packed into a self-extracting single EXE. This keeps native WinUI resources resolvable and avoids extracting libraries on every launch. Only the two entry-point EXEs and app folder are visible at the root. The editor shares the runtime, so its optional package is not a second full copy of the launcher.
+The runtime is not packed into a self-extracting single EXE. This keeps native WinUI resources resolvable and avoids extracting libraries on every launch. Only the two named entry-point EXEs and app folder are visible at the root. The editor shares the runtime with Aurora Launcher, so no additional editor archive is shipped.
 
 ## Checks
 
@@ -48,13 +48,13 @@ dotnet run --project Aurora.UpdateTests -c Release -- <build>/package/app/Assets
 
 The local update test verifies signed packages without relying on a published release. Optional NMF corpus and export tests require legally obtained game model fixtures, not committed game assets. Current CI builds on windows-latest and uploads temporary Actions artifacts. It has no release-write permission and contains no release step.
 
-## Future editor download
+## Included Aurora Editor
 
-After the owner approves a public release, publish the signed addon and aurora-editor.json together. Download editor in Aurora downloads, verifies SHA-256 and the pinned signature, stages files on the target volume, then atomically installs app/Editor. With no approved release, the app explains that the editor is not yet published. Keep extraction/copying away from user model files and never disable antivirus protection.
+Aurora Editor is always included in the same signed application ZIP, under app/Editor. Aurora Launcher checks the bundled editor's signed manifest before opening it. There is no separate editor download for Aurora 0.2. GitHub updater replaces the complete Launcher + Editor bundle, verifying the signature, ZIP digest and the editor module before handing it to the native updater.
 
 ## UI reference
 
 Use a narrow sidebar and an actionable game page (launch, modules, folders, Workshop), inspired by the game-hub pattern shown in the official Xbox PC app: https://www.xbox.com/en-us/apps/xbox-app-on-pc. Do not copy branding or add invented performance settings.
 
 
-The owner authorized test prerelease v0.2. English player text and explicit preliminary/compatibility notes must be first in the release. Provide matching setup + Full ZIP, separate editor addon, standalone PBR/FOV module ZIPs, signed metadata and hashes. Keep version 0.2; do not call this stable. The full ZIP contains the editor already, while the slim launcher can download the signed addon. The downloader supports the public prerelease when no stable release is available.
+Owner-authorized Aurora 0.2 preview is now distributed as one combined Launcher + Editor archive with its adjacent Setup executable. Packaging CI verifies one ZIP, signed embedded Editor and matching Setup payload digest. Future releases still require separate owner approval; do not publish releases automatically.

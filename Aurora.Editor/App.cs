@@ -28,9 +28,9 @@ sealed class EditorWindow:Window
  string? selectedLod,mtl,mask,maskMaterial;bool ready;
  public EditorWindow()
  {
-  Title="Аврора — Мастер моделей";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(1250,850));
+  Title="Aurora Editor";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(1250,850));
   var grid=new Grid();grid.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});grid.ColumnDefinitions.Add(new(){Width=new GridLength(350)});grid.Children.Add(view);
-  var scroll=new ScrollViewer{Content=controls};Grid.SetColumn(scroll,1);grid.Children.Add(scroll);WindowChrome.Attach(this,grid,"Аврора — Мастер моделей");
+  var scroll=new ScrollViewer{Content=controls};Grid.SetColumn(scroll,1);grid.Children.Add(scroll);WindowChrome.Attach(this,grid,"Aurora Editor");
   controls.Children.Add(new TextBlock{Text="Мастер моделей",FontSize=24});
   controls.Children.Add(Button("Открыть NMF…",async()=>{var path=await Pick(".nmf");if(path!=null)await Load(path);}));
   controls.Children.Add(Button("Добавить LOD…",async()=>{var path=await Pick(".nmf");if(path!=null){AddModel(path);lodChoice.SelectedItem=path;await Display();}}));

@@ -37,7 +37,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Package verification failed' }
       - uses: actions/upload-artifact@v4
         with:
-          name: Aurora-0.2-development-${{ github.sha }}
+          name: Aurora-0.2-Launcher-and-Editor-${{ github.sha }}
           path: artifacts/build-*/output/*
           retention-days: 7
           if-no-files-found: error

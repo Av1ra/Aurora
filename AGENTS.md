@@ -4,10 +4,10 @@ Aurora 0.2 is in development. The owner has now explicitly authorized the test p
 
 ## Current task
 
-- Tidy distribution: Aurora.exe and Aurora.Editor.exe at root; shared WinUI/.NET and editor files under app/. Avoid self-extracting executables and duplicated runtimes.
+- Bundle Aurora Launcher and Aurora Editor together: root Aurora Launcher.exe and Aurora Editor.exe, shared WinUI/.NET under app/, bundled editor under app/Editor. Exactly one installer ZIP. Avoid self-extracting executables and duplicated runtimes.
 - Separate archive and tiny adjacent installer. Default location: SovietRepublic/Aurora. No payload duplicated inside installer.
 - Narrow sidebar, functional game home, English window title, no repeated Aurora heading, plain language menu.
-- Model editor remains optional; download/install from future signed GitHub releases. No editor feature redesign in this task.
+- Aurora Editor is always included in the one installer ZIP for 0.2. No editor feature redesign in this task.
 - Compact alpha console opened only by tilde while this game's window is active.
 - Archive known working downloads; leave personal and unrelated files intact.
 - Consolidate documentation and workflows so remote development requires no local workspace access.

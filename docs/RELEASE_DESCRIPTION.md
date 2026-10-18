@@ -1,18 +1,17 @@
-# Aurora
+# Aurora Launcher and Aurora Editor
 
-A mod launcher for Workers & Resources: Soviet Republic, designed for Windows.
+Aurora Launcher is the mod launcher for Workers & Resources: Soviet Republic. Aurora Editor is the bundled model and material editor. Both are part of one Windows package and use the same WinUI/.NET runtime.
 
-- Find compatible mods in your Steam Workshop libraries.
-- Configure graphics modules and optional experimental effects before playing.
-- Start the game from one place.
-- Download the optional Model Editor to prepare vehicle materials, PBR and glass, with support for separate LOD files.
-- Choose English or Russian.
+- Detect registered modules in Steam Workshop and offer compatible updates.
+- Configure supported graphics modules and experimental camera options.
+- Launch Soviet Republic from Aurora Launcher.
+- Open Aurora Editor for vehicle models, materials, PBR and glass, with multiple LOD support.
+- Choose Russian or English.
 
-Aurora does not include texture packs. Graphics modules are distributed separately through Steam Workshop. The Model Editor is an optional download.
+## Installation (preliminary Aurora 0.2)
 
-## Installation (when a release is approved)
+Keep **Aurora-Setup.exe** next to **Aurora-0.2-win-x64.zip**, then run Aurora-Setup.exe. Choose the game folder and the Aurora application folder. The installer installs **Aurora Launcher.exe**, **Aurora Editor.exe**, and a single shared **app/** directory with the signed editor module at **app/Editor/**.
 
-Place Aurora-Setup.exe next to Aurora-0.2-Full-win-x64.zip. Run the installer, choose the game folder and installation location, then open Aurora.exe. The default location is the Aurora folder inside SovietRepublic. Keep the app folder beside the two entry-point EXEs; it contains the shared application libraries. Download the editor from Aurora when needed.
+There is only **one** ZIP. No second Full archive, editor ZIP or duplicate embedded runtime. No texture packs are included; PBR content is distributed separately through the registered Steam Workshop module. FOV Changer remains an independently signed optional module but its packaged fallback may be included under app/Modules without an extra ZIP.
 
-Version 0.2 is a preliminary test build. The full archive includes the Model Editor and two separately signed modules: PBR and FOV Changer. FOV Changer appears in Settings only when its module is discovered. Its current executable compatibility is pinned; unsupported builds are refused without changing memory. Real-game visual FOV acceptance remains pending. No texture packs are included.
-
+This is a development/test build of 0.2, not a stable release. The FOV module requires an explicitly supported game executable; full visual acceptance in the actual game remains pending.

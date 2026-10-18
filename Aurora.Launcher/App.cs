@@ -45,12 +45,12 @@ sealed class MainWindow:Window
  [DllImport("kernel32.dll",CharSet=CharSet.Unicode,SetLastError=true)]static extern bool WritePrivateProfileString(string section,string key,string value,string file);
  public MainWindow()
  {
-  Title="Aurora";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(1000,720));
+  Title="Aurora Launcher";SystemBackdrop=new MicaBackdrop();AppWindow.Resize(new(1000,720));
   Directory.CreateDirectory(stateRoot);
   try{prefs=JsonSerializer.Deserialize<Preferences>(File.ReadAllText(Path.Combine(stateRoot,"settings.json")))??new();}catch{prefs=new();}
   string gamePath=Path.Combine(stateRoot,"game-path.txt");if(File.Exists(gamePath)){string selected=File.ReadAllText(gamePath).Trim();if(File.Exists(Path.Combine(selected,"SOVIET64.exe")))prefs=prefs with{Game=selected};}
   if(!File.Exists(Path.Combine(prefs.Game,"SOVIET64.exe"))&&File.Exists(Path.Combine(InstallationPaths.SuggestedGame,"SOVIET64.exe")))prefs=prefs with{Game=InstallationPaths.SuggestedGame};
-  navigation.Content=new ScrollViewer{Content=body};WindowChrome.Attach(this,navigation,"Aurora");
+  navigation.Content=new ScrollViewer{Content=body};WindowChrome.Attach(this,navigation,"Aurora Launcher");
   var language=new NavigationViewItem{Content=UiLanguage.English?"English":"Русский",Icon=new FontIcon{Glyph="\uE774"},SelectsOnInvoked=false};
   ToolTipService.SetToolTip(language,"Язык / Language");navigation.FooterMenuItems.Add(language);navigation.FooterMenuItems.Add(settingsItem);
   var languageMenu=new MenuFlyout();
@@ -119,8 +119,8 @@ sealed class MainWindow:Window
    }
    body.Children.Add(Card(workshopState));
   }
-  var editor=new StackPanel{Orientation=Orientation.Horizontal,Spacing=12};editor.Children.Add(new TextBlock{Text=UiLanguage.Text("Мастер моделей"),VerticalAlignment=VerticalAlignment.Center,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});
-  editor.Children.Add(AsyncButton(File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","acode.lnchr"))?"Открыть редактор":"Скачать редактор",OpenEditor));body.Children.Add(Card(editor));
+  var editor=new StackPanel{Orientation=Orientation.Horizontal,Spacing=12};editor.Children.Add(new TextBlock{Text="Aurora Editor",VerticalAlignment=VerticalAlignment.Center,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});
+  editor.Children.Add(AsyncButton("Открыть редактор",OpenEditor));body.Children.Add(Card(editor));
   body.Children.Add(status);versionText=new TextBlock{Text=UiLanguage.Text(versionMessage),Opacity=.65};body.Children.Add(versionText);UiLanguage.Apply(body);
  }
  async Task DiscoverAsync()
@@ -272,11 +272,16 @@ sealed class MainWindow:Window
   UiLanguage.Apply(body);
  }
  internal async Task OpenEditorFromEntry(){try{await OpenEditor();}catch(Exception ex){Notice(ex.Message);}}
- async Task OpenEditor()
+ Task OpenEditor()
  {
-  if(!File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","acode.lnchr"))){status.Text=UiLanguage.Text("Скачивание редактора…");await updates.InstallEditor(publicKey);status.Text="";Home();}
-  _=new ModCatalog(publicKey).Verify(Path.Combine(AppContext.BaseDirectory,"Editor"));
-  var start=new ProcessStartInfo(Path.Combine(AppContext.BaseDirectory,"Aurora.Launcher.exe")){UseShellExecute=false};start.ArgumentList.Add("--editor");Process.Start(start);
+  var editor=Path.Combine(AppContext.BaseDirectory,"Editor");
+  if(!File.Exists(Path.Combine(editor,"acode.lnchr")))
+   throw new FileNotFoundException("Aurora Editor отсутствует. Переустановите полный комплект Aurora.");
+  var manifest=new ModCatalog(publicKey).Verify(editor);
+  if(manifest.Id!="aurora.editor")throw new InvalidDataException("Неверный модуль Aurora Editor.");
+  var start=new ProcessStartInfo(Path.Combine(AppContext.BaseDirectory,"Aurora.Launcher.exe")){UseShellExecute=false};
+  start.ArgumentList.Add("--editor");Process.Start(start);
+  return Task.CompletedTask;
  }
  async Task CheckUpdates(){try{var release=await updates.Check();versionMessage=release==null?"Установлена актуальная версия 0.2":"Устаревшая версия 0.2";if(versionText!=null)versionText.Text=UiLanguage.Text(versionMessage);}catch(Exception ex){status.Text="Не удалось проверить обновления: "+ex.Message;}}
  async void Notice(string message){await new ContentDialog{Title="Aurora",Content=message,CloseButtonText="ОК",XamlRoot=((FrameworkElement)Content).XamlRoot}.ShowAsync();}

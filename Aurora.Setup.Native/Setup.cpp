@@ -95,11 +95,11 @@ static void Shortcut(const fs::path &app) {
   IShellLinkW *link = nullptr;
   if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER,
                                  IID_PPV_ARGS(&link)))) {
-    link->SetPath((app / L"Aurora.exe").c_str());
+    link->SetPath((app / L"Aurora Launcher.exe").c_str());
     link->SetWorkingDirectory(app.c_str());
     IPersistFile *persist = nullptr;
     if (SUCCEEDED(link->QueryInterface(IID_PPV_ARGS(&persist)))) {
-      persist->Save((folder / L"Аврора.lnk").c_str(), TRUE);
+      persist->Save((folder / L"Aurora Launcher.lnk").c_str(), TRUE);
       persist->Release();
     }
     link->Release();
@@ -143,10 +143,10 @@ static DWORD Run(const fs::path &executable, std::wstring arguments) {
   return code;
 }
 static void Start(const fs::path &app) {
-  std::wstring cmd = Quote((app / L"Aurora.exe").wstring());
+  std::wstring cmd = Quote((app / L"Aurora Launcher.exe").wstring());
   STARTUPINFOW si{sizeof(si)};
   PROCESS_INFORMATION pi{};
-  if (!CreateProcessW((app / L"Aurora.exe").c_str(), cmd.data(), nullptr,
+  if (!CreateProcessW((app / L"Aurora Launcher.exe").c_str(), cmd.data(), nullptr,
                       nullptr, FALSE, 0, nullptr, app.c_str(), &si, &pi))
     throw std::runtime_error("Cannot launch Aurora");
   CloseHandle(pi.hThread);
@@ -163,7 +163,7 @@ static void CheckClosed(const fs::path &target) {
       if (entry.th32ProcessID == GetCurrentProcessId())
         continue;
       if (_wcsicmp(entry.szExeFile, L"Aurora.Launcher.exe") &&
-          _wcsicmp(entry.szExeFile, L"Aurora.Editor.exe") &&
+          _wcsicmp(entry.szExeFile, L"Aurora Editor.exe") &&
           _wcsicmp(entry.szExeFile, L"Aurora.ModelBackend.exe"))
         continue;
       HANDLE process = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE,
@@ -296,7 +296,7 @@ struct Change {
 static void Install(const fs::path &source, const fs::path &target,
                     bool persist = true) {
   CheckClosed(target);
-  if (!fs::exists(source / L"Aurora.exe") || !fs::exists(source / L"app" / L"Aurora.Launcher.exe"))
+  if (!fs::exists(source / L"Aurora Launcher.exe") || !fs::exists(source / L"app" / L"Aurora.Launcher.exe"))
     throw std::runtime_error("Incomplete Aurora package");
   if (fs::exists(target) && Linked(target))
     throw std::runtime_error("Linked installation folder is not supported");
@@ -446,7 +446,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM w,
           CreateFontW(-16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
                       DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
                       CLEARTYPE_QUALITY, DEFAULT_PITCH, L"Segoe UI");
-      Control(window, L"STATIC", L"Аврора", 24, 20, 570, 30, 0);
+      Control(window, L"STATIC", L"Aurora Launcher", 24, 20, 570, 30, 0);
       Control(window, L"STATIC",
               L"Выберите, где хранить приложение и для какой игры искать моды.",
               24, 57, 580, 36, 0);
@@ -465,7 +465,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM w,
       Control(window, L"BUTTON", L"Обзор…", 520, 206, 90, 28, 13, WS_TABSTOP);
       Control(window, L"STATIC",
               L"Файлы модов будут устанавливаться в папку mods выбранной "
-              L"игры.\nРедактор моделей скачивается отдельно из лаунчера.",
+              L"игры.\nAurora Editor устанавливается вместе с лаунчером.",
               24, 250, 585, 48, 0);
       statusText = Control(window, L"STATIC", L"", 24, 312, 580, 42, 0);
       installButton = Control(window, L"BUTTON", L"Установить", 460, 370, 150,
@@ -623,7 +623,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int) {
       wchar_t self[32768];
       GetModuleFileNameW(nullptr, self, 32768);
       auto source = fs::path(self).parent_path();
-      if (!fs::exists(source / L"Aurora.exe"))
+      if (!fs::exists(source / L"Aurora Launcher.exe"))
         source = source.parent_path();
       Install(source, target);
       Start(target);
@@ -642,7 +642,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int) {
     cls.hCursor = LoadCursorW(nullptr, IDC_ARROW);
     RegisterClassW(&cls);
     auto window = CreateWindowExW(
-        0, cls.lpszClassName, L"Установка Авроры",
+        0, cls.lpszClassName, L"Установка Aurora Launcher и Aurora Editor",
         WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, CW_USEDEFAULT,
         CW_USEDEFAULT, 650, 465, nullptr, nullptr, instance, nullptr);
     ShowWindow(window, SW_SHOW);

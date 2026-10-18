@@ -34,14 +34,6 @@ sealed class UpdateService
   if(await Check()==null)return null;
   return await Download(latest!,key);
  }
- public async Task<string> DownloadEditor(string key)
- {
-  using var json=await PublishedRelease()??throw new InvalidOperationException("Редактор пока не опубликован. Он появится после выпуска Aurora 0.2.");
-  string url=json.RootElement.GetProperty("assets").EnumerateArray().Single(x=>x.GetProperty("name").GetString()=="aurora-editor.json").GetProperty("browser_download_url").GetString()!;
-  var release=JsonSerializer.Deserialize<LauncherRelease>(await http.GetStringAsync(url))??throw new InvalidDataException("Нет описания редактора.");
-  if(!System.Text.RegularExpressions.Regex.IsMatch(release.Asset,@"^Aurora-Editor-[0-9.]+-win-x64\.zip$"))throw new InvalidDataException("Invalid editor asset");
-  return await Download(release,key);
- }
  async Task<string> Download(LauncherRelease release,string key)
  {
   using var signature=ECDsa.Create();signature.ImportFromPem(key);
@@ -56,18 +48,12 @@ sealed class UpdateService
   var unpack=Path.Combine(root,"package");Directory.CreateDirectory(unpack);
   using var zip=ZipFile.OpenRead(archive);
   foreach(var entry in zip.Entries){if(entry.FullName.EndsWith('/'))continue;var target=ModCatalog.SafePath(unpack,entry.FullName);if(entry.ExternalAttributes>>16 is var attr && (attr&0xf000)==0xa000)throw new InvalidDataException("Linked ZIP entry");Directory.CreateDirectory(Path.GetDirectoryName(target)!);entry.ExtractToFile(target,false);}
-  bool editor=release.Asset.StartsWith("Aurora-Editor-");
-  if(!File.Exists(Path.Combine(unpack,editor?"Editor/acode.lnchr":"Aurora.exe")))throw new InvalidDataException("Incomplete update");return unpack;
- }
- public async Task InstallEditor(string key)
- {
-  string package=await DownloadEditor(key),source=Path.Combine(package,"Editor");
-  var manifest=new ModCatalog(key).Verify(source);if(manifest.Id!="aurora.editor")throw new InvalidDataException("Неверный редактор.");
-  string root=AppContext.BaseDirectory,staging=Path.Combine(root,".editor-new-"+Guid.NewGuid().ToString("N")),target=Path.Combine(root,"Editor"),backup=Path.Combine(root,".editor-backup-"+Guid.NewGuid().ToString("N"));
-  Directory.CreateDirectory(staging);
-  foreach(string file in Directory.EnumerateFiles(source,"*",SearchOption.AllDirectories)){string relative=Path.GetRelativePath(source,file).Replace('\\','/');string destination=ModCatalog.SafePath(staging,relative);Directory.CreateDirectory(Path.GetDirectoryName(destination)!);File.Copy(file,destination);}
-  _=new ModCatalog(key).Verify(staging);
-  bool moved=false;try{if(Directory.Exists(target)){Directory.Move(target,backup);moved=true;}Directory.Move(staging,target);}catch{if(moved&&!Directory.Exists(target))Directory.Move(backup,target);throw;}
+  if(!File.Exists(Path.Combine(unpack,"Aurora Launcher.exe")) ||
+     !File.Exists(Path.Combine(unpack,"Aurora Editor.exe")) ||
+     !File.Exists(Path.Combine(unpack,"app","Editor","acode.lnchr")))
+    throw new InvalidDataException("Incomplete Aurora Launcher / Aurora Editor bundle");
+  _=new ModCatalog(key).Verify(Path.Combine(unpack,"app","Editor"));
+  return unpack;
  }
  public void StartReplacement(string folder)
  {

@@ -21,7 +21,7 @@ try {
  if($NativeDist){& "$root/Prepare-Graphics.ps1" -NativeDist $NativeDist -Output "$app/Modules/aurora.graphics" -Version $Version -MinimumLauncher '0.2.0'}
  & "$root/build-setup.ps1" -Output "$app/Aurora.Installer.exe"
  Copy-Item -LiteralPath "$root/artifacts/native/Aurora.Bootstrap.exe" -Destination $app
- Copy-Item -LiteralPath "$root/artifacts/native/Aurora.exe","$root/artifacts/native/Aurora.Editor.exe" -Destination $stage
+ Copy-Item -LiteralPath "$root/artifacts/native/Aurora Launcher.exe","$root/artifacts/native/Aurora Editor.exe" -Destination $stage
  New-Item -ItemType Directory "$app/docs" -Force | Out-Null
  Copy-Item -LiteralPath "$root/docs/RELEASE_DESCRIPTION.md" -Destination "$app/docs/Readme.md"
  Copy-Item -LiteralPath "$root/Packaging/legacy-files.tsv" -Destination "$app/retired-files.tsv"
@@ -38,18 +38,12 @@ try {
  $manifest=@{Schema=1;Id='aurora.editor';Name='Model Editor';Category='tools';Version=$Version;MinimumLauncher='0.2.0';Config='editor.ini';Files=$files;Options=@()}
  [IO.File]::WriteAllText("$buildRoot/editor-manifest.json",($manifest|ConvertTo-Json -Depth 8),[Text.UTF8Encoding]::new($false))
  Run 'dotnet' @('run','--project',"$root/Aurora.Publisher/Aurora.Publisher.csproj",'--','manifest',"$buildRoot/editor-manifest.json","$editorRoot/acode.lnchr")
- $zip="$output/Aurora-$Version-win-x64.zip"
- $editorZip="$output/Aurora-Editor-$Version-win-x64.zip"
- [IO.Compression.ZipFile]::CreateFromDirectory($stage,$zip,[IO.Compression.CompressionLevel]::Optimal,$false)
- [IO.Compression.ZipFile]::CreateFromDirectory("$buildRoot/addon",$editorZip,[IO.Compression.CompressionLevel]::Optimal,$false)
- foreach($module in Get-ChildItem "$app/Modules" -Directory){[IO.Compression.ZipFile]::CreateFromDirectory($module.FullName,"$output/$($module.Name)-0.2.zip",[IO.Compression.CompressionLevel]::Optimal,$false)}
+ # One ZIP for Aurora Launcher and Aurora Editor, sharing the same WinUI/.NET runtime.
  Copy-Item -LiteralPath "$buildRoot/addon/Editor" -Destination $app -Recurse
- $fullZip="$output/Aurora-$Version-Full-win-x64.zip"
- [IO.Compression.ZipFile]::CreateFromDirectory($stage,$fullZip,[IO.Compression.CompressionLevel]::Optimal,$false)
- Run 'dotnet' @('run','--project',"$root/Aurora.Publisher/Aurora.Publisher.csproj",'--','release',$Version,$fullZip,"$output/aurora-full.json")
+ $zip="$output/Aurora-$Version-win-x64.zip"
+ [IO.Compression.ZipFile]::CreateFromDirectory($stage,$zip,[IO.Compression.CompressionLevel]::Optimal,$false)
  Run 'dotnet' @('run','--project',"$root/Aurora.Publisher/Aurora.Publisher.csproj",'--','release',$Version,$zip,"$output/aurora-update.json")
- Run 'dotnet' @('run','--project',"$root/Aurora.Publisher/Aurora.Publisher.csproj",'--','release',$Version,$editorZip,"$output/aurora-editor.json")
- & "$root/build-setup.ps1" -Output "$output/Aurora-Setup.exe" -Payload $fullZip
+ & "$root/build-setup.ps1" -Output "$output/Aurora-Setup.exe" -Payload $zip
  $lines=Get-ChildItem -LiteralPath $output -File | Where-Object {$_.Name -ne "SHA256SUMS.txt"} | ForEach-Object{(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()+"  "+$_.Name}
  [IO.File]::WriteAllLines("$output/SHA256SUMS.txt",$lines,[Text.UTF8Encoding]::new($false))
  [IO.File]::WriteAllText("$root/artifacts/latest-build.txt",$buildRoot,[Text.UTF8Encoding]::new($false))
