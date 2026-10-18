@@ -183,19 +183,27 @@ sealed class MainWindow:Window
   }
  }
 
+ static void RefreshDependencies(ModManifest manifest,Dictionary<string,(Control Control,Func<bool> Value)> controls){
+  var options=manifest.Options.ToDictionary(x=>x.Id,StringComparer.Ordinal);
+  bool Active(string id)=>controls.TryGetValue(id,out var state)&&state.Value()&&(options[id].Requires??[]).All(Active);
+  foreach(var option in manifest.Options){if(!controls.TryGetValue(option.Id,out var state))continue;var required=option.Requires??[];state.Control.IsEnabled=required.All(Active);ToolTipService.SetToolTip(state.Control,required.Length==0?null:UiLanguage.Text("Требуется включить")+": "+string.Join(", ",required.Select(x=>UiLanguage.Text(options[x].Label))));}
+ }
  void ShowMod(VerifiedMod mod)
  {
   ClearBody();body.Children.Add(Heading(mod.Manifest.Name));
   body.Children.Add(new TextBlock{Text="Изменения применяются при следующем запуске игры.",TextWrapping=TextWrapping.Wrap});
   body.Spacing=8;
   var beta=new StackPanel{Spacing=6};
+  var states=new Dictionary<string,(Control Control,Func<bool> Value)>();
   string config=ModCatalog.SafePath(prefs.Game,"mods/"+mod.Manifest.Config);
   foreach(var option in mod.Manifest.Options)
   {
    var toggle=new ToggleSwitch{IsOn=GetPrivateProfileInt(option.Section,option.Key,option.Default?1:0,config)!=0,OnContent="Вкл.",OffContent="Выкл."};
-   toggle.Toggled+=(_,_)=>{try{VerifyCurrent(mod);Directory.CreateDirectory(Path.GetDirectoryName(config)!);if(!WritePrivateProfileString(option.Section,option.Key,toggle.IsOn?"1":"0",config))throw new System.ComponentModel.Win32Exception();}catch(Exception ex){Notice(ex.Message);}};
+   toggle.Toggled+=(_,_)=>{try{VerifyCurrent(mod);Directory.CreateDirectory(Path.GetDirectoryName(config)!);if(!WritePrivateProfileString(option.Section,option.Key,toggle.IsOn?"1":"0",config))throw new System.ComponentModel.Win32Exception();RefreshDependencies(mod.Manifest,states);}catch(Exception ex){Notice(ex.Message);}};
+   states[option.Id]=(toggle,()=>toggle.IsOn);
    var card=FeatureCard(option.Label,toggle,option.Beta?"Бета":null);if(option.Beta)beta.Children.Add(card);else body.Children.Add(card);
   }
+  RefreshDependencies(mod.Manifest,states);
   if(beta.Children.Count>0)body.Children.Add(new Expander{Header=RowTitle("Экспериментальные функции","Бета"),Content=beta,IsExpanded=false,HorizontalAlignment=HorizontalAlignment.Stretch,HorizontalContentAlignment=HorizontalAlignment.Stretch});
   body.Children.Add(Button("Установить / обновить модуль",()=>Install(mod)));
   UiLanguage.Apply(body);
@@ -205,6 +213,7 @@ sealed class MainWindow:Window
   string file=ModCatalog.SafePath(prefs.Game,"mods/"+module.Manifest.Config);
   void Write(ModOption option,int value){VerifyCurrent(module);Directory.CreateDirectory(Path.GetDirectoryName(file)!);if(!WritePrivateProfileString(option.Section,option.Key,value.ToString(System.Globalization.CultureInfo.InvariantCulture),file))throw new System.ComponentModel.Win32Exception();}
   var controls=new StackPanel{Spacing=8};
+  var states=new Dictionary<string,(Control Control,Func<bool> Value)>();
   controls.Children.Add(RowTitle(module.Manifest.Name,module.Manifest.Stage=="alpha"?"Альфа":module.Manifest.Stage=="beta"?"Бета":null));
   // Settings modules may contain only sliders, only toggles, or both.
   foreach(var option in module.Manifest.Options)
@@ -217,8 +226,8 @@ sealed class MainWindow:Window
    {
     var toggle=new ToggleSwitch{IsOn=GetPrivateProfileInt(option.Section,option.Key,option.Default?1:0,file)!=0,VerticalAlignment=VerticalAlignment.Center,OnContent=UiLanguage.Text("Вкл."),OffContent=UiLanguage.Text("Выкл.")};
     Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(toggle,option.Label);
-    toggle.Toggled+=(_,_)=>{try{Write(option,toggle.IsOn?1:0);}catch(Exception ex){Notice(ex.Message);}};
-    Grid.SetColumn(toggle,1);row.Children.Add(toggle);
+    toggle.Toggled+=(_,_)=>{try{Write(option,toggle.IsOn?1:0);RefreshDependencies(module.Manifest,states);}catch(Exception ex){Notice(ex.Message);}};
+    states[option.Id]=(toggle,()=>toggle.IsOn);Grid.SetColumn(toggle,1);row.Children.Add(toggle);
    }
    else if(option.Kind=="slider")
    {
@@ -228,11 +237,12 @@ sealed class MainWindow:Window
     Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(slider,option.Label);
     var value=new TextBlock{Text=((int)slider.Value).ToString(),Width=34,VerticalAlignment=VerticalAlignment.Center};
     slider.ValueChanged+=(_,e)=>{value.Text=((int)e.NewValue).ToString();try{Write(option,(int)e.NewValue);}catch(Exception ex){Notice(ex.Message);}};
-    Grid.SetColumn(value,1);right.Children.Add(slider);right.Children.Add(value);
+    states[option.Id]=(slider,()=>true);Grid.SetColumn(value,1);right.Children.Add(slider);right.Children.Add(value);
     Grid.SetColumn(right,1);row.Children.Add(right);
    }
    controls.Children.Add(row);
   }
+  RefreshDependencies(module.Manifest,states);
   return Card(controls);
  }
  void VerifyCurrent(VerifiedMod mod){var current=new ModCatalog(publicKey).Verify(mod.Folder);if(current.Id!=mod.Manifest.Id||current.Version!=mod.Manifest.Version)throw new InvalidDataException("Модуль обновился. Повторите поиск.");}

@@ -1,4 +1,4 @@
-#ifdef AURORA_STEAM_ENTRY
+﻿#ifdef AURORA_STEAM_ENTRY
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <filesystem>
@@ -102,7 +102,7 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR args, int) {
   if (!CreateProcessW(executable.c_str(), command.data(), nullptr, nullptr,
                       FALSE, 0, nullptr, (root + L"\\app").c_str(), &si, &pi)) {
     MessageBoxW(nullptr,
-                L"Keep the app folder beside Aurora.exe and Aurora.Editor.exe.",
+                L"Keep the app folder beside Aurora Launcher.exe and Aurora Editor.exe.",
                 L"Aurora", MB_ICONINFORMATION);
     return 1;
   }

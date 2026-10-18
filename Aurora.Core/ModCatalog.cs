@@ -1,11 +1,11 @@
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text.Json;
 
 namespace Aurora.Core;
 
 public record ModFile(string Path, string Sha256);
 public record ModOption(string Id, string Label, string Section, string Key, bool Beta = false, bool Default = true,
-    string Kind="toggle",int Minimum=0,int Maximum=100,int DefaultValue=0);
+    string Kind="toggle",int Minimum=0,int Maximum=100,int DefaultValue=0,string[]? Requires=null);
 public record ModManifest(int Schema, string Id, string Name, string Category, string Version,
     string MinimumLauncher, string Config, ModFile[] Files, ModOption[] Options,string Placement="navigation",string Stage="");
 public record SignedEnvelope(string Payload, string Signature);
@@ -50,6 +50,15 @@ public sealed class ModCatalog(string publicKeyPem)
             if(new[]{option.Section,option.Key}.Any(x=>!System.Text.RegularExpressions.Regex.IsMatch(x,@"^[a-zA-Z0-9_]{1,64}$")))
                 throw new InvalidDataException("Invalid setting key");
         }
+        var controls = new Dictionary<string, ModOption>(StringComparer.Ordinal);
+        foreach(var option in mod.Options)
+            if(string.IsNullOrWhiteSpace(option.Id)||!controls.TryAdd(option.Id,option))throw new InvalidDataException("Duplicate or missing control identity");
+        foreach(var option in mod.Options)
+        foreach(var required in option.Requires??[])
+            if(!controls.TryGetValue(required,out var parent)||parent.Kind!="toggle")throw new InvalidDataException("Invalid control dependency");
+        var visiting=new HashSet<string>();var visited=new HashSet<string>();
+        void Visit(string id){if(visited.Contains(id))return;if(!visiting.Add(id))throw new InvalidDataException("Cyclic control dependency");foreach(var parent in controls[id].Requires??[])Visit(parent);visiting.Remove(id);visited.Add(id);}
+        foreach(var id in controls.Keys)Visit(id);
         return mod;
     }
 

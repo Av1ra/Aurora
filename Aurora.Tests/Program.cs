@@ -163,3 +163,11 @@ Check(File.ReadAllText(Path.Combine(steamGame,"mods","m.dll"))=="user-customized
 Check(!Directory.EnumerateDirectories(Path.Combine(steamGame,"mods",".aurora-workshop"),".transaction-*").Any(),
       "temporary rollback staging removed after preserving user edits");
 
+
+// Dependencies are signed module data. Older manifests with no Requires remain valid.
+var dependencyModule=manifest with{Options=[new("master","PBR","features","enabled"),new("glass","Glass","features","glass",Requires:["master"])]};
+Sign(dependencyModule);Check(catalog.Verify(root).Options[1].Requires!.Single()=="master","signed control dependencies supported");
+Sign(dependencyModule with{Options=[new("glass","Glass","features","glass",Requires:["missing"])]});Reject(()=>catalog.Verify(root),"missing prerequisite control");
+Sign(dependencyModule with{Options=[new("master","PBR","features","enabled",Requires:["glass"]),new("glass","Glass","features","glass",Requires:["master"])]});Reject(()=>catalog.Verify(root),"cyclic control dependencies");
+Sign(dependencyModule with{Options=[new("master","PBR","features","enabled"),new("master","Glass","features","glass")]});Reject(()=>catalog.Verify(root),"duplicate control identity");
+Sign(manifest);Check(catalog.Verify(root).Options[0].Requires==null,"legacy manifest without dependencies still supported");

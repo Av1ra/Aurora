@@ -65,3 +65,7 @@ Aurora checks both `steamapps/workshop/content/784150/<SteamId>/` across detecte
 ## Signed module UI stage
 
 Optional `Stage` in `ModManifest` may be `alpha`, `beta` or omitted (stable/default). The Settings renderer shows the corresponding badge next to the signed module name. Unknown values are rejected by manifest verification. The independent FOV module declares `Stage: alpha` and its UI title is `Изменение угла обзора`.
+
+### Control dependencies
+
+An option may include optional `Requires: ["other-option-id"]`. Dependencies refer to toggle IDs in the same signed manifest. IDs must be unique, prerequisites must exist, and cycles are rejected. Missing Requires retains legacy behavior. The launcher disables dependent controls while any prerequisite is off, including transitive prerequisites, without overwriting their saved values. Keep dependencies in the signed package metadata rather than embedding feature-specific DLL logic in the launcher. Graphics uses its master for all effects and vehicles for glass; FOV's degrees control depends on enabled. Additional shadows depend on master PBR, not exclusively on roads, since vehicle self-shadows are a separate use.
