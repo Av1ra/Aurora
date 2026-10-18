@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -146,6 +147,13 @@ static class Program
                 if (!destination.StartsWith(target + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
                     throw new IOException("Unsafe install path");
                 Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
+                if (File.Exists(destination) && new FileInfo(file).Length == new FileInfo(destination).Length)
+                {
+                    using var incoming = File.OpenRead(file);
+                    using var installed = File.OpenRead(destination);
+                    if (SHA256.HashData(incoming).AsSpan().SequenceEqual(SHA256.HashData(installed)))
+                        continue; // Preserve unchanged files and avoid an unnecessary backup.
+                }
                 var previous = File.Exists(destination) ? Path.Combine(backup, changed.Count + ".bak") : null;
                 if (previous != null) File.Copy(destination, previous);
                 string staged = destination + ".aurora-new-" + Guid.NewGuid().ToString("N");
