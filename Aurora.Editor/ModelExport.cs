@@ -20,6 +20,7 @@ static class ModelExport
    var sourceMtl=File.ReadAllText(mtl);var materialNames=Regex.Matches(sourceMtl,@"(?m)^\s*\$SUBMATERIAL\s+([^\r\n]+)").Select(x=>x.Groups[1].Value.Trim()).ToHashSet();
    foreach(var model in lods.Values)foreach(var material in model.Materials)if(!materialNames.Contains(material))throw new InvalidDataException("В MTL нет материала: "+material);
    string outputMtl=sourceMtl;var copyNames=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
+   foreach(var pair in settings)foreach(var texture in new[]{(0,pair.Value.Base),(1,pair.Value.Specular),(2,pair.Value.Normal)})if(texture.Item2!=null)outputMtl=NativeMaterialText.SetTexture(outputMtl,pair.Key,texture.Item1,texture.Item2);
    string CopyMap(string path)
    {
     path=Path.GetFullPath(path);if(copyNames.TryGetValue(path,out string? prior))return prior;
@@ -41,11 +42,15 @@ static class ModelExport
     if(maskMaterial==null)throw new InvalidDataException("Mask material missing");
     var rgba=await image(mask);if(!rgba.Pixels.Where((_,i)=>i%4==3).Any(a=>a==0)||!rgba.Pixels.Where((_,i)=>i%4==3).Any(a=>a>0))throw new InvalidDataException("В маске нужна альфа 0 вне окон и ненулевая альфа на окнах.");
     File.WriteAllBytes(Path.Combine(staging,"glass.dds"),DdsImage.Encode(rgba));
-    var request=new{Models=lods.Keys.ToArray(),Material=maskMaterial,Mask=Path.Combine(staging,"glass.dds"),Output=staging};
+    // Imported OBJ and future pivot edits may exist only in memory.
+    string maskSources=Path.Combine(staging,"mask-sources");Directory.CreateDirectory(maskSources);
+    var sourceModels=lods.Select(pair=>{string file=Path.Combine(maskSources,Path.GetFileName(pair.Key));File.WriteAllBytes(file,pair.Value.Data);return file;}).ToArray();
+    var request=new{Models=sourceModels,Material=maskMaterial,Mask=Path.Combine(staging,"glass.dds"),Output=staging};
     string requestFile=Path.Combine(staging,"mask-request.json");File.WriteAllText(requestFile,JsonSerializer.Serialize(request));
     string backend=Path.Combine(AppContext.BaseDirectory,"Editor","Backend","Aurora.ModelBackend.exe");if(!File.Exists(backend))backend=Path.Combine(AppContext.BaseDirectory,"Backend","Aurora.ModelBackend.exe");
     var start=new ProcessStartInfo(backend){UseShellExecute=false,CreateNoWindow=true,RedirectStandardError=true,RedirectStandardOutput=true};start.ArgumentList.Add(requestFile);
     using var process=Process.Start(start)??throw new IOException("Backend failed to start");var error=process.StandardError.ReadToEndAsync();var result=process.StandardOutput.ReadToEndAsync();await process.WaitForExitAsync();if(process.ExitCode!=0)throw new InvalidDataException(await error);string glassName=(await result).Trim();
+    foreach(string file in sourceModels)File.Delete(file);Directory.Delete(maskSources);
     outputMtl=AddMaterial(outputMtl,maskMaterial,glassName);
     // One material block per identifier: augment a configured block rather than shadow it.
     string body=" {glass_mask = glass.dds}"+Environment.NewLine;if(settings.ContainsKey(maskMaterial)){string marker="{material "+maskMaterial+Environment.NewLine;rules.Replace(marker,marker+body);}else rules.AppendLine("{material "+maskMaterial).Append(body).AppendLine(" {preserve_native_diffuse = true}\n}");
@@ -71,6 +76,11 @@ static class ModelExport
     File.WriteAllText(Path.Combine(staging,"script.ini"),configuration,new UTF8Encoding(false));
    }
    foreach(var optional in new[]{"bbox.bin","preview.dds","preview_side.dds"})if(File.Exists(Path.Combine(sourceFolder,optional)))File.Copy(Path.Combine(sourceFolder,optional),Path.Combine(staging,optional));
+   var primary=lods.First().Value;
+   if(primary.Data.AsSpan(0,8).SequenceEqual("fromObj\0"u8)){
+    var bounds=new float[6];for(int axis=0;axis<3;axis++){bounds[axis]=primary.Nodes.Min(n=>n.Positions.Where((_,i)=>i%3==axis).Min());bounds[axis+3]=primary.Nodes.Max(n=>n.Positions.Where((_,i)=>i%3==axis).Max());}
+    using var bbox=new BinaryWriter(File.Create(Path.Combine(staging,"bbox.bin")));foreach(float value in bounds)bbox.Write(value);
+   }
    File.WriteAllText(Path.Combine(staging,"aurora-model.json"),JsonSerializer.Serialize(new{Schema=1,Requires="aurora.graphics",Version="0.1.0",Models=lods.Keys.Select(Path.GetFileName),Material=mtlName,Glass=mask!=null?"mask":glass.Values.Any(x=>x.Count>0)?"objects":"none"},new JsonSerializerOptions{WriteIndented=true}));
    Directory.Move(staging,target);
   }

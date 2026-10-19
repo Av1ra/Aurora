@@ -98,22 +98,24 @@ def prepare_mesh(data, material, alpha):
         lod = offset+232
         lod_size, nv, ni, ng, skin, cpu, gpu = struct.unpack_from('<7I', data, lod)
         require(struct.unpack_from('<I', data, offset+228)[0] == 1 and
-                not skin and not gpu and cpu in (0x40139, 0x4013a),
-                'Only verified rigid position/normal/tangent/UV layouts are supported')
+                not skin and not gpu and cpu in (0x108, 0x40139, 0x4013a),
+                'Only verified rigid position/normal/UV layouts are supported')
         require(0 < nv <= 65536 and ni > 0 and ni % 3 == 0 and 0 < ng <= 512,
                 'Invalid native vertex/index/group counts')
         ix = lod+28
         attributes = ix+ni*2
-        faces = attributes+nv*56
-        groups_at = faces+(ni//3)*40
+        stride, face_stride = (32, 0) if cpu == 0x108 else (56, 40)
+        faces = attributes+nv*stride
+        groups_at = faces+(ni//3)*face_stride
         require(groups_at+ng*12 == end and lod+lod_size in (end, end+4, end+8),
                 'Unsupported trailing vertex/face streams')
         indices = np.frombuffer(data, '<u2', count=ni, offset=ix).reshape(-1, 3)
         require(int(indices.max()) < nv, 'Out-of-range vertex index')
         uv = np.frombuffer(data, '<f4', count=nv*2,
-                           offset=attributes+nv*48).reshape(-1, 2)
-        cache = np.frombuffer(data, np.uint8, count=(ni//3)*40,
-                              offset=faces).reshape(-1, 40)
+                           offset=attributes+nv*(stride-8)).reshape(-1, 2)
+        cache = (np.frombuffer(data, np.uint8, count=(ni//3)*face_stride,
+                              offset=faces).reshape(-1, face_stride)
+                 if face_stride else np.empty((ni//3, 0), dtype=np.uint8))
         permutation, groups, consumed = [], [], 0
         selected = pure = mixed = 0
         for group in range(ng):

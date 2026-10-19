@@ -3,6 +3,8 @@ using System.Security.Cryptography;
 using System.Text.Json;
 static void Check(bool value,string label){if(!value)throw new Exception("FAIL "+label);Console.WriteLine("PASS "+label);}
 static void Reject(Action action,string label){try{action();}catch{Console.WriteLine("PASS rejected "+label);return;}throw new Exception("FAIL accepted "+label);}
+ObjImportChecks.Run(Check,Reject);
+await ObjExportChecks.Run(Check);
 var root=Path.Combine(Path.GetTempPath(),"Aurora-tests-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(root);
 using var key=ECDsa.Create(ECCurve.NamedCurves.nistP256);string pem=key.ExportSubjectPublicKeyInfoPem();
 File.WriteAllText(Path.Combine(root,"module.dll"),"fixture-not-executable");

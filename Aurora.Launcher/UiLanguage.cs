@@ -10,6 +10,13 @@ static class UiLanguage
     public static bool Reload(){try{string value=File.ReadAllText(path).Trim();if(value is not ("en" or "ru"))return false;bool english=value=="en";if(english==English)return false;English=english;return true;}catch{return false;}}
     static readonly Dictionary<string,string> words=new()
     {
+      ["Импортировать OBJ…"]="Import OBJ…",["Импорт текстур"]="Import textures",["OBJ импортирован"]="OBJ imported",
+      ["Максимальный размер текстуры — 8192 × 8192."]="Maximum texture size is 8192 × 8192.",
+      ["Перетащите один NMF или OBJ."]="Drop one NMF or OBJ file.",
+      ["Откройте NMF или импортируйте OBJ. Перетащить файл сюда тоже можно."]="Open an NMF or import an OBJ. You can also drop the file here.",
+      ["Назначьте текстуры через меню импорта."]="Assign textures through the import menu.",
+      ["Модель с таким именем уже загружена."]="A model with this name is already loaded.",
+      ["Материалы OBJ для LOD должны совпадать с основной моделью."]="OBJ LOD materials must match the main model.",
       ["Меню"]="Menu",["Выбрать объект"]="Select object",["Модификаторы"]="Modifiers",["Материалы"]="Materials",
       ["Назначить объект"]="Assign object",["Альфа-канал…"]="Alpha channel…",["Экспортировать NMF…"]="Export NMF…",
       ["Объекты"]="Objects",["Треугольники"]="Triangles",["Вершины"]="Vertices",["NMF экспортирован"]="NMF exported",

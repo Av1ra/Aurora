@@ -6,12 +6,15 @@ import assert from 'node:assert/strict';
 const html = fs.readFileSync(new URL('../Aurora.Editor/Assets/viewport.html', import.meta.url), 'utf8');
 const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
 const images = [], deleted = [], messages = [], reads = [];
+const uniforms = new Map();
 let created = 0, pickId = 1, viewportSize;
 class Texture {}
 class ImageStub { constructor() { images.push(this); } }
 const gpu = new Proxy({
   getShaderParameter: () => true, getProgramParameter: () => true,
   createTexture: () => { created++; return new Texture(); },
+  getUniformLocation: (_, name) => name,
+  uniform1i: (name, value) => uniforms.set(name, value),
   deleteTexture: texture => deleted.push(texture),
   viewport: (...args) => viewportSize = args,
   readPixels: (...args) => { reads.push(args.slice(0, 4)); args[6].set([pickId, 0, 0, 255]); }
@@ -49,4 +52,10 @@ assert.equal(api.selected(), -1, 'background click clears the object selection')
 assert.deepEqual(messages.at(-1), {selected:-1});
 api.load(scene());
 assert.equal(deleted.length, 3, 'scene replacement releases remaining GPU textures');
+api.texture('body', 'specular', 'specularMap'); images.at(-1).onload();
+assert.equal(uniforms.get('hasSpecular'), 1, 'specular map enables its own shader channel');
+assert.equal(uniforms.get('hasMetal'), 0, 'specular import must not masquerade as metallic');
+assert.notEqual(uniforms.get('specularMap'), uniforms.get('metalMap'), 'specular and metallic use separate texture units');
+api.load(scene());
+assert.equal(deleted.length, 4, 'specular GPU texture is disposed with its scene');
 console.log('PASS viewport scene ownership, texture lifetime, DPI picking and background deselection');

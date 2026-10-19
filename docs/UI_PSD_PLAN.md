@@ -33,7 +33,19 @@ Implemented compact top menus for File, Select object/LOD, Modifiers/Glass and M
 
 Added independent NMF export: all loaded LODs go into a new folder, originals stay untouched, glass object assignments must cover every LOD. NMF-only export does not clear unsaved material changes; alpha-mask projects must use the existing complete mod export. Actual three-LOD fixture tests passed for byte preservation, glass assignments, source hashes and duplicate-name rejection. No owner-screen validation yet.
 
-Still pending: OBJ importer, texture import submenus, pivot correction and game-light assignment/export. Do not show these as working placeholder commands or claim the whole PSD implementation is complete. F9/live-FOV is the separate agreed cycle.
+Still pending after cycle 1: OBJ importer, texture import submenus, pivot correction and game-light assignment/export. Do not show these as working placeholder commands or claim the whole PSD implementation is complete. F9/live-FOV is the separate agreed cycle.
+
+## Editor cycle 2: OBJ and texture import
+
+- OBJ importer preserves object/material groups, explicit normals, smoothing groups and hard edges. Ear clipping handles concave planar polygons and retains winding. Negative indices work. UV V is converted to the native image convention; XYZ axes are retained, not guessed. Large parts split at the native 16-bit vertex boundary. No animation/skin, curves or non-planar polygon repair is promised.
+- Menu, file argument and drop can import OBJ. Add LOD accepts NMF or OBJ; OBJ LOD material identifiers must exist in the loaded model set.
+- Geometry imports with a generated native MTL and neutral session textures. Wavefront mtllib/map paths are not loaded automatically: assign Diffuse, Normal, Specular, AO, Roughness and Metallic through the texture submenu for the selected material.
+- DDS is retained; supported PNG/JPEG/BMP/TIFF input is converted into session DDS for native export. Original images/models are not edited. Session assets live under LocalAppData/Aurora/Editor/Sessions and known generated files are removed when that editor closes.
+- Specular has a separate preview sampler and native MTL slot 1; it is not a metallic-map alias. Diffuse and Normal also update native MTL slots 0 and 2 on full mod export. Imported-model bounds are recalculated for bbox.bin.
+- OBJ rigid streams use the existing native cooker's 0x108 layout. Alpha glass now supports that layout too; mask export serializes in-memory models into its staging folder rather than reading virtual OBJ-derived NMF paths.
+- Checks cover concave area/winding, smoothing/explicit normals, indices, malformed geometry, multi-material boundaries, >65536 vertices, full in-memory LOD/specular/bounds export, GPU map isolation/disposal and alpha-glass stream conservation for 0x108/0x40139/0x4013a. Real UI, imported-vehicle game loading and texture appearance remain owner checks.
+
+Next editor cycle remains pivot correction and actual native headlights/rear lights. No placeholder Light/Pivot commands added yet.
 
 ## Graphics correction checkpoint
 

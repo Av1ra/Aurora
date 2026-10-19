@@ -34,7 +34,10 @@ sealed partial class EditorWindow
  {
   // Reuse the existing stateful selectors and command handlers.
   var toolbar=new StackPanel{Orientation=Orientation.Horizontal,Spacing=6,Margin=new Thickness(12,6,12,6)};
+  RegisterImportCommands();
   var file=new MenuFlyout();file.Items.Add(MenuCommand("Открыть NMF…"));file.Items.Add(MenuCommand("Добавить LOD…"));
+  file.Items.Add(MenuCommand("Импортировать OBJ…"));
+  var textures=MenuGroup("Импорт текстур");foreach(string channel in new[]{"Diffuse","Normal","Specular","AO","Roughness","Metallic"})textures.Items.Add(MenuCommand(channel));file.Items.Add(textures);
   file.Items.Add(new MenuFlyoutSeparator());
   editorCommands["Экспортировать NMF…"]=(ExportNmf,()=>HasModel);
   file.Items.Add(MenuCommand("Экспортировать NMF…"));file.Items.Add(MenuCommand("Сохранить мод…"));

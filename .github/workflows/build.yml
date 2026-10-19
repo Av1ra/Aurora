@@ -24,6 +24,8 @@ jobs:
         run: dotnet run --project Aurora.Tests -c Release
       - name: Viewport boundary checks
         run: node Packaging/test-viewport.mjs
+      - name: OBJ and native alpha-glass streams
+        run: python Packaging/test-obj-glass.py
       - name: Build development packages, never a release
         shell: pwsh
         run: ./build.ps1 -Development
