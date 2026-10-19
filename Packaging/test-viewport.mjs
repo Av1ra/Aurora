@@ -27,6 +27,7 @@ const overlay={style:{},getContext:()=>overlayContext};
 const document = { getElementById: () => canvas,createElement:()=>overlay,body:{appendChild(){}} };
 const api = new Function('document', 'window', 'ResizeObserver', 'Image', 'WebGLTexture',
   script + '\nreturn {load,texture,gizmo,gizmoRotate,gizmoProject,tool:()=>gizmoState,segments:()=>gizmoSegments,selected:()=>selected};')(document, window, class { observe() {} }, ImageStub, Texture);
+assert.match(overlay.style.cssText,/background\s*:\s*transparent(?:;|$)/,'pivot overlay must override the shared canvas background so loaded NMF stays visible');
 const scene = () => ({ Materials: ['body'], Nodes: [{
   Positions: [0,0,0, 1,0,0, 0,1,0], Normals: [0,0,1, 0,0,1, 0,0,1],
   Uv: [0,0, 1,0, 0,1], Indices: [0,1,2], Groups: [{ Material: 0, First: 0, Count: 3 }]

@@ -2,7 +2,7 @@
 let gizmoState={visible:false,position:[0,0,0],rotation:[0,0,0],mode:'move',editing:false},gizmoDrag=null,gizmoSegments=[];
 const gizmoCanvas=document.createElement?document.createElement('canvas'):null;
 let gizmoContext=null;
-if(gizmoCanvas){gizmoCanvas.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none';document.body.appendChild(gizmoCanvas);gizmoContext=gizmoCanvas.getContext('2d');}
+if(gizmoCanvas){gizmoCanvas.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;background:transparent';document.body.appendChild(gizmoCanvas);gizmoContext=gizmoCanvas.getContext('2d');}
 const gv={add:(a,b)=>a.map((x,i)=>x+b[i]),sub:(a,b)=>a.map((x,i)=>x-b[i]),mul:(a,s)=>a.map(x=>x*s),dot:(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0)};
 function gizmoRotate(v,r){let p=[...v];for(let a=0;a<3;a++){let b=(a+1)%3,c=(a+2)%3,t=r[a]*Math.PI/180,u=p[b],w=p[c];p[b]=u*Math.cos(t)-w*Math.sin(t);p[c]=u*Math.sin(t)+w*Math.cos(t);}return p;}
 function cameraRotate(p,inverse=false){let x=p[0],y=p[1],z=p[2];if(inverse){let y1=Math.cos(pitch)*y+Math.sin(pitch)*z,z1=-Math.sin(pitch)*y+Math.cos(pitch)*z;return[Math.cos(yaw)*x-Math.sin(yaw)*z1,y1,Math.sin(yaw)*x+Math.cos(yaw)*z1];}let x1=Math.cos(yaw)*x+Math.sin(yaw)*z,z1=-Math.sin(yaw)*x+Math.cos(yaw)*z;return[x1,Math.cos(pitch)*y-Math.sin(pitch)*z1,Math.sin(pitch)*y+Math.cos(pitch)*z1];}
