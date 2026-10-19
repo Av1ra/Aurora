@@ -9,6 +9,7 @@
 #include "PbrUiProtocol.h"
 #include <shellapi.h>
 #include "Sha256.h"
+#include "PbrRuntimeDefaults.h"
 namespace {
 bool X64(const std::wstring& file){
  // Read only the DOS and NT headers, never the whole game executable.
@@ -65,6 +66,7 @@ int WINAPI wWinMain(HINSTANCE,HINSTANCE,PWSTR,int){
  SetEnvironmentVariableW(L"PBR_GAME_ROOT",root.c_str());SetEnvironmentVariableW(L"PBR_MODS_DIR",mods.c_str());
  const auto ui=pbr::JoinPath(pbr::DirectoryOf(pbr::ModulePath(nullptr)),L"Aurora.Launcher.exe");SetEnvironmentVariableW(L"AURORA_UI_PATH",ui.c_str());
  const auto config=pbr::JoinPath(mods,L"pbr-runtime.ini");
+ for(const auto& library:libraries)if(!_wcsicmp(pbr::BaseName(library).c_str(),L"pbr.dll")&&!aurora::EnsurePbrRuntimeDefaults(config))return Error(L"Unable to save PBR runtime defaults. Check the mods folder permissions.");
  SetEnvironmentVariableW(L"PBR_DEBUG",GetPrivateProfileIntW(L"runtime",L"debug",0,config.c_str())?L"1":L"0");
  SetEnvironmentVariableW(L"PBR_CONTROLS",L"1");SetEnvironmentVariableW(L"PBR_CONSOLE",L"0");SetEnvironmentVariableW(L"PBR_MODEL_MODE",L"NATIVE");
  auto eventName=L"Local\\AURORA_PBR_"+std::to_wstring(GetCurrentProcessId());HANDLE ready=CreateEventW(nullptr,TRUE,FALSE,eventName.c_str());SetEnvironmentVariableW(L"PBR_BOOTSTRAP_EVENT",eventName.c_str());

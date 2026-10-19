@@ -22,5 +22,9 @@ if errorlevel 1 exit /b 26
 cl /nologo /std:c++20 /utf-8 /EHsc /O2 /MT "..\..\Modules\FovChanger\ResolverTests.cpp" /Fe:FovResolverTests.exe
 if errorlevel 1 exit /b 27
 FovResolverTests.exe
+if errorlevel 1 exit /b 29
+cl /nologo /std:c++20 /utf-8 /EHsc /O2 /MT /DUNICODE /D_UNICODE /I"..\..\Native" "..\..\Aurora.Tests\PbrRuntimeDefaultsTests.cpp" /Fe:PbrRuntimeDefaultsTests.exe
+if errorlevel 1 exit /b 30
+PbrRuntimeDefaultsTests.exe
 exit /b %errorlevel%
 

@@ -76,7 +76,7 @@ sealed class ConsoleWindow : Window
         <ComboBox x:Name="View" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" MinHeight="30"><ComboBoxItem Content="Полный PBR"/><ComboBoxItem Content="Карта металличности"/><ComboBoxItem Content="Карта шероховатости"/><ComboBoxItem Content="Карта AO"/><ComboBoxItem Content="Отражения"/><ComboBoxItem Content="Карта нормалей"/><ComboBoxItem Content="Базовый цвет"/></ComboBox>
         <InfoBar x:Name="Status" IsOpen="False" Severity="Informational" IsClosable="True"/>
       </StackPanel>
-      <Border Grid.Row="2" Background="{ThemeResource LayerFillColorDefaultBrush}" Padding="16,3"><Grid><TextBlock Text="F9 — показать / скрыть" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/><Button x:Name="Close" Content="Закрыть" HorizontalAlignment="Right" MinWidth="88" MinHeight="28" Padding="10,2"/></Grid></Border>
+      <Border Grid.Row="2" Background="{ThemeResource LayerFillColorDefaultBrush}" Padding="16,3"><Button x:Name="Close" Content="Закрыть" HorizontalAlignment="Right" MinWidth="88" MinHeight="28" Padding="10,2"/></Border>
     </Grid>
 
     """;
