@@ -22,13 +22,13 @@ sealed partial class EditorWindow
   if(asLod){
    if(lods.ContainsKey(virtualNmf))throw new InvalidDataException(UiLanguage.Text("Модель с таким именем уже загружена."));
    if(result.Model.Materials.Except(lods.Values.SelectMany(model=>model.Materials),StringComparer.Ordinal).Any())throw new InvalidDataException(UiLanguage.Text("Материалы OBJ для LOD должны совпадать с основной моделью."));
-   lods[virtualNmf]=result.Model;glassObjects[virtualNmf]=[];AddLodChoice(virtualNmf);SelectLod(virtualNmf);
+   lods[virtualNmf]=documentTransform==System.Numerics.Matrix4x4.Identity?result.Model:ModelOrientation.Apply(result.Model,documentTransform);glassObjects[virtualNmf]=[];AddLodChoice(virtualNmf);SelectLod(virtualNmf);
   }else{
    // Use private session assets; the source OBJ/MTL directories remain read-only.
    string diffuse=SessionFile("default-diffuse.dds"),specular=SessionFile("default-specular.dds"),normal=SessionFile("default-normal.dds");
    File.WriteAllBytes(diffuse,DdsImage.Encode(new(1,1,[180,180,180,255])));File.WriteAllBytes(specular,DdsImage.Encode(new(1,1,[255,255,255,255])));File.WriteAllBytes(normal,DdsImage.Encode(new(1,1,[128,128,255,255])));
    string generated=SessionFile("material-"+Guid.NewGuid().ToString("N")+".mtl");File.WriteAllText(generated,NativeMaterialText.Create(result.Model.Materials,diffuse,specular,normal));
-   lods.Clear();glassObjects.Clear();settings.Clear();lodChoice.Items.Clear();mask=null;maskMaterial=null;
+   lods.Clear();glassObjects.Clear();settings.Clear();lodChoice.Items.Clear();mask=null;maskMaterial=null;ResetVehicle(null);
    lods[virtualNmf]=result.Model;glassObjects[virtualNmf]=[];AddLodChoice(virtualNmf);SelectLod(virtualNmf);mtl=generated;
    foreach(string name in result.Model.Materials)settings[name]=new(Base:diffuse,Native:false);
   }

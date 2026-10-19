@@ -4,6 +4,8 @@ Checkpoint recorded: 2026-10-19. Canonical repository: `Av1ra/Aurora`, branch `m
 
 ## Read this first
 
+Latest scoped editor work (2026-10-19): OBJ/textures followed by rigid pivot/axes and native vehicle lights. Consult the newest entries in STATUS.md and [EDITOR_VEHICLES.md](EDITOR_VEHICLES.md) before older checkpoints below. Owner performs live UI/game tests; do not use desktop automation. Preserve version 0.2 and the one combined archive.
+
 Read [AGENTS.md](../AGENTS.md), [PROJECT_MAP.md](../PROJECT_MAP.md), [docs/STATUS.md](STATUS.md), [docs/DEVELOPMENT.md](DEVELOPMENT.md), [docs/WORKSHOP_UPDATES.md](WORKSHOP_UPDATES.md), and this document. For the next UI work, apply the active [UI design standard in Av1ra/GameData](https://github.com/Av1ra/GameData/blob/main/WORKFLOW/UI_DESIGN.md). That is the owner's canonical UI standard based on 17 visual references; do not substitute generic template UI.
 
 **Last implementation checkpoint**: `ef780f8a41f129d2443f79e2099e25bb8672f8cf` ("Add reversible Steam launch bridge for Aurora Launcher and preserve game executable"). Windows GitHub Actions [run 39171012901](https://github.com/Av1ra/Aurora/actions/runs/39171012901) finished **success**, including core checks, package build, native/Steam entry fixture tests, signed bundle checks, and artifact upload. Temporary build artifact ID `12152597565`, containing `Aurora-Setup.exe` and its adjacent ZIP, is approximately 96.7 MB as a combined Actions artifact and expires 2026-10-25. Link: https://github.com/Av1ra/Aurora/actions/runs/39171012901/artifacts/12152597565 . This proves automated checks, **not** that the bridge has been launched and accepted by a real Steam client.

@@ -31,11 +31,12 @@ public sealed class NativeModel
    Require(groups+ng*12==end,"Unsupported NMF trailing streams");
    var positions=new float[nv*3];var normals=new float[nv*3];var uv=new float[nv*2];
    var matrix=new Matrix4x4(F(offset+76),F(offset+80),F(offset+84),F(offset+88),F(offset+92),F(offset+96),F(offset+100),F(offset+104),F(offset+108),F(offset+112),F(offset+116),F(offset+120),F(offset+124),F(offset+128),F(offset+132),F(offset+136));
+   Require(Matrix4x4.Invert(matrix,out var inverse),"Singular NMF transform");var normalMatrix=Matrix4x4.Transpose(inverse);
    // Native vertex streams are local; matrix preserves placement of wheels/parts.
    for(int v=0;v<nv;v++)
    {
     var p=Vector3.Transform(new(F(attr+v*12),F(attr+v*12+4),F(attr+v*12+8)),matrix);
-    var normal=Vector3.TransformNormal(new(F(attr+nv*12+v*12),F(attr+nv*12+v*12+4),F(attr+nv*12+v*12+8)),matrix);
+    var normal=Vector3.TransformNormal(new(F(attr+nv*12+v*12),F(attr+nv*12+v*12+4),F(attr+nv*12+v*12+8)),normalMatrix);
     Require(float.IsFinite(p.X)&&float.IsFinite(p.Y)&&float.IsFinite(p.Z),"Nonfinite vertex");
     positions[v*3]=p.X;positions[v*3+1]=p.Y;positions[v*3+2]=p.Z;normals[v*3]=normal.X;normals[v*3+1]=normal.Y;normals[v*3+2]=normal.Z;
     int uvAt=attr+nv*(stride==56?48:24)+v*8;uv[v*2]=F(uvAt);uv[v*2+1]=F(uvAt+4);

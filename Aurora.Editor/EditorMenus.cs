@@ -34,7 +34,7 @@ sealed partial class EditorWindow
  {
   // Reuse the existing stateful selectors and command handlers.
   var toolbar=new StackPanel{Orientation=Orientation.Horizontal,Spacing=6,Margin=new Thickness(12,6,12,6)};
-  RegisterImportCommands();
+  RegisterImportCommands();RegisterVehicleCommands();
   var file=new MenuFlyout();file.Items.Add(MenuCommand("Открыть NMF…"));file.Items.Add(MenuCommand("Добавить LOD…"));
   file.Items.Add(MenuCommand("Импортировать OBJ…"));
   var textures=MenuGroup("Импорт текстур");foreach(string channel in new[]{"Diffuse","Normal","Specular","AO","Roughness","Metallic"})textures.Items.Add(MenuCommand(channel));file.Items.Add(textures);
@@ -45,7 +45,8 @@ sealed partial class EditorWindow
   var selection=new StackPanel{Spacing=12,MinWidth=260,MaxWidth=340};selection.Children.Add(lodChoice);selection.Children.Add(objects);detachedMenuContents.Add(selection);
   toolbar.Children.Add(ToolbarMenu("Выбрать объект",new Flyout{Content=selection}));
   var modifiers=new MenuFlyout();var glass=MenuGroup("Стекло");glass.Items.Add(MenuCommand("Сделать объект стеклом","Назначить объект"));glass.Items.Add(MenuCommand("Стекло через альфа-маску…","Альфа-канал…"));glass.Items.Add(new MenuFlyoutSeparator());glass.Items.Add(MenuCommand("Сбросить стекло"));modifiers.Items.Add(glass);
-  toolbar.Children.Add(ToolbarMenu("Модификаторы",modifiers));
+  var lights=MenuGroup("Свет");foreach(string command in new[]{"Назначить фары…","Назначить задние фонари…","Настроить огни…","Выбрать script.ini…"})lights.Items.Add(MenuCommand(command));modifiers.Items.Add(lights);
+  modifiers.Items.Add(MenuCommand("Починить ориентацию…"));toolbar.Children.Add(ToolbarMenu("Модификаторы",modifiers));
   var materialPanel=new StackPanel{Spacing=10,MinWidth=260,MaxWidth=360};materialPanel.Children.Add(materialChoice);materialPanel.Children.Add(materialFile);detachedMenuContents.Add(materialPanel);
   foreach(string key in new[]{"Выбрать MTL…","Настроить PBR"}){
    var command=editorCommands[key];var button=new Button{Content=UiLanguage.Text(key),HorizontalAlignment=HorizontalAlignment.Stretch};commandButtons.Add((button,command.CanExecute));button.Click+=async(_,_)=>{CloseEditorFlyouts();await RunCommand(command.Action);};materialPanel.Children.Add(button);
@@ -77,6 +78,7 @@ sealed partial class EditorWindow
  }
  async Task ExportNmf()
  {
+  if(vehicleConfigurationEdited)throw new InvalidDataException(UiLanguage.Text("Для сохранения игровых огней используйте экспорт мода."));
   if(mask!=null)throw new InvalidDataException(UiLanguage.Text("Для альфа-маски используйте экспорт мода."));
   var destination=await Folder();if(destination==null)return;
   processing=true;UpdateControls();string output=await Task.Run(()=>NmfExport.Write(lods,glassObjects,destination));SetStatus("NMF экспортирован",output);

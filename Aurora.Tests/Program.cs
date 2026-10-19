@@ -5,6 +5,7 @@ static void Check(bool value,string label){if(!value)throw new Exception("FAIL "
 static void Reject(Action action,string label){try{action();}catch{Console.WriteLine("PASS rejected "+label);return;}throw new Exception("FAIL accepted "+label);}
 ObjImportChecks.Run(Check,Reject);
 await ObjExportChecks.Run(Check);
+await VehicleChecks.Run(Check,Reject);
 var root=Path.Combine(Path.GetTempPath(),"Aurora-tests-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(root);
 using var key=ECDsa.Create(ECCurve.NamedCurves.nistP256);string pem=key.ExportSubjectPublicKeyInfoPem();
 File.WriteAllText(Path.Combine(root,"module.dll"),"fixture-not-executable");
@@ -31,6 +32,13 @@ if(args.Length>0)
  int passed=0,rejected=0;foreach(var path in Directory.EnumerateFiles(args[0],"*.nmf",SearchOption.AllDirectories).Take(180))
  {
   NativeModel model;try{model=new(File.ReadAllBytes(path));}catch(InvalidDataException){rejected++;continue;}
+  var pivotMatrix=ModelOrientation.Transform(model,1,4,true,false);var oriented=ModelOrientation.Apply(model,pivotMatrix);
+  Check(oriented.Nodes.Count==model.Nodes.Count&&oriented.Materials.SequenceEqual(model.Materials),"pivot bake retains native parts and materials");
+  for(int i=0;i<model.Nodes.Count;i++){
+   var before=model.Nodes[i];var after=oriented.Nodes[i];
+   Check(before.Indices.SequenceEqual(after.Indices)&&before.Uv.SequenceEqual(after.Uv)&&before.Groups.SequenceEqual(after.Groups),"native pivot retains triangles, UVs and material assignment");
+   Check(Enumerable.Range(0,before.VertexCount).All(v=>{var expected=System.Numerics.Vector3.Transform(new(before.Positions[v*3],before.Positions[v*3+1],before.Positions[v*3+2]),pivotMatrix);return System.Numerics.Vector3.Distance(expected,new(after.Positions[v*3],after.Positions[v*3+1],after.Positions[v*3+2]))<1e-5f;}),"native pivot retains all transformed vertices");
+  }
   var names=new HashSet<string>{model.Nodes[0].Name};var glass=new NativeModel(model.AssignGlass(names));
   Check(glass.Nodes.Count==model.Nodes.Count&&glass.Materials.Length==model.Materials.Length+1,"glass preserves model structure "+Path.GetFileName(Path.GetDirectoryName(path))+"/"+Path.GetFileName(path));
   for(int i=0;i<model.Nodes.Count;i++){var a=model.Nodes[i];var b=glass.Nodes[i];Check(a.Positions.SequenceEqual(b.Positions)&&a.Normals.SequenceEqual(b.Normals)&&a.Uv.SequenceEqual(b.Uv)&&a.Indices.SequenceEqual(b.Indices),"geometry/UV/transform unchanged");}

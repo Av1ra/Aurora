@@ -10,6 +10,15 @@ static class UiLanguage
     public static bool Reload(){try{string value=File.ReadAllText(path).Trim();if(value is not ("en" or "ru"))return false;bool english=value=="en";if(english==English)return false;English=english;return true;}catch{return false;}}
     static readonly Dictionary<string,string> words=new()
     {
+      ["Свет"]="Lights",["Починить ориентацию…"]="Fix orientation…",["Назначить фары…"]="Assign headlights…",["Назначить задние фонари…"]="Assign rear lights…",
+      ["Некорректные координаты огня."]="Invalid vehicle light coordinates.",
+      ["Выбрать script.ini…"]="Choose script.ini…",["Настроить огни…"]="Edit lights…",["Фара"]="Headlight",["Задний фонарь"]="Rear light",
+      ["Конфигурация огней загружена"]="Vehicle configuration loaded",["Выберите script.ini транспортного средства."]="Select a vehicle script.ini.",
+      ["Добавить симметричный огонь по X"]="Add a mirrored light on X",["Игровые огни назначены"]="Game lights assigned",["Игровые огни сохранены"]="Game lights saved",["Огни ещё не назначены."]="No lights assigned yet.",
+      ["В игре: перед +Z, верх +Y. Изменение применяется ко всем LOD."]="In game: forward +Z, up +Y. Applies to every LOD.",
+      ["Сейчас перед модели"]="Current model forward",["Сейчас верх модели"]="Current model up",["Центр pivot по X и Z"]="Centre pivot on X and Z",["Поставить нижнюю точку на Y = 0"]="Place lowest point at Y = 0",
+      ["Перед и верх должны быть разными осями."]="Forward and up must use different axes.",["Ориентация и pivot исправлены"]="Orientation and pivot corrected",
+      ["Для сохранения игровых огней используйте экспорт мода."]="Use mod export to save vehicle lights.",
       ["Импортировать OBJ…"]="Import OBJ…",["Импорт текстур"]="Import textures",["OBJ импортирован"]="OBJ imported",
       ["Максимальный размер текстуры — 8192 × 8192."]="Maximum texture size is 8192 × 8192.",
       ["Перетащите один NMF или OBJ."]="Drop one NMF or OBJ file.",

@@ -92,7 +92,7 @@ sealed partial class EditorWindow:Window
  void AddLodChoice(string path){if(lodChoice.Items.OfType<ComboBoxItem>().Any(x=>string.Equals(x.Tag as string,path,StringComparison.OrdinalIgnoreCase)))return;var item=new ComboBoxItem{Content=Path.GetFileName(path),Tag=path};ToolTipService.SetToolTip(item,path);lodChoice.Items.Add(item);}
  async Task<string?> Pick(params string[] extensions){var picker=new Windows.Storage.Pickers.FileOpenPicker();foreach(var ext in extensions)picker.FileTypeFilter.Add(ext);WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));return(await picker.PickSingleFileAsync())?.Path;}
  async Task<string?> Folder(){var picker=new Windows.Storage.Pickers.FolderPicker();picker.FileTypeFilter.Add("*");WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));return(await picker.PickSingleFolderAsync())?.Path;}
- async Task AddModel(string path){var model=await Task.Run(()=>new NativeModel(File.ReadAllBytes(path)));lods[path]=model;glassObjects.TryAdd(path,[]);AddLodChoice(path);}
+ async Task AddModel(string path){if(lods.ContainsKey(path))throw new InvalidDataException(UiLanguage.Text("Модель с таким именем уже загружена."));var model=await Task.Run(()=>new NativeModel(File.ReadAllBytes(path)));if(documentTransform!=System.Numerics.Matrix4x4.Identity)model=ModelOrientation.Apply(model,documentTransform);lods[path]=model;glassObjects.TryAdd(path,[]);AddLodChoice(path);}
  async Task Load(string path)
  {
   processing=true;UpdateControls();
@@ -100,7 +100,8 @@ sealed partial class EditorWindow:Window
   var siblings=Directory.GetFiles(Path.GetDirectoryName(path)!,"*.nmf").Where(p=>p.Equals(path,StringComparison.OrdinalIgnoreCase)||Regex.IsMatch(Path.GetFileName(p),@"^lod.*\.nmf$",RegexOptions.IgnoreCase)).ToArray();
   var parsed=await Task.Run(()=>siblings.ToDictionary(x=>x,x=>new NativeModel(File.ReadAllBytes(x))));
   lods.Clear();glassObjects.Clear();settings.Clear();lodChoice.Items.Clear();mask=null;maskMaterial=null;
-  foreach(var pair in parsed){lods[pair.Key]=pair.Value;glassObjects[pair.Key]=[];AddLodChoice(pair.Key);}
+  ResetVehicle(Path.Combine(Path.GetDirectoryName(path)!,"script.ini"));
+  foreach(var pair in parsed.OrderBy(p=>p.Key.Equals(path,StringComparison.OrdinalIgnoreCase)?0:1)){lods[pair.Key]=pair.Value;glassObjects[pair.Key]=[];AddLodChoice(pair.Key);}
   selectedLod=path;SelectLod(path);
   var candidate=Path.ChangeExtension(path,"mtl");var common=Path.Combine(Path.GetDirectoryName(path)!,"material.mtl");mtl=File.Exists(candidate)?candidate:File.Exists(common)?common:null;
   dirty=false;SetStatus("Загружено моделей и LOD",lods.Count.ToString(CultureInfo.InvariantCulture));await Display();
@@ -178,7 +179,7 @@ sealed partial class EditorWindow:Window
  {
   if(lods.Count==0||mtl==null)throw new InvalidOperationException("Выберите NMF и MTL.");
   var destination=await Folder();if(destination==null)return;
-  await ModelExport.Export(lods,glassObjects,settings,mtl,mask,maskMaterial,destination,ReadImage);
+  await ModelExport.Export(lods,glassObjects,settings,mtl,mask,maskMaterial,destination,ReadImage,vehicleConfiguration);
   dirty=false;SetStatus("Готово",destination);
  }
 }

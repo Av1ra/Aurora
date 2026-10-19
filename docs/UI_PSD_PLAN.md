@@ -45,7 +45,11 @@ Still pending after cycle 1: OBJ importer, texture import submenus, pivot correc
 - OBJ rigid streams use the existing native cooker's 0x108 layout. Alpha glass now supports that layout too; mask export serializes in-memory models into its staging folder rather than reading virtual OBJ-derived NMF paths.
 - Checks cover concave area/winding, smoothing/explicit normals, indices, malformed geometry, multi-material boundaries, >65536 vertices, full in-memory LOD/specular/bounds export, GPU map isolation/disposal and alpha-glass stream conservation for 0x108/0x40139/0x4013a. Real UI, imported-vehicle game loading and texture appearance remain owner checks.
 
-Next editor cycle remains pivot correction and actual native headlights/rear lights. No placeholder Light/Pivot commands added yet.
+Next editor cycle was pivot correction and actual native headlights/rear lights; implementation follows below.
+
+## Editor cycle 3: vehicle axes, pivot and game lights
+
+Implemented Modifiers > Fix orientation and Lights > Assign headlights / Assign rear lights / Edit lights / Choose script.ini. Explicit current front/up axes, optional horizontal pivot centring and ground placement apply a common correction to all LODs. Actual native light directives are exported in script.ini; no emission-material substitute. Original assets remain read-only. See [vehicle editor contract and limitations](EDITOR_VEHICLES.md), especially the guard against unknown spatial script sections. F9/live-FOV remains a separate cycle.
 
 ## Graphics correction checkpoint
 

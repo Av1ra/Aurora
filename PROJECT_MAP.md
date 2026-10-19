@@ -10,7 +10,8 @@
 | Download, verification, editor installation | Aurora.Launcher/UpdateService.cs |
 | Manifest, safe paths, module installation, NMF | Aurora.Core/ |
 | Registered Workshop release detection and transactional updates | Aurora.Core/WorkshopUpdates.cs, docs/WORKSHOP_UPDATES.md |
-| Existing Model Editor (no redesign requested) | Aurora.Editor/ and Aurora.Editor.Module/ |
+| Model Editor and owner PSD layout | Aurora.Editor/ and Aurora.Editor.Module/, docs/UI_PSD_PLAN.md |
+| Vehicle pivot, axes and native headlights/rear lights | Aurora.Core/ModelOrientation.cs, Aurora.Core/VehicleLights.cs, Aurora.Editor/EditorVehicle.cs, docs/EDITOR_VEHICLES.md |
 | Alpha mask backend | Backend/ |
 | Independent FOV Changer DLL | Modules/FovChanger/, Prepare-Fov.ps1 |
 | PBR payload packaging | Prepare-Graphics.ps1 |
