@@ -1,4 +1,4 @@
-﻿using Aurora.Core;
+using Aurora.Core;
 using Aurora.Launcher;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
@@ -31,6 +31,7 @@ sealed class EditorWindow:Window
  readonly Dictionary<string,MaterialSettings> settings=[];
  string? selectedLod,mtl,mask,maskMaterial;bool ready,busy,processing,dirty,closeApproved,closePrompt;
  ContentDialog? activeDialog;
+ string? viewportHtml;
  readonly TextBlock dirtyText=new(){Text=UiLanguage.Text("Есть несохранённые изменения"),FontSize=12,Opacity=.75,Visibility=Visibility.Collapsed};
  readonly ProgressBar busyIndicator=new(){IsIndeterminate=true,Visibility=Visibility.Collapsed};
  readonly List<(Button Button,Func<bool> CanExecute)> commandButtons=[];
@@ -63,7 +64,7 @@ sealed class EditorWindow:Window
   controls.Children.Add(Button("Стекло через альфа-маску…",async()=>{if(materialChoice.SelectedItem is not string name)throw new InvalidOperationException("Выберите материал кузова.");var chosen=await Pick(".dds",".png");if(chosen!=null){mask=chosen;maskMaterial=name;dirty=true;status.Text=UiLanguage.Text("Альфа-маска")+": "+Path.GetFileName(mask)+" — "+name;}},()=>HasModel&&materialChoice.SelectedItem!=null));
   controls.Children.Add(Button("Сбросить стекло",async()=>{if(selectedLod!=null)glassObjects[selectedLod].Clear();mask=null;maskMaterial=null;dirty=true;await Display();},()=>HasModel&&(mask!=null||(selectedLod!=null&&glassObjects[selectedLod].Count>0))));
   controls.Children.Add(Button("Сохранить мод…",Export,()=>HasModel&&mtl!=null));controls.Children.Add(busyIndicator);controls.Children.Add(dirtyText);controls.Children.Add(status);
-  view.CoreWebView2Initialized+=(_,_)=>{view.CoreWebView2.NavigationStarting+=(_,e)=>{if(!string.Equals(e.Uri,"about:blank",StringComparison.OrdinalIgnoreCase))e.Cancel=true;};view.CoreWebView2.Settings.AreDevToolsEnabled=false;view.CoreWebView2.Settings.AreDefaultContextMenusEnabled=false;view.CoreWebView2.WebMessageReceived+=async(_,e)=>{try{using var json=JsonDocument.Parse(e.WebMessageAsJson);if(json.RootElement.TryGetProperty("error",out var viewportError))status.Text="Viewport: "+viewportError.GetString();if(json.RootElement.TryGetProperty("ready",out var readyProperty)){ready=true;await view.ExecuteScriptAsync("document.getElementById('hint').textContent="+JsonSerializer.Serialize(UiLanguage.Text("Перетаскивание: вращение. Колесо: масштаб. Щелчок: выбор объекта.")));if(startupModel is string path){startupModel=null;await RunCommand(()=>Load(path));}else await Display();}if(json.RootElement.TryGetProperty("selected",out var index)&&index.TryGetInt32(out int i)&&i>=-1&&i<objects.Items.Count)objects.SelectedIndex=i;}catch{}};};
+  view.CoreWebView2Initialized+=(_,_)=>{view.CoreWebView2.NavigationStarting+=(_,e)=>{if(!ViewportNavigation.IsAllowed(e.Uri,viewportHtml))e.Cancel=true;};view.CoreWebView2.Settings.AreDevToolsEnabled=false;view.CoreWebView2.Settings.AreDefaultContextMenusEnabled=false;view.CoreWebView2.WebMessageReceived+=async(_,e)=>{try{using var json=JsonDocument.Parse(e.WebMessageAsJson);if(json.RootElement.TryGetProperty("error",out var viewportError))status.Text="Viewport: "+viewportError.GetString();if(json.RootElement.TryGetProperty("ready",out var readyProperty)){ready=true;await view.ExecuteScriptAsync("document.getElementById('hint').textContent="+JsonSerializer.Serialize(UiLanguage.Text("Перетаскивание: вращение. Колесо: масштаб. Щелчок: выбор объекта.")));if(startupModel is string path){startupModel=null;await RunCommand(()=>Load(path));}else await Display();}if(json.RootElement.TryGetProperty("selected",out var index)&&index.TryGetInt32(out int i)&&i>=-1&&i<objects.Items.Count)objects.SelectedIndex=i;}catch{}};};
   AppWindow.Closing+=async(_,e)=>{if(!dirty||closeApproved)return;e.Cancel=true;if(closePrompt||busy)return;closePrompt=true;try{if(await ConfirmDiscard(true)){closeApproved=true;Close();}}finally{closePrompt=false;}};
   Activated+=async(_,e)=>{if(e.WindowActivationState==WindowActivationState.Deactivated||!UiLanguage.Reload())return;UiLanguage.Apply(grid);if(activeDialog!=null)UiLanguage.Apply(activeDialog);UpdateControls();if(ready)try{await UpdateViewportLanguage();}catch{}};
   UiLanguage.Apply(controls);UpdateControls();LoadedView();
@@ -74,7 +75,7 @@ sealed class EditorWindow:Window
   Directory.CreateDirectory(userData);
   var environment=await CoreWebView2Environment.CreateWithOptionsAsync(null,userData,new CoreWebView2EnvironmentOptions());
   await view.EnsureCoreWebView2Async(environment);
-  string folder=File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","Assets","viewport.html"))?"Editor":"";view.NavigateToString(File.ReadAllText(Path.Combine(AppContext.BaseDirectory,folder,"Assets","viewport.html")));
+  string folder=File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","Assets","viewport.html"))?"Editor":"";viewportHtml=File.ReadAllText(Path.Combine(AppContext.BaseDirectory,folder,"Assets","viewport.html"));view.CoreWebView2.NavigateToString(viewportHtml);
  }catch(Exception ex){status.Text=UiLanguage.Text("Не удалось открыть viewport")+": "+ex.Message;}}
  Task UpdateViewportLanguage()=>view.ExecuteScriptAsync("document.getElementById('hint').textContent="+JsonSerializer.Serialize(UiLanguage.Text("Перетаскивание: вращение. Колесо: масштаб. Щелчок: выбор объекта."))).AsTask();
  async Task<ContentDialogResult> ShowDialog(ContentDialog dialog){activeDialog=dialog;try{return await dialog.ShowAsync();}finally{activeDialog=null;}}

@@ -212,3 +212,12 @@ Check(Aurora.Shared.WindowSizing.Fit(520,260,144,1920,1080)==(780,390),"150-perc
 Check(Aurora.Shared.WindowSizing.Fit(1250,850,144,1920,1040)==(1872,992),"large editor fits the monitor work area at high DPI");
 Check(Aurora.Shared.WindowSizing.Fit(520,260,0,1920,1080)==(520,260),"unknown DPI falls back to standard scale");
 Check(Aurora.Shared.WindowSizing.Fit(520,260,192,20,20)==(1,1),"small work area never produces negative dimensions");
+
+string viewportDocument="<html><body>trusted viewport</body></html>";
+string viewportData=Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(viewportDocument));
+Check(ViewportNavigation.IsAllowed("about:blank",null),"viewport permits initial blank document");
+Check(ViewportNavigation.IsAllowed("data:text/html;base64,"+viewportData,viewportDocument),"viewport permits its exact encoded document");
+Check(ViewportNavigation.IsAllowed("data:text/html;charset=utf-8;base64,"+viewportData,viewportDocument),"viewport permits explicit UTF-8 document encoding");
+Check(!ViewportNavigation.IsAllowed("data:text/html;base64,"+viewportData,null),"viewport rejects data before trusted document is assigned");
+Check(!ViewportNavigation.IsAllowed("data:text/html;base64,PHNjcmlwdD4=",viewportDocument),"viewport rejects different encoded HTML");
+Check(!ViewportNavigation.IsAllowed("https://example.invalid/",viewportDocument)&&!ViewportNavigation.IsAllowed("file:///C:/model.nmf",viewportDocument),"viewport rejects web and dropped file navigation");
