@@ -39,7 +39,7 @@ sealed partial class EditorWindow
   string prefix="project-"+Guid.NewGuid().ToString("N");var files=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
   foreach(var entry in entries){string output=SessionFile(prefix+"/"+entry.Key);Directory.CreateDirectory(Path.GetDirectoryName(output)!);File.WriteAllBytes(output,entry.Value);files.Add(entry.Key,output);}
   string? Asset(string? name)=>name==null?null:files.TryGetValue(name,out var file)?file:throw new InvalidDataException("Project asset missing");
-  var parsed=p.Models.Select(m=>{if(Path.GetFileName(m.Name)!=m.Name||!m.Name.EndsWith(".nmf",StringComparison.OrdinalIgnoreCase))throw new InvalidDataException("Invalid project model name");return new NativeModel(File.ReadAllBytes(Asset(m.Asset)!));}).ToArray();
+  var parsed=p.Models.Select(m=>{if(Path.GetFileName(m.Name)!=m.Name||!AuroraProjectArchive.IsPortablePath(m.Name)||!m.Name.EndsWith(".nmf",StringComparison.OrdinalIgnoreCase))throw new InvalidDataException("Invalid project model name");return new NativeModel(File.ReadAllBytes(Asset(m.Asset)!));}).ToArray();
   var newVariants=p.Variants.Select(v=>new MaterialVariant(v.Name,Asset(v.Native)!,v.Settings.ToDictionary(x=>x.Key,x=>MapSettings(x.Value,Asset)))).ToArray();
   if(p.Models.Select(m=>m.Name).Distinct(StringComparer.OrdinalIgnoreCase).Count()!=p.Models.Length)throw new InvalidDataException("Duplicate project LOD");
   lods.Clear();glassObjects.Clear();lodChoice.Items.Clear();settings.Clear();variants.Clear();variantChoice.Items.Clear();
