@@ -121,10 +121,10 @@ sealed partial class EditorWindow:Window
   foreach(var line in text.Split('\n'))
   {
    var material=Regex.Match(line,@"^\s*\$SUBMATERIAL\s+(.+?)\s*$");if(material.Success){name=material.Groups[1].Value;continue;}
-   var texture=Regex.Match(line,@"^\s*\$TEXTURE(?:_MTL)?\s+0\s+(.+?)\s*$");
+   var texture=Regex.Match(line,@"^\s*\$TEXTURE(?:_MTL)?\s+([012])\s+(.+?)\s*$");
    if(name!=null&&texture.Success)
    {
-    try{var file=MaterialFiles.Resolve(mtl,texture.Groups[1].Value);var image=await ReadImage(file);await PreviewTexture(name,image);}catch(Exception ex){SetStatus("Текстура",ex.Message);}
+    try{var file=MaterialFiles.Resolve(mtl,texture.Groups[2].Value);var image=await ReadImage(file);string channel=texture.Groups[1].Value switch{"1"=>"specularMap","2"=>"normalMap",_=>"texture"};await PreviewTexture(name,image,channel);}catch(Exception ex){SetStatus("Текстура",ex.Message);}
    }
   }
  }
