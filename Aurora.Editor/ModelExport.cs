@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace Aurora.Editor;
 static class ModelExport
 {
- public static async Task Export(Dictionary<string,NativeModel> lods,Dictionary<string,HashSet<string>> glass,Dictionary<string,MaterialSettings> settings,string mtl,string? mask,string? maskMaterial,string destination,Func<string,Task<RgbaImage>> image,string? vehicleConfiguration=null)
+ public static async Task Export(Dictionary<string,NativeModel> lods,Dictionary<string,HashSet<string>> glass,Dictionary<string,MaterialSettings> settings,string mtl,string? mask,string? maskMaterial,string destination,Func<string,Task<RgbaImage>> image,string? vehicleConfiguration=null,bool useSourceScript=true)
  {
   if(lods.Keys.Select(Path.GetFileName).Distinct(StringComparer.OrdinalIgnoreCase).Count()!=lods.Count)throw new InvalidDataException("LOD filenames must be unique");
   if(mask!=null&&glass.Values.Any(x=>x.Count>0))throw new InvalidDataException("Выберите один способ стекла: объекты или альфа-маска.");
@@ -69,7 +69,7 @@ static class ModelExport
    string mtlName=Path.GetFileName(mtl);File.WriteAllText(Path.Combine(staging,mtlName),outputMtl,new UTF8Encoding(false));File.WriteAllText(Path.Combine(staging,Path.ChangeExtension(mtlName,"pbr")),rules.ToString(),new UTF8Encoding(false));
    string sourceFolder=Path.GetDirectoryName(lods.Keys.First())!;
    string script=Path.Combine(sourceFolder,"script.ini");
-   if(vehicleConfiguration!=null||File.Exists(script))
+   if(vehicleConfiguration!=null||(useSourceScript&&File.Exists(script)))
    {
     string configuration=vehicleConfiguration??File.ReadAllText(script);
     configuration=Regex.Replace(configuration,@"(?m)^(\s*\$LOD\d+\s+)([^\r\n]+)",m=>{string file=Path.GetFileName(m.Groups[2].Value.Trim().Replace('/',Path.DirectorySeparatorChar));if(!File.Exists(Path.Combine(staging,file)))throw new InvalidDataException("Добавьте LOD, указанный в script.ini: "+file);return m.Groups[1].Value+file;});

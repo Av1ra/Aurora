@@ -179,7 +179,7 @@ sealed partial class EditorWindow:Window
  {
   if(lods.Count==0||mtl==null)throw new InvalidOperationException("Выберите NMF и MTL.");
   var destination=await Folder();if(destination==null)return;
-  await ModelExport.Export(lods,glassObjects,settings,mtl,mask,maskMaterial,destination,ReadImage,vehicleConfiguration);
+  await ModelExport.Export(lods,glassObjects,settings,mtl,mask,maskMaterial,destination,ReadImage,vehicleConfiguration,useSourceScript:false);
   dirty=false;SetStatus("Готово",destination);
  }
 }

@@ -43,6 +43,9 @@ static class VehicleChecks
    string folder=Directory.GetDirectories(root,"Aurora-Model-*").Single();string saved=File.ReadAllText(Path.Combine(folder,"script.ini"));
    check(VehicleLights.Read(saved).SequenceEqual(VehicleLights.Read(rotated))&&Regex.IsMatch(saved,@"\$LOD1 lod1\.nmf")&&File.ReadAllText(scriptFile)==script,"full export saves edited game lights, rewrites LOD links and preserves source script");
    check(new NativeModel(File.ReadAllBytes(Path.Combine(folder,"lod1.nmf"))).Nodes[0].Positions.SequenceEqual(result.Nodes[0].Positions)&&File.ReadAllBytes(Path.Combine(folder,"bbox.bin")).Length==24,"same pivot across LODs with rebuilt native hitbox");
+   string second=Path.Combine(root,"snapshot-only");Directory.CreateDirectory(second);
+   await ModelExport.Export(models,models.Keys.ToDictionary(k=>k,_=>new HashSet<string>()),new(),mtl,null,null,second,p=>Task.FromResult(DdsImage.Decode(File.ReadAllBytes(p))),useSourceScript:false);
+   check(!File.Exists(Path.Combine(Directory.GetDirectories(second).Single(),"script.ini")),"editor snapshot does not silently re-read an untransformed script from disk");
   }finally{Directory.Delete(root,true);}
  }
 }
