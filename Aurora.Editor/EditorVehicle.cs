@@ -14,10 +14,12 @@ sealed partial class EditorWindow
  {
   vehicleConfiguration=script!=null&&File.Exists(script)?File.ReadAllText(script):null;
   vehicleConfigurationEdited=false;documentTransform=Matrix4x4.Identity;
+  mainPivot=mainRotation=Vector3.Zero;gizmoVisible=false;ReadLampSlots();
  }
  void RegisterVehicleCommands()
  {
-  editorCommands["Починить ориентацию…"]=(FixOrientation,()=>HasModel);
+  editorCommands["Починить ориентацию…"]=(StartPivot,()=>HasModel);
+  editorCommands["Фары и фонари"]=(ChooseLamp,()=>HasModel);
   editorCommands["Выбрать script.ini…"]=(ChooseVehicleScript,()=>HasModel);
   editorCommands["Назначить фары…"]=(async()=>await AssignLight(false),()=>HasModel&&objects.SelectedItem!=null);
   editorCommands["Назначить задние фонари…"]=(async()=>await AssignLight(true),()=>HasModel&&objects.SelectedItem!=null);
@@ -33,7 +35,7 @@ sealed partial class EditorWindow
  {
   var path=await Pick(".ini");if(path==null)return;
   string source=File.ReadAllText(path);source=VehicleLights.Write(source,VehicleLights.Read(source));
-  vehicleConfiguration=VehicleLights.Transform(source,documentTransform);vehicleConfigurationEdited=true;dirty=true;SetStatus("Конфигурация огней загружена",Path.GetFileName(path));
+  vehicleConfiguration=VehicleLights.Transform(source,documentTransform);ReadLampSlots();vehicleConfigurationEdited=true;dirty=true;SetStatus("Конфигурация огней загружена");
  }
  async Task<bool> EnsureVehicleScript()
  {

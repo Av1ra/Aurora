@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 // Exercise the actual viewport script with a deterministic GPU boundary.
 // This covers async scene ownership and coordinate conversion, not visual quality.
 const html = fs.readFileSync(new URL('../Aurora.Editor/Assets/viewport.html', import.meta.url), 'utf8');
-const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
+const script = html.match(/<script>([\s\S]*?)<\/script>/)[1].replace('/*AURORA_GIZMO*/',fs.readFileSync(new URL('../Aurora.Editor/Assets/gizmo.js',import.meta.url),'utf8'));
 const images = [], deleted = [], messages = [], reads = [];
 const uniforms = new Map();
 let created = 0, pickId = 1, viewportSize;
@@ -22,9 +22,11 @@ const gpu = new Proxy({
 const canvas = { clientWidth: 200, clientHeight: 100, width: 200, height: 100,
   getContext: () => gpu, setPointerCapture() {} };
 const window = { devicePixelRatio: 2, chrome: { webview: { postMessage: message => messages.push(message) } } };
-const document = { getElementById: () => canvas };
+const overlayContext=new Proxy({}, {get:()=>()=>{}});
+const overlay={style:{},getContext:()=>overlayContext};
+const document = { getElementById: () => canvas,createElement:()=>overlay,body:{appendChild(){}} };
 const api = new Function('document', 'window', 'ResizeObserver', 'Image', 'WebGLTexture',
-  script + '\nreturn {load,texture,selected:()=>selected};')(document, window, class { observe() {} }, ImageStub, Texture);
+  script + '\nreturn {load,texture,gizmo,gizmoRotate,gizmoProject,tool:()=>gizmoState,segments:()=>gizmoSegments,selected:()=>selected};')(document, window, class { observe() {} }, ImageStub, Texture);
 const scene = () => ({ Materials: ['body'], Nodes: [{
   Positions: [0,0,0, 1,0,0, 0,1,0], Normals: [0,0,1, 0,0,1, 0,0,1],
   Uv: [0,0, 1,0, 0,1], Indices: [0,1,2], Groups: [{ Material: 0, First: 0, Count: 3 }]
@@ -59,3 +61,23 @@ assert.notEqual(uniforms.get('specularMap'), uniforms.get('metalMap'), 'specular
 api.load(scene());
 assert.equal(deleted.length, 4, 'specular GPU texture is disposed with its scene');
 console.log('PASS viewport scene ownership, texture lifetime, DPI picking and background deselection');
+api.gizmo({visible:true,editing:true,mode:'move',position:[.5,.5,0],rotation:[0,0,0]});
+let segment=api.segments().find(s=>s.axis===0);assert.ok(segment,'move tool creates a pickable X axis');
+let start=segment.a.map((x,i)=>x*.3+segment.b[i]*.7),step=segment.b.map((x,i)=>(x-segment.a[i])*.25);
+canvas.onpointerdown({clientX:start[0],clientY:start[1],pointerId:2});
+canvas.onpointermove({clientX:start[0]+step[0],clientY:start[1]+step[1]});
+canvas.onpointerup({clientX:start[0]+step[0],clientY:start[1]+step[1]});
+assert.ok(api.tool().position[0]>.5,'arrow dragging changes the corresponding world position');
+assert.equal(api.tool().position[1],.5);assert.equal(api.tool().position[2],0);
+assert.ok(messages.some(m=>m.gizmo),'gizmo drag sends numeric state to the editor');
+api.gizmo({mode:'rotate',position:[.5,.5,0],rotation:[0,0,0]});
+assert.ok(api.segments().length>280,'rotation tool exposes three sampled rings');
+let ring=api.segments().find(s=>s.axis===1&&s.angle>1&&s.angle<1.2);
+start=ring.a.map((x,i)=>(x+ring.b[i])/2);
+canvas.onpointerdown({clientX:start[0],clientY:start[1],pointerId:3});
+canvas.onpointermove({clientX:start[0]+8,clientY:start[1]+5});
+canvas.onpointerup({clientX:start[0]+8,clientY:start[1]+5});
+assert.ok(api.tool().rotation.every(Number.isFinite)&&api.tool().rotation.some(x=>Math.abs(x)>.01),'ring dragging changes a finite Euler angle');
+assert.deepEqual(api.gizmoRotate([0,1,0],[90,0,0]).map(x=>Math.round(x)),[0,0,1],'tool frame uses the same handedness as exported model rotation');
+api.gizmo({visible:false});assert.equal(api.segments().length,0,'hidden tools do not intercept object selection');
+console.log('PASS actual move arrows, rotation rings, editor messages and tool-frame handedness');

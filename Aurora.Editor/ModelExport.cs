@@ -33,8 +33,12 @@ static class ModelExport
    {
     if(!materialNames.Contains(pair.Key))throw new InvalidDataException("Unknown material setting");var s=pair.Value;
     if(pair.Key.IndexOfAny(['{','}','\r','\n'])>=0)throw new InvalidDataException("Invalid material identifier");
-    rules.AppendLine("{material "+pair.Key).AppendLine(" {workflow = painter}").AppendLine(" {preserve_native_diffuse = "+s.Native.ToString().ToLowerInvariant()+"}");
-    foreach(var item in new[]{("base_color",s.Base),("normal",s.Normal),("orm",s.Orm),("metallic",s.MetalMap),("roughness",s.RoughMap),("ao",s.AoMap),("emissive",s.Emissive)})if(item.Item2!=null)rules.AppendLine(" {"+item.Item1+" = "+CopyMap(item.Item2)+"}");
+    rules.AppendLine("{material "+pair.Key).AppendLine(" {workflow = "+(s.Extra?.GetValueOrDefault("workflow")??"painter")+"}").AppendLine(" {preserve_native_diffuse = "+s.Native.ToString().ToLowerInvariant()+"}");
+    if(s.Extra!=null)foreach(var extra in s.Extra.Where(p=>p.Key!="workflow")){
+     if(!Regex.IsMatch(extra.Key,@"^\w+$")||extra.Value.IndexOfAny(['{','}','\r','\n'])>=0)throw new InvalidDataException("Invalid PBR property");
+     string value=extra.Key is "glass" or "glass_mask"&&extra.Value!="none"&&!extra.Value.StartsWith("aurora:",StringComparison.Ordinal)?CopyMap(extra.Value):extra.Value;rules.AppendLine(" {"+extra.Key+" = "+value+"}");
+    }
+    foreach(var item in new[]{("base_color",s.PbrBase??s.Base),("normal",s.PbrNormal??s.Normal),("orm",s.Orm),("metallic",s.MetalMap),("roughness",s.RoughMap),("ao",s.AoMap),("emissive",s.Emissive)})if(item.Item2!=null)rules.AppendLine(" {"+item.Item1+" = "+CopyMap(item.Item2)+"}");
     rules.AppendLine(" {metallic_factor = "+F(s.Metallic)+"}").AppendLine(" {roughness_factor = "+F(s.Roughness)+"}").AppendLine(" {ao_factor = "+F(s.Ao)+"}").AppendLine(" {normal_strength = "+F(s.NormalStrength)+"}").AppendLine(" {normal_y = "+(s.NormalY<0?"directx":"opengl")+"}").AppendLine(" {emissive_strength = "+F(s.EmissiveStrength)+"}").AppendLine(" {ibl_strength = "+F(s.Ibl)+"}").AppendLine("}");
    }
    if(mask!=null)

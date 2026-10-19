@@ -37,6 +37,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Native installer test failed' }
           python Packaging/test-package.py "$build/output"
           if ($LASTEXITCODE -ne 0) { throw 'Adjacent archive test failed' }
+          python Packaging/test-brand.py "$build/package" "$build/output/Aurora-Setup.exe"
+          if ($LASTEXITCODE -ne 0) { throw 'Executable icon/backend test failed' }
           dotnet run --project Aurora.UpdateTests -c Release -- "$build/package/app/Assets/publisher.pem" "$build/output"
           if ($LASTEXITCODE -ne 0) { throw 'Package verification failed' }
       - uses: actions/upload-artifact@v4

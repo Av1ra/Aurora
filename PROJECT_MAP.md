@@ -12,6 +12,9 @@
 | Registered Workshop release detection and transactional updates | Aurora.Core/WorkshopUpdates.cs, docs/WORKSHOP_UPDATES.md |
 | Model Editor and owner PSD layout | Aurora.Editor/ and Aurora.Editor.Module/, docs/UI_PSD_PLAN.md |
 | Vehicle pivot, axes and native headlights/rear lights | Aurora.Core/ModelOrientation.cs, Aurora.Core/VehicleLights.cs, Aurora.Editor/EditorVehicle.cs, docs/EDITOR_VEHICLES.md |
+| Owner editor revision, material variants, gizmos and projects | docs/EDITOR_02_REVISION.md, Aurora.Editor/EditorMaterials.cs, MaterialDocuments.cs, VariantExport.cs, EditorGizmos.cs, Assets/gizmo.js, EditorProject.cs |
+| Encrypted portable projects and object editing | Aurora.Core/AuroraProjectArchive.cs, Aurora.Core/ModelEditing.cs |
+| Embedded executable artwork | Packaging/Branding/LogoAE.png, Packaging/embed-logo.ps1, Packaging/test-brand.py |
 | Alpha mask backend | Backend/ |
 | Independent FOV Changer DLL | Modules/FovChanger/, Prepare-Fov.ps1 |
 | PBR payload packaging | Prepare-Graphics.ps1 |

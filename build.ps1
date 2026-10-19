@@ -44,7 +44,12 @@ try {
  if($PythonDependencyDirectory){Run $Python (@('-c','import sys;sys.path.insert(0,sys.argv[1]);from PyInstaller.__main__ import run;run(sys.argv[2:])',$PythonDependencyDirectory)+$backendArgs)}else{Run $Python (@('-m','PyInstaller')+$backendArgs)}
  Copy-Item -LiteralPath "$buildRoot/module/Aurora.Editor.Module.dll" -Destination "$buildRoot/addon/Editor"
  Copy-Item -LiteralPath "$root/Aurora.Editor/Assets/viewport.html" -Destination "$buildRoot/addon/Editor/Assets"
+ Copy-Item -LiteralPath "$root/Aurora.Editor/Assets/gizmo.js" -Destination "$buildRoot/addon/Editor/Assets"
  Copy-Item -Path "$buildRoot/backend/Aurora.ModelBackend/*" -Destination "$buildRoot/addon/Editor/Backend" -Recurse
+ Run $Python @("$root/Packaging/prepare-logo.py","$root/Packaging/Branding/LogoAE.png","$buildRoot/logo.png")
+ $brandExecutables=@(Get-ChildItem -LiteralPath $stage -Recurse -Filter '*.exe' -File | Where-Object {$_.Name -like 'Aurora*'} | Select-Object -ExpandProperty FullName)
+ $brandExecutables+=@(Get-ChildItem -LiteralPath "$buildRoot/addon/Editor" -Recurse -Filter 'Aurora*.exe' -File | Select-Object -ExpandProperty FullName)
+ & "$root/Packaging/embed-logo.ps1" -Logo "$buildRoot/logo.png" -Executables $brandExecutables
  $editorRoot="$buildRoot/addon/Editor"
  $files=@(Get-ChildItem -LiteralPath $editorRoot -Recurse -File | ForEach-Object {@{Path=$_.FullName.Substring($editorRoot.Length+1).Replace('\','/');Sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}})
  $manifest=@{Schema=1;Id='aurora.editor';Name='Model Editor';Category='tools';Version=$Version;MinimumLauncher='0.2.0';Config='editor.ini';Files=$files;Options=@()}
@@ -56,6 +61,7 @@ try {
  [IO.Compression.ZipFile]::CreateFromDirectory($stage,$zip,[IO.Compression.CompressionLevel]::Optimal,$false)
  Run 'dotnet' @('run','--project',"$root/Aurora.Publisher/Aurora.Publisher.csproj",'--','release',$Version,$zip,"$output/aurora-update.json")
  & "$root/build-setup.ps1" -Output "$output/Aurora-Setup.exe" -Payload $zip
+ & "$root/Packaging/embed-logo.ps1" -Logo "$buildRoot/logo.png" -Executables @("$output/Aurora-Setup.exe")
  $lines=Get-ChildItem -LiteralPath $output -File | Where-Object {$_.Name -ne "SHA256SUMS.txt"} | ForEach-Object{(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()+"  "+$_.Name}
  [IO.File]::WriteAllLines("$output/SHA256SUMS.txt",$lines,[Text.UTF8Encoding]::new($false))
  [IO.File]::WriteAllText("$root/artifacts/latest-build.txt",$buildRoot,[Text.UTF8Encoding]::new($false))

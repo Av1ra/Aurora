@@ -10,6 +10,12 @@ static class UiLanguage
     public static bool Reload(){try{string value=File.ReadAllText(path).Trim();if(value is not ("en" or "ru"))return false;bool english=value=="en";if(english==English)return false;English=english;return true;}catch{return false;}}
     static readonly Dictionary<string,string> words=new()
     {
+      ["Настройки материала"]="Material settings",["Стандартный материал"]="Standard material",["Загрузить стандартный MTL…"]="Load standard MTL…",["Загрузить PBR MTL…"]="Load PBR MTL…",
+      ["Вариант"]="Variant",["Имя"]="Name",["Создать материал…"]="Create material…",["Создать вариант…"]="Create variant…",["Назначить материал объекту"]="Assign material to object",["Материал загружен"]="Material loaded",
+      ["Сохранить NMF…"]="Save NMF…",["Сохранить проект…"]="Save project…",["Открыть проект…"]="Open project…",["Проект сохранён"]="Project saved",["Проект открыт"]="Project opened",["Один материал"]="One material",["Несколько материалов"]="Multiple materials",["Выберите материал."]="Select a material.",
+      ["Редактировать pivot"]="Edit pivot",["Исправить pivot"]="Fix pivot",["Автоцентрирование"]="Auto centre",["Фары и фонари"]="Headlights and rear lights",
+      ["Левая фара"]="Left headlight",["Правая фара"]="Right headlight",["Левый фонарь"]="Left rear light",["Правый фонарь"]="Right rear light",["Настроить симметрию?"]="Set up symmetry?",["Отразить"]="Mirror",["Вручную"]="Manual",
+      ["Переименовать объект…"]="Rename object…",["Разделить несвязанные меши"]="Split disconnected meshes",["Объект уже связан."]="Object is already connected.",["Число частей должно совпадать во всех LOD."]="Part counts must match across LODs.",["Используйте латиницу, цифры и знак подчёркивания."]="Use Latin letters, numbers and underscores.",
       ["Свет"]="Lights",["Починить ориентацию…"]="Fix orientation…",["Назначить фары…"]="Assign headlights…",["Назначить задние фонари…"]="Assign rear lights…",
       ["Некорректные координаты огня."]="Invalid vehicle light coordinates.",
       ["Выбрать script.ini…"]="Choose script.ini…",["Настроить огни…"]="Edit lights…",["Фара"]="Headlight",["Задний фонарь"]="Rear light",

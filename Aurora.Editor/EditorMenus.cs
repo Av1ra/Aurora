@@ -27,6 +27,8 @@ sealed partial class EditorWindow
  MenuFlyoutSubItem MenuGroup(string label){var item=new MenuFlyoutSubItem{Text=UiLanguage.Text(label)};menuGroups.Add((item,label));return item;}
  Button ToolbarMenu(string label,FlyoutBase flyout)
  {
+  flyout.Placement=FlyoutPlacementMode.BottomEdgeAlignedLeft;
+  flyout.ShouldConstrainToRootBounds=true;
   editorFlyouts.Add(flyout);var button=new Button{Content=UiLanguage.Text(label),Flyout=flyout,MinHeight=30,Padding=new Thickness(10,3,10,3)};
   menuButtons.Add((button,label));return button;
  }
@@ -34,22 +36,22 @@ sealed partial class EditorWindow
  {
   // Reuse the existing stateful selectors and command handlers.
   var toolbar=new StackPanel{Orientation=Orientation.Horizontal,Spacing=6,Margin=new Thickness(12,6,12,6)};
-  RegisterImportCommands();RegisterVehicleCommands();
+  RegisterImportCommands();RegisterVehicleCommands();RegisterMaterialCommands();RegisterProjectCommands();RegisterObjectCommands();
   var file=new MenuFlyout();file.Items.Add(MenuCommand("Открыть NMF…"));file.Items.Add(MenuCommand("Добавить LOD…"));
-  file.Items.Add(MenuCommand("Импортировать OBJ…"));
-  var textures=MenuGroup("Импорт текстур");foreach(string channel in new[]{"Diffuse","Normal","Specular","AO","Roughness","Metallic"})textures.Items.Add(MenuCommand(channel));file.Items.Add(textures);
+  file.Items.Add(MenuCommand("Импортировать OBJ…"));file.Items.Add(MenuCommand("Открыть проект…"));
   file.Items.Add(new MenuFlyoutSeparator());
-  editorCommands["Экспортировать NMF…"]=(ExportNmf,()=>HasModel);
-  file.Items.Add(MenuCommand("Экспортировать NMF…"));file.Items.Add(MenuCommand("Сохранить мод…"));
+  editorCommands["Сохранить NMF…"]=(SaveNmfMaterials,()=>HasModel&&variants.Count>0);
+  file.Items.Add(MenuCommand("Сохранить NMF…"));file.Items.Add(MenuCommand("Сохранить проект…"));
   var fileButton=ToolbarMenu("Меню",file);fileButton.Content=new FontIcon{Glyph="\uE700",FontSize=14};Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(fileButton,UiLanguage.Text("Меню"));toolbar.Children.Add(fileButton);
   var selection=new StackPanel{Spacing=12,MinWidth=260,MaxWidth=340};selection.Children.Add(lodChoice);selection.Children.Add(objects);detachedMenuContents.Add(selection);
+  foreach(string key in new[]{"Переименовать объект…","Разделить несвязанные меши"}){var command=editorCommands[key];var button=new Button{Content=UiLanguage.Text(key),HorizontalAlignment=HorizontalAlignment.Stretch};commandButtons.Add((button,command.CanExecute));button.Click+=async(_,_)=>{CloseEditorFlyouts();await RunCommand(command.Action);};selection.Children.Add(button);}
   toolbar.Children.Add(ToolbarMenu("Выбрать объект",new Flyout{Content=selection}));
   var modifiers=new MenuFlyout();var glass=MenuGroup("Стекло");glass.Items.Add(MenuCommand("Сделать объект стеклом","Назначить объект"));glass.Items.Add(MenuCommand("Стекло через альфа-маску…","Альфа-канал…"));glass.Items.Add(new MenuFlyoutSeparator());glass.Items.Add(MenuCommand("Сбросить стекло"));modifiers.Items.Add(glass);
-  var lights=MenuGroup("Свет");foreach(string command in new[]{"Назначить фары…","Назначить задние фонари…","Настроить огни…","Выбрать script.ini…"})lights.Items.Add(MenuCommand(command));modifiers.Items.Add(lights);
+  modifiers.Items.Add(MenuCommand("Фары и фонари"));
   modifiers.Items.Add(MenuCommand("Починить ориентацию…"));toolbar.Children.Add(ToolbarMenu("Модификаторы",modifiers));
-  var materialPanel=new StackPanel{Spacing=10,MinWidth=260,MaxWidth=360};materialPanel.Children.Add(materialChoice);materialPanel.Children.Add(materialFile);detachedMenuContents.Add(materialPanel);
-  foreach(string key in new[]{"Выбрать MTL…","Настроить PBR"}){
-   var command=editorCommands[key];var button=new Button{Content=UiLanguage.Text(key),HorizontalAlignment=HorizontalAlignment.Stretch};commandButtons.Add((button,command.CanExecute));button.Click+=async(_,_)=>{CloseEditorFlyouts();await RunCommand(command.Action);};materialPanel.Children.Add(button);
+  var materialPanel=new StackPanel{Spacing=10,MinWidth=260,MaxWidth=360};materialPanel.Children.Add(variantChoice);materialPanel.Children.Add(materialChoice);detachedMenuContents.Add(materialPanel);
+  foreach(string key in new[]{"Настроить PBR","Создать материал…","Создать вариант…","Назначить материал объекту"}){
+   var command=editorCommands[key];var button=new Button{Content=UiLanguage.Text(key=="Настроить PBR"?"Настройки материала":key),HorizontalAlignment=HorizontalAlignment.Stretch};commandButtons.Add((button,command.CanExecute));button.Click+=async(_,_)=>{CloseEditorFlyouts();await RunCommand(command.Action);};materialPanel.Children.Add(button);
   }
   toolbar.Children.Add(ToolbarMenu("Материалы",new Flyout{Content=materialPanel}));
   grid.Children.Add(new ScrollViewer{Content=toolbar,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,VerticalScrollBarVisibility=ScrollBarVisibility.Disabled,HorizontalScrollMode=ScrollMode.Auto});
@@ -57,7 +59,7 @@ sealed partial class EditorWindow
   var footer=new Grid{Margin=new Thickness(14,8,14,8),ColumnSpacing=16,RowSpacing=4};footer.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});footer.ColumnDefinitions.Add(new(){Width=GridLength.Auto});footer.RowDefinitions.Add(new(){Height=GridLength.Auto});footer.RowDefinitions.Add(new(){Height=GridLength.Auto});
   footer.Children.Add(geometryInfo);Grid.SetColumn(dirtyText,1);footer.Children.Add(dirtyText);Grid.SetRow(status,1);Grid.SetColumnSpan(status,2);footer.Children.Add(status);Grid.SetRow(footer,2);grid.Children.Add(footer);
   busyIndicator.Height=2;busyIndicator.VerticalAlignment=VerticalAlignment.Bottom;grid.Children.Add(busyIndicator);
-  foreach(var shortcut in new[]{(Windows.System.VirtualKey.O,"Открыть NMF…"),(Windows.System.VirtualKey.S,"Сохранить мод…")}){
+  foreach(var shortcut in new[]{(Windows.System.VirtualKey.O,"Открыть NMF…"),(Windows.System.VirtualKey.S,"Сохранить проект…")}){
    var accelerator=new KeyboardAccelerator{Key=shortcut.Item1,Modifiers=Windows.System.VirtualKeyModifiers.Control};accelerator.Invoked+=async(_,e)=>{e.Handled=true;var command=editorCommands[shortcut.Item2];if(!busy&&command.CanExecute()){CloseEditorFlyouts();await RunCommand(command.Action);}};grid.KeyboardAccelerators.Add(accelerator);
   }
   RefreshMenuLanguage();

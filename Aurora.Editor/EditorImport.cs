@@ -8,7 +8,7 @@ sealed partial class EditorWindow
  string? importSession;
  readonly HashSet<string> importedFiles=[];
  string SessionFile(string name){importSession??=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Aurora","Editor","Sessions",Guid.NewGuid().ToString("N"));Directory.CreateDirectory(importSession);string file=Path.Combine(importSession,name);importedFiles.Add(file);return file;}
- void CleanImportSession(){foreach(string file in importedFiles)try{File.Delete(file);}catch{}if(importSession!=null)try{Directory.Delete(importSession);}catch{}}
+ void CleanImportSession(){foreach(string file in importedFiles)try{File.Delete(file);}catch{}if(importSession==null)return;var folders=new HashSet<string>(StringComparer.OrdinalIgnoreCase);foreach(string file in importedFiles)for(string? folder=Path.GetDirectoryName(file);folder!=null&&folder.StartsWith(importSession+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase);folder=Path.GetDirectoryName(folder))folders.Add(folder);foreach(string folder in folders.OrderByDescending(f=>f.Length))try{Directory.Delete(folder);}catch{}try{Directory.Delete(importSession);}catch{}}
  void RegisterImportCommands()
  {
   editorCommands["Импортировать OBJ…"]=(async()=>{var path=await Pick(".obj");if(path!=null&&await ConfirmDiscard())await ImportObj(path);},()=>ready);
@@ -24,15 +24,18 @@ sealed partial class EditorWindow
    if(result.Model.Materials.Except(lods.Values.SelectMany(model=>model.Materials),StringComparer.Ordinal).Any())throw new InvalidDataException(UiLanguage.Text("Материалы OBJ для LOD должны совпадать с основной моделью."));
    lods[virtualNmf]=documentTransform==System.Numerics.Matrix4x4.Identity?result.Model:ModelOrientation.Apply(result.Model,documentTransform);glassObjects[virtualNmf]=[];AddLodChoice(virtualNmf);SelectLod(virtualNmf);
   }else{
+   var importedMaps=MaterialDocuments.Obj(path,result);await NormalizeMaterialMaps(importedMaps);
    // Use private session assets; the source OBJ/MTL directories remain read-only.
    string diffuse=SessionFile("default-diffuse.dds"),specular=SessionFile("default-specular.dds"),normal=SessionFile("default-normal.dds");
    File.WriteAllBytes(diffuse,DdsImage.Encode(new(1,1,[180,180,180,255])));File.WriteAllBytes(specular,DdsImage.Encode(new(1,1,[255,255,255,255])));File.WriteAllBytes(normal,DdsImage.Encode(new(1,1,[128,128,255,255])));
    string generated=SessionFile("material-"+Guid.NewGuid().ToString("N")+".mtl");File.WriteAllText(generated,NativeMaterialText.Create(result.Model.Materials,diffuse,specular,normal));
    lods.Clear();glassObjects.Clear();settings.Clear();lodChoice.Items.Clear();mask=null;maskMaterial=null;ResetVehicle(Path.Combine(Path.GetDirectoryName(path)!,"script.ini"));
    lods[virtualNmf]=result.Model;glassObjects[virtualNmf]=[];AddLodChoice(virtualNmf);SelectLod(virtualNmf);mtl=generated;
-   foreach(string name in result.Model.Materials)settings[name]=new(Base:diffuse,Native:false);
+   foreach(string name in result.Model.Materials){var value=importedMaps.GetValueOrDefault(name)??new();settings[name]=value with{Base=value.Base??diffuse,Specular=value.Specular??specular,Normal=value.Normal??normal};}
+   string? paired=MaterialDocuments.FindPbr(Path.ChangeExtension(path,"mtl"));if(paired!=null){var maps=MaterialDocuments.Pbr(paired,settings);await NormalizeMaterialMaps(maps);settings.Clear();foreach(var p in maps)settings[p.Key]=p.Value;}
+   variants.Clear();variantChoice.Items.Clear();variants.Add(new("material",generated,new(settings)));variantChoice.Items.Add("1");activeVariant=0;variantChoice.SelectedIndex=0;
   }
-  dirty=true;SetStatus("OBJ импортирован",null,"Назначьте текстуры через меню импорта.");await Display();
+  dirty=true;SetStatus("OBJ импортирован");await Display();
  }
  async Task ImportTexture(string channel)
  {

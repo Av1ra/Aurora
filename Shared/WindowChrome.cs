@@ -6,6 +6,9 @@ namespace Aurora.Shared;
 static class WindowChrome
 {
  [System.Runtime.InteropServices.DllImport("user32.dll")]static extern uint GetDpiForWindow(nint hwnd);
+ [System.Runtime.InteropServices.DllImport("kernel32.dll",CharSet=System.Runtime.InteropServices.CharSet.Unicode)]static extern nint GetModuleHandle(string? name);
+ [System.Runtime.InteropServices.DllImport("user32.dll",CharSet=System.Runtime.InteropServices.CharSet.Unicode)]static extern nint LoadImage(nint module,nint name,uint type,int width,int height,uint flags);
+ [System.Runtime.InteropServices.DllImport("user32.dll")]static extern nint SendMessage(nint window,uint message,nint wParam,nint lParam);
  public static void ResizeLogical(Window window,int width,int height)
  {
   var area=Microsoft.UI.Windowing.DisplayArea.GetFromWindowId(window.AppWindow.Id,Microsoft.UI.Windowing.DisplayAreaFallback.Primary).WorkArea;
@@ -21,6 +24,7 @@ static class WindowChrome
   bar.Children.Add(new TextBlock{Text=title,FontSize=12,VerticalAlignment=VerticalAlignment.Center});
   root.Children.Add(bar);Grid.SetRow(content,1);root.Children.Add(content);window.Content=root;
   window.ExtendsContentIntoTitleBar=true;window.SetTitleBar(bar);MatchCaption(window,root);
+  nint hwnd=WinRT.Interop.WindowNative.GetWindowHandle(window);foreach(int size in new[]{16,32}){nint icon=LoadImage(GetModuleHandle(null),1,1,size,size,0x8000);if(icon!=0)SendMessage(hwnd,0x80,size==32?1:0,icon);}
  }
  public static void MatchCaption(Window window,FrameworkElement root)
  {

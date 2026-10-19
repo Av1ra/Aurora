@@ -4,4 +4,8 @@
  <ItemGroup><Compile Include="..\Aurora.Launcher\UiLanguage.cs" Link="UiLanguage.cs"/></ItemGroup>
  <ItemGroup><Compile Include="..\Shared\WindowSizing.cs" Link="WindowSizing.cs"/><Compile Include="..\Aurora.Editor\EditorMenus.cs"/><Compile Include="..\Aurora.Editor\EditorImport.cs"/></ItemGroup>
  <ItemGroup><Compile Include="..\Aurora.Editor\EditorVehicle.cs"/></ItemGroup>
+ <ItemGroup><Compile Include="..\Aurora.Editor\MaterialDocuments.cs"/><Compile Include="..\Aurora.Editor\EditorMaterials.cs"/></ItemGroup>
+ <ItemGroup><Compile Include="..\Aurora.Editor\VariantExport.cs"/><Compile Include="..\Aurora.Editor\EditorProject.cs"/></ItemGroup>
+ <ItemGroup><Compile Include="..\Aurora.Editor\EditorGizmos.cs"/></ItemGroup>
+ <ItemGroup><Compile Include="..\Aurora.Editor\EditorObjects.cs"/></ItemGroup>
 </Project>
