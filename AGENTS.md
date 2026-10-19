@@ -13,7 +13,7 @@ UI changes must follow the [GameData UI design standard](https://github.com/Av1r
 - Bundle Aurora Launcher and Aurora Editor together: root Aurora Launcher.exe and Aurora Editor.exe, shared WinUI/.NET under app/, bundled editor under app/Editor. Exactly one installer ZIP. Avoid self-extracting executables and duplicated runtimes.
 - Separate archive and tiny adjacent installer. Default location: SovietRepublic/Aurora. No payload duplicated inside installer.
 - Next work after Steam acceptance: audit and repair Aurora Launcher and Aurora Editor UIs without breaking working flows. Maintain the compact sidebar, professional hierarchy and actual controls. No generic UI templates.
-- Aurora Editor is always included in the one installer ZIP for 0.2. No editor feature redesign in this task.
+- Aurora Editor is always included in the one installer ZIP for 0.2. The owner now explicitly requests the layered PSD layout and new editor commands, including OBJ/NMF, pivot correction and real vehicle lights. Follow docs/UI_PSD_PLAN.md and preserve WinUI. Work in economical batches of 2–3 related changes; owner performs live UI/game tests, without desktop automation.
 - Compact alpha console opened only by tilde while this game's window is active.
 - Archive known working downloads; leave personal and unrelated files intact.
 - Consolidate documentation and workflows so remote development requires no local workspace access.

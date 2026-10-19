@@ -19,9 +19,9 @@ sealed partial class EditorApp:Application{Window? window;public EditorApp(){Ini
 #endif
 public static class EditorFactory { public static Window Create() => new EditorWindow(); }
 
-sealed class EditorWindow:Window
+sealed partial class EditorWindow:Window
 {
- readonly WebView2 view=new();readonly StackPanel controls=new(){Spacing=10,Margin=new Thickness(18)};
+ readonly WebView2 view=new();
  readonly ComboBox lodChoice=new(){Header=UiLanguage.Text("Модель / LOD"),PlaceholderText=UiLanguage.Text("Сначала откройте NMF"),HorizontalAlignment=HorizontalAlignment.Stretch};
  readonly ComboBox objects=new(){Header=UiLanguage.Text("Объект"),PlaceholderText=UiLanguage.Text("Выберите объект"),HorizontalAlignment=HorizontalAlignment.Stretch};
  readonly ComboBox materialChoice=new(){Header=UiLanguage.Text("Материал"),PlaceholderText=UiLanguage.Text("Выберите материал"),HorizontalAlignment=HorizontalAlignment.Stretch};
@@ -42,33 +42,34 @@ sealed class EditorWindow:Window
  public EditorWindow()
  {
   Title="Aurora Editor";SystemBackdrop=new MicaBackdrop();WindowChrome.ResizeLogical(this,1250,850);
-  var grid=new Grid();grid.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});grid.ColumnDefinitions.Add(new(){Width=new GridLength(350)});grid.Children.Add(view);
+  var grid=new Grid();grid.RowDefinitions.Add(new(){Height=GridLength.Auto});grid.RowDefinitions.Add(new(){Height=new GridLength(1,GridUnitType.Star)});grid.RowDefinitions.Add(new(){Height=GridLength.Auto});
+  var viewport=new Grid();viewport.Children.Add(view);Grid.SetRow(viewport,1);grid.Children.Add(viewport);
   emptyView.Children.Add(new TextBlock{Text=UiLanguage.Text("Откройте модель"),FontSize=22,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});
   emptyView.Children.Add(new TextBlock{Text=UiLanguage.Text("Откройте NMF или перетащите его сюда. Затем выберите MTL для настройки PBR и стекла."),TextWrapping=TextWrapping.Wrap,Opacity=.7});
-  emptyView.IsHitTestVisible=false;grid.Children.Add(emptyView);
+  emptyView.IsHitTestVisible=false;viewport.Children.Add(emptyView);
   grid.AllowDrop=true;
   grid.DragOver+=(_,e)=>{if(!busy&&e.DataView.Contains(StandardDataFormats.StorageItems)){e.AcceptedOperation=DataPackageOperation.Copy;e.DragUIOverride.Caption=UiLanguage.Text("Открыть модель");}e.Handled=true;};
   grid.Drop+=async(_,e)=>{e.Handled=true;if(busy||!e.DataView.Contains(StandardDataFormats.StorageItems))return;try{var files=(await e.DataView.GetStorageItemsAsync()).OfType<Windows.Storage.StorageFile>().Where(x=>x.FileType.Equals(".nmf",StringComparison.OrdinalIgnoreCase)).ToArray();if(files.Length!=1){SetStatus("Перетащите один основной NMF. Файлы LOD загрузятся из той же папки.");return;}await RunCommand(async()=>{if(await ConfirmDiscard())await Load(files[0].Path);});}catch(Exception ex){SetStatus(ex.Message);}};
-  grid.SizeChanged+=(_,e)=>grid.ColumnDefinitions[1].Width=new GridLength(Math.Min(350,Math.Max(260,e.NewSize.Width*.32)));
-  var scroll=new ScrollViewer{Content=controls,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled};Grid.SetColumn(scroll,1);grid.Children.Add(scroll);WindowChrome.Attach(this,grid,"Aurora Editor");
-  controls.Children.Add(new TextBlock{Text="Мастер моделей",FontSize=24});
-  controls.Children.Add(Button("Открыть NMF…",async()=>{var path=await Pick(".nmf");if(path!=null&&await ConfirmDiscard())await Load(path);}));
-  controls.Children.Add(Button("Добавить LOD…",async()=>{var path=await Pick(".nmf");if(path!=null){await AddModel(path);SelectLod(path);dirty=true;await Display();}},()=>HasModel));
-  controls.Children.Add(Button("Выбрать MTL…",async()=>{var chosen=await Pick(".mtl");if(chosen!=null){mtl=chosen;dirty=true;SetStatus(Path.GetFileName(mtl));await LoadTextures();}},()=>HasModel));
-  controls.Children.Add(materialFile);
-  controls.Children.Add(lodChoice);controls.Children.Add(objects);controls.Children.Add(materialChoice);
+  WindowChrome.Attach(this,grid,"Aurora Editor");
+
+  RegisterCommand("Открыть NMF…",async()=>{var path=await Pick(".nmf");if(path!=null&&await ConfirmDiscard())await Load(path);});
+  RegisterCommand("Добавить LOD…",async()=>{var path=await Pick(".nmf");if(path!=null){await AddModel(path);SelectLod(path);dirty=true;await Display();}},()=>HasModel);
+  RegisterCommand("Выбрать MTL…",async()=>{var chosen=await Pick(".mtl");if(chosen!=null){mtl=chosen;dirty=true;SetStatus(Path.GetFileName(mtl));await LoadTextures();}},()=>HasModel);
+
+
   lodChoice.SelectionChanged+=async(_,_)=>{if(!busy&&lodChoice.SelectedItem is ComboBoxItem item&&item.Tag is string path){await RunCommand(async()=>{selectedLod=path;await Display();});}};
   objects.SelectionChanged+=async(_,_)=>{try{if(ready&&!busy){int index=objects.SelectedIndex;if(index>=0&&selectedLod!=null&&CurrentModel().Nodes[index].Groups.FirstOrDefault() is DrawGroup group&&group.Material<materialChoice.Items.Count)materialChoice.SelectedIndex=group.Material;await view.ExecuteScriptAsync("select("+index+")");}}catch(Exception ex){SetStatus(ex.Message);}finally{UpdateControls();}};
   materialChoice.SelectionChanged+=(_,_)=>UpdateControls();
-  controls.Children.Add(Button("Настроить PBR",ConfigurePbr,()=>HasModel&&materialChoice.SelectedItem!=null));
-  controls.Children.Add(Button("Сделать объект стеклом",async()=>{if(selectedLod==null||objects.SelectedItem is not string name)throw new InvalidOperationException("Выберите объект.");glassObjects[selectedLod].Add(name);dirty=true;await view.ExecuteScriptAsync("glassObject("+objects.SelectedIndex+",true)");SetStatus("Стекло",name,"Настройте соответствующий объект в каждом LOD.");},()=>HasModel&&objects.SelectedItem!=null));
-  controls.Children.Add(Button("Стекло через альфа-маску…",async()=>{if(materialChoice.SelectedItem is not string name)throw new InvalidOperationException("Выберите материал кузова.");var chosen=await Pick(".dds",".png");if(chosen!=null){mask=chosen;maskMaterial=name;dirty=true;SetStatus("Альфа-маска",Path.GetFileName(mask)+" — "+name);}},()=>HasModel&&materialChoice.SelectedItem!=null));
-  controls.Children.Add(Button("Сбросить стекло",async()=>{if(selectedLod!=null)glassObjects[selectedLod].Clear();mask=null;maskMaterial=null;dirty=true;await Display();},()=>HasModel&&(mask!=null||(selectedLod!=null&&glassObjects[selectedLod].Count>0))));
-  controls.Children.Add(Button("Сохранить мод…",Export,()=>HasModel&&mtl!=null));controls.Children.Add(busyIndicator);controls.Children.Add(dirtyText);controls.Children.Add(status);
+  RegisterCommand("Настроить PBR",ConfigurePbr,()=>HasModel&&materialChoice.SelectedItem!=null);
+  RegisterCommand("Сделать объект стеклом",async()=>{if(selectedLod==null||objects.SelectedItem is not string name)throw new InvalidOperationException("Выберите объект.");glassObjects[selectedLod].Add(name);dirty=true;await view.ExecuteScriptAsync("glassObject("+objects.SelectedIndex+",true)");SetStatus("Стекло",name,"Настройте соответствующий объект в каждом LOD.");},()=>HasModel&&objects.SelectedItem!=null);
+  RegisterCommand("Стекло через альфа-маску…",async()=>{if(materialChoice.SelectedItem is not string name)throw new InvalidOperationException("Выберите материал кузова.");var chosen=await Pick(".dds",".png");if(chosen!=null){mask=chosen;maskMaterial=name;dirty=true;SetStatus("Альфа-маска",Path.GetFileName(mask)+" — "+name);}},()=>HasModel&&materialChoice.SelectedItem!=null);
+  RegisterCommand("Сбросить стекло",async()=>{if(selectedLod!=null)glassObjects[selectedLod].Clear();mask=null;maskMaterial=null;dirty=true;await Display();},()=>HasModel&&(mask!=null||(selectedLod!=null&&glassObjects[selectedLod].Count>0)));
+  RegisterCommand("Сохранить мод…",Export,()=>HasModel&&mtl!=null);
+  BuildMenuLayout(grid);
   view.CoreWebView2Initialized+=(_,_)=>{view.CoreWebView2.NavigationStarting+=(_,e)=>{if(!ViewportNavigation.IsAllowed(e.Uri,viewportHtml))e.Cancel=true;};view.CoreWebView2.Settings.AreDevToolsEnabled=false;view.CoreWebView2.Settings.AreDefaultContextMenusEnabled=false;view.CoreWebView2.WebMessageReceived+=async(_,e)=>{try{using var json=JsonDocument.Parse(e.WebMessageAsJson);if(json.RootElement.TryGetProperty("error",out var viewportError))SetStatus("Viewport",viewportError.GetString());if(json.RootElement.TryGetProperty("ready",out var readyProperty)){ready=true;await view.ExecuteScriptAsync("document.getElementById('hint').textContent="+JsonSerializer.Serialize(UiLanguage.Text("Перетаскивание: вращение. Колесо: масштаб. Щелчок: выбор объекта.")));if(startupModel is string path){startupModel=null;await RunCommand(()=>Load(path));}else await Display();}if(json.RootElement.TryGetProperty("selected",out var index)&&index.TryGetInt32(out int i)&&i>=-1&&i<objects.Items.Count)objects.SelectedIndex=i;}catch{}};};
   AppWindow.Closing+=async(_,e)=>{if(!dirty||closeApproved)return;e.Cancel=true;if(closePrompt||busy)return;closePrompt=true;try{if(await ConfirmDiscard(true)){closeApproved=true;Close();}}finally{closePrompt=false;}};
-  Activated+=async(_,e)=>{if(e.WindowActivationState==WindowActivationState.Deactivated||!UiLanguage.Reload())return;UiLanguage.Apply(grid);if(activeDialog!=null)UiLanguage.Apply(activeDialog);RefreshStatus();UpdateControls();if(ready)try{await UpdateViewportLanguage();}catch{}};
-  UiLanguage.Apply(controls);UpdateControls();LoadedView();
+  Activated+=async(_,e)=>{if(e.WindowActivationState==WindowActivationState.Deactivated||!UiLanguage.Reload())return;UiLanguage.Apply(grid);RefreshMenuLanguage();if(activeDialog!=null)UiLanguage.Apply(activeDialog);RefreshStatus();UpdateControls();if(ready)try{await UpdateViewportLanguage();}catch{}};
+  RefreshMenuLanguage();UpdateControls();LoadedView();
  }
  async void LoadedView(){try{
   // Keep writable browser state outside the installation, including read-only installs.
@@ -84,8 +85,8 @@ sealed class EditorWindow:Window
  async Task<ContentDialogResult> ShowDialog(ContentDialog dialog){activeDialog=dialog;try{return await dialog.ShowAsync();}finally{activeDialog=null;}}
  async Task<bool> ConfirmDiscard(bool closing=false){if(!dirty)return true;return await ShowDialog(new ContentDialog{Title=UiLanguage.Text(closing?"Закрыть редактор?":"Открыть другую модель?"),Content=UiLanguage.Text("Несохранённые настройки текущей модели будут потеряны."),PrimaryButtonText=UiLanguage.Text(closing?"Закрыть без сохранения":"Открыть"),CloseButtonText=UiLanguage.Text("Отмена"),DefaultButton=ContentDialogButton.Close,XamlRoot=((FrameworkElement)Content).XamlRoot})==ContentDialogResult.Primary;}
  NativeModel CurrentModel()=>lods[selectedLod??throw new InvalidOperationException("Выберите NMF")];
- void UpdateControls(){materialFile.Text=mtl==null?UiLanguage.Text("MTL не выбран"):Path.GetFileName(mtl);ToolTipService.SetToolTip(materialFile,mtl);dirtyText.Visibility=dirty?Visibility.Visible:Visibility.Collapsed;busyIndicator.Visibility=busy&&processing?Visibility.Visible:Visibility.Collapsed;view.IsHitTestVisible=!busy;foreach(var command in commandButtons)command.Button.IsEnabled=!busy&&command.CanExecute();lodChoice.IsEnabled=!busy&&HasModel;objects.IsEnabled=!busy&&HasModel;materialChoice.IsEnabled=!busy&&HasModel;emptyView.Visibility=selectedLod==null?Visibility.Visible:Visibility.Collapsed;}
- Button Button(string label,Func<Task> action,Func<bool>? canExecute=null){var b=new Button{Content=UiLanguage.Text(label),HorizontalAlignment=HorizontalAlignment.Stretch};commandButtons.Add((b,canExecute??(()=>true)));if(label is "Открыть NMF…" or "Сохранить мод…")b.KeyboardAccelerators.Add(new Microsoft.UI.Xaml.Input.KeyboardAccelerator{Key=label=="Открыть NMF…"?Windows.System.VirtualKey.O:Windows.System.VirtualKey.S,Modifiers=Windows.System.VirtualKeyModifiers.Control});b.Click+=async(_,_)=>await RunCommand(action);return b;}
+ void UpdateControls(){materialFile.Text=mtl==null?UiLanguage.Text("MTL не выбран"):Path.GetFileName(mtl);ToolTipService.SetToolTip(materialFile,mtl);dirtyText.Visibility=dirty?Visibility.Visible:Visibility.Collapsed;busyIndicator.Visibility=busy&&processing?Visibility.Visible:Visibility.Collapsed;view.IsHitTestVisible=!busy;foreach(var command in commandButtons)command.Button.IsEnabled=!busy&&command.CanExecute();lodChoice.IsEnabled=!busy&&HasModel;objects.IsEnabled=!busy&&HasModel;materialChoice.IsEnabled=!busy&&HasModel;emptyView.Visibility=selectedLod==null?Visibility.Visible:Visibility.Collapsed;UpdateMenuState();}
+ void RegisterCommand(string label,Func<Task> action,Func<bool>? canExecute=null)=>editorCommands[label]=(action,canExecute??(()=>true));
  async Task RunCommand(Func<Task> action){if(busy)return;busy=true;processing=false;UpdateControls();try{await action();}catch(Exception ex){SetStatus(ex.Message);}finally{busy=false;processing=false;UpdateControls();}}
  void SelectLod(string path){selectedLod=path;lodChoice.SelectedItem=lodChoice.Items.OfType<ComboBoxItem>().First(x=>string.Equals(x.Tag as string,path,StringComparison.OrdinalIgnoreCase));}
  void AddLodChoice(string path){if(lodChoice.Items.OfType<ComboBoxItem>().Any(x=>string.Equals(x.Tag as string,path,StringComparison.OrdinalIgnoreCase)))return;var item=new ComboBoxItem{Content=Path.GetFileName(path),Tag=path};ToolTipService.SetToolTip(item,path);lodChoice.Items.Add(item);}

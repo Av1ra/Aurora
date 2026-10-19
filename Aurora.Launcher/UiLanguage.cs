@@ -10,6 +10,10 @@ static class UiLanguage
     public static bool Reload(){try{string value=File.ReadAllText(path).Trim();if(value is not ("en" or "ru"))return false;bool english=value=="en";if(english==English)return false;English=english;return true;}catch{return false;}}
     static readonly Dictionary<string,string> words=new()
     {
+      ["Меню"]="Menu",["Выбрать объект"]="Select object",["Модификаторы"]="Modifiers",["Материалы"]="Materials",
+      ["Назначить объект"]="Assign object",["Альфа-канал…"]="Alpha channel…",["Экспортировать NMF…"]="Export NMF…",
+      ["Объекты"]="Objects",["Треугольники"]="Triangles",["Вершины"]="Vertices",["NMF экспортирован"]="NMF exported",
+      ["Для альфа-маски используйте экспорт мода."]="Use mod export for an alpha mask.",
       ["Сила normal"]="Normal strength",
       ["Сохранять штатную цветовую текстуру"]="Keep original colour texture",
       ["Сила свечения"]="Emission strength",

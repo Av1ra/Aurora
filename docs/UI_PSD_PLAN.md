@@ -22,10 +22,18 @@ The PSD replaces tall FOV/console cards with single compact rows: label, right-a
 - Menu: Import OBJ, Export NMF, Import textures. Texture submenu: Diffuse, Normal, Specular, AO, Roughness, Metallic.
 - Modifiers: Glass, Light, Fix orientation. Glass submenu: Assign object, Alpha channel. Light submenu: Assign headlights, Assign rear lights.
 - Material editing and LOD selection must survive the move from the current sidebar. Keep original-file protection, unsaved-change handling and RU/EN.
-- Owner explicitly requested all new commands now, not placeholder buttons. Define light export semantics and the intended orientation correction before those dependent implementations. OBJ/NMF round-trip and all LODs need meaningful geometry tests.
+- Owner explicitly requested all new commands in this work, not placeholder buttons. The owner clarified that Fix orientation corrects the pivot/axes so the model faces correctly, not inverted surface normals. Headlights/rear lights must be actual game effects. Native vehicle script.ini files use $LIGHT_FORWARD / $LIGHT_BACKWARD positions (+Z front, -Z rear in the inspected VZ2109), not emissive material substitutes. OBJ/NMF round-trip and all LODs need meaningful geometry tests.
 - The blank right region in the PSD is labelled as under development; do not fill it with invented feature cards or invent unapproved controls.
 
 Future visual UI-authoring plugin is a recorded idea only. Do not implement it in these cycles.
+
+## Editor cycle 1
+
+Implemented compact top menus for File, Select object/LOD, Modifiers/Glass and Materials. Existing operations share their original state/handlers; no duplicated hidden sidebar controls. Ctrl+O / Ctrl+S live at the window root. Statistics show objects, triangles and vertices for the active LOD, not a sum of all LODs.
+
+Added independent NMF export: all loaded LODs go into a new folder, originals stay untouched, glass object assignments must cover every LOD. NMF-only export does not clear unsaved material changes; alpha-mask projects must use the existing complete mod export. Actual three-LOD fixture tests passed for byte preservation, glass assignments, source hashes and duplicate-name rejection. No owner-screen validation yet.
+
+Still pending: OBJ importer, texture import submenus, pivot correction and game-light assignment/export. Do not show these as working placeholder commands or claim the whole PSD implementation is complete. F9/live-FOV is the separate agreed cycle.
 
 ## Graphics correction checkpoint
 

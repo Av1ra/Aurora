@@ -35,6 +35,21 @@ if(args.Length>0)
   passed++;
  }
  Console.WriteLine($"NMF_CORPUS accepted={passed} rejected={rejected}");Check(passed>0,"native corpus has supported models");
+ var exportFiles=Directory.GetFiles(args[0],"*.nmf");
+ if(exportFiles.Length>0){
+  var exportModels=exportFiles.ToDictionary(p=>p,p=>new NativeModel(File.ReadAllBytes(p)));
+  var sourceHashes=exportFiles.ToDictionary(p=>p,p=>SHA256.HashData(File.ReadAllBytes(p)));
+  var exportGlass=exportModels.Keys.ToDictionary(p=>p,p=>new HashSet<string>());
+  string nmfOutput=NmfExport.Write(exportModels,exportGlass,root);
+  Check(exportFiles.All(p=>File.ReadAllBytes(Path.Combine(nmfOutput,Path.GetFileName(p))).SequenceEqual(exportModels[p].Data)),"NMF-only export retains every LOD byte-for-byte");
+  foreach(var pair in exportModels)exportGlass[pair.Key].Add(pair.Value.Nodes[0].Name);
+  string glassOutput=NmfExport.Write(exportModels,exportGlass,root);
+  Check(exportFiles.All(p=>new NativeModel(File.ReadAllBytes(Path.Combine(glassOutput,Path.GetFileName(p)))).Materials.Contains("Aurora_Glass")),"NMF-only export applies object glass to every LOD");
+  Check(exportFiles.All(p=>sourceHashes[p].SequenceEqual(SHA256.HashData(File.ReadAllBytes(p)))),"NMF exports never modify source files");
+  if(exportModels.Count>1){exportGlass[exportFiles[0]].Clear();Reject(()=>NmfExport.Write(exportModels,exportGlass,root),"incomplete glass assignments across exported LODs");}
+  var duplicate=exportModels.Take(1).Single();var duplicates=new Dictionary<string,NativeModel>{{duplicate.Key,duplicate.Value},{Path.Combine(root,Path.GetFileName(duplicate.Key)),duplicate.Value}};
+  Reject(()=>NmfExport.Write(duplicates,new Dictionary<string,HashSet<string>>(),root),"duplicate LOD filenames before writing output");
+ }
 }
 Console.WriteLine("AURORA_TESTS_PASS");
 
