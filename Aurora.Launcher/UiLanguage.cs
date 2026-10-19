@@ -97,6 +97,8 @@ static class UiLanguage
     public static void Apply(DependencyObject node){ApplyNode(node,new HashSet<DependencyObject>());}
     static void ApplyNode(DependencyObject node,HashSet<DependencyObject> visited){
       if(!visited.Add(node))return;
+      string name=Microsoft.UI.Xaml.Automation.AutomationProperties.GetName(node);
+      if(!string.IsNullOrEmpty(name))Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(node,Text(name));
       // Translate application-owned values, never template presenters: setting a
       // presenter's Text locally destroys its binding (InfoBar, ComboBox, navigation).
       if(node is NavigationViewItem)return;
