@@ -22,9 +22,9 @@ sealed partial class EditorWindow
   Button Action(string label,Func<Task> action){var b=new Button{Content=UiLanguage.Text(label),HorizontalAlignment=HorizontalAlignment.Stretch};b.Click+=async(_,_)=>{if(!busy)await RunCommand(action);};return b;}
   gizmoModes.Children.Add(Action("Move",async()=>{gizmoMode="move";await RefreshGizmo();}));gizmoRotateButton=Action("Rotate",async()=>{gizmoMode="rotate";await RefreshGizmo();});gizmoModes.Children.Add(gizmoRotateButton);gizmoActions.Children.Add(gizmoModes);
   gizmoActions.Children.Add(Action("Редактировать pivot",async()=>{gizmoEditing=!gizmoEditing;await RefreshGizmo();}));
-  pivotCentreButton=Action("Автоцентрирование",async()=>{var points=lods.First().Value.Nodes.SelectMany(n=>Enumerable.Range(0,n.VertexCount).Select(i=>new Vector3(n.Positions[i*3],n.Positions[i*3+1],n.Positions[i*3+2]))).ToArray();mainPivot=new((points.Min(p=>p.X)+points.Max(p=>p.X))/2,(points.Min(p=>p.Y)+points.Max(p=>p.Y))/2,(points.Min(p=>p.Z)+points.Max(p=>p.Z))/2);dirty=true;await RefreshGizmo();});gizmoActions.Children.Add(pivotCentreButton);
+  pivotCentreButton=Action("Автоцентрирование",async()=>{mainPivot=ModelOrientation.BottomPivot(lods.First().Value);dirty=true;await RefreshGizmo();});gizmoActions.Children.Add(pivotCentreButton);
   pivotApplyButton=Action("Исправить pivot",ApplyPivot);gizmoActions.Children.Add(pivotApplyButton);gizmoActions.Children.Add(Action("Готово",async()=>{gizmoVisible=false;gizmoEditing=false;await RefreshGizmo();}));
-  for(int i=0;i<3;i++){int axis=i;var box=new NumberBox{Header="XYZ"[i].ToString(),Value=0,Width=108,SmallChange=.01,SpinButtonPlacementMode=NumberBoxSpinButtonPlacementMode.Compact};box.ValueChanged+=async(_,_)=>{if(gizmoUpdating||busy||!gizmoVisible||!double.IsFinite(box.Value))return;var v=GizmoValue();v=axis switch{0=>new((float)box.Value,v.Y,v.Z),1=>new(v.X,(float)box.Value,v.Z),_=>new(v.X,v.Y,(float)box.Value)};if(!float.IsFinite(v.X)||!float.IsFinite(v.Y)||!float.IsFinite(v.Z))return;SetGizmoValue(v);dirty=true;await RefreshGizmo();};gizmoCoordinates[i]=box;gizmoNumbers.Children.Add(box);}
+  for(int i=0;i<3;i++){int axis=i;var box=new NumberBox{Header="XYZ"[i].ToString(),Value=0,Width=108,SmallChange=.01,SpinButtonPlacementMode=NumberBoxSpinButtonPlacementMode.Compact};box.ValueChanged+=async(_,_)=>{if(gizmoUpdating||busy||!gizmoVisible||!double.IsFinite(box.Value))return;var v=GizmoValue();v=axis switch{0=>new((float)box.Value,v.Y,v.Z),1=>new(v.X,(float)box.Value,v.Z),_=>new(v.X,v.Y,(float)box.Value)};if(!float.IsFinite(v.X)||!float.IsFinite(v.Y)||!float.IsFinite(v.Z))return;var before=CaptureSnapshot();SetGizmoValue(v);dirty=true;CommitHistory(before);await RefreshGizmo();};gizmoCoordinates[i]=box;gizmoNumbers.Children.Add(box);}
   viewport.Children.Add(gizmoActions);viewport.Children.Add(gizmoNumbers);
  }
  Vector3 GizmoPosition()=>activeLamp<0?mainPivot:lampSlots[activeLamp]?.Position??mainPivot;
@@ -50,9 +50,10 @@ sealed partial class EditorWindow
  void ReceiveGizmo(JsonElement element)
  {
   if(busy||!gizmoVisible||!element.TryGetProperty("position",out var p)||!element.TryGetProperty("rotation",out var r)||p.GetArrayLength()!=3||r.GetArrayLength()!=3)return;
+  string? phase=element.TryGetProperty("phase",out var phaseValue)?phaseValue.GetString():null;if(phase=="begin"){dragBefore=CaptureSnapshot();return;}
   var position=p.EnumerateArray().Select(x=>x.GetSingle()).ToArray();var rotation=r.EnumerateArray().Select(x=>x.GetSingle()).ToArray();if(position.Concat(rotation).Any(x=>!float.IsFinite(x)||MathF.Abs(x)>1e7f))return;
   if(activeLamp<0){mainPivot=new(position[0],position[1],position[2]);mainRotation=new(rotation[0],rotation[1],rotation[2]);}else{lampSlots[activeLamp]=new(activeLamp>=2,new(position[0],position[1],position[2]));lampRotations[activeLamp]=new(rotation[0],rotation[1],rotation[2]);StoreLampSlots();}
-  gizmoUpdating=true;var values=gizmoMode=="move"?position:rotation;for(int i=0;i<3;i++)gizmoCoordinates[i].Value=values[i];gizmoUpdating=false;dirty=true;
+  gizmoUpdating=true;var values=gizmoMode=="move"?position:rotation;for(int i=0;i<3;i++)gizmoCoordinates[i].Value=values[i];gizmoUpdating=false;dirty=true;if(phase=="end"&&dragBefore!=null){CommitHistory(dragBefore);dragBefore=null;}
  }
  Matrix4x4 PivotFrame()=>Matrix4x4.CreateRotationX(mainRotation.X*MathF.PI/180)*Matrix4x4.CreateRotationY(mainRotation.Y*MathF.PI/180)*Matrix4x4.CreateRotationZ(mainRotation.Z*MathF.PI/180);
  async Task ApplyPivot()

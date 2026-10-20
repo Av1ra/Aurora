@@ -4,6 +4,8 @@ Checkpoint recorded: 2026-10-19. Canonical repository: `Av1ra/Aurora`, branch `m
 
 ## Read this first
 
+Current owner cycle (2026-10-20): [history, model settings, cargo and automatic previews](EDITOR_HISTORY_MODEL_PREVIEWS.md). Ctrl+Z/Y covers editor actions; auto-centre uses minimum Y. Model settings are beside Materials; lights stay in Modifiers. Cargo is a viewport-only resource model driven by native script records; export generates per-variant main/side DDS previews (256x256/256x128), default configurable FOV20. Exact native camera matching and live WinUI acceptance remain owner checks. See newest STATUS entry for build/install evidence.
+
 Latest scoped editor work (2026-10-19): OBJ/textures followed by rigid pivot/axes and native vehicle lights. Consult the newest entries in STATUS.md and [EDITOR_VEHICLES.md](EDITOR_VEHICLES.md) before older checkpoints below. Owner performs live UI/game tests; do not use desktop automation. Preserve version 0.2 and the one combined archive.
 
 Owner revision 2026-10-20 supersedes the old modal-only pivot and single-material workflow: [EDITOR_02_REVISION.md](EDITOR_02_REVISION.md). Native/PBR variants, interactive gizmos/four light slots, object split/rename, two save commands and encrypted portable .aur projects are the new editor contract. Check STATUS.md for actual build/install evidence.

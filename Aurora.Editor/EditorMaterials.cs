@@ -92,7 +92,7 @@ sealed partial class EditorWindow
   var checks=variants.Select((v,i)=>new CheckBox{Content=(i+1).ToString(),IsChecked=i==activeVariant}).ToArray();foreach(var box in checks)panel.Children.Add(box);
   var dialog=VehicleDialog("Сохранить NMF…",panel);ValidateVehicleDialog(dialog,panel,()=>{int count=checks.Count(c=>c.IsChecked==true);if(count==0||(mode.SelectedIndex==0&&count!=1))throw new InvalidDataException(UiLanguage.Text("Выберите материал."));});
   if(await ShowDialog(dialog)!=ContentDialogResult.Primary)return;string? folder=await Folder();if(folder==null)return;
-  processing=true;UpdateControls();var selected=variants.Where((_,i)=>checks[i].IsChecked==true).ToArray();string output=await VariantExport.Write(selected,lods,glassObjects,mask,maskMaterial,vehicleConfiguration,folder,ReadImage);SetStatus("Готово",output);
+  processing=true;UpdateControls();var selected=variants.Where((_,i)=>checks[i].IsChecked==true).ToArray();string output=await VariantExport.Write(selected,lods,glassObjects,mask,maskMaterial,vehicleConfiguration,folder,ReadImage,previewSettings.Automatic?RenderVariantPreviews:null);SetStatus("Готово",output);
   // A game export is not the editable document. Only Save project clears dirty.
  }
 }

@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace Aurora.Editor;
 static class VariantExport
 {
- public static async Task<string> Write(IReadOnlyList<MaterialVariant> variants,Dictionary<string,NativeModel> lods,Dictionary<string,HashSet<string>> glass,string? mask,string? maskMaterial,string? script,string destination,Func<string,Task<RgbaImage>> image)
+ public static async Task<string> Write(IReadOnlyList<MaterialVariant> variants,Dictionary<string,NativeModel> lods,Dictionary<string,HashSet<string>> glass,string? mask,string? maskMaterial,string? script,string destination,Func<string,Task<RgbaImage>> image,Func<MaterialVariant,Task<(byte[] Main,byte[] Side)>>? previews=null)
  {
   if(variants.Count==0)throw new InvalidDataException("Выберите материал.");
   string final=Path.Combine(destination,"Aurora-Model-"+DateTime.Now.ToString("yyyyMMdd-HHmmss")+"-"+Guid.NewGuid().ToString("N")[..8]);string stage=final+".building";Directory.CreateDirectory(stage);
@@ -17,7 +17,7 @@ static class VariantExport
     await ModelExport.Export(lods,glass,variant.Settings,native,mask,maskMaterial,folder,image,script,useSourceScript:false);
     string output=Directory.GetDirectories(folder,"Aurora-Model-*").Single();var maps=Directory.GetFiles(output,"map-*").ToDictionary(p=>Path.GetFileName(p)!,p=>"v"+i+"-"+Path.GetFileName(p));
     foreach(string path in Directory.GetFiles(output)){
-     string name=Path.GetFileName(path);if(name=="aurora-model.json")continue;
+     string name=Path.GetFileName(path);if(name=="aurora-model.json"||(previews!=null&&name is "preview.dds" or "preview_side.dds"))continue;
      if(name.EndsWith(".mtl",StringComparison.OrdinalIgnoreCase)||name.EndsWith(".pbr",StringComparison.OrdinalIgnoreCase)){
       string content=File.ReadAllText(path);foreach(var pair in maps.OrderByDescending(p=>p.Key!.Length))content=content.Replace(pair.Key!,pair.Value,StringComparison.Ordinal);
       string target=Path.Combine(stage,name.EndsWith(".pbr",StringComparison.OrdinalIgnoreCase)?MaterialDocuments.PairedName(nativeName):name);File.WriteAllText(target,content,new UTF8Encoding(false));
@@ -26,6 +26,7 @@ static class VariantExport
       if(File.Exists(target)){if(!File.ReadAllBytes(target).SequenceEqual(File.ReadAllBytes(path)))throw new InvalidDataException("Variant geometry differs: "+name);}else File.Copy(path,target);
      }
     }
+    if(previews!=null){var pair=await previews(variant);string suffix=i==0?"":"_"+i;File.WriteAllBytes(Path.Combine(stage,"preview"+suffix+".dds"),pair.Main);File.WriteAllBytes(Path.Combine(stage,"preview_side"+suffix+".dds"),pair.Side);}
    }
    // work is a freshly created child of this export's unique staging directory.
    Directory.Delete(work,true);Directory.Move(stage,final);return final;

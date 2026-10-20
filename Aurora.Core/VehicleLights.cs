@@ -22,17 +22,19 @@ public static class VehicleLights
  public static string Transform(string script,Matrix4x4 transform)
  {
   if(transform==Matrix4x4.Identity)return script;
-  // Multi-line cargo/attachment geometry needs its own editor. Refuse to
-  // silently leave an unrotated resource box or unsupported attachment.
-  var known=new HashSet<string>(StringComparer.Ordinal){"TYPE","SOUND_PARAMS","NAME","DESCRIPTION","COST_RUB","COST_WORK","RESOURCE_CAPACITY","RESOURCE_TRANSPORT_TYPE","AVAILABLE","COUNTRY","SKILL_PERSONAL","DRIVER","LIGHT_FORWARD","LIGHT_BACKWARD","LIGHT_BLINKER","PARTICLE_MOVEMENT","PARTICLE_ENGINE","FAMILY"};
+  // Main cargo frames are understood; unknown joint/attachment sections still
+  // reject a partial transformation rather than leaving stale coordinates.
+  var known=new HashSet<string>(StringComparer.Ordinal){"TYPE","SOUND_PARAMS","NAME","NAME_STR","DESCRIPTION","COST_RUB","COST_USD","COST_WORK","RESOURCE_CAPACITY","RESOURCE_TRANSPORT_TYPE","RESOURCE_ALLOW_ONLY","RESOURCE_VISUALIZATION","AVAILABLE","COUNTRY","LIFESPAN","PURCHASE_EXCLUDE","DRIVER","LIGHT_FORWARD","LIGHT_BACKWARD","LIGHT_BLINKER","PARTICLE_MOVEMENT","PARTICLE_ENGINE","FAMILY"};
   foreach(Match m in Regex.Matches(script,@"(?m)^[\t ]*\$([A-Z_0-9]+)")){
-   string key=m.Groups[1].Value;if(!known.Contains(key)&&!key.StartsWith("MOVEMENT_",StringComparison.Ordinal)&&!Regex.IsMatch(key,@"^(LOD\d+|LODDISTANCE\d+)$"))throw new InvalidDataException("Pivot: неподдерживаемая секция script.ini: "+key);
+   string key=m.Groups[1].Value;if(!known.Contains(key)&&!key.StartsWith("MOVEMENT_",StringComparison.Ordinal)&&!key.StartsWith("SKILL_",StringComparison.Ordinal)&&!Regex.IsMatch(key,@"^(LOD\d*|LODDISTANCE\d*)$"))throw new InvalidDataException("Pivot: неподдерживаемая секция script.ini: "+key);
   }
-  return Regex.Replace(script,@"(?m)^([\t ]*\$(?:LIGHT_FORWARD|LIGHT_BACKWARD|LIGHT_BLINKER|DRIVER|PARTICLE_MOVEMENT|PARTICLE_ENGINE)[\t ]+)([^\r\n]+)",m=>{
+  string updated=Regex.Replace(script,@"(?m)^([\t ]*\$(?:LIGHT_FORWARD|LIGHT_BACKWARD|LIGHT_BLINKER|DRIVER|PARTICLE_MOVEMENT|PARTICLE_ENGINE)[\t ]+)([^\r\n]+)",m=>{
    string suffix=m.Groups[2].Value;string prefix=m.Groups[1].Value;
    if(prefix.Contains("PARTICLE_",StringComparison.Ordinal)){int split=suffix.IndexOfAny([' ','\t']);if(split<0)throw new InvalidDataException("Invalid particle position");prefix+=suffix[..split]+" ";suffix=suffix[(split+1)..];}
    var p=Position(suffix);if(p.Y<=-999)return m.Value; // Native disabled emitter sentinel.
    return prefix+Coordinates(Vector3.Transform(p,transform));
   });
+  foreach(var field in VehicleScript.Fields(script).Where(f=>f.Key=="RESOURCE_VISUALIZATION"))updated=VehicleScript.SetCargo(updated,VehicleScript.TransformCargo(VehicleScript.Cargo(script,field.Occurrence)!,transform),field.Occurrence);
+  return updated;
  }
 }

@@ -36,12 +36,13 @@ sealed partial class EditorWindow
  {
   // Reuse the existing stateful selectors and command handlers.
   var toolbar=new StackPanel{Orientation=Orientation.Horizontal,Spacing=6,Margin=new Thickness(12,6,12,6)};
-  RegisterImportCommands();RegisterVehicleCommands();RegisterMaterialCommands();RegisterProjectCommands();RegisterObjectCommands();
+  RegisterImportCommands();RegisterVehicleCommands();RegisterMaterialCommands();RegisterProjectCommands();RegisterObjectCommands();RegisterHistoryCommands();RegisterModelSettingsCommands();
   var file=new MenuFlyout();file.Items.Add(MenuCommand("Открыть NMF…"));file.Items.Add(MenuCommand("Добавить LOD…"));
   file.Items.Add(MenuCommand("Импортировать OBJ…"));file.Items.Add(MenuCommand("Открыть проект…"));
   file.Items.Add(new MenuFlyoutSeparator());
   editorCommands["Сохранить NMF…"]=(SaveNmfMaterials,()=>HasModel&&variants.Count>0);
   file.Items.Add(MenuCommand("Сохранить NMF…"));file.Items.Add(MenuCommand("Сохранить проект…"));
+  file.Items.Add(new MenuFlyoutSeparator());var undoItem=MenuCommand("Отменить");undoItem.KeyboardAcceleratorTextOverride="Ctrl+Z";file.Items.Add(undoItem);var redoItem=MenuCommand("Повторить");redoItem.KeyboardAcceleratorTextOverride="Ctrl+Y";file.Items.Add(redoItem);
   var fileButton=ToolbarMenu("Меню",file);fileButton.Content=new FontIcon{Glyph="\uE700",FontSize=14};Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(fileButton,UiLanguage.Text("Меню"));toolbar.Children.Add(fileButton);
   var selection=new StackPanel{Spacing=12,MinWidth=260,MaxWidth=340};selection.Children.Add(lodChoice);selection.Children.Add(objects);detachedMenuContents.Add(selection);
   foreach(string key in new[]{"Переименовать объект…","Разделить несвязанные меши"}){var command=editorCommands[key];var button=new Button{Content=UiLanguage.Text(key),HorizontalAlignment=HorizontalAlignment.Stretch};commandButtons.Add((button,command.CanExecute));button.Click+=async(_,_)=>{CloseEditorFlyouts();await RunCommand(command.Action);};selection.Children.Add(button);}
@@ -54,6 +55,7 @@ sealed partial class EditorWindow
    var command=editorCommands[key];var button=new Button{Content=UiLanguage.Text(key=="Настроить PBR"?"Настройки материала":key),HorizontalAlignment=HorizontalAlignment.Stretch};commandButtons.Add((button,command.CanExecute));button.Click+=async(_,_)=>{CloseEditorFlyouts();await RunCommand(command.Action);};materialPanel.Children.Add(button);
   }
   toolbar.Children.Add(ToolbarMenu("Материалы",new Flyout{Content=materialPanel}));
+  var modelSettings=new MenuFlyout();foreach(string key in new[]{"Настройки модели","Добавить параметр…","Настроить груз…","Настройки превью…"})modelSettings.Items.Add(MenuCommand(key));toolbar.Children.Add(ToolbarMenu("Модель",modelSettings));
   grid.Children.Add(new ScrollViewer{Content=toolbar,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,VerticalScrollBarVisibility=ScrollBarVisibility.Disabled,HorizontalScrollMode=ScrollMode.Auto});
 
   var footer=new Grid{Margin=new Thickness(14,8,14,8),ColumnSpacing=16,RowSpacing=4};footer.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});footer.ColumnDefinitions.Add(new(){Width=GridLength.Auto});footer.RowDefinitions.Add(new(){Height=GridLength.Auto});footer.RowDefinitions.Add(new(){Height=GridLength.Auto});
@@ -63,6 +65,7 @@ sealed partial class EditorWindow
    var accelerator=new KeyboardAccelerator{Key=shortcut.Item1,Modifiers=Windows.System.VirtualKeyModifiers.Control};accelerator.Invoked+=async(_,e)=>{e.Handled=true;var command=editorCommands[shortcut.Item2];if(!busy&&command.CanExecute()){CloseEditorFlyouts();await RunCommand(command.Action);}};grid.KeyboardAccelerators.Add(accelerator);
   }
   RefreshMenuLanguage();
+  foreach(var shortcut in new[]{(Windows.System.VirtualKey.Z,"Отменить"),(Windows.System.VirtualKey.Y,"Повторить")}){var accelerator=new KeyboardAccelerator{Key=shortcut.Item1,Modifiers=Windows.System.VirtualKeyModifiers.Control};accelerator.Invoked+=async(_,e)=>{if(EditingText()||view.FocusState!=FocusState.Unfocused)return;var command=editorCommands[shortcut.Item2];if(!busy&&command.CanExecute()){e.Handled=true;CloseEditorFlyouts();await RunCommand(command.Action);}};grid.KeyboardAccelerators.Add(accelerator);}
  }
  void RefreshMenuLanguage()
  {

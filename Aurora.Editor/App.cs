@@ -66,7 +66,7 @@ sealed partial class EditorWindow:Window
   RegisterCommand("Сбросить стекло",async()=>{if(selectedLod!=null)glassObjects[selectedLod].Clear();mask=null;maskMaterial=null;dirty=true;await Display();},()=>HasModel&&(mask!=null||(selectedLod!=null&&glassObjects[selectedLod].Count>0)));
   RegisterCommand("Сохранить мод…",Export,()=>HasModel&&mtl!=null);
   BuildMenuLayout(grid);
-  view.CoreWebView2Initialized+=(_,_)=>{view.CoreWebView2.NavigationStarting+=(_,e)=>{if(!ViewportNavigation.IsAllowed(e.Uri,viewportHtml))e.Cancel=true;};view.CoreWebView2.Settings.AreDevToolsEnabled=false;view.CoreWebView2.Settings.AreDefaultContextMenusEnabled=false;view.CoreWebView2.WebMessageReceived+=async(_,e)=>{try{using var json=JsonDocument.Parse(e.WebMessageAsJson);if(json.RootElement.TryGetProperty("error",out var viewportError))SetStatus("Viewport",viewportError.GetString());if(json.RootElement.TryGetProperty("ready",out var readyProperty)){ready=true;await view.ExecuteScriptAsync("document.getElementById('hint').textContent="+JsonSerializer.Serialize(UiLanguage.Text("Перетаскивание: вращение. Колесо: масштаб. Щелчок: выбор объекта.")));if(startupModel is string path){startupModel=null;await RunCommand(()=>OpenDocument(path));}else await Display();}if(json.RootElement.TryGetProperty("gizmo",out var gizmoMessage))ReceiveGizmo(gizmoMessage);if(json.RootElement.TryGetProperty("selected",out var index)&&index.TryGetInt32(out int i)&&i>=-1&&i<objects.Items.Count)objects.SelectedIndex=i;}catch{}};};
+  view.CoreWebView2Initialized+=(_,_)=>{view.CoreWebView2.NavigationStarting+=(_,e)=>{if(!ViewportNavigation.IsAllowed(e.Uri,viewportHtml))e.Cancel=true;};view.CoreWebView2.Settings.AreDevToolsEnabled=false;view.CoreWebView2.Settings.AreDefaultContextMenusEnabled=false;view.CoreWebView2.WebMessageReceived+=async(_,e)=>{try{using var json=JsonDocument.Parse(e.WebMessageAsJson);if(json.RootElement.TryGetProperty("error",out var viewportError))SetStatus("Viewport",viewportError.GetString());if(json.RootElement.TryGetProperty("ready",out var readyProperty)){ready=true;await view.ExecuteScriptAsync("document.getElementById('hint').textContent="+JsonSerializer.Serialize(UiLanguage.Text("Перетаскивание: вращение. Колесо: масштаб. Щелчок: выбор объекта.")));if(startupModel is string path){startupModel=null;await RunCommand(()=>OpenDocument(path));}else await Display();}ReceivePreview(json.RootElement);await ReceiveHistory(json.RootElement);if(json.RootElement.TryGetProperty("gizmo",out var gizmoMessage))ReceiveGizmo(gizmoMessage);if(json.RootElement.TryGetProperty("selected",out var index)&&index.TryGetInt32(out int i)&&i>=-1&&i<objects.Items.Count)objects.SelectedIndex=i;}catch{}};};
   AppWindow.Closing+=async(_,e)=>{if(!dirty||closeApproved)return;e.Cancel=true;if(closePrompt||busy)return;closePrompt=true;try{if(await ConfirmDiscard(true)){closeApproved=true;Close();}}finally{closePrompt=false;}};
   Activated+=async(_,e)=>{if(e.WindowActivationState==WindowActivationState.Deactivated||!UiLanguage.Reload())return;UiLanguage.Apply(grid);RefreshMenuLanguage();if(activeDialog!=null)UiLanguage.Apply(activeDialog);RefreshStatus();UpdateControls();if(ready)try{await UpdateViewportLanguage();}catch{}};
   RefreshMenuLanguage();UpdateControls();LoadedView();
@@ -77,7 +77,7 @@ sealed partial class EditorWindow:Window
   Directory.CreateDirectory(userData);
   var environment=await CoreWebView2Environment.CreateWithOptionsAsync(null,userData,new CoreWebView2EnvironmentOptions());
   await view.EnsureCoreWebView2Async(environment);
-  string folder=File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","Assets","viewport.html"))?"Editor":"";viewportHtml=File.ReadAllText(Path.Combine(AppContext.BaseDirectory,folder,"Assets","viewport.html")).Replace("/*AURORA_GIZMO*/",File.ReadAllText(Path.Combine(AppContext.BaseDirectory,folder,"Assets","gizmo.js")));view.CoreWebView2.NavigateToString(viewportHtml);
+  string folder=File.Exists(Path.Combine(AppContext.BaseDirectory,"Editor","Assets","viewport.html"))?"Editor":"";viewportHtml=File.ReadAllText(Path.Combine(AppContext.BaseDirectory,folder,"Assets","viewport.html")).Replace("/*AURORA_GIZMO*/",File.ReadAllText(Path.Combine(AppContext.BaseDirectory,folder,"Assets","gizmo.js"))).Replace("/*AURORA_PREVIEWS*/",File.ReadAllText(Path.Combine(AppContext.BaseDirectory,folder,"Assets","previews.js")));view.CoreWebView2.NavigateToString(viewportHtml);
  }catch(Exception ex){SetStatus("Не удалось открыть viewport",ex.Message);}}
  Task UpdateViewportLanguage()=>view.ExecuteScriptAsync("document.getElementById('hint').textContent="+JsonSerializer.Serialize(UiLanguage.Text("Перетаскивание: вращение. Колесо: масштаб. Щелчок: выбор объекта."))).AsTask();
  void SetStatus(string key,string? detail=null,string? hint=null){statusKey=key;statusDetail=detail;statusHint=hint;RefreshStatus();}
@@ -87,7 +87,7 @@ sealed partial class EditorWindow:Window
  NativeModel CurrentModel()=>lods[selectedLod??throw new InvalidOperationException("Выберите NMF")];
  void UpdateControls(){materialFile.Text=mtl==null?UiLanguage.Text("MTL не выбран"):Path.GetFileName(mtl);ToolTipService.SetToolTip(materialFile,mtl);dirtyText.Visibility=dirty?Visibility.Visible:Visibility.Collapsed;busyIndicator.Visibility=busy&&processing?Visibility.Visible:Visibility.Collapsed;view.IsHitTestVisible=!busy;foreach(var command in commandButtons)command.Button.IsEnabled=!busy&&command.CanExecute();lodChoice.IsEnabled=!busy&&HasModel;objects.IsEnabled=!busy&&HasModel;materialChoice.IsEnabled=!busy&&HasModel;variantChoice.IsEnabled=!busy&&variants.Count>1;gizmoActions.IsHitTestVisible=!busy;gizmoNumbers.IsHitTestVisible=!busy;foreach(var box in gizmoCoordinates)if(box!=null)box.IsEnabled=!busy;emptyView.Visibility=selectedLod==null?Visibility.Visible:Visibility.Collapsed;UpdateMenuState();}
  void RegisterCommand(string label,Func<Task> action,Func<bool>? canExecute=null)=>editorCommands[label]=(action,canExecute??(()=>true));
- async Task RunCommand(Func<Task> action){if(busy)return;busy=true;processing=false;UpdateControls();try{await action();}catch(Exception ex){SetStatus(ex.Message);}finally{busy=false;processing=false;UpdateControls();}}
+ Task RunCommand(Func<Task> action)=>RunHistoryCommand(action);
  void SelectLod(string path){selectedLod=path;lodChoice.SelectedItem=lodChoice.Items.OfType<ComboBoxItem>().First(x=>string.Equals(x.Tag as string,path,StringComparison.OrdinalIgnoreCase));}
  void AddLodChoice(string path){if(lodChoice.Items.OfType<ComboBoxItem>().Any(x=>string.Equals(x.Tag as string,path,StringComparison.OrdinalIgnoreCase)))return;var item=new ComboBoxItem{Content=Path.GetFileName(path),Tag=path};ToolTipService.SetToolTip(item,path);lodChoice.Items.Add(item);}
  async Task<string?> Pick(params string[] extensions){var picker=new Windows.Storage.Pickers.FileOpenPicker();foreach(var ext in extensions)picker.FileTypeFilter.Add(ext);WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));return(await picker.PickSingleFileAsync())?.Path;}
@@ -104,17 +104,17 @@ sealed partial class EditorWindow:Window
   foreach(var pair in parsed.OrderBy(p=>p.Key.Equals(path,StringComparison.OrdinalIgnoreCase)?0:1)){lods[pair.Key]=pair.Value;glassObjects[pair.Key]=[];AddLodChoice(pair.Key);}
   selectedLod=path;SelectLod(path);
   await LoadMaterialVariants(path);
-  dirty=false;SetStatus("Загружено моделей и LOD",lods.Count.ToString(CultureInfo.InvariantCulture));await Display();
+  dirty=false;MarkHistorySaved();SetStatus("Загружено моделей и LOD",lods.Count.ToString(CultureInfo.InvariantCulture));await Display();
  }
  async Task Display()
  {
   processing=true;UpdateControls();if(!ready||selectedLod==null)return;string? selectedObject=objects.SelectedItem as string,selectedMaterial=materialChoice.SelectedItem as string;var model=CurrentModel();objects.Items.Clear();foreach(var node in model.Nodes)objects.Items.Add(node.Name);materialChoice.Items.Clear();foreach(var name in model.Materials)materialChoice.Items.Add(name);objects.SelectedItem=selectedObject!=null&&objects.Items.Contains(selectedObject)?selectedObject:null;if(materialChoice.Items.Count>0)materialChoice.SelectedItem=selectedMaterial!=null&&materialChoice.Items.Contains(selectedMaterial)?selectedMaterial:materialChoice.Items[0];
-  var scene=new{model.Materials,Nodes=model.Nodes.Select(n=>new{n.Name,n.Positions,n.Normals,n.Uv,Indices=n.Indices.Select(x=>(int)x).ToArray(),n.Groups})};
+  var scene=BuildViewportScene(model);
   string sceneJson=await Task.Run(()=>JsonSerializer.Serialize(scene));
   await view.ExecuteScriptAsync("load("+sceneJson+")");await view.ExecuteScriptAsync("select("+objects.SelectedIndex+")");await LoadTextures();
   foreach(var pair in settings)await ApplyPreview(pair.Key,pair.Value);
   for(int i=0;i<model.Nodes.Count;i++)if(glassObjects[selectedLod].Contains(model.Nodes[i].Name))await view.ExecuteScriptAsync("glassObject("+i+",true)");
-  await RefreshGizmo();
+  await LoadCargoTextures();await RefreshGizmo();
  }
  async Task LoadTextures()
  {

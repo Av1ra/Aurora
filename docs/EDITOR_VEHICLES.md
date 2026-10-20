@@ -13,7 +13,7 @@ Version 0.2, rigid NMF/OBJ documents. Native WinUI menus and dialogs, Russian/En
 
 ## Boundaries and acceptance
 
-Orientation also transforms supported single-line light/driver/particle positions. Unrecognized script directives, including multi-line `$RESOURCE_VISUALIZATION` cargo geometry, **block** a non-identity correction atomically. No partial model/light rotation is committed. Extend that parser with native fixtures before allowing additional spatial directives; never silently retain a stale cargo box. Assigning lights alone still preserves these unrelated sections.
+Orientation also transforms supported single-line light/driver/particle positions. Main multi-line `$RESOURCE_VISUALIZATION` cargo rotation and min/max position/scale are now transformed atomically with the vehicle. Unrecognized spatial directives (including unsupported joint cargo layouts) still **block** a non-identity correction atomically. No partial model/light rotation is committed. Extend that parser with native fixtures before allowing additional spatial directives; never silently retain a stale cargo box. Assigning lights alone still preserves these unrelated sections.
 
 There is no viewport simulation of game headlights. Automated tests establish stream integrity, axes, bounds, source preservation and native script serialization; actual lamp rendering, procedural wheel behaviour and appearance remain owner game tests. Do not call these live-validated.
 

@@ -8,4 +8,6 @@
  <ItemGroup><Compile Include="..\Aurora.Editor\VariantExport.cs"/><Compile Include="..\Aurora.Editor\EditorProject.cs"/></ItemGroup>
  <ItemGroup><Compile Include="..\Aurora.Editor\EditorGizmos.cs"/></ItemGroup>
  <ItemGroup><Compile Include="..\Aurora.Editor\EditorObjects.cs"/></ItemGroup>
+ <ItemGroup><Compile Include="..\Aurora.Editor\EditorHistory.cs"/></ItemGroup>
+ <ItemGroup><Compile Include="..\Aurora.Editor\EditorModelSettings.cs"/><Compile Include="..\Aurora.Editor\EditorCargo.cs"/><Compile Include="..\Aurora.Editor\EditorPreviews.cs"/></ItemGroup>
 </Project>

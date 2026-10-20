@@ -4,10 +4,10 @@ import assert from 'node:assert/strict';
 // Exercise the actual viewport script with a deterministic GPU boundary.
 // This covers async scene ownership and coordinate conversion, not visual quality.
 const html = fs.readFileSync(new URL('../Aurora.Editor/Assets/viewport.html', import.meta.url), 'utf8');
-const script = html.match(/<script>([\s\S]*?)<\/script>/)[1].replace('/*AURORA_GIZMO*/',fs.readFileSync(new URL('../Aurora.Editor/Assets/gizmo.js',import.meta.url),'utf8'));
+const script = html.match(/<script>([\s\S]*?)<\/script>/)[1].replace('/*AURORA_GIZMO*/',fs.readFileSync(new URL('../Aurora.Editor/Assets/gizmo.js',import.meta.url),'utf8')).replace('/*AURORA_PREVIEWS*/',fs.readFileSync(new URL('../Aurora.Editor/Assets/previews.js',import.meta.url),'utf8'));
 const images = [], deleted = [], messages = [], reads = [];
 const uniforms = new Map();
-let created = 0, pickId = 1, viewportSize;
+let created = 0, pickId = 1, viewportSize;const previewFrames=[],clearColours=[],eventHandlers=new Map();
 class Texture {}
 class ImageStub { constructor() { images.push(this); } }
 const gpu = new Proxy({
@@ -15,18 +15,20 @@ const gpu = new Proxy({
   createTexture: () => { created++; return new Texture(); },
   getUniformLocation: (_, name) => name,
   uniform1i: (name, value) => uniforms.set(name, value),
+  uniform1f: (name,value)=>uniforms.set(name,value),
+  clearColor:(...args)=>clearColours.push(args),
   deleteTexture: texture => deleted.push(texture),
   viewport: (...args) => viewportSize = args,
   readPixels: (...args) => { reads.push(args.slice(0, 4)); args[6].set([pickId, 0, 0, 255]); }
 }, { get: (target, name) => name in target ? target[name] : /^[A-Z_0-9]+$/.test(name) ? 1 : () => ({}) });
 const canvas = { clientWidth: 200, clientHeight: 100, width: 200, height: 100,
-  getContext: () => gpu, setPointerCapture() {} };
-const window = { devicePixelRatio: 2, chrome: { webview: { postMessage: message => messages.push(message) } } };
+  getContext: () => gpu, setPointerCapture() {},toDataURL:()=>{previewFrames.push({size:viewportSize,focal:uniforms.get('focal')});return 'data:image/png;base64,TEST';} };
+const window = {devicePixelRatio:2,addEventListener:(name,handler)=>eventHandlers.set(name,handler),chrome:{webview:{postMessage:message=>messages.push(message)}}};
 const overlayContext=new Proxy({}, {get:()=>()=>{}});
 const overlay={style:{},getContext:()=>overlayContext};
 const document = { getElementById: () => canvas,createElement:()=>overlay,body:{appendChild(){}} };
-const api = new Function('document', 'window', 'ResizeObserver', 'Image', 'WebGLTexture',
-  script + '\nreturn {load,texture,gizmo,gizmoRotate,gizmoProject,tool:()=>gizmoState,segments:()=>gizmoSegments,selected:()=>selected};')(document, window, class { observe() {} }, ImageStub, Texture);
+const api = new Function('document', 'window', 'ResizeObserver', 'Image', 'WebGLTexture','requestAnimationFrame',
+  script + '\nreturn {load,texture,requestPreview,gizmo,gizmoRotate,gizmoProject,camera:()=>({yaw,pitch,distance,focal}),tool:()=>gizmoState,segments:()=>gizmoSegments,selected:()=>selected};')(document, window, class { observe() {} }, ImageStub, Texture,cb=>cb());
 assert.match(overlay.style.cssText,/background\s*:\s*transparent(?:;|$)/,'pivot overlay must override the shared canvas background so loaded NMF stays visible');
 const scene = () => ({ Materials: ['body'], Nodes: [{
   Positions: [0,0,0, 1,0,0, 0,1,0], Normals: [0,0,1, 0,0,1, 0,0,1],
@@ -82,3 +84,15 @@ assert.ok(api.tool().rotation.every(Number.isFinite)&&api.tool().rotation.some(x
 assert.deepEqual(api.gizmoRotate([0,1,0],[90,0,0]).map(x=>Math.round(x)),[0,0,1],'tool frame uses the same handedness as exported model rotation');
 api.gizmo({visible:false});assert.equal(api.segments().length,0,'hidden tools do not intercept object selection');
 console.log('PASS actual move arrows, rotation rings, editor messages and tool-frame handedness');
+const cameraBefore=api.camera();
+await api.requestPreview('main',{width:256,height:256,fov:20,yaw:-45,pitch:30});
+await api.requestPreview('side',{width:256,height:128,fov:20,yaw:-90,pitch:0});
+assert.deepEqual(previewFrames.map(p=>p.size),[[0,0,256,256],[0,0,256,128]]);
+assert.ok(previewFrames.every(p=>Math.abs(p.focal-1/Math.tan(Math.PI/18))<1e-8),'preview uses requested 20 degree FOV');
+assert.deepEqual(api.camera(),cameraBefore,'preview generation restores editor camera');
+assert.ok(clearColours.some(c=>c[3]===0),'preview background is transparent');
+assert.ok(messages.some(m=>m.preview==='main'&&m.png)&&messages.some(m=>m.preview==='side'&&m.png),'native editor receives both preview images');
+assert.ok(messages.some(m=>m.gizmo?.phase==='begin')&&messages.some(m=>m.gizmo?.phase==='end'),'one drag has explicit undo transaction boundaries');
+console.log('PASS native-size FOV previews, transparent capture, camera restoration and undo drag transactions');
+let prevented=0;for(const code of ['KeyZ','KeyY'])eventHandlers.get('keydown')({ctrlKey:true,metaKey:false,altKey:false,code,preventDefault(){prevented++;}});
+assert.equal(prevented,2);assert.ok(messages.some(m=>m.history==='undo')&&messages.some(m=>m.history==='redo'),'viewport focus forwards undo/redo to native document history');

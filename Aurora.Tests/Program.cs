@@ -7,6 +7,7 @@ ObjImportChecks.Run(Check,Reject);
 await ObjExportChecks.Run(Check);
 await VehicleChecks.Run(Check,Reject);
 await EditorRevisionChecks.Run(Check,Reject);
+ModelToolsChecks.Run(Check,Reject);
 var root=Path.Combine(Path.GetTempPath(),"Aurora-tests-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(root);
 using var key=ECDsa.Create(ECCurve.NamedCurves.nistP256);string pem=key.ExportSubjectPublicKeyInfoPem();
 File.WriteAllText(Path.Combine(root,"module.dll"),"fixture-not-executable");

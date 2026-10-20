@@ -1,0 +1,22 @@
+using Aurora.Core;
+using System.Numerics;
+static class ModelToolsChecks
+{
+ public static void Run(Action<bool,string> check,Action<Action,string> reject)
+ {
+  var model=ObjImporter.Parse("v -3 2 -4\nv 5 3 -4\nv -3 6 8\nf 1 2 3").Model;
+  check(ModelOrientation.BottomPivot(model)==new Vector3(1,2,2),"pivot centre uses horizontal midpoint and minimum height");
+  var first=(Model:model,Pivot:Vector3.Zero);var moved=(Model:model,Pivot:new Vector3(1,2,3));var fixedModel=ModelOrientation.Apply(model,Matrix4x4.CreateTranslation(-moved.Pivot));var applied=(Model:fixedModel,Pivot:Vector3.Zero);
+  var history=new EditHistory<(NativeModel Model,Vector3 Pivot)>((a,b)=>ReferenceEquals(a.Model,b.Model)&&a.Pivot==b.Pivot,_=>1,3,16);
+  history.Commit(first,moved);history.Commit(moved,applied);check(ReferenceEquals(history.Undo().Model,model),"undo applied pivot restores original native geometry reference");check(history.Undo().Pivot==Vector3.Zero,"undo draft restores prior pivot");check(history.Redo().Pivot==moved.Pivot&&ReferenceEquals(history.Redo().Model,fixedModel),"redo restores draft and applied geometry");history.Undo();history.Commit(moved,first);check(!history.CanRedo,"new edit invalidates redo branch");history.Clear();check(!history.CanUndo&&!history.CanRedo,"new document clears history");for(int i=0;i<10;i++)history.Commit((model,new(i,0,0)),(model,new(i+1,0,0)));int count=0;while(history.CanUndo){history.Undo();count++;}check(count==3,"undo history is bounded");
+  string script="$TYPE VEHICLETYPE_ROAD\n$NAME_STR \"Bus\"\n$COST_RUB 100\n$SOUND_PARAMS sounds/one.ini\n$SOUND_PARAMS sounds/two.ini\n$LIGHT_FORWARD 1 2 3\n$AVAILABLE 1950 1980\n$UNRECOGNIZED custom\nend\n";
+  string updated=VehicleScript.Set(script,"SOUND_PARAMS",1,"sounds/new.ini");updated=VehicleScript.Set(updated,"AVAILABLE",0,"1960 1990");check(updated.Contains("sounds/one.ini")&&updated.Contains("sounds/new.ini")&&updated.Contains("$LIGHT_FORWARD 1 2 3")&&updated.Contains("$UNRECOGNIZED custom"),"script editing preserves repeated fields, native lights and unknown directives");
+  updated=VehicleScript.Set(updated,"SKILL_FIRETRUCK",0,"9");check(updated.IndexOf("$SKILL_FIRETRUCK",StringComparison.Ordinal)<updated.IndexOf("end",StringComparison.Ordinal),"new vehicle parameter is inserted before native end");reject(()=>VehicleScript.Set(script,"NAME_STR",0,"bad\n$TYPE bad"),"multiline header argument");
+  var cargo=new CargoLayout(new(.1f,.4f,-.2f),new(0,1,-2),new(.1f,.2f,.3f),new(0,2,-2),new(1,2,3));string loaded=VehicleScript.SetCargo(script,cargo);check(VehicleScript.Cargo(loaded)==cargo,"native cargo min/max position and scale roundtrip");loaded=VehicleScript.SetCargo(loaded,cargo with{FullPosition=new(1,3,4)},1);check(VehicleScript.Fields(loaded).Count(f=>f.Key=="RESOURCE_VISUALIZATION")==2&&VehicleScript.Cargo(loaded,1)!.FullPosition==new Vector3(1,3,4),"multiple cargo areas retain independent coordinates");
+  loaded=VehicleScript.SetCargo(loaded,null,0);check(VehicleScript.Cargo(loaded)!.FullPosition==new Vector3(1,3,4)&&loaded.Contains("$LIGHT_FORWARD 1 2 3"),"removing a cargo area retains the other and vehicle lights");
+  foreach(var rotation in new[]{new Vector3(.3f,-.6f,.8f),new Vector3(0,MathF.PI/2,0),new Vector3(0,-MathF.PI/2,0)}){
+   var transform=Matrix4x4.CreateRotationX(rotation.X)*Matrix4x4.CreateRotationY(rotation.Y)*Matrix4x4.CreateRotationZ(rotation.Z)*Matrix4x4.CreateTranslation(2,-1,3);var movedCargo=VehicleScript.TransformCargo(cargo,transform);var before=Matrix4x4.CreateScale(cargo.FullScale)*Matrix4x4.CreateRotationX(cargo.Rotation.X)*Matrix4x4.CreateRotationY(cargo.Rotation.Y)*Matrix4x4.CreateRotationZ(cargo.Rotation.Z)*Matrix4x4.CreateTranslation(cargo.FullPosition)*transform;var after=Matrix4x4.CreateScale(movedCargo.FullScale)*Matrix4x4.CreateRotationX(movedCargo.Rotation.X)*Matrix4x4.CreateRotationY(movedCargo.Rotation.Y)*Matrix4x4.CreateRotationZ(movedCargo.Rotation.Z)*Matrix4x4.CreateTranslation(movedCargo.FullPosition);check(Vector3.Distance(Vector3.Transform(new(.3f,.7f,-.2f),before),Vector3.Transform(new(.3f,.7f,-.2f),after))<1e-4f,"pivot correction preserves native cargo placement and rotation");
+  }
+  string transformed=VehicleLights.Transform(VehicleScript.SetCargo(script.Replace("$UNRECOGNIZED custom\n",""),cargo),Matrix4x4.CreateRotationY(.4f));check(VehicleScript.Cargo(transformed)!=null&&transformed.Contains("$NAME_STR \"Bus\""),"literal vehicle names and cargo no longer block supported pivot correction");
+ }
+}
