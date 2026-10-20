@@ -13,6 +13,7 @@ sealed partial class EditorWindow
  void ResetVehicle(string? script)
  {
   NewHistoryDocument();
+  previewWorkspace.Visibility=Visibility.Collapsed;mainPng=sidePng=null;
   activeSmoke=-1;activeCargo=-1;cargoModel=null;cargoMtl=cargoModelPath=null;showCargo=false;cargoFill=1;previewSettings=new();
   vehicleConfiguration=script!=null&&File.Exists(script)?File.ReadAllText(script):null;
   vehicleConfigurationEdited=false;documentTransform=Matrix4x4.Identity;
@@ -53,7 +54,7 @@ sealed partial class EditorWindow
  }
  NumberBox Coordinate(string label,float value,Panel panel)
  {
-  var box=new NumberBox{Header=label,Value=value,SmallChange=.01,LargeChange=.1,SpinButtonPlacementMode=NumberBoxSpinButtonPlacementMode.Hidden,MinWidth=100,HorizontalAlignment=HorizontalAlignment.Stretch};
+  var box=new NumberBox{Header=label,Value=value,SmallChange=.1,LargeChange=.1,SpinButtonPlacementMode=NumberBoxSpinButtonPlacementMode.Hidden,MinWidth=100,HorizontalAlignment=HorizontalAlignment.Stretch};
   panel.Children.Add(box);return box;
  }
  static Vector3 LightPosition(NumberBox x,NumberBox y,NumberBox z)

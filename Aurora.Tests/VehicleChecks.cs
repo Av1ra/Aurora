@@ -31,7 +31,7 @@ static class VehicleChecks
   check(Vector3.Distance(VehicleLights.Read(rotated)[0].Position,expected)<1e-5f&&rotated.Contains("$LIGHT_BLINKER 0 -1000 0")&&rotated.Contains("$PARTICLE_MOVEMENT smoke"),"pivot transforms lights/driver/particles and preserves disabled emitters");
   check(VehicleLights.Read(VehicleLights.Write(configured,[])).Count==0,"removing lights does not resurrect original positions");
   reject(()=>VehicleLights.Write("$TYPE BUILDING\nend",lights),"non-vehicle script template");
-  reject(()=>VehicleLights.Transform(script+"$RESOURCE_VISUALIZATION\n",transform),"unsupported spatial script sections instead of silently corrupting them");
+  reject(()=>VehicleLights.Transform(script.Replace("end\r\n","$RESOURCE_VISUALIZATION\nend\r\n"),transform),"unsupported active spatial script sections instead of silently corrupting them");
   reject(()=>VehicleLights.Write(script,[new(false,new(float.NaN,0,0))]),"nonfinite light position");
 
   string root=Path.Combine(Path.GetTempPath(),"Aurora-vehicle-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(root);

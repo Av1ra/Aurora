@@ -5,7 +5,7 @@ let gizmoContext=null;
 if(gizmoCanvas){gizmoCanvas.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;background:transparent';document.body.appendChild(gizmoCanvas);gizmoContext=gizmoCanvas.getContext('2d');}
 const gv={add:(a,b)=>a.map((x,i)=>x+b[i]),sub:(a,b)=>a.map((x,i)=>x-b[i]),mul:(a,s)=>a.map(x=>x*s),dot:(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0)};
 function gizmoRotate(v,r){let p=[...v];for(let a=0;a<3;a++){let b=(a+1)%3,c=(a+2)%3,t=r[a]*Math.PI/180,u=p[b],w=p[c];p[b]=u*Math.cos(t)-w*Math.sin(t);p[c]=u*Math.sin(t)+w*Math.cos(t);}return p;}
-function cameraRotate(p,inverse=false){let x=p[0],y=p[1],z=p[2];if(inverse){let y1=Math.cos(pitch)*y+Math.sin(pitch)*z,z1=-Math.sin(pitch)*y+Math.cos(pitch)*z;return[Math.cos(yaw)*x-Math.sin(yaw)*z1,y1,Math.sin(yaw)*x+Math.cos(yaw)*z1];}let x1=Math.cos(yaw)*x+Math.sin(yaw)*z,z1=-Math.sin(yaw)*x+Math.cos(yaw)*z;return[x1,Math.cos(pitch)*y-Math.sin(pitch)*z1,Math.sin(pitch)*y+Math.cos(pitch)*z1];}
+function cameraRotate(p,inverse=false){let x=p[0],y=p[1],z=p[2];if(inverse){let x0=Math.cos(roll)*x+Math.sin(roll)*y,y0=-Math.sin(roll)*x+Math.cos(roll)*y;x=x0;y=y0;let y1=Math.cos(pitch)*y+Math.sin(pitch)*z,z1=-Math.sin(pitch)*y+Math.cos(pitch)*z;return[Math.cos(yaw)*x-Math.sin(yaw)*z1,y1,Math.sin(yaw)*x+Math.cos(yaw)*z1];}let x1=Math.cos(yaw)*x+Math.sin(yaw)*z,z1=-Math.sin(yaw)*x+Math.cos(yaw)*z,y1=Math.cos(pitch)*y-Math.sin(pitch)*z1;return[Math.cos(roll)*x1-Math.sin(roll)*y1,Math.sin(roll)*x1+Math.cos(roll)*y1,Math.sin(pitch)*y+Math.cos(pitch)*z1];}
 function gizmoProject(point){let p=cameraRotate(gv.mul(gv.sub(point,scene.center),1/scene.extent));let depth=distance-p[2];if(depth<.05)return null;return[canvas.clientWidth*(.5+p[0]*focal/(canvas.clientWidth/canvas.clientHeight)/depth/2),canvas.clientHeight*(.5-p[1]*focal/depth/2)];}
 function transformCargo(){
  if(gizmoState.cargo<0)return;const {position,rotation,scale}=gizmoState;
@@ -17,6 +17,7 @@ function transformCargo(){
 function gizmo(value){gizmoState={...gizmoState,...value};transformCargo();draw();}
 function drawGizmo(){
  if(!gizmoContext)return;const c=gizmoContext,scale=Math.min(2,window.devicePixelRatio||1);gizmoCanvas.width=Math.max(1,Math.round(canvas.clientWidth*scale));gizmoCanvas.height=Math.max(1,Math.round(canvas.clientHeight*scale));c.scale(scale,scale);gizmoSegments=[];
+ if(scene&&nightView&&!transparentPreview)for(const light of nightLights){const point=gizmoProject(light.position);if(!point)continue;const colour=light.rear?'255,30,15':'255,240,195';const glow=c.createRadialGradient(...point,0,...point,14);glow.addColorStop(0,'rgba('+colour+',1)');glow.addColorStop(.2,'rgba('+colour+',.8)');glow.addColorStop(1,'rgba('+colour+',0)');c.fillStyle=glow;c.beginPath();c.arc(...point,14,0,Math.PI*2);c.fill();}
  if(!scene||!gizmoState.visible)return;const position=gizmoState.position,origin=gizmoProject(position);if(!origin)return;
  const size=scene.extent*.26,axes=[[1,0,0],[0,1,0],[0,0,1]],colours=['#e65151','#64c56c','#5292ee'];
  function line(a,b,axis,angle){if(!a||!b)return;c.beginPath();c.moveTo(...a);c.lineTo(...b);c.stroke();if(gizmoState.editing)gizmoSegments.push({a,b,axis,angle});}

@@ -229,3 +229,9 @@ Source `a9bc2b14b2ba4bc4c1e0e0ddb326c6c75e2ca4ef` adds the missing Delete transl
 Installation pending closure of both running Aurora hosts; owner closure question sent. Installed runtime remains e121fe9 until the subsequent installation receipt. No desktop/game automation or unrelated runtime changes.
 
 Installation receipt for cargo English translation: owner confirmed both hosts closed. Transactional installation of build-fed605c94ba84ccf99358315f31d3c0b succeeded; all 572 applicable installed files match stage hashes. Installed source a9bc2b14b2ba4bc4c1e0e0ddb326c6c75e2ca4ef, Version 0.2, DevelopmentSigning=false, ModifiedSources=false. Supersedes the pending-install note above. No live UI automation performed.
+
+## 2026-10-20: Scripts, night lamps and standardized preview workflow
+
+Implemented Scripts toolbar naming, day/night inspection with configured warm forward/red rear lamps, two standard preview views and Shot PNG/DDS export. Main/side camera editing has native instructions, WASD/QE/ZX/R, mouse rotation, integer wheel FOV 5–120, one-decimal stored poses, undo/.aur persistence and camera/input restoration. All editor numeric displays now use at most one decimal with hidden spinners. Transport family filtering and native class field profiles hide unrelated optional fields. Script parsing/lamp operations now support BOM/lowercase/comments/next-line scalars, preserve unknown sections and inactive tails, and retain guards against unsupported spatial pivot transformations.
+
+Core checks with bus_ikr_66 and installed native catalog passed; standalone and bundled WinUI builds passed; actual viewport script harness passed including camera controls, FOV boundaries, saved poses and day/night lamp uniforms. Scope/remaining manual checks are recorded in EDITOR_TASK_SETTINGS.md. Preparing production package; no Release and no desktop/game automation. Native PBR payload unchanged.

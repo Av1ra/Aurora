@@ -24,12 +24,12 @@ const gpu = new Proxy({
 }, { get: (target, name) => name in target ? target[name] : /^[A-Z_0-9]+$/.test(name) ? 1 : () => ({}) });
 const canvas = { clientWidth: 200, clientHeight: 100, width: 200, height: 100,
   getContext: () => gpu, setPointerCapture() {},toDataURL:()=>{previewFrames.push({size:viewportSize,focal:uniforms.get('focal')});return 'data:image/png;base64,TEST';} };
-const window = {devicePixelRatio:2,addEventListener:(name,handler)=>eventHandlers.set(name,handler),chrome:{webview:{postMessage:message=>messages.push(message)}}};
-const overlayContext=new Proxy({}, {get:()=>()=>{}});
+const window = {devicePixelRatio:2,addEventListener:(name,handler)=>{const previous=eventHandlers.get(name);eventHandlers.set(name,previous?e=>{previous(e);handler(e);}:handler);},chrome:{webview:{postMessage:message=>messages.push(message)}}};
+const overlayContext=new Proxy({}, {get:(_,key)=>key==='createRadialGradient'?()=>({addColorStop(){}}):()=>{}});
 const overlay={style:{},getContext:()=>overlayContext};
 const document = { getElementById: () => canvas,createElement:()=>overlay,body:{appendChild(){}} };
 const api = new Function('document', 'window', 'ResizeObserver', 'Image', 'WebGLTexture','requestAnimationFrame',
-  script + '\nreturn {load,texture,requestPreview,wireframe,gizmo,gizmoRotate,gizmoProject,camera:()=>({yaw,pitch,distance,focal}),tool:()=>gizmoState,segments:()=>gizmoSegments,selected:()=>selected,cargoNodes:()=>nodes.filter(n=>n.Cargo),bounds:()=>({center:scene.center,extent:scene.extent})};')(document, window, class { observe() {} }, ImageStub, Texture,cb=>cb());
+  script + '\nreturn {load,texture,requestPreview,wireframe,lighting,startPreviewCamera,stopPreviewCamera,previewCameraPose,gizmo,gizmoRotate,gizmoProject,camera:()=>({yaw,pitch,distance,focal}),tool:()=>gizmoState,segments:()=>gizmoSegments,selected:()=>selected,cargoNodes:()=>nodes.filter(n=>n.Cargo),bounds:()=>({center:scene.center,extent:scene.extent})};')(document, window, class { observe() {} }, ImageStub, Texture,cb=>cb());
 assert.match(overlay.style.cssText,/background\s*:\s*transparent(?:;|$)/,'pivot overlay must override the shared canvas background so loaded NMF stays visible');
 const scene = () => ({ Materials: ['body'], Nodes: [{
   Positions: [0,0,0, 1,0,0, 0,1,0], Normals: [0,0,1, 0,0,1, 0,0,1],
@@ -115,3 +115,18 @@ console.log('PASS cargo resource switching keeps vehicle framing stable');
 
 api.load(scene());drawCalls.length=0;api.wireframe(true);assert.ok(drawCalls.some(c=>c.mode===2&&c.count===6),'wireframe draws the three edges of the actual triangle');drawCalls.length=0;api.wireframe(false);assert.ok(!drawCalls.some(c=>c.mode===2),'wireframe toggle off restores solid-only rendering');api.wireframe(true);drawCalls.length=0;await api.requestPreview('no-wire',{width:256,height:128,fov:20,yaw:0,pitch:0});const firstLines=drawCalls.findIndex(c=>c.mode===2);assert.ok(firstLines>0&&drawCalls[0].mode===3,'exported preview draws solid geometry before restoring editor wireframe');api.wireframe(false);
 console.log('PASS wireframe edges, toggle restoration and solid export previews');
+
+const originalCamera=api.camera(),originalBounds=api.bounds(),oldDown=canvas.onpointerdown;
+api.startPreviewCamera({width:256,height:256,fov:20,yaw:-45,pitch:30});const initialPose=api.previewCameraPose();
+const key=k=>eventHandlers.get('keydown')({key:k,ctrlKey:false,altKey:false,metaKey:false,preventDefault(){}});
+key('w');key('q');key('z');let pose=api.previewCameraPose();assert.notEqual(pose.Y,initialPose.Y);assert.equal(pose.Roll,-1);
+for(let i=0;i<150;i++)canvas.onwheel({deltaY:1,preventDefault(){}});assert.equal(api.previewCameraPose().Fov,120);
+for(let i=0;i<150;i++)canvas.onwheel({deltaY:-1,preventDefault(){}});assert.equal(api.previewCameraPose().Fov,5);
+canvas.onpointerdown({clientX:10,clientY:10,pointerId:8});canvas.onpointermove({clientX:30,clientY:15});canvas.onpointerup({});assert.notEqual(api.previewCameraPose().Yaw,initialPose.Yaw);
+key('r');assert.deepEqual(api.previewCameraPose(),initialPose,'reset restores the standard camera');
+key('d');pose=api.previewCameraPose();assert.ok(Object.values(pose).every(v=>Math.abs(v*10-Math.round(v*10))<1e-8),'stored camera settings have at most one decimal');
+api.stopPreviewCamera();assert.deepEqual(api.camera(),originalCamera);assert.deepEqual(api.bounds(),originalBounds);assert.equal(canvas.onpointerdown,oldDown,'camera editor restores original picking/gizmo handlers');
+await api.requestPreview('saved-camera',{width:256,height:256,fov:20,yaw:0,pitch:0,pose:{...pose,Fov:120}});assert.ok(Math.abs(previewFrames.at(-1).focal-1/Math.tan(Math.PI/3))<1e-8);
+api.lighting({night:true,lights:[{position:[0,0,0],direction:[0,0,1],rear:false},{position:[0,0,-1],direction:[0,0,-1],rear:true}]});assert.equal(uniforms.get('night'),1);assert.equal(uniforms.get('lightCount'),2);
+await api.requestPreview('night-shot',{width:256,height:128,fov:20,yaw:0,pitch:0});assert.equal(uniforms.get('night'),1,'shot restores night mode');api.lighting({night:false,lights:[]});assert.equal(uniforms.get('night'),0);
+console.log('PASS interactive camera movement, roll, reset, integer FOV limits, stored pose capture, handler restoration and night lamp uniforms');

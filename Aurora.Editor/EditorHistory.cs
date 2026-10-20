@@ -35,7 +35,7 @@ sealed partial class EditorWindow
  }
  async Task RunHistoryCommand(Func<Task> action)
  {
-  if(busy)return;var before=HasModel?CaptureSnapshot():null;long epoch=documentEpoch,traversal=historyTraversal;busy=true;processing=false;UpdateControls();try{await action();}catch(Exception ex){SetStatus(ex.Message);}finally{if(before!=null&&epoch==documentEpoch&&traversal==historyTraversal&&HasModel)history.Commit(before,CaptureSnapshot());busy=false;processing=false;UpdateControls();}
+  if(busy||cameraEditing)return;var before=HasModel?CaptureSnapshot():null;long epoch=documentEpoch,traversal=historyTraversal;busy=true;processing=false;UpdateControls();try{await action();}catch(Exception ex){SetStatus(ex.Message);}finally{if(before!=null&&epoch==documentEpoch&&traversal==historyTraversal&&HasModel)history.Commit(before,CaptureSnapshot());busy=false;processing=false;UpdateControls();}
  }
  bool EditingText()=>FocusManager.GetFocusedElement(((FrameworkElement)Content).XamlRoot) is TextBox or RichEditBox;
  async Task ReceiveHistory(JsonElement message){if(busy||!message.TryGetProperty("history",out var command))return;string? value=command.GetString();if(value=="undo"&&history.CanUndo)await RunCommand(()=>TraverseHistory(false));else if(value=="redo"&&history.CanRedo)await RunCommand(()=>TraverseHistory(true));}

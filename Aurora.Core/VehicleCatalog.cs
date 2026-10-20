@@ -15,6 +15,7 @@ public sealed class VehicleCatalog
  public VehicleClass[] Classes {get;private set;}=[];
  public VehicleSound[] Sounds {get;private set;}=[];
  public Dictionary<string,string[]> Values {get;private set;}=[];
+ public Dictionary<string,string[]> ClassFields {get;private set;}=[];
  public static Dictionary<int,string> ReadTexts(string file)
  {
   if(!File.Exists(file))return [];byte[] data=File.ReadAllBytes(file);if(data.Length<12)throw new InvalidDataException("Invalid game text table");int count=BinaryPrimitives.ReadInt32BigEndian(data);long start=12L+count*10L;if(count<0||start>data.Length)throw new InvalidDataException("Invalid game text table");var result=new Dictionary<int,string>();
@@ -34,18 +35,19 @@ public sealed class VehicleCatalog
  public static VehicleCatalog Load(string media,bool english)
  {
   var englishTexts=ReadTexts(Path.Combine(media,"sovietEnglish.btf"));var texts=new Dictionary<int,string>(englishTexts);if(!english)foreach(var p in ReadTexts(Path.Combine(media,"sovietRussian.btf")))texts[p.Key]=p.Value;
-  var modelNames=new Dictionary<string,string>();var classes=new Dictionary<string,VehicleClass>();var sounds=new Dictionary<string,VehicleSound>();var values=new Dictionary<string,HashSet<string>>();
+  var modelNames=new Dictionary<string,string>();var classes=new Dictionary<string,VehicleClass>();var sounds=new Dictionary<string,VehicleSound>();var values=new Dictionary<string,HashSet<string>>();var classFields=new Dictionary<string,HashSet<string>>();
   string[] roots=["vehicles","trains","ships","airplanes","helicopters"];
   var bases=new[]{media}.Concat(Directory.GetDirectories(media).Where(d=>Path.GetFileName(d).StartsWith("dlc",StringComparison.OrdinalIgnoreCase)||Path.GetFileName(d).StartsWith("elc",StringComparison.OrdinalIgnoreCase)));
   foreach(string folder in bases.SelectMany(b=>roots.Select(r=>Path.Combine(b,r))).Where(Directory.Exists))foreach(string path in Directory.EnumerateFiles(folder,"script.ini",SearchOption.AllDirectories)){
    string script=File.ReadAllText(path);var f=VehicleScript.Fields(script);string type=Value(f,"TYPE");if(type.Length==0)continue;string id=ClassId(script);
+   if(!classFields.TryGetValue(id,out var keys))classFields[id]=keys=[];foreach(var field in f)keys.Add(field.Key);
    classes.TryAdd(id,new(id,type,Value(f,"RESOURCE_TRANSPORT_TYPE"),ClassFlags(f),ClassName(f,english),f.Where(x=>ClassFlags(f).Contains(x.Key)).ToDictionary(x=>x.Key,x=>x.Value)));
    foreach(var field in f){if(!values.TryGetValue(field.Key,out var set))values[field.Key]=set=[];if(field.Value.Length>0)set.Add(field.Value);}
    string modelFolder=Path.GetFileName(Path.GetDirectoryName(path))!;string modelName=Value(f,"NAME_STR").Trim('"');if(modelName.Length==0&&int.TryParse(Value(f,"NAME"),out int modelId))modelName=texts.GetValueOrDefault(modelId,modelFolder);modelNames.TryAdd(modelFolder,modelName.Length>0?modelName:modelFolder);
    var files=f.Where(x=>x.Key=="SOUND_PARAMS").Select(x=>x.Value).ToArray();if(files.Length>0){string name=Value(f,"NAME_STR").Trim('"');if(name.Length==0&&int.TryParse(Value(f,"NAME"),out int nameId))name=texts.GetValueOrDefault(nameId,"");if(name.Length==0)name=Path.GetFileName(Path.GetDirectoryName(path))!;string signature=id+"\n"+string.Join("\n",files);sounds.TryAdd(signature,new(ClassName(f,english)+" / "+name,id,files));}
   }
   var entries=texts.Where(p=>p.Key is >=38998 and <=39044&&englishTexts.ContainsKey(p.Key)).Select(p=>new VehicleCountry(p.Key,p.Value,CountryCurrencies(p.Key))).ToArray();
-  return new(){Texts=texts,ModelNames=modelNames,Countries=entries,Classes=classes.Values.OrderBy(c=>c.Name).ToArray(),Sounds=sounds.Values.OrderBy(s=>s.Name).ToArray(),Values=values.ToDictionary(p=>p.Key,p=>p.Value.Order().ToArray())};
+  return new(){Texts=texts,ModelNames=modelNames,Countries=entries,Classes=classes.Values.OrderBy(c=>c.Name).ToArray(),Sounds=sounds.Values.OrderBy(s=>s.Name).ToArray(),Values=values.ToDictionary(p=>p.Key,p=>p.Value.Order().ToArray()),ClassFields=classFields.ToDictionary(p=>p.Key,p=>p.Value.Order().ToArray())};
  }
  // Bloc is an explicit country classification, not inferred from a vehicle's price currency.
  public static string[] CountryCurrencies(int id)=>id is 38998 or 38999?["RUB","USD"]:new[]{39000,39004,39006,39007,39008,39009,39010,39011,39012,39013,39014,39015,39019,39020,39021,39025,39026,39027,39028,39029,39042}.Contains(id)?["RUB"]:["USD"];
