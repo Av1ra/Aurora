@@ -1,0 +1,68 @@
+{
+  "scriptCount": 1073,
+  "endYearAbove2100": {
+    "count": 51,
+    "examples": [
+      {
+        "path": "trains/russian_crane/script.ini",
+        "years": "$AVAILABLE 1971 3000"
+      },
+      {
+        "path": "trains/russian_crane_v2/script.ini",
+        "years": "$AVAILABLE 1971 3000"
+      },
+      {
+        "path": "trains/russian_loco_dr243/script.ini",
+        "years": "$AVAILABLE 1985 3000"
+      },
+      {
+        "path": "trains/russian_service_muv69/script.ini",
+        "years": "$AVAILABLE 1968\t3000"
+      }
+    ]
+  },
+  "multipleAllowedResources": {
+    "count": 6,
+    "examples": [
+      {
+        "path": "dlc3/vehicles/covered_gz_51_van/script.ini",
+        "resources": [
+          "food",
+          "alcohol",
+          "clothes",
+          "eletronics"
+        ]
+      },
+      {
+        "path": "dlc3/vehicles/covered_skdm706ro/script.ini",
+        "resources": [
+          "food",
+          "alcohol",
+          "clothes",
+          "eletronics"
+        ]
+      },
+      {
+        "path": "dlc3/vehicles/SSyms/script.ini",
+        "resources": [
+          "steel",
+          "aluminium",
+          "prefabpanels"
+        ]
+      },
+      {
+        "path": "dlc3/vehicles/SSys/script.ini",
+        "resources": [
+          "steel",
+          "aluminium",
+          "prefabpanels"
+        ]
+      }
+    ]
+  },
+  "stringCountries": [
+    "dlc3/vehicles/bbo214/script.ini",
+    "dlc3/vehicles/bbotender/script.ini"
+  ],
+  "dollarEndFiles": 26
+}

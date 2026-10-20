@@ -1,0 +1,304 @@
+{
+  "vehicles": {
+    "total": 2347,
+    "opened": 2242,
+    "rejected": 105,
+    "errors": {
+      "Unsupported animated/external NMF node": {
+        "count": 10,
+        "examples": [
+          "vehicles/bus_zis_155/main.nmf",
+          "vehicles/service_buldozer_small/mining.nmf",
+          "vehicles/service_caterpilar_big/mining.nmf"
+        ]
+      },
+      "Unsupported NMF vertex stream: 4011a": {
+        "count": 2,
+        "examples": [
+          "vehicles/covered_rnt_agk/main.nmf",
+          "vehicles/oil_rnt_agk/main.nmf"
+        ]
+      },
+      "Unsupported NMF trailing streams": {
+        "count": 2,
+        "examples": [
+          "vehicles/covered_t138/main.nmf",
+          "vehicles/covered_t148/main.nmf"
+        ]
+      },
+      "Invalid NMF header": {
+        "count": 91,
+        "examples": [
+          "vehicles/garbage_big_kmz_5320/loading.nmf",
+          "vehicles/garbage_big_kmz_5320/tilting.nmf",
+          "vehicles/garbage_big_kmz_5320/unloading.nmf"
+        ]
+      }
+    },
+    "specialMeshNames": {
+      "tire2Shape": 252,
+      "tire1Shape": 214,
+      "tireShape2": 209,
+      "tire3Shape": 196,
+      "tire.002": 166,
+      "tire.001": 165,
+      "tireShape01": 154,
+      "tireShape03": 154,
+      "tireShape02": 153,
+      "tireShape1": 146,
+      "tireShape3": 108,
+      "tire.003": 74,
+      "tire2": 58,
+      "tire1Shape_2": 53,
+      "tire2Shape_2": 53,
+      "tire3Shape_2": 53,
+      "tire1shape": 49,
+      "tire2shape": 48,
+      "tire3shape": 48,
+      "tire1Shape_blacha": 43,
+      "tire2Shape_blacha": 43,
+      "tire3Shape_blacha": 43,
+      "tireShape4": 41,
+      "tire.004": 41,
+      "tire.02": 38,
+      "tire.01": 38,
+      "tire1": 37,
+      "tireShape04": 36,
+      "tire3": 34,
+      "tire1Shape_guma": 30
+    }
+  },
+  "trains": {
+    "total": 285,
+    "opened": 280,
+    "rejected": 5,
+    "errors": {
+      "Unsupported NMF trailing streams": {
+        "count": 1,
+        "examples": [
+          "trains/russian_loco_t3m2my/main.nmf"
+        ]
+      },
+      "Invalid NMF header": {
+        "count": 4,
+        "examples": [
+          "trains/russian_vagon_falls_gravel/lod1.nmf",
+          "trains/russian_vagon_falls_gravel/main.nmf",
+          "trains/russian_vagon_raj_cement/lod1.nmf"
+        ]
+      }
+    },
+    "specialMeshNames": {
+      "tire2": 9,
+      "tire1": 9,
+      "tire2Shape": 9,
+      "tire1Shape": 9,
+      "tire3Shape": 8,
+      "tire4Shape": 8,
+      "tire3": 6,
+      "tire4": 6,
+      "tire5": 3,
+      "tire6": 3,
+      "tire6Shape": 3,
+      "tire5Shape": 2,
+      "tire7Shape": 1,
+      "tireShape8": 1,
+      "tireShape9": 1
+    }
+  },
+  "ships": {
+    "total": 35,
+    "opened": 35,
+    "rejected": 0,
+    "errors": {},
+    "specialMeshNames": {}
+  },
+  "airplanes": {
+    "total": 98,
+    "opened": 82,
+    "rejected": 16,
+    "errors": {
+      "Unsupported animated/external NMF node": {
+        "count": 9,
+        "examples": [
+          "airplanes/an12/wheels.nmf",
+          "airplanes/c401/wheels.nmf",
+          "airplanes/f27/wheels.nmf"
+        ]
+      },
+      "Invalid NMF header": {
+        "count": 7,
+        "examples": [
+          "airplanes/b737/wheels.nmf",
+          "airplanes/b737_4/wheels.nmf",
+          "airplanes/il76/wheels.nmf"
+        ]
+      }
+    },
+    "specialMeshNames": {
+      "tireShape1": 3,
+      "tireShape8": 2,
+      "tire.01": 1,
+      "tire.02": 1,
+      "tireShape2": 1,
+      "tire.003": 1,
+      "tire.004": 1,
+      "tire.002": 1,
+      "tire.001": 1
+    }
+  },
+  "helicopters": {
+    "total": 66,
+    "opened": 63,
+    "rejected": 3,
+    "errors": {
+      "Unsupported NMF vertex stream: 13a": {
+        "count": 3,
+        "examples": [
+          "helicopters/mi8/screwcon.nmf",
+          "helicopters/mi8/screwhi.nmf",
+          "helicopters/mi8/screwlo.nmf"
+        ]
+      }
+    },
+    "specialMeshNames": {
+      "Rotor01": 2,
+      "Rotor02": 2,
+      "Rotor": 2,
+      "tire3Shape": 1,
+      "tire2Shape": 1,
+      "tire1Shape": 1,
+      "Zadni.rotor": 1
+    }
+  },
+  "cabins": {
+    "total": 33,
+    "opened": 33,
+    "rejected": 0,
+    "errors": {},
+    "specialMeshNames": {}
+  },
+  "buildings": {
+    "total": 948,
+    "opened": 909,
+    "rejected": 39,
+    "errors": {
+      "Unsupported NMF trailing streams": {
+        "count": 3,
+        "examples": [
+          "buildings/bus_endstation_big.nmf",
+          "buildings/harbor_container.nmf",
+          "buildings/ship_dock_small.nmf"
+        ]
+      },
+      "Unsupported animated/external NMF node": {
+        "count": 2,
+        "examples": [
+          "buildings/container_unpacking.nmf",
+          "buildings/powerplant_gas.nmf"
+        ]
+      },
+      "Unsupported NMF vertex stream: 4011a": {
+        "count": 2,
+        "examples": [
+          "buildings/hospital.nmf",
+          "buildings/shop_prior.nmf"
+        ]
+      },
+      "Unsupported skin or invalid geometry": {
+        "count": 1,
+        "examples": [
+          "buildings/mesto4.nmf"
+        ]
+      },
+      "Unsupported NMF signature": {
+        "count": 15,
+        "examples": [
+          "buildings/muddy_busstop.nmf",
+          "buildings/muddy_construction.nmf",
+          "buildings/muddy_demolition.nmf"
+        ]
+      },
+      "Unsupported NMF vertex stream: 13a": {
+        "count": 12,
+        "examples": [
+          "buildings/panelak_juh1_interior.nmf",
+          "buildings/panelak_juh1_light.nmf",
+          "buildings/panelak_juh2_interior.nmf"
+        ]
+      },
+      "Unterminated NMF name": {
+        "count": 1,
+        "examples": [
+          "buildings/water_switch_underground.nmf"
+        ]
+      },
+      "Invalid NMF header": {
+        "count": 3,
+        "examples": [
+          "dlc3/buildings/mine_coal/1_anim.nmf",
+          "dlc3/buildings/mine_iron/1_anim.nmf",
+          "dlc3/buildings/mine_uranium/1_anim.nmf"
+        ]
+      }
+    },
+    "specialMeshNames": {}
+  },
+  "resources": {
+    "total": 100,
+    "opened": 100,
+    "rejected": 0,
+    "errors": {},
+    "specialMeshNames": {}
+  },
+  "containers": {
+    "total": 5,
+    "opened": 5,
+    "rejected": 0,
+    "errors": {},
+    "specialMeshNames": {}
+  },
+  "trees": {
+    "total": 44,
+    "opened": 38,
+    "rejected": 6,
+    "errors": {
+      "Unsupported NMF vertex stream: 4011a": {
+        "count": 5,
+        "examples": [
+          "trees/broadbush1.nmf",
+          "trees/broadbush2.nmf",
+          "trees/broadbush3.nmf"
+        ]
+      },
+      "Nonfinite vertex": {
+        "count": 1,
+        "examples": [
+          "trees/leafkriak_green.nmf"
+        ]
+      }
+    },
+    "specialMeshNames": {}
+  },
+  "fences": {
+    "total": 10,
+    "opened": 10,
+    "rejected": 0,
+    "errors": {},
+    "specialMeshNames": {}
+  },
+  "paths": {
+    "total": 27,
+    "opened": 27,
+    "rejected": 0,
+    "errors": {},
+    "specialMeshNames": {}
+  },
+  "buildingeditor": {
+    "total": 65,
+    "opened": 65,
+    "rejected": 0,
+    "errors": {},
+    "specialMeshNames": {}
+  }
+}

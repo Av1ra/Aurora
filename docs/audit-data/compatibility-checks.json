@@ -1,0 +1,12 @@
+{
+  "dollarEnd": {
+    "example": "dlc3/vehicles/bbo214/script.ini",
+    "parsedAsOrdinaryField": true,
+    "newFieldAfterDollarEnd": true
+  },
+  "multiArgumentSkill": {
+    "example": "trains/russian_service_agmu/script.ini",
+    "value": "19 25",
+    "acceptedByScalarUi": false
+  }
+}

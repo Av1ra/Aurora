@@ -4,6 +4,8 @@ Checkpoint recorded: 2026-10-19. Canonical repository: `Av1ra/Aurora`, branch `m
 
 ## Read this first
 
+Read-only capability audit (2026-10-21): [installed game/editor gaps and prioritized plan](EDITOR_CAPABILITY_AUDIT_2026-10-21.md), with reproducible tools and measured corpus data under `audit-data/`. Findings include unsupported primary NMF files, `$END` insertion, multi-argument skills, native material/DDS gaps and misleading field semantics. The audit does not mean these issues were fixed or a new runtime was installed.
+
 Current owner correction: [task-based vehicle settings, cargo material fix and PSD launcher rows](EDITOR_TASK_SETTINGS.md). This supersedes generic native-field forms and currency-derived country lists. Custom sounds scope is INI import only. Check newest STATUS entry for verified package/install evidence.
 
 Latest model workflow: [guided purchase/class/sound settings and visual cargo](EDITOR_CARGO_GUIDED_MODEL.md). This supersedes generic script-field editing as the primary flow; cargo is inside Model settings with live Move/Rotate/Scale and proportional/per-axis scaling. See STATUS for installed checkpoint.
