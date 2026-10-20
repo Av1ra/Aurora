@@ -10,6 +10,8 @@ static class UiLanguage
     public static bool Reload(){try{string value=File.ReadAllText(path).Trim();if(value is not ("en" or "ru"))return false;bool english=value=="en";if(english==English)return false;English=english;return true;}catch{return false;}}
     static readonly Dictionary<string,string> words=new()
     {
+["Расход топлива"]="Fuel consumption",
+["Удалить LOD"]="Remove LOD",
 ["Лёгкий дым локомотива"]="Light locomotive exhaust",
 ["Дым локомотива"]="Locomotive exhaust",
 ["Эффект электропоезда"]="Electric train effect",

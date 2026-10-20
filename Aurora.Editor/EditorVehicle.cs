@@ -46,7 +46,7 @@ sealed partial class EditorWindow
  }
  NumberBox Coordinate(string label,float value,Panel panel)
  {
-  var box=new NumberBox{Header=label,Value=value,SmallChange=.01,LargeChange=.1,SpinButtonPlacementMode=NumberBoxSpinButtonPlacementMode.Compact,MinWidth=100,HorizontalAlignment=HorizontalAlignment.Stretch};
+  var box=new NumberBox{Header=label,Value=value,SmallChange=.01,LargeChange=.1,SpinButtonPlacementMode=NumberBoxSpinButtonPlacementMode.Hidden,MinWidth=100,HorizontalAlignment=HorizontalAlignment.Stretch};
   panel.Children.Add(box);return box;
  }
  static Vector3 LightPosition(NumberBox x,NumberBox y,NumberBox z)

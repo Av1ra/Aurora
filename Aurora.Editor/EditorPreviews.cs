@@ -14,7 +14,7 @@ sealed partial class EditorWindow
  async Task ConfigurePreviews()
  {
   var panel=new StackPanel{Spacing=10,Width=340};var automatic=new CheckBox{Content=UiLanguage.Text("Создавать превью при сохранении NMF"),IsChecked=previewSettings.Automatic};panel.Children.Add(automatic);
-  NumberBox Field(string label,double value,double min,double max){var box=new NumberBox{Header=UiLanguage.Text(label),Value=value,Minimum=min,Maximum=max,SmallChange=1,SpinButtonPlacementMode=NumberBoxSpinButtonPlacementMode.Compact};panel.Children.Add(box);return box;}
+  NumberBox Field(string label,double value,double min,double max){var box=new NumberBox{Header=UiLanguage.Text(label),Value=value,Minimum=min,Maximum=max,SmallChange=1,SpinButtonPlacementMode=NumberBoxSpinButtonPlacementMode.Hidden};panel.Children.Add(box);return box;}
   var fov=Field("FOV, °",previewSettings.Fov,5,100);var yaw=Field("Основной ракурс: поворот",previewSettings.Yaw,-360,360);var pitch=Field("Основной ракурс: наклон",previewSettings.Pitch,-89,89);var sideYaw=Field("Боковой ракурс: поворот",previewSettings.SideYaw,-360,360);var sidePitch=Field("Боковой ракурс: наклон",previewSettings.SidePitch,-89,89);
   var dialog=VehicleDialog("Настройки превью…",panel);ValidateVehicleDialog(dialog,panel,()=>{if(new[]{fov,yaw,pitch,sideYaw,sidePitch}.Any(b=>!double.IsFinite(b.Value)))throw new InvalidDataException("Invalid preview settings");});if(await ShowDialog(dialog)!=ContentDialogResult.Primary)return;previewSettings=new(automatic.IsChecked==true,(float)fov.Value,(float)yaw.Value,(float)pitch.Value,(float)sideYaw.Value,(float)sidePitch.Value);dirty=true;
  }

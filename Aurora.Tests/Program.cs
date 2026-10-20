@@ -5,6 +5,7 @@ static void Check(bool value,string label){if(!value)throw new Exception("FAIL "
 static void Reject(Action action,string label){try{action();}catch{Console.WriteLine("PASS rejected "+label);return;}throw new Exception("FAIL accepted "+label);}
 ObjImportChecks.Run(Check,Reject);
 await ObjExportChecks.Run(Check);
+await LodImportChecks.Run(Check,Reject);
 await VehicleChecks.Run(Check,Reject);
 await EditorRevisionChecks.Run(Check,Reject);
 ModelToolsChecks.Run(Check,Reject);
