@@ -11,6 +11,7 @@
 | Manifest, safe paths, module installation, NMF | Aurora.Core/ |
 | Registered Workshop release detection and transactional updates | Aurora.Core/WorkshopUpdates.cs, docs/WORKSHOP_UPDATES.md |
 | Model Editor and owner PSD layout | Aurora.Editor/ and Aurora.Editor.Module/, docs/UI_PSD_PLAN.md |
+| Corrected task-based model form, smoke, LOD rows and native sound INI | Aurora.Core/VehicleLods.cs, Aurora.Core/VehicleSmoke.cs, Aurora.Core/VehicleSoundFiles.cs, Aurora.Editor/EditorLods.cs, Aurora.Editor/EditorSmoke.cs, docs/EDITOR_TASK_SETTINGS.md |
 | Guided model setup, native countries/classes/sounds, visual cargo scaling | Aurora.Core/VehicleCatalog.cs, Aurora.Editor/EditorModelSettings.cs, Aurora.Editor/EditorCargo.cs, Aurora.Editor/Assets/gizmo.js, docs/EDITOR_CARGO_GUIDED_MODEL.md |
 | Editor undo, script.ini model settings, cargo and automatic previews | Aurora.Core/EditHistory.cs, Aurora.Core/VehicleScript.cs, Aurora.Editor/EditorHistory.cs, Aurora.Editor/EditorModelSettings.cs, Aurora.Editor/EditorCargo.cs, Aurora.Editor/EditorPreviews.cs, docs/EDITOR_HISTORY_MODEL_PREVIEWS.md |
 | Vehicle pivot, axes and native headlights/rear lights | Aurora.Core/ModelOrientation.cs, Aurora.Core/VehicleLights.cs, Aurora.Editor/EditorVehicle.cs, docs/EDITOR_VEHICLES.md |

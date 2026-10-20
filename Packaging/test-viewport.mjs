@@ -28,7 +28,7 @@ const overlayContext=new Proxy({}, {get:()=>()=>{}});
 const overlay={style:{},getContext:()=>overlayContext};
 const document = { getElementById: () => canvas,createElement:()=>overlay,body:{appendChild(){}} };
 const api = new Function('document', 'window', 'ResizeObserver', 'Image', 'WebGLTexture','requestAnimationFrame',
-  script + '\nreturn {load,texture,requestPreview,gizmo,gizmoRotate,gizmoProject,camera:()=>({yaw,pitch,distance,focal}),tool:()=>gizmoState,segments:()=>gizmoSegments,selected:()=>selected,cargoNodes:()=>nodes.filter(n=>n.Cargo)};')(document, window, class { observe() {} }, ImageStub, Texture,cb=>cb());
+  script + '\nreturn {load,texture,requestPreview,gizmo,gizmoRotate,gizmoProject,camera:()=>({yaw,pitch,distance,focal}),tool:()=>gizmoState,segments:()=>gizmoSegments,selected:()=>selected,cargoNodes:()=>nodes.filter(n=>n.Cargo),bounds:()=>({center:scene.center,extent:scene.extent})};')(document, window, class { observe() {} }, ImageStub, Texture,cb=>cb());
 assert.match(overlay.style.cssText,/background\s*:\s*transparent(?:;|$)/,'pivot overlay must override the shared canvas background so loaded NMF stays visible');
 const scene = () => ({ Materials: ['body'], Nodes: [{
   Positions: [0,0,0, 1,0,0, 0,1,0], Normals: [0,0,1, 0,0,1, 0,0,1],
@@ -108,3 +108,6 @@ canvas.onpointerdown({clientX:start[0],clientY:start[1],pointerId:5});canvas.onp
 assert.ok(api.tool().scale[0]>1);assert.equal(api.tool().scale[1]/api.tool().scale[0],2);assert.equal(api.tool().scale[2]/api.tool().scale[0],3,'uniform scaling preserves aspect ratios');
 api.gizmo({mode:'move',position:[2,3,4],rotation:[0,0,90],scale:[2,3,4]});assert.deepEqual(api.cargoNodes()[0].Positions.slice(0,3),[2,3,4]);assert.ok(Math.abs(api.cargoNodes()[0].Positions[4]-5)<1e-6,'cargo rotation and nonuniform scale use the export coordinate convention');assert.ok(messages.some(m=>m.gizmo?.scale),'cargo scale is sent to native undo history');
 console.log('PASS visual cargo axis/uniform scale, live vertices and native transform convention');
+
+const ordinary=scene();api.load(ordinary);const vehicleBounds=api.bounds();const distantCargo=scene();distantCargo.Nodes.push({...distantCargo.Nodes[0],Cargo:true,Positions:[1000,1000,1000,1001,1000,1000,1000,1001,1000]});api.load(distantCargo);assert.deepEqual(api.bounds(),vehicleBounds,'switching cargo resources must not reframe or move the vehicle camera');
+console.log('PASS cargo resource switching keeps vehicle framing stable');

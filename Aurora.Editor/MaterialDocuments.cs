@@ -6,6 +6,8 @@ namespace Aurora.Editor;
 sealed record MaterialVariant(string Name,string NativePath,Dictionary<string,MaterialSettings> Settings);
 static class MaterialDocuments
 {
+ public static string? ResourceMaterial(string model){string folder=Path.GetDirectoryName(model)!;string stem=Path.GetFileNameWithoutExtension(model);string[] stems=[stem,Regex.Replace(stem,@"_vehicle$|_open$|\d+$","")];return stems.Select(n=>Path.Combine(folder,n+".mtl")).FirstOrDefault(File.Exists);}
+ public static Dictionary<string,MaterialSettings> ResourceMaps(NativeModel model,string material){var native=Native(material);if(model.Materials.All(native.ContainsKey))return model.Materials.ToDictionary(n=>n,n=>native[n]);if(native.Count!=model.Materials.Length)throw new InvalidDataException("Cargo material count differs from model");var values=native.Values.ToArray();return model.Materials.Select((n,i)=>(n,i)).ToDictionary(p=>p.n,p=>values[p.i]);}
  public static string PairedName(string native)
  {
   string stem=Path.GetFileNameWithoutExtension(native);

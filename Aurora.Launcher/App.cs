@@ -93,12 +93,9 @@ sealed class MainWindow:Window
  static Grid RowTitle(string title,string? badge=null){var panel=new Grid{ColumnSpacing=10};panel.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});panel.ColumnDefinitions.Add(new(){Width=GridLength.Auto});panel.Children.Add(new TextBlock{Text=UiLanguage.Text(title),TextWrapping=TextWrapping.Wrap,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold,VerticalAlignment=VerticalAlignment.Center});if(badge!=null){var tag=Badge(badge);Grid.SetColumn(tag,1);panel.Children.Add(tag);}return panel;}
  static Grid ResponsiveActions(){var panel=new Grid{ColumnSpacing=8,RowSpacing=8};bool? stacked=null;panel.SizeChanged+=(_,e)=>{bool next=e.NewSize.Width<500;if(stacked==next&&panel.ColumnDefinitions.Count>0)return;stacked=next;panel.ColumnDefinitions.Clear();panel.RowDefinitions.Clear();for(int i=0;i<panel.Children.Count;i++){if(next)panel.RowDefinitions.Add(new(){Height=GridLength.Auto});else panel.ColumnDefinitions.Add(new(){Width=GridLength.Auto});var child=(FrameworkElement)panel.Children[i];Grid.SetRow(child,next?i:0);Grid.SetColumn(child,next?0:i);child.HorizontalAlignment=HorizontalAlignment.Left;}};return panel;}
  static Border Card(UIElement content){var border=(Border)XamlReader.Load("<Border xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" Background=\"{ThemeResource CardBackgroundFillColorDefaultBrush}\" BorderBrush=\"{ThemeResource CardStrokeColorDefaultBrush}\" BorderThickness=\"1\" CornerRadius=\"8\" Padding=\"14,6\" HorizontalAlignment=\"Stretch\"/>");border.Child=content;return border;}
- static Border FeatureCard(string title,ToggleSwitch toggle,string? badge=null,string? description=null,UIElement? action=null)
+ static Border FeatureCard(string title,ToggleSwitch toggle,string? badge=null)
  {
-  var grid=new Grid{ColumnSpacing=18};grid.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});grid.ColumnDefinitions.Add(new(){Width=GridLength.Auto});
-  var text=new StackPanel{Spacing=5};text.Children.Add(RowTitle(title,badge));if(description!=null)text.Children.Add(new TextBlock{Text=UiLanguage.Text(description),FontSize=12,Opacity=.72,TextWrapping=TextWrapping.Wrap});
-  if(action!=null)text.Children.Add(action);
-  toggle.VerticalAlignment=VerticalAlignment.Center;toggle.OnContent=UiLanguage.Text("Вкл.");toggle.OffContent=UiLanguage.Text("Выкл.");Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(toggle,UiLanguage.Text(title));Grid.SetColumn(toggle,1);grid.Children.Add(text);grid.Children.Add(toggle);return Card(grid);
+  var row=new Grid{ColumnSpacing=16,MinHeight=32};row.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});row.ColumnDefinitions.Add(new(){Width=new GridLength(90)});row.ColumnDefinitions.Add(new(){Width=GridLength.Auto});row.Children.Add(new TextBlock{Text=UiLanguage.Text(title),FontSize=14,VerticalAlignment=VerticalAlignment.Center,TextWrapping=TextWrapping.Wrap});toggle.OnContent="";toggle.OffContent="";toggle.MinWidth=40;toggle.HorizontalAlignment=HorizontalAlignment.Center;toggle.VerticalAlignment=VerticalAlignment.Center;Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(toggle,UiLanguage.Text(title));Grid.SetColumn(toggle,1);row.Children.Add(toggle);if(badge!=null){var tag=Badge(badge);Grid.SetColumn(tag,2);row.Children.Add(tag);}return Card(row);
  }
  void Home()
  {
@@ -234,6 +231,9 @@ sealed class MainWindow:Window
  }
  Border SettingsModuleCard(VerifiedMod module)
  {
+  if(module.Manifest.Id=="aurora.fov"){
+   var option=module.Manifest.Options.Single(o=>o.Id=="enabled");string file=ModCatalog.SafePath(prefs.Game,"mods/"+module.Manifest.Config);bool restoring=false;var enabled=new ToggleSwitch{IsOn=GetPrivateProfileInt(option.Section,option.Key,option.Default?1:0,file)!=0};enabled.Toggled+=(_,_)=>{if(restoring)return;try{VerifyCurrent(module);Directory.CreateDirectory(Path.GetDirectoryName(file)!);if(!WritePrivateProfileString(option.Section,option.Key,enabled.IsOn?"1":"0",file))throw new System.ComponentModel.Win32Exception();}catch(Exception ex){restoring=true;enabled.IsOn=GetPrivateProfileInt(option.Section,option.Key,option.Default?1:0,file)!=0;restoring=false;Notice(ex.Message);}};return FeatureCard(module.Manifest.Name,enabled,"Альфа");
+  }
   var controls=new StackPanel{Spacing=8};controls.Children.Add(RowTitle(module.Manifest.Name,module.Manifest.Stage=="alpha"?"Альфа":module.Manifest.Stage=="beta"?"Бета":null));AddOptionRows(controls,module,false);return Card(controls);
  }
  void VerifyCurrent(VerifiedMod mod){_=new ModCatalog(publicKey).VerifySnapshot(mod);}
@@ -285,7 +285,7 @@ sealed class MainWindow:Window
   locateButtons.Children.Add(Button("Сохранить папку",()=>{if(!File.Exists(Path.Combine(path.Text,"SOVIET64.exe")))throw new InvalidDataException("В выбранной папке нет SOVIET64.exe.");prefs=prefs with{Game=Path.GetFullPath(path.Text)};Save();Notice("Папка сохранена.",InfoBarSeverity.Success);Discover();}));
   locateButtons.Children.Add(Button("Workshop",()=>Process.Start(new ProcessStartInfo("https://steamcommunity.com/app/784150/workshop/"){UseShellExecute=true})));locations.Children.Add(locateButtons);body.Children.Add(Card(locations));
   foreach(var module in mods.Where(x=>x.Manifest.Placement=="settings"))body.Children.Add(SettingsModuleCard(module));
-  var console=new ToggleSwitch{IsOn=prefs.Console};console.Toggled+=(_,_)=>{prefs=prefs with{Console=console.IsOn};Save();};body.Children.Add(FeatureCard("Консоль",console,"Альфа","Открыть в игре: ~"));
+  var console=new ToggleSwitch{IsOn=prefs.Console};console.Toggled+=(_,_)=>{prefs=prefs with{Console=console.IsOn};Save();};body.Children.Add(FeatureCard("Консоль разработчика",console,"Альфа"));
   var updater=new StackPanel{Spacing=10};updater.Children.Add(new TextBox{Header=UiLanguage.Text("Папка лаунчера"),Text=InstallationPaths.Root,IsReadOnly=true});var updateButtons=ResponsiveActions();
   updateButtons.Children.Add(AsyncButton("Проверить обновления",CheckUpdates));
   installUpdateButton=AsyncButton("Установить обновление",async()=>{var folder=await updates.DownloadVerified(publicKey);if(folder==null){Notice("Обновлений нет.");return;}updates.StartReplacement(folder);Application.Current.Exit();},()=>updateAvailable);installUpdateButton.IsEnabled=updateAvailable;updateButtons.Children.Add(installUpdateButton);updater.Children.Add(updateButtons);versionText=new TextBlock{Text=UiLanguage.Text(versionMessage),Opacity=.65};updater.Children.Add(versionText);updater.Children.Add(status);body.Children.Add(Card(updater));

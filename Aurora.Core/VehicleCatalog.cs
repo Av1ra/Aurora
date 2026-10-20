@@ -34,22 +34,21 @@ public sealed class VehicleCatalog
  public static VehicleCatalog Load(string media,bool english)
  {
   var englishTexts=ReadTexts(Path.Combine(media,"sovietEnglish.btf"));var texts=new Dictionary<int,string>(englishTexts);if(!english)foreach(var p in ReadTexts(Path.Combine(media,"sovietRussian.btf")))texts[p.Key]=p.Value;
-  var modelNames=new Dictionary<string,string>();var classes=new Dictionary<string,VehicleClass>();var sounds=new Dictionary<string,VehicleSound>();var values=new Dictionary<string,HashSet<string>>();var countries=new Dictionary<int,HashSet<string>>();
+  var modelNames=new Dictionary<string,string>();var classes=new Dictionary<string,VehicleClass>();var sounds=new Dictionary<string,VehicleSound>();var values=new Dictionary<string,HashSet<string>>();
   string[] roots=["vehicles","trains","ships","airplanes","helicopters"];
   var bases=new[]{media}.Concat(Directory.GetDirectories(media).Where(d=>Path.GetFileName(d).StartsWith("dlc",StringComparison.OrdinalIgnoreCase)||Path.GetFileName(d).StartsWith("elc",StringComparison.OrdinalIgnoreCase)));
   foreach(string folder in bases.SelectMany(b=>roots.Select(r=>Path.Combine(b,r))).Where(Directory.Exists))foreach(string path in Directory.EnumerateFiles(folder,"script.ini",SearchOption.AllDirectories)){
-   string script=File.ReadAllText(path);var f=VehicleScript.Fields(script);string type=Value(f,"TYPE");if(type.Length==0)continue;string id=ClassId(script),currency=f.Any(x=>x.Key=="COST_USD")?"USD":"RUB";
+   string script=File.ReadAllText(path);var f=VehicleScript.Fields(script);string type=Value(f,"TYPE");if(type.Length==0)continue;string id=ClassId(script);
    classes.TryAdd(id,new(id,type,Value(f,"RESOURCE_TRANSPORT_TYPE"),ClassFlags(f),ClassName(f,english),f.Where(x=>ClassFlags(f).Contains(x.Key)).ToDictionary(x=>x.Key,x=>x.Value)));
-   if(int.TryParse(Value(f,"COUNTRY"),out int country)){if(!countries.TryGetValue(country,out var set))countries[country]=set=[];set.Add(currency);}
    foreach(var field in f){if(!values.TryGetValue(field.Key,out var set))values[field.Key]=set=[];if(field.Value.Length>0)set.Add(field.Value);}
    string modelFolder=Path.GetFileName(Path.GetDirectoryName(path))!;string modelName=Value(f,"NAME_STR").Trim('"');if(modelName.Length==0&&int.TryParse(Value(f,"NAME"),out int modelId))modelName=texts.GetValueOrDefault(modelId,modelFolder);modelNames.TryAdd(modelFolder,modelName.Length>0?modelName:modelFolder);
    var files=f.Where(x=>x.Key=="SOUND_PARAMS").Select(x=>x.Value).ToArray();if(files.Length>0){string name=Value(f,"NAME_STR").Trim('"');if(name.Length==0&&int.TryParse(Value(f,"NAME"),out int nameId))name=texts.GetValueOrDefault(nameId,"");if(name.Length==0)name=Path.GetFileName(Path.GetDirectoryName(path))!;string signature=id+"\n"+string.Join("\n",files);sounds.TryAdd(signature,new(ClassName(f,english)+" / "+name,id,files));}
   }
-  // Currency association comes from the actual vehicle catalog; unused native countries use their default purchase bloc.
-  int[] dollarCountries=[39001,39002,39005,39016,39017,39018,39022,39023,39024,39030,39041,39043,39044];
-  var entries=texts.Where(p=>p.Key is >=38998 and <=39044&&englishTexts.ContainsKey(p.Key)).Select(p=>new VehicleCountry(p.Key,p.Value,p.Key is 38998 or 38999?["RUB","USD"]:countries.TryGetValue(p.Key,out var currencies)?currencies.Order().ToArray():[dollarCountries.Contains(p.Key)?"USD":"RUB"])).ToArray();
+  var entries=texts.Where(p=>p.Key is >=38998 and <=39044&&englishTexts.ContainsKey(p.Key)).Select(p=>new VehicleCountry(p.Key,p.Value,CountryCurrencies(p.Key))).ToArray();
   return new(){Texts=texts,ModelNames=modelNames,Countries=entries,Classes=classes.Values.OrderBy(c=>c.Name).ToArray(),Sounds=sounds.Values.OrderBy(s=>s.Name).ToArray(),Values=values.ToDictionary(p=>p.Key,p=>p.Value.Order().ToArray())};
  }
+ // Bloc is an explicit country classification, not inferred from a vehicle's price currency.
+ public static string[] CountryCurrencies(int id)=>id is 38998 or 38999?["RUB","USD"]:new[]{39000,39004,39006,39007,39008,39009,39010,39011,39012,39013,39014,39015,39019,39020,39021,39025,39026,39027,39028,39029,39042}.Contains(id)?["RUB"]:["USD"];
  public static string ApplyClass(string script,VehicleClass selected)
  {
   if(ClassId(script)==selected.Id)return script;var fields=VehicleScript.Fields(script);foreach(var field in fields.Where(f=>f.Key.StartsWith("SKILL_",StringComparison.Ordinal)||f.Key.StartsWith("TRAINGROUP_",StringComparison.Ordinal)).Reverse())script=VehicleScript.Set(script,field.Key,field.Occurrence,null);
@@ -79,7 +78,7 @@ public sealed class VehicleCatalog
    "RESOURCE_TRANSPORT_OPEN"=>["boards","bricks","steel","prefabpanels","wood","aluminium"],
    "RESOURCE_TRANSPORT_LIVESTOCK"=>["livestock_vehicle"],
    "RESOURCE_TRANSPORT_WASTE"=>["waste1","waste_gravel_vehicle","waste_steel_vehicle","waste_aluminium_vehicle","waste_plastic"],_=>Array.Empty<string>()};
-  if(!string.IsNullOrEmpty(only)&&only!="*"){string resource=only switch{"cargovehicles"=>"vehicles","eletronics"=>"electronics",_=>only};if(names.Contains(resource))names=[resource];else if(names.Contains(resource+"_vehicle"))names=[resource+"_vehicle"];else if(resource=="waste"&&transport=="RESOURCE_TRANSPORT_WASTE")names=["waste1"];else if(transport=="RESOURCE_TRANSPORT_COVERED"||transport=="RESOURCE_TRANSPORT_GENERAL"&&(ResourceOptions("RESOURCE_TRANSPORT_COVERED").Contains(resource)||resource=="meat"))names=["generalcargo_vehicle"];else names=[];}
+  if(!string.IsNullOrEmpty(only)&&only!="*"){string resource=only switch{"cargovehicles"=>"vehicles","eletronics"=>"electronics",_=>only};if(names.Contains(resource))names=[resource];else if(names.Contains(resource+"_vehicle"))names=[resource+"_vehicle"];else if(resource=="waste"&&transport=="RESOURCE_TRANSPORT_WASTE")names=["waste1"];else if(transport=="RESOURCE_TRANSPORT_COVERED"||transport=="RESOURCE_TRANSPORT_GENERAL"&&(ResourceOptions("RESOURCE_TRANSPORT_COVERED").Contains(resource)||resource is "meat" or "electronics"))names=["generalcargo_vehicle"];else names=[];}
   return names.Select(n=>new CargoResource(n+".nmf",Label(n,english))).ToArray();
  }
  static readonly Dictionary<string,(string Ru,string En)> labels=new()

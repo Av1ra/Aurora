@@ -75,7 +75,7 @@ static class ModelExport
    string script=Path.Combine(sourceFolder,"script.ini");
    if(vehicleConfiguration!=null||(useSourceScript&&File.Exists(script)))
    {
-    string configuration=vehicleConfiguration??File.ReadAllText(script);
+    string configuration=VehicleSoundFiles.Export(vehicleConfiguration??File.ReadAllText(script),sourceFolder,staging);
     configuration=Regex.Replace(configuration,@"(?m)^(\s*\$LOD\d*\s+)([^\r\n]+)",m=>{string file=Path.GetFileName(m.Groups[2].Value.Trim().Replace('/',Path.DirectorySeparatorChar));if(!File.Exists(Path.Combine(staging,file)))throw new InvalidDataException("Добавьте LOD, указанный в script.ini: "+file);return m.Groups[1].Value+file;});
     File.WriteAllText(Path.Combine(staging,"script.ini"),configuration,new UTF8Encoding(false));
    }

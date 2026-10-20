@@ -37,7 +37,7 @@ sealed partial class EditorWindow
   // Reuse the existing stateful selectors and command handlers.
   var toolbar=new StackPanel{Orientation=Orientation.Horizontal,Spacing=6,Margin=new Thickness(12,6,12,6)};
   RegisterImportCommands();RegisterVehicleCommands();RegisterMaterialCommands();RegisterProjectCommands();RegisterObjectCommands();RegisterHistoryCommands();RegisterModelSettingsCommands();
-  var file=new MenuFlyout();file.Items.Add(MenuCommand("Открыть NMF…"));file.Items.Add(MenuCommand("Добавить LOD…"));
+  var file=new MenuFlyout();file.Items.Add(MenuCommand("Открыть NMF…"));
   file.Items.Add(MenuCommand("Импортировать OBJ…"));file.Items.Add(MenuCommand("Открыть проект…"));
   file.Items.Add(new MenuFlyoutSeparator());
   editorCommands["Сохранить NMF…"]=(SaveNmfMaterials,()=>HasModel&&variants.Count>0);
