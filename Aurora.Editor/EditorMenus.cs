@@ -9,6 +9,7 @@ namespace Aurora.Editor;
 
 sealed partial class EditorWindow
 {
+ readonly ToggleMenuFlyoutItem wireframeMenu=new(){Text=UiLanguage.Text("Полигональная сетка")};
  readonly Dictionary<string,(Func<Task> Action,Func<bool> CanExecute)> editorCommands=[];
  readonly List<(MenuFlyoutItem Item,string Label,Func<bool> CanExecute)> menuCommands=[];
  readonly List<(MenuFlyoutSubItem Item,string Label)> menuGroups=[];
@@ -43,6 +44,7 @@ sealed partial class EditorWindow
   editorCommands["Сохранить NMF…"]=(SaveNmfMaterials,()=>HasModel&&variants.Count>0);
   file.Items.Add(MenuCommand("Сохранить NMF…"));file.Items.Add(MenuCommand("Сохранить проект…"));
   file.Items.Add(new MenuFlyoutSeparator());var undoItem=MenuCommand("Отменить");undoItem.KeyboardAcceleratorTextOverride="Ctrl+Z";file.Items.Add(undoItem);var redoItem=MenuCommand("Повторить");redoItem.KeyboardAcceleratorTextOverride="Ctrl+Y";file.Items.Add(redoItem);
+  file.Items.Add(new MenuFlyoutSeparator());file.Items.Add(wireframeMenu);wireframeMenu.Click+=async(_,_)=>{if(ready)try{await view.ExecuteScriptAsync("wireframe("+(wireframeMenu.IsChecked?"true":"false")+")");}catch(Exception ex){SetStatus(ex.Message);}};
   var fileButton=ToolbarMenu("Меню",file);fileButton.Content=new FontIcon{Glyph="\uE700",FontSize=14};Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(fileButton,UiLanguage.Text("Меню"));toolbar.Children.Add(fileButton);
   var selection=new StackPanel{Spacing=12,MinWidth=260,MaxWidth=340};selection.Children.Add(lodChoice);selection.Children.Add(objects);detachedMenuContents.Add(selection);
   foreach(string key in new[]{"Переименовать объект…","Разделить несвязанные меши"}){var command=editorCommands[key];var button=new Button{Content=UiLanguage.Text(key),HorizontalAlignment=HorizontalAlignment.Stretch};commandButtons.Add((button,command.CanExecute));button.Click+=async(_,_)=>{CloseEditorFlyouts();await RunCommand(command.Action);};selection.Children.Add(button);}
@@ -69,6 +71,7 @@ sealed partial class EditorWindow
  }
  void RefreshMenuLanguage()
  {
+  wireframeMenu.Text=UiLanguage.Text("Полигональная сетка");
   foreach(var entry in menuButtons){if(entry.Button.Content is string)entry.Button.Content=UiLanguage.Text(entry.Label);else Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(entry.Button,UiLanguage.Text(entry.Label));}
   foreach(var entry in menuCommands)entry.Item.Text=UiLanguage.Text(entry.Label);
   foreach(var entry in menuGroups)entry.Item.Text=UiLanguage.Text(entry.Label);
@@ -76,6 +79,7 @@ sealed partial class EditorWindow
  }
  void UpdateMenuState()
  {
+  wireframeMenu.IsEnabled=HasModel&&!busy;
   foreach(var command in menuCommands)command.Item.IsEnabled=!busy&&command.CanExecute();
   if(selectedLod==null||!lods.TryGetValue(selectedLod,out var model)){geometryInfo.Text="";return;}
   var statistics=ModelStatistics.Of(model);

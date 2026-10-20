@@ -27,7 +27,14 @@ sealed partial class EditorWindow
   editorCommands["Назначить задние фонари…"]=(async()=>await AssignLight(true),()=>HasModel&&objects.SelectedItem!=null);
   editorCommands["Настроить огни…"]=(EditLights,()=>HasModel&&vehicleConfiguration!=null);
  }
- ContentDialog VehicleDialog(string title,FrameworkElement panel)=>new(){Title=UiLanguage.Text(title),Content=new ScrollViewer{Content=panel,MaxHeight=Math.Max(180,((FrameworkElement)Content).ActualHeight-220)},PrimaryButtonText=UiLanguage.Text("Применить"),CloseButtonText=UiLanguage.Text("Отмена"),DefaultButton=ContentDialogButton.Close,XamlRoot=((FrameworkElement)Content).XamlRoot};
+ ContentDialog VehicleDialog(string title,FrameworkElement panel)
+ {
+  var root=(FrameworkElement)Content;double preferred=double.IsFinite(panel.Width)?panel.Width:400;panel.Width=double.NaN;panel.MinWidth=0;panel.HorizontalAlignment=HorizontalAlignment.Stretch;
+  var scroll=new ScrollViewer{Content=panel,HorizontalContentAlignment=HorizontalAlignment.Stretch,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,HorizontalScrollMode=ScrollMode.Disabled,VerticalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(0,0,16,0)};
+  var dialog=new ContentDialog{Title=UiLanguage.Text(title),Content=scroll,PrimaryButtonText=UiLanguage.Text("Применить"),CloseButtonText=UiLanguage.Text("Отмена"),DefaultButton=ContentDialogButton.Close,XamlRoot=root.XamlRoot,MinWidth=0,MinHeight=0};
+  void Resize(){double width=root.ActualWidth>0?root.ActualWidth:800,height=root.ActualHeight>0?root.ActualHeight:600;scroll.Width=Math.Max(0,Math.Min(preferred+16,width-96));scroll.MaxHeight=Math.Max(0,height-200);dialog.MaxWidth=Math.Max(0,width-24);dialog.MaxHeight=Math.Max(0,height-24);dialog.Resources["ContentDialogMaxWidth"]=dialog.MaxWidth;}
+  SizeChangedEventHandler resize=(_,_)=>Resize();root.SizeChanged+=resize;dialog.Closed+=(_,_)=>root.SizeChanged-=resize;Resize();return dialog;
+ }
  void ValidateVehicleDialog(ContentDialog dialog,Panel panel,Action validate)
  {
   var error=new InfoBar{Severity=InfoBarSeverity.Error,IsClosable=false};panel.Children.Add(error);

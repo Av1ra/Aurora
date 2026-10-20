@@ -111,7 +111,7 @@ sealed partial class EditorWindow:Window
   processing=true;UpdateControls();if(!ready||selectedLod==null)return;string? selectedObject=objects.SelectedItem as string,selectedMaterial=materialChoice.SelectedItem as string;var model=CurrentModel();objects.Items.Clear();foreach(var node in model.Nodes)objects.Items.Add(node.Name);materialChoice.Items.Clear();foreach(var name in model.Materials)materialChoice.Items.Add(name);objects.SelectedItem=selectedObject!=null&&objects.Items.Contains(selectedObject)?selectedObject:null;if(materialChoice.Items.Count>0)materialChoice.SelectedItem=selectedMaterial!=null&&materialChoice.Items.Contains(selectedMaterial)?selectedMaterial:materialChoice.Items[0];
   var scene=BuildViewportScene(model);
   string sceneJson=await Task.Run(()=>JsonSerializer.Serialize(scene));
-  await view.ExecuteScriptAsync("load("+sceneJson+")");await view.ExecuteScriptAsync("select("+objects.SelectedIndex+")");await LoadTextures();
+  await view.ExecuteScriptAsync("load("+sceneJson+")");await view.ExecuteScriptAsync("wireframe("+(wireframeMenu.IsChecked?"true":"false")+")");await view.ExecuteScriptAsync("select("+objects.SelectedIndex+")");await LoadTextures();
   foreach(var pair in settings)await ApplyPreview(pair.Key,pair.Value);
   for(int i=0;i<model.Nodes.Count;i++)if(glassObjects[selectedLod].Contains(model.Nodes[i].Name))await view.ExecuteScriptAsync("glassObject("+i+",true)");
   await LoadCargoTextures();await RefreshGizmo();

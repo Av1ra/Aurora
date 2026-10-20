@@ -5,12 +5,13 @@ import assert from 'node:assert/strict';
 // This covers async scene ownership and coordinate conversion, not visual quality.
 const html = fs.readFileSync(new URL('../Aurora.Editor/Assets/viewport.html', import.meta.url), 'utf8');
 const script = html.match(/<script>([\s\S]*?)<\/script>/)[1].replace('/*AURORA_GIZMO*/',fs.readFileSync(new URL('../Aurora.Editor/Assets/gizmo.js',import.meta.url),'utf8')).replace('/*AURORA_PREVIEWS*/',fs.readFileSync(new URL('../Aurora.Editor/Assets/previews.js',import.meta.url),'utf8'));
-const images = [], deleted = [], messages = [], reads = [];
+const images = [], deleted = [], messages = [], reads = [],drawCalls=[];
 const uniforms = new Map();
 let created = 0, pickId = 1, viewportSize;const previewFrames=[],clearColours=[],eventHandlers=new Map();
 class Texture {}
 class ImageStub { constructor() { images.push(this); } }
 const gpu = new Proxy({
+  LINES:2,TRIANGLES:3,drawElements:(mode,count)=>drawCalls.push({mode,count}),
   getShaderParameter: () => true, getProgramParameter: () => true,
   createTexture: () => { created++; return new Texture(); },
   getUniformLocation: (_, name) => name,
@@ -28,7 +29,7 @@ const overlayContext=new Proxy({}, {get:()=>()=>{}});
 const overlay={style:{},getContext:()=>overlayContext};
 const document = { getElementById: () => canvas,createElement:()=>overlay,body:{appendChild(){}} };
 const api = new Function('document', 'window', 'ResizeObserver', 'Image', 'WebGLTexture','requestAnimationFrame',
-  script + '\nreturn {load,texture,requestPreview,gizmo,gizmoRotate,gizmoProject,camera:()=>({yaw,pitch,distance,focal}),tool:()=>gizmoState,segments:()=>gizmoSegments,selected:()=>selected,cargoNodes:()=>nodes.filter(n=>n.Cargo),bounds:()=>({center:scene.center,extent:scene.extent})};')(document, window, class { observe() {} }, ImageStub, Texture,cb=>cb());
+  script + '\nreturn {load,texture,requestPreview,wireframe,gizmo,gizmoRotate,gizmoProject,camera:()=>({yaw,pitch,distance,focal}),tool:()=>gizmoState,segments:()=>gizmoSegments,selected:()=>selected,cargoNodes:()=>nodes.filter(n=>n.Cargo),bounds:()=>({center:scene.center,extent:scene.extent})};')(document, window, class { observe() {} }, ImageStub, Texture,cb=>cb());
 assert.match(overlay.style.cssText,/background\s*:\s*transparent(?:;|$)/,'pivot overlay must override the shared canvas background so loaded NMF stays visible');
 const scene = () => ({ Materials: ['body'], Nodes: [{
   Positions: [0,0,0, 1,0,0, 0,1,0], Normals: [0,0,1, 0,0,1, 0,0,1],
@@ -111,3 +112,6 @@ console.log('PASS visual cargo axis/uniform scale, live vertices and native tran
 
 const ordinary=scene();api.load(ordinary);const vehicleBounds=api.bounds();const distantCargo=scene();distantCargo.Nodes.push({...distantCargo.Nodes[0],Cargo:true,Positions:[1000,1000,1000,1001,1000,1000,1000,1001,1000]});api.load(distantCargo);assert.deepEqual(api.bounds(),vehicleBounds,'switching cargo resources must not reframe or move the vehicle camera');
 console.log('PASS cargo resource switching keeps vehicle framing stable');
+
+api.load(scene());drawCalls.length=0;api.wireframe(true);assert.ok(drawCalls.some(c=>c.mode===2&&c.count===6),'wireframe draws the three edges of the actual triangle');drawCalls.length=0;api.wireframe(false);assert.ok(!drawCalls.some(c=>c.mode===2),'wireframe toggle off restores solid-only rendering');api.wireframe(true);drawCalls.length=0;await api.requestPreview('no-wire',{width:256,height:128,fov:20,yaw:0,pitch:0});const firstLines=drawCalls.findIndex(c=>c.mode===2);assert.ok(firstLines>0&&drawCalls[0].mode===3,'exported preview draws solid geometry before restoring editor wireframe');api.wireframe(false);
+console.log('PASS wireframe edges, toggle restoration and solid export previews');
