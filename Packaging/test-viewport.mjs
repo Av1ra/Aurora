@@ -28,7 +28,7 @@ const overlayContext=new Proxy({}, {get:()=>()=>{}});
 const overlay={style:{},getContext:()=>overlayContext};
 const document = { getElementById: () => canvas,createElement:()=>overlay,body:{appendChild(){}} };
 const api = new Function('document', 'window', 'ResizeObserver', 'Image', 'WebGLTexture','requestAnimationFrame',
-  script + '\nreturn {load,texture,requestPreview,gizmo,gizmoRotate,gizmoProject,camera:()=>({yaw,pitch,distance,focal}),tool:()=>gizmoState,segments:()=>gizmoSegments,selected:()=>selected};')(document, window, class { observe() {} }, ImageStub, Texture,cb=>cb());
+  script + '\nreturn {load,texture,requestPreview,gizmo,gizmoRotate,gizmoProject,camera:()=>({yaw,pitch,distance,focal}),tool:()=>gizmoState,segments:()=>gizmoSegments,selected:()=>selected,cargoNodes:()=>nodes.filter(n=>n.Cargo)};')(document, window, class { observe() {} }, ImageStub, Texture,cb=>cb());
 assert.match(overlay.style.cssText,/background\s*:\s*transparent(?:;|$)/,'pivot overlay must override the shared canvas background so loaded NMF stays visible');
 const scene = () => ({ Materials: ['body'], Nodes: [{
   Positions: [0,0,0, 1,0,0, 0,1,0], Normals: [0,0,1, 0,0,1, 0,0,1],
@@ -96,3 +96,15 @@ assert.ok(messages.some(m=>m.gizmo?.phase==='begin')&&messages.some(m=>m.gizmo?.
 console.log('PASS native-size FOV previews, transparent capture, camera restoration and undo drag transactions');
 let prevented=0;for(const code of ['KeyZ','KeyY'])eventHandlers.get('keydown')({ctrlKey:true,metaKey:false,altKey:false,code,preventDefault(){prevented++;}});
 assert.equal(prevented,2);assert.ok(messages.some(m=>m.history==='undo')&&messages.some(m=>m.history==='redo'),'viewport focus forwards undo/redo to native document history');
+
+// Actual scale handles and live cargo vertex updates, without rebuilding the scene.
+const cargoScene=scene();cargoScene.Nodes.push({...cargoScene.Nodes[0],Cargo:true,CargoSlot:0,LocalPositions:[0,0,0,1,0,0,0,1,0],LocalNormals:[0,0,1,0,0,1,0,0,1]});api.load(cargoScene);
+api.gizmo({visible:true,editing:true,mode:'scale',cargo:0,uniformScale:false,position:[0,0,0],rotation:[0,0,0],scale:[1,1,1]});
+segment=api.segments().find(s=>s.axis===0);start=segment.a.map((x,i)=>x*.2+segment.b[i]*.8);step=segment.b.map((x,i)=>(x-segment.a[i])*.5);
+canvas.onpointerdown({clientX:start[0],clientY:start[1],pointerId:4});canvas.onpointermove({clientX:start[0]+step[0],clientY:start[1]+step[1]});canvas.onpointerup({clientX:start[0]+step[0],clientY:start[1]+step[1]});
+assert.ok(api.tool().scale[0]>1);assert.equal(api.tool().scale[1],1);assert.equal(api.tool().scale[2],1);assert.equal(api.cargoNodes()[0].Positions[3],api.tool().scale[0],'axis scaling updates visible cargo vertices immediately');
+api.gizmo({mode:'scale',uniformScale:true,scale:[1,2,3]});segment=api.segments().find(s=>s.axis===3);assert.ok(segment,'uniform scaling exposes the centre handle');start=segment.a;
+canvas.onpointerdown({clientX:start[0],clientY:start[1],pointerId:5});canvas.onpointermove({clientX:start[0],clientY:start[1]-20});canvas.onpointerup({clientX:start[0],clientY:start[1]-20});
+assert.ok(api.tool().scale[0]>1);assert.equal(api.tool().scale[1]/api.tool().scale[0],2);assert.equal(api.tool().scale[2]/api.tool().scale[0],3,'uniform scaling preserves aspect ratios');
+api.gizmo({mode:'move',position:[2,3,4],rotation:[0,0,90],scale:[2,3,4]});assert.deepEqual(api.cargoNodes()[0].Positions.slice(0,3),[2,3,4]);assert.ok(Math.abs(api.cargoNodes()[0].Positions[4]-5)<1e-6,'cargo rotation and nonuniform scale use the export coordinate convention');assert.ok(messages.some(m=>m.gizmo?.scale),'cargo scale is sent to native undo history');
+console.log('PASS visual cargo axis/uniform scale, live vertices and native transform convention');

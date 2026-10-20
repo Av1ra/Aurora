@@ -4,6 +4,8 @@ Checkpoint recorded: 2026-10-19. Canonical repository: `Av1ra/Aurora`, branch `m
 
 ## Read this first
 
+Latest model workflow: [guided purchase/class/sound settings and visual cargo](EDITOR_CARGO_GUIDED_MODEL.md). This supersedes generic script-field editing as the primary flow; cargo is inside Model settings with live Move/Rotate/Scale and proportional/per-axis scaling. See STATUS for installed checkpoint.
+
 Current owner cycle (2026-10-20): [history, model settings, cargo and automatic previews](EDITOR_HISTORY_MODEL_PREVIEWS.md). Ctrl+Z/Y covers editor actions; auto-centre uses minimum Y. Model settings are beside Materials; lights stay in Modifiers. Cargo is a viewport-only resource model driven by native script records; export generates per-variant main/side DDS previews (256x256/256x128), default configurable FOV20. Exact native camera matching and live WinUI acceptance remain owner checks. See newest STATUS entry for build/install evidence.
 
 Latest scoped editor work (2026-10-19): OBJ/textures followed by rigid pivot/axes and native vehicle lights. Consult the newest entries in STATUS.md and [EDITOR_VEHICLES.md](EDITOR_VEHICLES.md) before older checkpoints below. Owner performs live UI/game tests; do not use desktop automation. Preserve version 0.2 and the one combined archive.

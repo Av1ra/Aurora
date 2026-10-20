@@ -6,6 +6,7 @@ namespace Aurora.Core;
 // 0x108 stream. Do not retain stale tangent or face-cache coordinates.
 public static class ModelOrientation
 {
+ public static (Vector3 Min,Vector3 Max) Bounds(NativeModel model){var min=new Vector3(float.PositiveInfinity);var max=new Vector3(float.NegativeInfinity);foreach(var node in model.Nodes)for(int i=0;i<node.VertexCount;i++){var p=new Vector3(node.Positions[i*3],node.Positions[i*3+1],node.Positions[i*3+2]);min=Vector3.Min(min,p);max=Vector3.Max(max,p);}return(min,max);}
  public static Vector3 BottomPivot(NativeModel model){var p=model.Nodes.SelectMany(n=>Enumerable.Range(0,n.VertexCount).Select(i=>new Vector3(n.Positions[i*3],n.Positions[i*3+1],n.Positions[i*3+2]))).ToArray();return new((p.Min(v=>v.X)+p.Max(v=>v.X))/2,p.Min(v=>v.Y),(p.Min(v=>v.Z)+p.Max(v=>v.Z))/2);}
  public static readonly Vector3[] Axes=[Vector3.UnitZ,-Vector3.UnitZ,Vector3.UnitX,-Vector3.UnitX,Vector3.UnitY,-Vector3.UnitY];
  public static Matrix4x4 Transform(NativeModel primary,int front,int up,bool centre,bool ground)

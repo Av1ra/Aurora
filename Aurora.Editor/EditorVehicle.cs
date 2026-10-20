@@ -13,7 +13,7 @@ sealed partial class EditorWindow
  void ResetVehicle(string? script)
  {
   NewHistoryDocument();
-  cargoModel=null;cargoMtl=cargoModelPath=null;showCargo=false;cargoFill=1;previewSettings=new();
+  activeCargo=-1;cargoModel=null;cargoMtl=cargoModelPath=null;showCargo=false;cargoFill=1;previewSettings=new();
   vehicleConfiguration=script!=null&&File.Exists(script)?File.ReadAllText(script):null;
   vehicleConfigurationEdited=false;documentTransform=Matrix4x4.Identity;
   mainPivot=mainRotation=Vector3.Zero;gizmoVisible=false;ReadLampSlots();
