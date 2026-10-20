@@ -1,0 +1,2495 @@
+{
+  "scope": "Only script.ini and MTL under six transport roots in base/DLC/ELC. Native TYPE determines class. Shapes are observed syntax, not a documented argument schema. No game execution.",
+  "script_count": 1073,
+  "classes": {
+    "VEHICLETYPE_AIRPLANE": {
+      "files": 27,
+      "examples": [
+        "airplanes/an12/script.ini",
+        "airplanes/an14/script.ini",
+        "airplanes/an2/script.ini"
+      ]
+    },
+    "VEHICLETYPE_CABIN": {
+      "files": 11,
+      "examples": [
+        "cabins/cargo_big/script.ini",
+        "cabins/cargo_small/script.ini",
+        "cabins/gravel_big/script.ini"
+      ]
+    },
+    "VEHICLETYPE_HELICOPTER": {
+      "files": 8,
+      "examples": [
+        "helicopters/g31/script.ini",
+        "helicopters/mi10c/script.ini",
+        "helicopters/mi10r/script.ini"
+      ]
+    },
+    "VEHICLETYPE_RAIL_LOCOMOTIVE": {
+      "files": 117,
+      "examples": [
+        "trains/russian_crane/script.ini",
+        "trains/russian_crane_v2/script.ini",
+        "trains/russian_loco_060da/script.ini"
+      ]
+    },
+    "VEHICLETYPE_RAIL_VAGON": {
+      "files": 109,
+      "examples": [
+        "trains/russian_crane_vagon/script.ini",
+        "trains/russian_metro_717_5_vagon/script.ini",
+        "trains/russian_metro_717_vagon/script.ini"
+      ]
+    },
+    "VEHICLETYPE_ROAD": {
+      "files": 773,
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_cavB14/script.ini"
+      ]
+    },
+    "VEHICLETYPE_SHIP": {
+      "files": 28,
+      "examples": [
+        "ships/army_freedom/script.ini",
+        "ships/container_ship/script.ini",
+        "ships/container_ship_medium/script.ini"
+      ]
+    }
+  },
+  "keys": {
+    "ALPHA": {
+      "occurrences": 77,
+      "files": 77,
+      "types": {
+        "VEHICLETYPE_SHIP": 16,
+        "VEHICLETYPE_ROAD": 51,
+        "VEHICLETYPE_RAIL_VAGON": 4,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 6
+      },
+      "examples": [
+        "ships/container_ship/script.ini",
+        "ships/container_ship_medium/script.ini",
+        "ships/danube/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 76,
+        "header:1;body-lines:2": 1
+      }
+    },
+    "AVAILABLE": {
+      "occurrences": 1046,
+      "files": 1046,
+      "types": {
+        "VEHICLETYPE_ROAD": 772,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 114,
+        "VEHICLETYPE_RAIL_VAGON": 97,
+        "VEHICLETYPE_SHIP": 28,
+        "VEHICLETYPE_AIRPLANE": 27,
+        "VEHICLETYPE_HELICOPTER": 8
+      },
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_cavB14/script.ini"
+      ],
+      "shapes": {
+        "header:2;body-lines:0": 1042,
+        "header:2;body-lines:1": 4
+      }
+    },
+    "CABIN_HEAVY": {
+      "occurrences": 5,
+      "files": 5,
+      "types": {
+        "VEHICLETYPE_CABIN": 5
+      },
+      "examples": [
+        "cabins/cargo_big/script.ini",
+        "cabins/gravel_big/script.ini",
+        "cabins/passanger_big_1/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:0": 5
+      }
+    },
+    "CABIN_LIGHT": {
+      "occurrences": 6,
+      "files": 6,
+      "types": {
+        "VEHICLETYPE_CABIN": 6
+      },
+      "examples": [
+        "cabins/cargo_small/script.ini",
+        "cabins/gravel_small/script.ini",
+        "cabins/passanger_small_1/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:0": 6
+      }
+    },
+    "CARGOVEHICLE_VISUALIZATION": {
+      "occurrences": 69,
+      "files": 63,
+      "types": {
+        "VEHICLETYPE_ROAD": 49,
+        "VEHICLETYPE_RAIL_VAGON": 6,
+        "VEHICLETYPE_SHIP": 6,
+        "VEHICLETYPE_HELICOPTER": 2
+      },
+      "examples": [
+        "vehicles/open_gz53/script.ini",
+        "vehicles/open_ifa_w50/script.ini",
+        "vehicles/open_j300/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:2": 69
+      }
+    },
+    "CARGOVEHICLE_VISUALIZATION_JOINT": {
+      "occurrences": 16,
+      "files": 16,
+      "types": {
+        "VEHICLETYPE_ROAD": 16
+      },
+      "examples": [
+        "vehicles/open_ifa_w50_trail/script.ini",
+        "vehicles/open_kmz_5410/script.ini",
+        "vehicles/open_mck/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:2": 16
+      }
+    },
+    "CARGO_PLATFORM": {
+      "occurrences": 2,
+      "files": 2,
+      "types": {
+        "VEHICLETYPE_HELICOPTER": 2
+      },
+      "examples": [
+        "helicopters/mi10c/script.ini",
+        "helicopters/s64/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 1,
+        "header:1;body-lines:0": 1
+      }
+    },
+    "CONSTRUCTION_RAIL_CRANE_ANIMATION": {
+      "occurrences": 2,
+      "files": 2,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 2
+      },
+      "examples": [
+        "dlc3/vehicles/russian_service_BR_weimar_long/script.ini",
+        "dlc3/vehicles/russian_service_BR_weimar_short/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:0": 2
+      }
+    },
+    "COST_RUB": {
+      "occurrences": 854,
+      "files": 854,
+      "types": {
+        "VEHICLETYPE_ROAD": 597,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 107,
+        "VEHICLETYPE_RAIL_VAGON": 91,
+        "VEHICLETYPE_SHIP": 23,
+        "VEHICLETYPE_AIRPLANE": 19,
+        "VEHICLETYPE_HELICOPTER": 6,
+        "VEHICLETYPE_CABIN": 11
+      },
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_cavB14/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 854
+      }
+    },
+    "COST_USD": {
+      "occurrences": 207,
+      "files": 207,
+      "types": {
+        "VEHICLETYPE_ROAD": 176,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 10,
+        "VEHICLETYPE_RAIL_VAGON": 6,
+        "VEHICLETYPE_SHIP": 5,
+        "VEHICLETYPE_AIRPLANE": 8,
+        "VEHICLETYPE_HELICOPTER": 2
+      },
+      "examples": [
+        "vehicles/bus_gm_5301/script.ini",
+        "vehicles/bus_gmc_rts/script.ini",
+        "vehicles/bus_mn_sg192/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 207
+      }
+    },
+    "COUNTRY": {
+      "occurrences": 1071,
+      "files": 1071,
+      "types": {
+        "VEHICLETYPE_ROAD": 773,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 116,
+        "VEHICLETYPE_RAIL_VAGON": 108,
+        "VEHICLETYPE_SHIP": 28,
+        "VEHICLETYPE_AIRPLANE": 27,
+        "VEHICLETYPE_HELICOPTER": 8,
+        "VEHICLETYPE_CABIN": 11
+      },
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_cavB14/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 1041,
+        "header:1;body-lines:1": 28,
+        "header:1;body-lines:2": 2
+      }
+    },
+    "COUNTRY_STR": {
+      "occurrences": 2,
+      "files": 2,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 1,
+        "VEHICLETYPE_RAIL_VAGON": 1
+      },
+      "examples": [
+        "dlc3/vehicles/bbo214/script.ini",
+        "dlc3/vehicles/bbotender/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 2
+      }
+    },
+    "CRANE_DYNAMIC": {
+      "occurrences": 65,
+      "files": 65,
+      "types": {
+        "VEHICLETYPE_ROAD": 34,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 20,
+        "VEHICLETYPE_CABIN": 11
+      },
+      "examples": [
+        "vehicles/firetruck_ladder_w50/script.ini",
+        "vehicles/service_crane_j300/script.ini",
+        "vehicles/service_crane_kmz_5320/script.ini"
+      ],
+      "shapes": {
+        "header:4;body-lines:0": 65
+      }
+    },
+    "CRANE_DYNAMIC2": {
+      "occurrences": 2,
+      "files": 2,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 2
+      },
+      "examples": [
+        "trains/russian_service_uk25/script.ini",
+        "trains/russian_service_uk25_v2/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 2
+      }
+    },
+    "CRANE_STATIC": {
+      "occurrences": 65,
+      "files": 65,
+      "types": {
+        "VEHICLETYPE_ROAD": 34,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 20,
+        "VEHICLETYPE_CABIN": 11
+      },
+      "examples": [
+        "vehicles/firetruck_ladder_w50/script.ini",
+        "vehicles/service_crane_j300/script.ini",
+        "vehicles/service_crane_kmz_5320/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 63,
+        "header:4;body-lines:0": 2
+      }
+    },
+    "DESCRIPTION": {
+      "occurrences": 592,
+      "files": 592,
+      "types": {
+        "VEHICLETYPE_ROAD": 448,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 81,
+        "VEHICLETYPE_RAIL_VAGON": 62,
+        "VEHICLETYPE_SHIP": 1
+      },
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_cavB14/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 535,
+        "header:0;body-lines:0": 57
+      }
+    },
+    "DRIVER": {
+      "occurrences": 117,
+      "files": 117,
+      "types": {
+        "VEHICLETYPE_ROAD": 117
+      },
+      "examples": [
+        "vehicles/combine_ck_4/script.ini",
+        "vehicles/combine_cl_matador/script.ini",
+        "vehicles/forklift_y/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 115,
+        "header:3;body-lines:1": 2
+      }
+    },
+    "DRIVER_JOINT": {
+      "occurrences": 18,
+      "files": 18,
+      "types": {
+        "VEHICLETYPE_ROAD": 18
+      },
+      "examples": [
+        "dlc3/vehicles/h_ambulance/script.ini",
+        "dlc3/vehicles/h_bus1/script.ini",
+        "dlc3/vehicles/h_bus2/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 18
+      }
+    },
+    "DUMPER_DECK_PIVOT": {
+      "occurrences": 41,
+      "files": 40,
+      "types": {
+        "VEHICLETYPE_ROAD": 40
+      },
+      "examples": [
+        "vehicles/gravel_avi/script.ini",
+        "vehicles/gravel_baz_525/script.ini",
+        "vehicles/gravel_gz53/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:2": 41
+      }
+    },
+    "DUMPER_JOINTDECK_PIVOT": {
+      "occurrences": 4,
+      "files": 4,
+      "types": {
+        "VEHICLETYPE_ROAD": 4
+      },
+      "examples": [
+        "vehicles/gravel_kmz_5410/script.ini",
+        "vehicles/gravel_lz100_trailer/script.ini",
+        "vehicles/gravel_lz100_train/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:2": 4
+      }
+    },
+    "FAMILY": {
+      "occurrences": 491,
+      "files": 490,
+      "types": {
+        "VEHICLETYPE_ROAD": 480,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 2,
+        "VEHICLETYPE_RAIL_VAGON": 8
+      },
+      "examples": [
+        "vehicles/bus_cavB14/script.ini",
+        "vehicles/bus_ikr_280/script.ini",
+        "vehicles/bus_krs_sl11/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 487,
+        "header:1;body-lines:1": 4
+      }
+    },
+    "GARBAGE_ANIM_BIGCONTAINERS": {
+      "occurrences": 11,
+      "files": 11,
+      "types": {
+        "VEHICLETYPE_ROAD": 11
+      },
+      "examples": [
+        "vehicles/garbage_big_kmz_5320/script.ini",
+        "vehicles/garbage_big_mckR/script.ini",
+        "vehicles/garbage_big_skd_706mts/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:0": 11
+      }
+    },
+    "GARBAGE_LOADING_ANIM": {
+      "occurrences": 25,
+      "files": 25,
+      "types": {
+        "VEHICLETYPE_ROAD": 25
+      },
+      "examples": [
+        "vehicles/garbage_big_kmz_5320/script.ini",
+        "vehicles/garbage_big_mckR/script.ini",
+        "vehicles/garbage_big_skd_706mts/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 25
+      }
+    },
+    "GARBAGE_UNLOADING_ANIM": {
+      "occurrences": 25,
+      "files": 25,
+      "types": {
+        "VEHICLETYPE_ROAD": 25
+      },
+      "examples": [
+        "vehicles/garbage_big_kmz_5320/script.ini",
+        "vehicles/garbage_big_mckR/script.ini",
+        "vehicles/garbage_big_skd_706mts/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 25
+      }
+    },
+    "GARBAGE_UNLOADING_ANIM2": {
+      "occurrences": 11,
+      "files": 11,
+      "types": {
+        "VEHICLETYPE_ROAD": 11
+      },
+      "examples": [
+        "vehicles/garbage_big_kmz_5320/script.ini",
+        "vehicles/garbage_big_mckR/script.ini",
+        "vehicles/garbage_big_skd_706mts/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 11
+      }
+    },
+    "HORSE": {
+      "occurrences": 80,
+      "files": 24,
+      "types": {
+        "VEHICLETYPE_ROAD": 24
+      },
+      "examples": [
+        "dlc3/vehicles/h_ambulance/script.ini",
+        "dlc3/vehicles/h_bus1/script.ini",
+        "dlc3/vehicles/h_bus2/script.ini"
+      ],
+      "shapes": {
+        "header:4;body-lines:0": 80
+      }
+    },
+    "HORSE_MATERIAL": {
+      "occurrences": 4,
+      "files": 4,
+      "types": {
+        "VEHICLETYPE_ROAD": 4
+      },
+      "examples": [
+        "dlc3/vehicles/h_single/script.ini",
+        "dlc3/vehicles/h_single2/script.ini",
+        "dlc3/vehicles/h_single3/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 4
+      }
+    },
+    "HORSE_MESH": {
+      "occurrences": 16,
+      "files": 4,
+      "types": {
+        "VEHICLETYPE_ROAD": 4
+      },
+      "examples": [
+        "dlc3/vehicles/h_single/script.ini",
+        "dlc3/vehicles/h_single2/script.ini",
+        "dlc3/vehicles/h_single3/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 16
+      }
+    },
+    "JOINT": {
+      "occurrences": 99,
+      "files": 99,
+      "types": {
+        "VEHICLETYPE_ROAD": 99
+      },
+      "examples": [
+        "vehicles/bus_cavB14/script.ini",
+        "vehicles/bus_ikr_280/script.ini",
+        "vehicles/bus_mn_sg192/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 98,
+        "header:3;body-lines:4": 1
+      }
+    },
+    "LANDING_GEAR_ANIM": {
+      "occurrences": 20,
+      "files": 20,
+      "types": {
+        "VEHICLETYPE_AIRPLANE": 20
+      },
+      "examples": [
+        "airplanes/an12/script.ini",
+        "airplanes/b737/script.ini",
+        "airplanes/b737_4/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 20
+      }
+    },
+    "LIFESPAN": {
+      "occurrences": 26,
+      "files": 26,
+      "types": {
+        "VEHICLETYPE_ROAD": 26
+      },
+      "examples": [
+        "vehicles/bust_f2472/script.ini",
+        "vehicles/bust_mrc_mbo305/script.ini",
+        "vehicles/bust_skd_14Tr/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 26
+      }
+    },
+    "LIGHT_BACKWARD": {
+      "occurrences": 1370,
+      "files": 752,
+      "types": {
+        "VEHICLETYPE_ROAD": 627,
+        "VEHICLETYPE_RAIL_VAGON": 42,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 45,
+        "VEHICLETYPE_SHIP": 11,
+        "VEHICLETYPE_AIRPLANE": 27
+      },
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_cavB14/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 1352,
+        "header:3;body-lines:1": 5,
+        "header:3;body-lines:8": 11,
+        "header:3;body-lines:3": 2
+      }
+    },
+    "LIGHT_BLINKER": {
+      "occurrences": 648,
+      "files": 398,
+      "types": {
+        "VEHICLETYPE_ROAD": 396,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 2
+      },
+      "examples": [
+        "vehicles/bus_ikr_256/script.ini",
+        "vehicles/bus_ikr_260/script.ini",
+        "vehicles/bus_ikr_280/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 623,
+        "header:3;body-lines:3": 25
+      }
+    },
+    "LIGHT_BLINKER_TRAILER": {
+      "occurrences": 2,
+      "files": 1,
+      "types": {
+        "VEHICLETYPE_ROAD": 1
+      },
+      "examples": [
+        "vehicles/bus_ikr_280/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 2
+      }
+    },
+    "LIGHT_FORWARD": {
+      "occurrences": 1806,
+      "files": 879,
+      "types": {
+        "VEHICLETYPE_ROAD": 726,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 103,
+        "VEHICLETYPE_RAIL_VAGON": 2,
+        "VEHICLETYPE_SHIP": 21,
+        "VEHICLETYPE_AIRPLANE": 27
+      },
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_cavB14/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 1801,
+        "header:6;body-lines:0": 2,
+        "header:3;body-lines:2": 2,
+        "header:3;body-lines:3": 1
+      }
+    },
+    "LOD": {
+      "occurrences": 1,
+      "files": 1,
+      "types": {
+        "VEHICLETYPE_ROAD": 1
+      },
+      "examples": [
+        "vehicles/z_police_vz2109/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 1
+      }
+    },
+    "LOD1": {
+      "occurrences": 719,
+      "files": 719,
+      "types": {
+        "VEHICLETYPE_ROAD": 541,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 79,
+        "VEHICLETYPE_RAIL_VAGON": 80,
+        "VEHICLETYPE_AIRPLANE": 14,
+        "VEHICLETYPE_HELICOPTER": 4,
+        "VEHICLETYPE_SHIP": 1
+      },
+      "examples": [
+        "vehicles/bus_gm_5301/script.ini",
+        "vehicles/bus_gmc_rts/script.ini",
+        "vehicles/bus_ikr_256/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 716,
+        "header:1;body-lines:1": 3
+      }
+    },
+    "LOD2": {
+      "occurrences": 594,
+      "files": 594,
+      "types": {
+        "VEHICLETYPE_ROAD": 417,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 77,
+        "VEHICLETYPE_RAIL_VAGON": 81,
+        "VEHICLETYPE_AIRPLANE": 14,
+        "VEHICLETYPE_HELICOPTER": 4,
+        "VEHICLETYPE_SHIP": 1
+      },
+      "examples": [
+        "vehicles/bus_gm_5301/script.ini",
+        "vehicles/bus_gmc_rts/script.ini",
+        "vehicles/bus_ikr_256/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 574,
+        "header:1;body-lines:1": 17,
+        "header:1;body-lines:2": 1,
+        "header:1;body-lines:3": 2
+      }
+    },
+    "LODDISTANCE": {
+      "occurrences": 1,
+      "files": 1,
+      "types": {
+        "VEHICLETYPE_ROAD": 1
+      },
+      "examples": [
+        "vehicles/z_police_vz2109/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 1
+      }
+    },
+    "LODDISTANCE1": {
+      "occurrences": 634,
+      "files": 633,
+      "types": {
+        "VEHICLETYPE_ROAD": 455,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 79,
+        "VEHICLETYPE_RAIL_VAGON": 80,
+        "VEHICLETYPE_AIRPLANE": 14,
+        "VEHICLETYPE_HELICOPTER": 4,
+        "VEHICLETYPE_SHIP": 1
+      },
+      "examples": [
+        "vehicles/bus_gm_5301/script.ini",
+        "vehicles/bus_gmc_rts/script.ini",
+        "vehicles/bus_ikr_256/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 634
+      }
+    },
+    "LODDISTANCE2": {
+      "occurrences": 524,
+      "files": 524,
+      "types": {
+        "VEHICLETYPE_ROAD": 355,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 73,
+        "VEHICLETYPE_RAIL_VAGON": 77,
+        "VEHICLETYPE_AIRPLANE": 14,
+        "VEHICLETYPE_HELICOPTER": 4,
+        "VEHICLETYPE_SHIP": 1
+      },
+      "examples": [
+        "vehicles/bus_gm_5301/script.ini",
+        "vehicles/bus_gmc_rts/script.ini",
+        "vehicles/bus_ikr_256/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 524
+      }
+    },
+    "LODJOINT1": {
+      "occurrences": 59,
+      "files": 57,
+      "types": {
+        "VEHICLETYPE_ROAD": 57
+      },
+      "examples": [
+        "vehicles/bus_skd_rto_po1e/script.ini",
+        "vehicles/cement_mckR/script.ini",
+        "vehicles/cement_mz504/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 57,
+        "header:1;body-lines:1": 2
+      }
+    },
+    "LODJOINT2": {
+      "occurrences": 33,
+      "files": 33,
+      "types": {
+        "VEHICLETYPE_ROAD": 33
+      },
+      "examples": [
+        "vehicles/bus_skd_rto_po1e/script.ini",
+        "vehicles/cement_mckR/script.ini",
+        "vehicles/cement_rmn_19256/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 33
+      }
+    },
+    "MIXER_DRUM": {
+      "occurrences": 10,
+      "files": 10,
+      "types": {
+        "VEHICLETYPE_ROAD": 10
+      },
+      "examples": [
+        "vehicles/service_mixer_kmz_5320/script.ini",
+        "vehicles/service_mixer_mck_R/script.ini",
+        "vehicles/service_mixer_rmn_12215/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:3": 10
+      }
+    },
+    "MIXER_JOINTDRUM": {
+      "occurrences": 1,
+      "files": 1,
+      "types": {
+        "VEHICLETYPE_ROAD": 1
+      },
+      "examples": [
+        "vehicles/service_mixer_j300/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:3": 1
+      }
+    },
+    "MOVEMENT_ANIM": {
+      "occurrences": 18,
+      "files": 18,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 18
+      },
+      "examples": [
+        "dlc3/vehicles/bbo214/script.ini",
+        "dlc3/vehicles/br80/script.ini",
+        "dlc3/vehicles/br81/script.ini"
+      ],
+      "shapes": {
+        "header:2;body-lines:0": 18
+      }
+    },
+    "MOVEMENT_CONSPUMPTION": {
+      "occurrences": 295,
+      "files": 295,
+      "types": {
+        "VEHICLETYPE_ROAD": 178,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 20,
+        "VEHICLETYPE_RAIL_VAGON": 62,
+        "VEHICLETYPE_AIRPLANE": 27,
+        "VEHICLETYPE_HELICOPTER": 8
+      },
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_cavB14/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 295
+      }
+    },
+    "MOVEMENT_EMPTY_WEIGHT": {
+      "occurrences": 1062,
+      "files": 1062,
+      "types": {
+        "VEHICLETYPE_ROAD": 771,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 117,
+        "VEHICLETYPE_RAIL_VAGON": 100,
+        "VEHICLETYPE_SHIP": 28,
+        "VEHICLETYPE_AIRPLANE": 27,
+        "VEHICLETYPE_HELICOPTER": 8,
+        "VEHICLETYPE_CABIN": 11
+      },
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_cavB14/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 923,
+        "header:1;body-lines:1": 128,
+        "header:1;body-lines:2": 11
+      }
+    },
+    "MOVEMENT_HILL_ACCELERATION": {
+      "occurrences": 17,
+      "files": 17,
+      "types": {
+        "VEHICLETYPE_ROAD": 17
+      },
+      "examples": [
+        "dlc3/vehicles/ambulance_f1100/script.ini",
+        "dlc3/vehicles/ambulance_pospa/script.ini",
+        "dlc3/vehicles/covered_pospa/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 17
+      }
+    },
+    "MOVEMENT_HILL_SPEED": {
+      "occurrences": 17,
+      "files": 17,
+      "types": {
+        "VEHICLETYPE_ROAD": 17
+      },
+      "examples": [
+        "dlc3/vehicles/ambulance_f1100/script.ini",
+        "dlc3/vehicles/ambulance_pospa/script.ini",
+        "dlc3/vehicles/covered_pospa/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 17
+      }
+    },
+    "MOVEMENT_POWER_KW": {
+      "occurrences": 940,
+      "files": 940,
+      "types": {
+        "VEHICLETYPE_ROAD": 747,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 117,
+        "VEHICLETYPE_RAIL_VAGON": 13,
+        "VEHICLETYPE_SHIP": 28,
+        "VEHICLETYPE_AIRPLANE": 27,
+        "VEHICLETYPE_HELICOPTER": 8
+      },
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_cavB14/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 936,
+        "header:7;body-lines:0": 3,
+        "header:4;body-lines:0": 1
+      }
+    },
+    "MOVEMENT_SPEED": {
+      "occurrences": 1002,
+      "files": 998,
+      "types": {
+        "VEHICLETYPE_ROAD": 749,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 117,
+        "VEHICLETYPE_RAIL_VAGON": 69,
+        "VEHICLETYPE_SHIP": 28,
+        "VEHICLETYPE_AIRPLANE": 27,
+        "VEHICLETYPE_HELICOPTER": 8
+      },
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_cavB14/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 1002
+      }
+    },
+    "MOVEMENT_WHEEL_BACK": {
+      "occurrences": 35,
+      "files": 35,
+      "types": {
+        "VEHICLETYPE_AIRPLANE": 27,
+        "VEHICLETYPE_HELICOPTER": 8
+      },
+      "examples": [
+        "airplanes/an12/script.ini",
+        "airplanes/an14/script.ini",
+        "airplanes/an2/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 35
+      }
+    },
+    "MOVEMENT_WHEEL_FRONT": {
+      "occurrences": 35,
+      "files": 35,
+      "types": {
+        "VEHICLETYPE_AIRPLANE": 27,
+        "VEHICLETYPE_HELICOPTER": 8
+      },
+      "examples": [
+        "airplanes/an12/script.ini",
+        "airplanes/an14/script.ini",
+        "airplanes/an2/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 35
+      }
+    },
+    "NAME": {
+      "occurrences": 796,
+      "files": 796,
+      "types": {
+        "VEHICLETYPE_ROAD": 527,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 100,
+        "VEHICLETYPE_RAIL_VAGON": 96,
+        "VEHICLETYPE_SHIP": 27,
+        "VEHICLETYPE_AIRPLANE": 27,
+        "VEHICLETYPE_HELICOPTER": 8,
+        "VEHICLETYPE_CABIN": 11
+      },
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_cavB14/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 784,
+        "header:0;body-lines:0": 12
+      }
+    },
+    "NAME_STR": {
+      "occurrences": 277,
+      "files": 277,
+      "types": {
+        "VEHICLETYPE_ROAD": 246,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 17,
+        "VEHICLETYPE_RAIL_VAGON": 13,
+        "VEHICLETYPE_SHIP": 1
+      },
+      "examples": [
+        "vehicles/bus_ikr_55/script.ini",
+        "vehicles/bus_ikr_620/script.ini",
+        "vehicles/bus_ikr_66/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 277
+      }
+    },
+    "PARTICLE_JETPOINT": {
+      "occurrences": 20,
+      "files": 7,
+      "types": {
+        "VEHICLETYPE_AIRPLANE": 7
+      },
+      "examples": [
+        "airplanes/b737/script.ini",
+        "airplanes/b737_4/script.ini",
+        "airplanes/il76/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 20
+      }
+    },
+    "PARTICLE_MOVEMENT": {
+      "occurrences": 788,
+      "files": 693,
+      "types": {
+        "VEHICLETYPE_ROAD": 560,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 107,
+        "VEHICLETYPE_RAIL_VAGON": 1,
+        "VEHICLETYPE_SHIP": 25
+      },
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_gm_5301/script.ini"
+      ],
+      "shapes": {
+        "header:4;body-lines:0": 775,
+        "header:4;body-lines:8": 2,
+        "header:4;body-lines:1": 7,
+        "header:4;body-lines:2": 1,
+        "header:3;body-lines:0": 3
+      }
+    },
+    "PARTICLE_MOVEMENT_JOINT": {
+      "occurrences": 10,
+      "files": 7,
+      "types": {
+        "VEHICLETYPE_ROAD": 7
+      },
+      "examples": [
+        "vehicles/bus_cavB14/script.ini",
+        "vehicles/bus_ikr_280/script.ini",
+        "vehicles/bus_mn_sg192/script.ini"
+      ],
+      "shapes": {
+        "header:4;body-lines:0": 10
+      }
+    },
+    "PREVIEW_OFFSET": {
+      "occurrences": 11,
+      "files": 11,
+      "types": {
+        "VEHICLETYPE_CABIN": 11
+      },
+      "examples": [
+        "cabins/cargo_big/script.ini",
+        "cabins/cargo_small/script.ini",
+        "cabins/gravel_big/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 11
+      }
+    },
+    "PREVIEW_ZOOM": {
+      "occurrences": 11,
+      "files": 11,
+      "types": {
+        "VEHICLETYPE_CABIN": 11
+      },
+      "examples": [
+        "cabins/cargo_big/script.ini",
+        "cabins/cargo_small/script.ini",
+        "cabins/gravel_big/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 11
+      }
+    },
+    "PROPELER_DYNAMIC": {
+      "occurrences": 20,
+      "files": 20,
+      "types": {
+        "VEHICLETYPE_AIRPLANE": 20
+      },
+      "examples": [
+        "airplanes/an12/script.ini",
+        "airplanes/an14/script.ini",
+        "airplanes/an2/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 20
+      }
+    },
+    "PROPELER_HELICOPTER": {
+      "occurrences": 16,
+      "files": 8,
+      "types": {
+        "VEHICLETYPE_HELICOPTER": 8
+      },
+      "examples": [
+        "helicopters/g31/script.ini",
+        "helicopters/mi10c/script.ini",
+        "helicopters/mi10r/script.ini"
+      ],
+      "shapes": {
+        "header:5;body-lines:0": 10,
+        "header:2;body-lines:2": 6
+      }
+    },
+    "PROPELER_HELICOPTER_POINT_DIR": {
+      "occurrences": 16,
+      "files": 8,
+      "types": {
+        "VEHICLETYPE_HELICOPTER": 8
+      },
+      "examples": [
+        "helicopters/g31/script.ini",
+        "helicopters/mi10c/script.ini",
+        "helicopters/mi10r/script.ini"
+      ],
+      "shapes": {
+        "header:6;body-lines:0": 16
+      }
+    },
+    "PROPELER_LOW": {
+      "occurrences": 20,
+      "files": 20,
+      "types": {
+        "VEHICLETYPE_AIRPLANE": 20
+      },
+      "examples": [
+        "airplanes/an12/script.ini",
+        "airplanes/an14/script.ini",
+        "airplanes/an2/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 10,
+        "header:2;body-lines:1": 10
+      }
+    },
+    "PROPELER_POINT": {
+      "occurrences": 45,
+      "files": 20,
+      "types": {
+        "VEHICLETYPE_AIRPLANE": 20
+      },
+      "examples": [
+        "airplanes/an12/script.ini",
+        "airplanes/an14/script.ini",
+        "airplanes/an2/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 45
+      }
+    },
+    "PROPELER_STATIC": {
+      "occurrences": 20,
+      "files": 20,
+      "types": {
+        "VEHICLETYPE_AIRPLANE": 20
+      },
+      "examples": [
+        "airplanes/an12/script.ini",
+        "airplanes/an14/script.ini",
+        "airplanes/an2/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 20
+      }
+    },
+    "PURCHASE_EXCLUDE": {
+      "occurrences": 75,
+      "files": 75,
+      "types": {
+        "VEHICLETYPE_ROAD": 3,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 12,
+        "VEHICLETYPE_RAIL_VAGON": 58,
+        "VEHICLETYPE_SHIP": 1,
+        "VEHICLETYPE_AIRPLANE": 1
+      },
+      "examples": [
+        "vehicles/covered_gz_66/script.ini",
+        "vehicles/tractor_1950/script.ini",
+        "vehicles/z_police_bus_zil_158/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:1": 3,
+        "header:0;body-lines:0": 72
+      }
+    },
+    "RESOURCE_ALLOW_ONLY": {
+      "occurrences": 41,
+      "files": 29,
+      "types": {
+        "VEHICLETYPE_ROAD": 26,
+        "VEHICLETYPE_RAIL_VAGON": 3
+      },
+      "examples": [
+        "vehicles/open_mck/script.ini",
+        "vehicles/openwood_mckR/script.ini",
+        "vehicles/openwood_pan_movic/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 40,
+        "header:1;body-lines:4": 1
+      }
+    },
+    "RESOURCE_CAPACITY": {
+      "occurrences": 870,
+      "files": 868,
+      "types": {
+        "VEHICLETYPE_ROAD": 656,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 47,
+        "VEHICLETYPE_RAIL_VAGON": 91,
+        "VEHICLETYPE_SHIP": 28,
+        "VEHICLETYPE_AIRPLANE": 27,
+        "VEHICLETYPE_HELICOPTER": 8,
+        "VEHICLETYPE_CABIN": 11
+      },
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_cavB14/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 870
+      }
+    },
+    "RESOURCE_TRANSPORT_TYPE": {
+      "occurrences": 838,
+      "files": 838,
+      "types": {
+        "VEHICLETYPE_ROAD": 637,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 47,
+        "VEHICLETYPE_RAIL_VAGON": 81,
+        "VEHICLETYPE_SHIP": 27,
+        "VEHICLETYPE_AIRPLANE": 27,
+        "VEHICLETYPE_HELICOPTER": 8,
+        "VEHICLETYPE_CABIN": 11
+      },
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_cavB14/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 826,
+        "header:1;body-lines:4": 12
+      }
+    },
+    "RESOURCE_VISUALIZATION": {
+      "occurrences": 503,
+      "files": 178,
+      "types": {
+        "VEHICLETYPE_ROAD": 122,
+        "VEHICLETYPE_RAIL_VAGON": 36,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 6,
+        "VEHICLETYPE_SHIP": 6,
+        "VEHICLETYPE_HELICOPTER": 2,
+        "VEHICLETYPE_CABIN": 6
+      },
+      "examples": [
+        "vehicles/forklift_h80/script.ini",
+        "vehicles/forklift_lza/script.ini",
+        "vehicles/forklift_y/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:8": 501,
+        "header:0;body-lines:12": 1,
+        "header:0;body-lines:11": 1
+      }
+    },
+    "RESOURCE_VISUALIZATION_BONE": {
+      "occurrences": 11,
+      "files": 11,
+      "types": {
+        "VEHICLETYPE_ROAD": 11
+      },
+      "examples": [
+        "vehicles/garbage_big_kmz_5320/script.ini",
+        "vehicles/garbage_big_mckR/script.ini",
+        "vehicles/garbage_big_skd_706mts/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:8": 11
+      }
+    },
+    "RESOURCE_VISUALIZATION_JOINT": {
+      "occurrences": 62,
+      "files": 36,
+      "types": {
+        "VEHICLETYPE_ROAD": 36
+      },
+      "examples": [
+        "vehicles/gravel_kmz_5410/script.ini",
+        "vehicles/gravel_lz100_trailer/script.ini",
+        "vehicles/gravel_lz100_train/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:8": 61,
+        "header:0;body-lines:10": 1
+      }
+    },
+    "SINGLE_HORSE_POWER": {
+      "occurrences": 4,
+      "files": 4,
+      "types": {
+        "VEHICLETYPE_ROAD": 4
+      },
+      "examples": [
+        "dlc3/vehicles/h_single/script.ini",
+        "dlc3/vehicles/h_single2/script.ini",
+        "dlc3/vehicles/h_single3/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 4
+      }
+    },
+    "SIREN_POINT": {
+      "occurrences": 71,
+      "files": 46,
+      "types": {
+        "VEHICLETYPE_ROAD": 46
+      },
+      "examples": [
+        "vehicles/firetruck_avi_furgon/script.ini",
+        "vehicles/firetruck_gz53/script.ini",
+        "vehicles/firetruck_imf_2200d/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 71
+      }
+    },
+    "SKILL_AMBULANCE": {
+      "occurrences": 28,
+      "files": 28,
+      "types": {
+        "VEHICLETYPE_ROAD": 28
+      },
+      "examples": [
+        "vehicles/z_ambulance_b1000/script.ini",
+        "vehicles/z_ambulance_imf_1600/script.ini",
+        "vehicles/z_ambulance_nysa/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 27,
+        "header:1;body-lines:4": 1
+      }
+    },
+    "SKILL_CONSTRUCTION_ASPHALT_LAYING": {
+      "occurrences": 2,
+      "files": 2,
+      "types": {
+        "VEHICLETYPE_ROAD": 2
+      },
+      "examples": [
+        "vehicles/service_paver/script.ini",
+        "vehicles/service_paver_d150/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 2
+      }
+    },
+    "SKILL_CONSTRUCTION_BULLDOZER": {
+      "occurrences": 11,
+      "files": 11,
+      "types": {
+        "VEHICLETYPE_ROAD": 11
+      },
+      "examples": [
+        "vehicles/service_buldozer_small/script.ini",
+        "vehicles/service_bulldozer_big/script.ini",
+        "vehicles/service_bulldozer_K12/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 11
+      }
+    },
+    "SKILL_CONSTRUCTION_CRANE": {
+      "occurrences": 33,
+      "files": 33,
+      "types": {
+        "VEHICLETYPE_ROAD": 33
+      },
+      "examples": [
+        "vehicles/service_crane_j300/script.ini",
+        "vehicles/service_crane_kmz_5320/script.ini",
+        "vehicles/service_crane_lg4866/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 32,
+        "header:1;body-lines:4": 1
+      }
+    },
+    "SKILL_CONSTRUCTION_GROUNDWORKS": {
+      "occurrences": 12,
+      "files": 12,
+      "types": {
+        "VEHICLETYPE_ROAD": 12
+      },
+      "examples": [
+        "vehicles/service_caterpilar_big/script.ini",
+        "vehicles/service_exvacator_e10011/script.ini",
+        "vehicles/service_exvacator_eo302b/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 11,
+        "header:1;body-lines:4": 1
+      }
+    },
+    "SKILL_CONSTRUCTION_RAIL_CRANE": {
+      "occurrences": 7,
+      "files": 7,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 7
+      },
+      "examples": [
+        "trains/russian_crane/script.ini",
+        "trains/russian_crane_v2/script.ini",
+        "trains/russian_service_agmu/script.ini"
+      ],
+      "shapes": {
+        "header:2;body-lines:0": 7
+      }
+    },
+    "SKILL_CONSTRUCTION_RAIL_CRANE2": {
+      "occurrences": 10,
+      "files": 10,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 10
+      },
+      "examples": [
+        "dlc3/vehicles/russian_service_BR_weimar_long/script.ini",
+        "dlc3/vehicles/russian_service_BR_weimar_short/script.ini",
+        "dlc3/vehicles/russian_service_dampfdrehkran/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 10
+      }
+    },
+    "SKILL_CONSTRUCTION_RAIL_TRACK_LAYER": {
+      "occurrences": 2,
+      "files": 2,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 2
+      },
+      "examples": [
+        "trains/russian_service_uk25/script.ini",
+        "trains/russian_service_uk25_v2/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 2
+      }
+    },
+    "SKILL_CONSTRUCTION_RAIL_TUNNEL_BORING": {
+      "occurrences": 1,
+      "files": 1,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 1
+      },
+      "examples": [
+        "trains/russian_service_tbm_kt1_56/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 1
+      }
+    },
+    "SKILL_CONSTRUCTION_ROLLING": {
+      "occurrences": 4,
+      "files": 4,
+      "types": {
+        "VEHICLETYPE_ROAD": 4
+      },
+      "examples": [
+        "vehicles/service_roller_d211/script.ini",
+        "vehicles/service_roller_small/script.ini",
+        "vehicles/service_roller_vv110/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 4
+      }
+    },
+    "SKILL_FIRETRUCK": {
+      "occurrences": 25,
+      "files": 25,
+      "types": {
+        "VEHICLETYPE_ROAD": 25
+      },
+      "examples": [
+        "vehicles/firetruck_avi_furgon/script.ini",
+        "vehicles/firetruck_gz53/script.ini",
+        "vehicles/firetruck_imf_2200d/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 24,
+        "header:1;body-lines:3": 1
+      }
+    },
+    "SKILL_FORKLIFT": {
+      "occurrences": 7,
+      "files": 7,
+      "types": {
+        "VEHICLETYPE_ROAD": 7
+      },
+      "examples": [
+        "vehicles/forklift_h80/script.ini",
+        "vehicles/forklift_lza/script.ini",
+        "vehicles/forklift_y/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 7
+      }
+    },
+    "SKILL_GRAVELMINING": {
+      "occurrences": 13,
+      "files": 13,
+      "types": {
+        "VEHICLETYPE_ROAD": 13
+      },
+      "examples": [
+        "vehicles/service_buldozer_small/script.ini",
+        "vehicles/service_caterpilar_big/script.ini",
+        "vehicles/service_exvacator_e10011/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 13
+      }
+    },
+    "SKILL_HARVESTING": {
+      "occurrences": 10,
+      "files": 10,
+      "types": {
+        "VEHICLETYPE_ROAD": 10
+      },
+      "examples": [
+        "vehicles/combine_ck_4/script.ini",
+        "vehicles/combine_ck_5/script.ini",
+        "vehicles/combine_cl_d85/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 10
+      }
+    },
+    "SKILL_PERSONAL": {
+      "occurrences": 76,
+      "files": 76,
+      "types": {
+        "VEHICLETYPE_ROAD": 76
+      },
+      "examples": [
+        "vehicles/personal_b1200/script.ini",
+        "vehicles/personal_b1200a/script.ini",
+        "vehicles/personal_d1300/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 72,
+        "header:1;body-lines:4": 4
+      }
+    },
+    "SKILL_POLICEBUS": {
+      "occurrences": 14,
+      "files": 14,
+      "types": {
+        "VEHICLETYPE_ROAD": 14
+      },
+      "examples": [
+        "vehicles/z_police_avi/script.ini",
+        "vehicles/z_police_avi_furgon/script.ini",
+        "vehicles/z_police_b1000_prison/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 13,
+        "header:1;body-lines:1": 1
+      }
+    },
+    "SKILL_POLICECAR": {
+      "occurrences": 41,
+      "files": 41,
+      "types": {
+        "VEHICLETYPE_ROAD": 41
+      },
+      "examples": [
+        "vehicles/z_police_f125/script.ini",
+        "vehicles/z_police_m21/script.ini",
+        "vehicles/z_police_s100/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 40,
+        "header:1;body-lines:4": 1
+      }
+    },
+    "SKILL_SEEDING": {
+      "occurrences": 15,
+      "files": 15,
+      "types": {
+        "VEHICLETYPE_ROAD": 15
+      },
+      "examples": [
+        "vehicles/tractor_1950/script.ini",
+        "vehicles/tractor_cs_1370/script.ini",
+        "vehicles/tractor_mtz82/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 13,
+        "header:1;body-lines:1": 1,
+        "header:1;body-lines:4": 1
+      }
+    },
+    "SKILL_SNOWPLOW": {
+      "occurrences": 20,
+      "files": 20,
+      "types": {
+        "VEHICLETYPE_ROAD": 20
+      },
+      "examples": [
+        "vehicles/snow_gz53/script.ini",
+        "vehicles/snow_ifa_w50/script.ini",
+        "vehicles/snow_kaz_256b/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 19,
+        "header:1;body-lines:3": 1
+      }
+    },
+    "SKILL_WASTE_CONTAINER_BIG": {
+      "occurrences": 14,
+      "files": 14,
+      "types": {
+        "VEHICLETYPE_ROAD": 14
+      },
+      "examples": [
+        "vehicles/garbage_big_kmz_5320/script.ini",
+        "vehicles/garbage_big_mckR/script.ini",
+        "vehicles/garbage_big_skd_706mts/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 14
+      }
+    },
+    "SKILL_WASTE_CONTAINER_SMALL": {
+      "occurrences": 15,
+      "files": 15,
+      "types": {
+        "VEHICLETYPE_ROAD": 15
+      },
+      "examples": [
+        "vehicles/garbage_gz53m/script.ini",
+        "vehicles/garbage_ifa_w50/script.ini",
+        "vehicles/garbage_lz100/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 15
+      }
+    },
+    "SKILL_WOODCARRING": {
+      "occurrences": 24,
+      "files": 24,
+      "types": {
+        "VEHICLETYPE_ROAD": 24
+      },
+      "examples": [
+        "vehicles/open_kaz_256b/script.ini",
+        "vehicles/open_t138/script.ini",
+        "vehicles/open_t148/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 23,
+        "header:1;body-lines:4": 1
+      }
+    },
+    "SOUND_PARAMS": {
+      "occurrences": 2812,
+      "files": 1059,
+      "types": {
+        "VEHICLETYPE_ROAD": 773,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 115,
+        "VEHICLETYPE_RAIL_VAGON": 97,
+        "VEHICLETYPE_SHIP": 28,
+        "VEHICLETYPE_AIRPLANE": 27,
+        "VEHICLETYPE_HELICOPTER": 8,
+        "VEHICLETYPE_CABIN": 11
+      },
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_cavB14/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 2812
+      }
+    },
+    "SOUND_PARAMS_WORKSHOP": {
+      "occurrences": 1,
+      "files": 1,
+      "types": {
+        "VEHICLETYPE_ROAD": 1
+      },
+      "examples": [
+        "dlc3/vehicles/chausson_aph521/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 1
+      }
+    },
+    "TAKEOFF_DISTANCE": {
+      "occurrences": 27,
+      "files": 27,
+      "types": {
+        "VEHICLETYPE_AIRPLANE": 27
+      },
+      "examples": [
+        "airplanes/an12/script.ini",
+        "airplanes/an14/script.ini",
+        "airplanes/an2/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 27
+      }
+    },
+    "TOKEN_POSITION": {
+      "occurrences": 1,
+      "files": 1,
+      "types": {
+        "VEHICLETYPE_ROAD": 1
+      },
+      "examples": [
+        "dlc3/vehicles/refrig_m400/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 1
+      }
+    },
+    "TRACKTOR_TOOL_POINT": {
+      "occurrences": 1,
+      "files": 1,
+      "types": {
+        "VEHICLETYPE_ROAD": 1
+      },
+      "examples": [
+        "vehicles/tractor_1950/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 1
+      }
+    },
+    "TRAINBOX": {
+      "occurrences": 4,
+      "files": 4,
+      "types": {
+        "VEHICLETYPE_ROAD": 4
+      },
+      "examples": [
+        "vehicles/service_trainset_agmu/script.ini",
+        "vehicles/service_trainset_muv69/script.ini",
+        "dlc3/vehicles/russian_service_BR_short_dis/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 4
+      }
+    },
+    "TRAINGROUP_LOCOMOTIVE": {
+      "occurrences": 43,
+      "files": 43,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 34,
+        "VEHICLETYPE_RAIL_VAGON": 9
+      },
+      "examples": [
+        "trains/russian_loco_060da/script.ini",
+        "trains/russian_loco_163/script.ini",
+        "trains/russian_loco_753/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:0": 40,
+        "header:0;body-lines:1": 3
+      }
+    },
+    "TRAINGROUP_LOCOMOTIVE_STEAM": {
+      "occurrences": 19,
+      "files": 19,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 19
+      },
+      "examples": [
+        "dlc3/vehicles/bbo214/script.ini",
+        "dlc3/vehicles/br80/script.ini",
+        "dlc3/vehicles/br81/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:0": 19
+      }
+    },
+    "TRAINGROUP_METRO": {
+      "occurrences": 20,
+      "files": 20,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 9,
+        "VEHICLETYPE_RAIL_VAGON": 11
+      },
+      "examples": [
+        "trains/russian_metro_717/script.ini",
+        "trains/russian_metro_717_5/script.ini",
+        "trains/russian_metro_717_5_vagon/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:0": 20
+      }
+    },
+    "TRAINGROUP_MOTORVAGON": {
+      "occurrences": 6,
+      "files": 6,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 6
+      },
+      "examples": [
+        "trains/russian_mv_820/script.ini",
+        "trains/russian_mv_853/script.ini",
+        "trains/russian_mv_m131/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:0": 6
+      }
+    },
+    "TRAINGROUP_TRACKBUILDER": {
+      "occurrences": 13,
+      "files": 13,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 12,
+        "VEHICLETYPE_RAIL_VAGON": 1
+      },
+      "examples": [
+        "trains/russian_crane/script.ini",
+        "trains/russian_crane_v2/script.ini",
+        "trains/russian_crane_vagon/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:0": 13
+      }
+    },
+    "TRAINGROUP_TRACKBUILDER_STEAM": {
+      "occurrences": 8,
+      "files": 8,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 8
+      },
+      "examples": [
+        "dlc3/vehicles/russian_service_BR_weimar_long/script.ini",
+        "dlc3/vehicles/russian_service_BR_weimar_short/script.ini",
+        "dlc3/vehicles/russian_service_dampfdrehkran/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:0": 7,
+        "header:0;body-lines:1": 1
+      }
+    },
+    "TRAINGROUP_TRAINSET": {
+      "occurrences": 13,
+      "files": 13,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 10,
+        "VEHICLETYPE_RAIL_VAGON": 3
+      },
+      "examples": [
+        "trains/russian_set_d1/script.ini",
+        "trains/russian_set_dp/script.ini",
+        "trains/russian_set_dr1a/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:0": 13
+      }
+    },
+    "TRAINGROUP_TRAM": {
+      "occurrences": 22,
+      "files": 22,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 19,
+        "VEHICLETYPE_RAIL_VAGON": 3
+      },
+      "examples": [
+        "trains/russian_tram_102na/script.ini",
+        "trains/russian_tram_105na/script.ini",
+        "trains/russian_tram_13n/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:0": 22
+      }
+    },
+    "TRAINGROUP_VAGON": {
+      "occurrences": 57,
+      "files": 57,
+      "types": {
+        "VEHICLETYPE_RAIL_VAGON": 57
+      },
+      "examples": [
+        "trains/russian_vagon_box066/script.ini",
+        "trains/russian_vagon_box270/script.ini",
+        "trains/russian_vagon_box280/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:0": 51,
+        "header:0;body-lines:1": 6
+      }
+    },
+    "TRAINSET": {
+      "occurrences": 94,
+      "files": 52,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 52
+      },
+      "examples": [
+        "trains/russian_crane/script.ini",
+        "trains/russian_crane_v2/script.ini",
+        "trains/russian_metro_717/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 94
+      }
+    },
+    "TRAINSET_REVERSE": {
+      "occurrences": 24,
+      "files": 22,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 22
+      },
+      "examples": [
+        "trains/russian_loco_chs7/script.ini",
+        "trains/russian_loco_t2116/script.ini",
+        "trains/russian_loco_te7/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 24
+      }
+    },
+    "TRAIN_BACKWARD_AXIS_DISTANCE": {
+      "occurrences": 10,
+      "files": 10,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 5,
+        "VEHICLETYPE_RAIL_VAGON": 5
+      },
+      "examples": [
+        "trains/russian_metro_mfav/script.ini",
+        "trains/russian_metro_mfav_vagon/script.ini",
+        "trains/russian_service_tbm_kt1_56/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 10
+      }
+    },
+    "TRAIN_BBOX_BACKWARD_CORRECTION": {
+      "occurrences": 40,
+      "files": 40,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 28,
+        "VEHICLETYPE_RAIL_VAGON": 12
+      },
+      "examples": [
+        "trains/russian_loco_vl10/script.ini",
+        "trains/russian_loco_vl80k/script.ini",
+        "trains/russian_metro_717/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 40
+      }
+    },
+    "TRAIN_BBOX_FORWARD_CORRECTION": {
+      "occurrences": 39,
+      "files": 39,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 17,
+        "VEHICLETYPE_RAIL_VAGON": 22
+      },
+      "examples": [
+        "trains/russian_metro_717/script.ini",
+        "trains/russian_metro_717_5/script.ini",
+        "trains/russian_metro_Ecs/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 39
+      }
+    },
+    "TRAIN_FORWARD_AXIS_DISTANCE": {
+      "occurrences": 9,
+      "files": 9,
+      "types": {
+        "VEHICLETYPE_RAIL_VAGON": 7,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 2
+      },
+      "examples": [
+        "trains/russian_metro_mfav_vagon/script.ini",
+        "trains/russian_metro_mfav_vagon2/script.ini",
+        "trains/russian_service_tbm_kt1_56/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 9
+      }
+    },
+    "TUNNELING_TEETH": {
+      "occurrences": 1,
+      "files": 1,
+      "types": {
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 1
+      },
+      "examples": [
+        "trains/russian_service_tbm_kt1_56/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:0": 1
+      }
+    },
+    "TYPE": {
+      "occurrences": 1073,
+      "files": 1073,
+      "types": {
+        "VEHICLETYPE_ROAD": 773,
+        "VEHICLETYPE_RAIL_LOCOMOTIVE": 117,
+        "VEHICLETYPE_RAIL_VAGON": 109,
+        "VEHICLETYPE_SHIP": 28,
+        "VEHICLETYPE_AIRPLANE": 27,
+        "VEHICLETYPE_HELICOPTER": 8,
+        "VEHICLETYPE_CABIN": 11
+      },
+      "examples": [
+        "vehicles/bus_cav11m3/script.ini",
+        "vehicles/bus_cavB13/script.ini",
+        "vehicles/bus_cavB14/script.ini"
+      ],
+      "shapes": {
+        "header:1;body-lines:0": 1073
+      }
+    },
+    "WATER_POINT": {
+      "occurrences": 7,
+      "files": 7,
+      "types": {
+        "VEHICLETYPE_ROAD": 7
+      },
+      "examples": [
+        "vehicles/firetruck_j300/script.ini",
+        "vehicles/firetruck_skd_706rt/script.ini",
+        "vehicles/firetruck_w50/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 7
+      }
+    },
+    "WAVEPOINTBACK": {
+      "occurrences": 28,
+      "files": 28,
+      "types": {
+        "VEHICLETYPE_SHIP": 28
+      },
+      "examples": [
+        "ships/army_freedom/script.ini",
+        "ships/container_ship/script.ini",
+        "ships/container_ship_medium/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:6": 27,
+        "header:0;body-lines:10": 1
+      }
+    },
+    "WAVEPOINTFRONT": {
+      "occurrences": 28,
+      "files": 28,
+      "types": {
+        "VEHICLETYPE_SHIP": 28
+      },
+      "examples": [
+        "ships/army_freedom/script.ini",
+        "ships/container_ship/script.ini",
+        "ships/container_ship_medium/script.ini"
+      ],
+      "shapes": {
+        "header:0;body-lines:6": 28
+      }
+    },
+    "WORKING_ANIM": {
+      "occurrences": 13,
+      "files": 13,
+      "types": {
+        "VEHICLETYPE_ROAD": 13
+      },
+      "examples": [
+        "vehicles/service_buldozer_small/script.ini",
+        "vehicles/service_caterpilar_big/script.ini",
+        "vehicles/service_exvacator_e10011/script.ini"
+      ],
+      "shapes": {
+        "header:3;body-lines:0": 13
+      }
+    }
+  },
+  "reference_extensions": {
+    "ini": 2813,
+    "nmf": 2010,
+    "mtl": 40,
+    "naf": 16
+  },
+  "special_cases": [
+    {
+      "kind": "multiple-skills",
+      "example": "vehicles/service_buldozer_small/script.ini",
+      "skills": [
+        [
+          "SKILL_GRAVELMINING",
+          "9"
+        ],
+        [
+          "SKILL_CONSTRUCTION_BULLDOZER",
+          "9"
+        ]
+      ]
+    },
+    {
+      "kind": "multiple-skills",
+      "example": "vehicles/service_caterpilar_big/script.ini",
+      "skills": [
+        [
+          "SKILL_GRAVELMINING",
+          "37"
+        ],
+        [
+          "SKILL_CONSTRUCTION_GROUNDWORKS",
+          "37"
+        ]
+      ]
+    },
+    {
+      "kind": "multiple-skills",
+      "example": "vehicles/service_exvacator_e10011/script.ini",
+      "skills": [
+        [
+          "SKILL_GRAVELMINING",
+          "33"
+        ],
+        [
+          "SKILL_CONSTRUCTION_GROUNDWORKS",
+          "33"
+        ]
+      ]
+    },
+    {
+      "kind": "multiple-skills",
+      "example": "vehicles/service_exvacator_eo302b/script.ini",
+      "skills": [
+        [
+          "SKILL_GRAVELMINING",
+          "22"
+        ],
+        [
+          "SKILL_CONSTRUCTION_GROUNDWORKS",
+          "22"
+        ]
+      ]
+    },
+    {
+      "kind": "multiple-skills",
+      "example": "vehicles/service_exvacator_lh360/script.ini",
+      "skills": [
+        [
+          "SKILL_GRAVELMINING",
+          "28"
+        ],
+        [
+          "SKILL_CONSTRUCTION_GROUNDWORKS",
+          "28"
+        ]
+      ]
+    },
+    {
+      "kind": "multiple-skills",
+      "example": "vehicles/service_exvacator_rmn12215/script.ini",
+      "skills": [
+        [
+          "SKILL_GRAVELMINING",
+          "17"
+        ],
+        [
+          "SKILL_CONSTRUCTION_GROUNDWORKS",
+          "17"
+        ]
+      ]
+    },
+    {
+      "kind": "multiple-skills",
+      "example": "vehicles/service_exvacator_t815/script.ini",
+      "skills": [
+        [
+          "SKILL_GRAVELMINING",
+          "27"
+        ],
+        [
+          "SKILL_CONSTRUCTION_GROUNDWORKS",
+          "15"
+        ]
+      ]
+    },
+    {
+      "kind": "multiple-skills",
+      "example": "vehicles/service_exvacator_wt174/script.ini",
+      "skills": [
+        [
+          "SKILL_GRAVELMINING",
+          "26"
+        ],
+        [
+          "SKILL_CONSTRUCTION_GROUNDWORKS",
+          "26"
+        ]
+      ]
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "trains/russian_crane/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE",
+      "arguments": 2
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "trains/russian_crane_v2/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE",
+      "arguments": 2
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "trains/russian_service_agmu/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE",
+      "arguments": 2
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "trains/russian_service_dkgu5/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE",
+      "arguments": 2
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "trains/russian_service_dkgu5_v2/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE",
+      "arguments": 2
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "trains/russian_service_edk300/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE",
+      "arguments": 2
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "trains/russian_service_muv69/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE",
+      "arguments": 2
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "trains/russian_service_uk25/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_TRACK_LAYER",
+      "arguments": 3
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "trains/russian_service_uk25_v2/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_TRACK_LAYER",
+      "arguments": 3
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "dlc3/vehicles/russian_service_BR_weimar_long/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE2",
+      "arguments": 3
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "dlc3/vehicles/russian_service_BR_weimar_short/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE2",
+      "arguments": 3
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "dlc3/vehicles/russian_service_dampfdrehkran/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE2",
+      "arguments": 3
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "dlc3/vehicles/russian_service_dampfdrehkran_v2/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE2",
+      "arguments": 3
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "dlc3/vehicles/russian_service_manual_machine/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE2",
+      "arguments": 3
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "dlc3/vehicles/russian_service_weimar/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE2",
+      "arguments": 3
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "dlc3/vehicles/russian_service_weimar_v2/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE2",
+      "arguments": 3
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "dlc3/vehicles/russian_service_ya3/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE2",
+      "arguments": 3
+    },
+    {
+      "kind": "multiple-skills",
+      "example": "dlc3/vehicles/service_exvacator_erie/script.ini",
+      "skills": [
+        [
+          "SKILL_GRAVELMINING",
+          "15"
+        ],
+        [
+          "SKILL_CONSTRUCTION_GROUNDWORKS",
+          "12"
+        ]
+      ]
+    },
+    {
+      "kind": "multiple-skills",
+      "example": "dlc3/vehicles/service_exvacator_MIIIP/script.ini",
+      "skills": [
+        [
+          "SKILL_GRAVELMINING",
+          "21"
+        ],
+        [
+          "SKILL_CONSTRUCTION_GROUNDWORKS",
+          "15"
+        ]
+      ]
+    },
+    {
+      "kind": "multiple-skills",
+      "example": "dlc3/vehicles/service_exvacator_RB10/script.ini",
+      "skills": [
+        [
+          "SKILL_GRAVELMINING",
+          "21"
+        ],
+        [
+          "SKILL_CONSTRUCTION_GROUNDWORKS",
+          "15"
+        ],
+        [
+          "SKILL_CONSTRUCTION_BULLDOZER",
+          "12"
+        ]
+      ]
+    },
+    {
+      "kind": "multiple-skills",
+      "example": "dlc3/vehicles/service_exvacator_t111/script.ini",
+      "skills": [
+        [
+          "SKILL_GRAVELMINING",
+          "25"
+        ],
+        [
+          "SKILL_CONSTRUCTION_GROUNDWORKS",
+          "15"
+        ]
+      ]
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "dlc3/vehicles/west_service_steamcrane/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE2",
+      "arguments": 3
+    },
+    {
+      "kind": "multi-argument-skill",
+      "example": "dlc3/vehicles/west_service_steamcrane_v2/script.ini",
+      "key": "SKILL_CONSTRUCTION_RAIL_CRANE2",
+      "arguments": 3
+    },
+    {
+      "kind": "multiple-skills",
+      "example": "dlc3/vehicles/yag_excavator/script.ini",
+      "skills": [
+        [
+          "SKILL_GRAVELMINING",
+          "15"
+        ],
+        [
+          "SKILL_CONSTRUCTION_GROUNDWORKS",
+          "15"
+        ]
+      ]
+    }
+  ],
+  "material_keys": {
+    "AMBIENTCOLOR": {
+      "files": 3999,
+      "examples": [
+        "vehicles/bus_cav11m3/material.mtl",
+        "vehicles/bus_cavB13/material.mtl",
+        "vehicles/bus_cavB14/material.mtl"
+      ]
+    },
+    "CUSTOMVECTOR": {
+      "files": 3,
+      "examples": [
+        "ships/army_freedom/material.mtl",
+        "ships/shipcargo_small/material.mtl",
+        "ships/tanker/material.mtl"
+      ]
+    },
+    "DIFFUSECOLOR": {
+      "files": 3991,
+      "examples": [
+        "vehicles/bus_cav11m3/material.mtl",
+        "vehicles/bus_cavB13/material.mtl",
+        "vehicles/bus_cavB14/material.mtl"
+      ]
+    },
+    "END": {
+      "files": 3999,
+      "examples": [
+        "vehicles/bus_cav11m3/material.mtl",
+        "vehicles/bus_cavB13/material.mtl",
+        "vehicles/bus_cavB14/material.mtl"
+      ]
+    },
+    "SPECULARCOLOR": {
+      "files": 3999,
+      "examples": [
+        "vehicles/bus_cav11m3/material.mtl",
+        "vehicles/bus_cavB13/material.mtl",
+        "vehicles/bus_cavB14/material.mtl"
+      ]
+    },
+    "SPECULARPOWER": {
+      "files": 3999,
+      "examples": [
+        "vehicles/bus_cav11m3/material.mtl",
+        "vehicles/bus_cavB13/material.mtl",
+        "vehicles/bus_cavB14/material.mtl"
+      ]
+    },
+    "SUBMATERIAL": {
+      "files": 3999,
+      "examples": [
+        "vehicles/bus_cav11m3/material.mtl",
+        "vehicles/bus_cavB13/material.mtl",
+        "vehicles/bus_cavB14/material.mtl"
+      ]
+    },
+    "TEXTURE": {
+      "files": 2376,
+      "examples": [
+        "vehicles/bus_cav11m3/material.mtl",
+        "vehicles/bus_cavB13/material.mtl",
+        "vehicles/bus_cavB14/material.mtl"
+      ]
+    },
+    "TEXTURE_MTL": {
+      "files": 3174,
+      "examples": [
+        "vehicles/bus_gm_5301/material.mtl",
+        "vehicles/bus_gm_5301/material_1.mtl",
+        "vehicles/bus_gm_5301/material_2.mtl"
+      ]
+    }
+  }
+}

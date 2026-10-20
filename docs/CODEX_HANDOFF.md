@@ -4,6 +4,8 @@ Checkpoint recorded: 2026-10-19. Canonical repository: `Av1ra/Aurora`, branch `m
 
 ## Read this first
 
+Owner scope correction: current analysis concerns **transport only**. Start with [the deeper transport audit](EDITOR_TRANSPORT_DEEP_AUDIT_2026-10-21.md) and [98 evidence-linked criteria](EDITOR_TRANSPORT_CHECKLIST_2026-10-21.md). Buildings/maps/scenarios in the older broad report are outside the present task. These are research findings and implementation criteria, not newly delivered features.
+
 Read-only capability audit (2026-10-21): [installed game/editor gaps and prioritized plan](EDITOR_CAPABILITY_AUDIT_2026-10-21.md), with reproducible tools and measured corpus data under `audit-data/`. Findings include unsupported primary NMF files, `$END` insertion, multi-argument skills, native material/DDS gaps and misleading field semantics. The audit does not mean these issues were fixed or a new runtime was installed.
 
 Current owner correction: [task-based vehicle settings, cargo material fix and PSD launcher rows](EDITOR_TASK_SETTINGS.md). This supersedes generic native-field forms and currency-derived country lists. Custom sounds scope is INI import only. Check newest STATUS entry for verified package/install evidence.
