@@ -250,3 +250,5 @@ Production/install receipt: `artifacts/build-e8784bc2d6e947a2b05b606e7ca2ed1d`, 
 ## 2026-10-20: lamp scale and day/night button
 
 Doubled native lamp sprite radii for both front and rear lights. Day/night button now uses explicit monochrome Segoe Fluent Icons with zero padding, preventing emoji rendering and clipping in the compact button; accessible name follows its action. Bundled WinUI build and viewport regression harness passed. Preparing production package; owner visual acceptance pending.
+
+Production package: artifacts/build-af9e8048f57141a5a215da9a8b2440ef, source f4737f86b5c3c57c3f34ac37ce6aa7e70260a0e4, Version=0.2, ModifiedSources=false, DevelopmentSigning=false. Signed bundle/editor/module, adjacent ZIP rejection and branding/backend checks passed. Matching combined ZIP/Setup delivered to Downloads/Aurora-0.2. Installation awaits owner closure of the running Aurora host; closure question sent. No Release or desktop automation.
