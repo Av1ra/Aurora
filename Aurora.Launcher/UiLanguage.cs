@@ -30,6 +30,8 @@ static class UiLanguage
 ["Скрипты"]="Scripts",
 ["Длина разбега, м"]="Takeoff distance, m",
 ["Удалить"]="Delete",
+["Управление"]="Controls",
+["Камеры превью сохранены в проекте"]="Preview cameras saved in project",
 ["Полигональная сетка"]="Wireframe",
 ["Расход топлива"]="Fuel consumption",
 ["Удалить LOD"]="Remove LOD",

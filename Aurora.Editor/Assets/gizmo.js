@@ -17,7 +17,7 @@ function transformCargo(){
 function gizmo(value){gizmoState={...gizmoState,...value};transformCargo();draw();}
 function drawGizmo(){
  if(!gizmoContext)return;const c=gizmoContext,scale=Math.min(2,window.devicePixelRatio||1);gizmoCanvas.width=Math.max(1,Math.round(canvas.clientWidth*scale));gizmoCanvas.height=Math.max(1,Math.round(canvas.clientHeight*scale));c.scale(scale,scale);gizmoSegments=[];
- if(scene&&nightView&&!transparentPreview)for(const light of nightLights){const point=gizmoProject(light.position);if(!point)continue;const colour=light.rear?'255,30,15':'255,240,195';const glow=c.createRadialGradient(...point,0,...point,14);glow.addColorStop(0,'rgba('+colour+',1)');glow.addColorStop(.2,'rgba('+colour+',.8)');glow.addColorStop(1,'rgba('+colour+',0)');c.fillStyle=glow;c.beginPath();c.arc(...point,14,0,Math.PI*2);c.fill();}
+ drawPreviewCameraFrame(c);
  if(!scene||!gizmoState.visible)return;const position=gizmoState.position,origin=gizmoProject(position);if(!origin)return;
  const size=scene.extent*.26,axes=[[1,0,0],[0,1,0],[0,0,1]],colours=['#e65151','#64c56c','#5292ee'];
  function line(a,b,axis,angle){if(!a||!b)return;c.beginPath();c.moveTo(...a);c.lineTo(...b);c.stroke();if(gizmoState.editing)gizmoSegments.push({a,b,axis,angle});}
@@ -55,5 +55,5 @@ canvas.onpointermove=e=>{
  transformCargo();draw();window.chrome.webview.postMessage({gizmo:{position:gizmoState.position,rotation:gizmoState.rotation,scale:gizmoState.scale,phase:"update"}});
 };
 canvas.onpointerup=e=>{if(gizmoDrag){window.chrome.webview.postMessage({gizmo:{position:gizmoState.position,rotation:gizmoState.rotation,scale:gizmoState.scale,phase:"end"}});gizmoDrag=null;return;}orbitUp(e);drawGizmo();};canvas.onpointercancel=e=>{if(gizmoDrag)window.chrome.webview.postMessage({gizmo:{position:gizmoState.position,rotation:gizmoState.rotation,scale:gizmoState.scale,phase:"end"}});gizmoDrag=null;orbitCancel(e);};
-const normalDraw=draw;draw=function(picking=false){normalDraw(picking);if(!picking)drawGizmo();};
+const normalDraw=draw;draw=function(picking=false){normalDraw(picking);if(!picking){drawLampSprites();drawGizmo();}};
 window.addEventListener?.('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||e.altKey||!['KeyZ','KeyY'].includes(e.code))return;e.preventDefault();window.chrome.webview.postMessage({history:e.code==='KeyY'||e.shiftKey?'redo':'undo'});});

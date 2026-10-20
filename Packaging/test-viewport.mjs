@@ -7,11 +7,12 @@ const html = fs.readFileSync(new URL('../Aurora.Editor/Assets/viewport.html', im
 const script = html.match(/<script>([\s\S]*?)<\/script>/)[1].replace('/*AURORA_GIZMO*/',fs.readFileSync(new URL('../Aurora.Editor/Assets/gizmo.js',import.meta.url),'utf8')).replace('/*AURORA_PREVIEWS*/',fs.readFileSync(new URL('../Aurora.Editor/Assets/previews.js',import.meta.url),'utf8'));
 const images = [], deleted = [], messages = [], reads = [],drawCalls=[];
 const uniforms = new Map();
-let created = 0, pickId = 1, viewportSize;const previewFrames=[],clearColours=[],eventHandlers=new Map();
+let created = 0, pickId = 1, viewportSize;const previewFrames=[],clearColours=[],eventHandlers=new Map(),cameraFrames=[];let frameTime=0,spriteCount=0;
 class Texture {}
 class ImageStub { constructor() { images.push(this); } }
 const gpu = new Proxy({
   LINES:2,TRIANGLES:3,drawElements:(mode,count)=>drawCalls.push({mode,count}),
+  drawArrays:()=>spriteCount++,
   getShaderParameter: () => true, getProgramParameter: () => true,
   createTexture: () => { created++; return new Texture(); },
   getUniformLocation: (_, name) => name,
@@ -29,7 +30,7 @@ const overlayContext=new Proxy({}, {get:(_,key)=>key==='createRadialGradient'?()
 const overlay={style:{},getContext:()=>overlayContext};
 const document = { getElementById: () => canvas,createElement:()=>overlay,body:{appendChild(){}} };
 const api = new Function('document', 'window', 'ResizeObserver', 'Image', 'WebGLTexture','requestAnimationFrame',
-  script + '\nreturn {load,texture,requestPreview,wireframe,lighting,startPreviewCamera,stopPreviewCamera,previewCameraPose,gizmo,gizmoRotate,gizmoProject,camera:()=>({yaw,pitch,distance,focal}),tool:()=>gizmoState,segments:()=>gizmoSegments,selected:()=>selected,cargoNodes:()=>nodes.filter(n=>n.Cargo),bounds:()=>({center:scene.center,extent:scene.extent})};')(document, window, class { observe() {} }, ImageStub, Texture,cb=>cb());
+  script + '\nreturn {load,texture,requestPreview,wireframe,lighting,lampTexture,startPreviewCamera,stopPreviewCamera,previewCameraPose,gizmo,gizmoRotate,gizmoProject,camera:()=>({yaw,pitch,distance,focal}),tool:()=>gizmoState,segments:()=>gizmoSegments,selected:()=>selected,cargoNodes:()=>nodes.filter(n=>n.Cargo),bounds:()=>({center:scene.center,extent:scene.extent})};')(document, window, class { observe() {} }, ImageStub, Texture,cb=>{if(cb.name==='cameraFrameTick')cameraFrames.push(cb);else cb(0);});
 assert.match(overlay.style.cssText,/background\s*:\s*transparent(?:;|$)/,'pivot overlay must override the shared canvas background so loaded NMF stays visible');
 const scene = () => ({ Materials: ['body'], Nodes: [{
   Positions: [0,0,0, 1,0,0, 0,1,0], Normals: [0,0,1, 0,0,1, 0,0,1],
@@ -119,14 +120,16 @@ console.log('PASS wireframe edges, toggle restoration and solid export previews'
 const originalCamera=api.camera(),originalBounds=api.bounds(),oldDown=canvas.onpointerdown;
 api.startPreviewCamera({width:256,height:256,fov:20,yaw:-45,pitch:30});const initialPose=api.previewCameraPose();
 const key=k=>eventHandlers.get('keydown')({key:k,ctrlKey:false,altKey:false,metaKey:false,preventDefault(){}});
-key('w');key('q');key('z');let pose=api.previewCameraPose();assert.notEqual(pose.Y,initialPose.Y);assert.equal(pose.Roll,-1);
+const frames=count=>{for(let i=0;i<count;i++){frameTime+=1000/60;const next=cameraFrames.splice(0);next.forEach(cb=>cb(frameTime));}};
+key('w');key('q');key('z');frames(30);for(const k of ['w','q','z'])eventHandlers.get('keyup')({key:k});frames(100);let pose=api.previewCameraPose();assert.notEqual(pose.Y,initialPose.Y);assert.ok(pose.Roll<0);
 for(let i=0;i<150;i++)canvas.onwheel({deltaY:1,preventDefault(){}});assert.equal(api.previewCameraPose().Fov,120);
 for(let i=0;i<150;i++)canvas.onwheel({deltaY:-1,preventDefault(){}});assert.equal(api.previewCameraPose().Fov,5);
 canvas.onpointerdown({clientX:10,clientY:10,pointerId:8});canvas.onpointermove({clientX:30,clientY:15});canvas.onpointerup({});assert.notEqual(api.previewCameraPose().Yaw,initialPose.Yaw);
 key('r');assert.deepEqual(api.previewCameraPose(),initialPose,'reset restores the standard camera');
-key('d');pose=api.previewCameraPose();assert.ok(Object.values(pose).every(v=>Math.abs(v*10-Math.round(v*10))<1e-8),'stored camera settings have at most one decimal');
+key('d');frames(30);eventHandlers.get('keyup')({key:'d'});frames(100);pose=api.previewCameraPose();assert.ok(Object.values(pose).every(v=>Math.abs(v*10-Math.round(v*10))<1e-8),'stored camera settings have at most one decimal');
 api.stopPreviewCamera();assert.deepEqual(api.camera(),originalCamera);assert.deepEqual(api.bounds(),originalBounds);assert.equal(canvas.onpointerdown,oldDown,'camera editor restores original picking/gizmo handlers');
 await api.requestPreview('saved-camera',{width:256,height:256,fov:20,yaw:0,pitch:0,pose:{...pose,Fov:120}});assert.ok(Math.abs(previewFrames.at(-1).focal-1/Math.tan(Math.PI/3))<1e-8);
-api.lighting({night:true,lights:[{position:[0,0,0],direction:[0,0,1],rear:false},{position:[0,0,-1],direction:[0,0,-1],rear:true}]});assert.equal(uniforms.get('night'),1);assert.equal(uniforms.get('lightCount'),2);
-await api.requestPreview('night-shot',{width:256,height:128,fov:20,yaw:0,pitch:0});assert.equal(uniforms.get('night'),1,'shot restores night mode');api.lighting({night:false,lights:[]});assert.equal(uniforms.get('night'),0);
-console.log('PASS interactive camera movement, roll, reset, integer FOV limits, stored pose capture, handler restoration and night lamp uniforms');
+api.lampTexture('forward','data:image/png;base64,GAME');images.at(-1).onload();api.lighting({night:true,lights:[{position:[0,0,0],direction:[0,0,1],rear:false}]});assert.ok(spriteCount>0,'native artwork uses a GPU sprite pass');const beforeShot=spriteCount;await api.requestPreview('night-shot',{width:256,height:128,fov:20,yaw:0,pitch:0});assert.equal(spriteCount,beforeShot+1,'transparent shot excludes lamps, then restores editor lamps');api.lighting({night:false,lights:[]});const off=spriteCount;api.wireframe(false);assert.equal(spriteCount,off,'day mode excludes lamp sprites');
+console.log('PASS smooth held-key camera, roll/reset/FOV limits, saved poses, handler restoration and native lamp sprite pass');
+await api.requestPreview('editor-main-hq',{width:1024,height:1024,fov:20,yaw:-45,pitch:30});assert.deepEqual(previewFrames.at(-1).size,[0,0,1024,1024]);await api.requestPreview('editor-side-hq',{width:1024,height:512,fov:20,yaw:-90,pitch:0});assert.deepEqual(previewFrames.at(-1).size,[0,0,1024,512]);assert.deepEqual(api.camera(),originalCamera,'high-quality inspection restores viewport camera');
+console.log('PASS high-resolution camera inspection retains native-size export behavior');
