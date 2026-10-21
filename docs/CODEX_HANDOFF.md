@@ -4,6 +4,8 @@ Checkpoint recorded: 2026-10-19. Canonical repository: `Av1ra/Aurora`, branch `m
 
 ## Read this first
 
+Latest research extension: [22 further transport requirements](EDITOR_TRANSPORT_ADDITIONAL_22.md), distinguishing confirmed source limitations from untested risks/research. Owner approved the previous seven additions as important. Notable new findings: missing cabins catalog root, missing cabin subtype identity, OBJ/MTL data loss paths, mesh rename script references, LOD topology assumptions and skin export. The earlier bbox risk is narrowed: normal pivot baking already triggers bounds rebuilding. No runtime changes.
+
 Latest owner priority: [complete transport authoring requirements](EDITOR_TRANSPORT_AUTHORING_REQUIREMENTS.md). Recent convenience brainstorming, PBR extensions and the in-game sandbox are parked. Animation authoring/playback is a later stage by explicit owner clarification. Current analysis focuses on native transport configuration, linked parts and export, with optional donors. The older 98-item checklist includes deferred work and is not the immediate scope in full.
 
 Owner scope correction: current analysis concerns **transport only**. Start with [the deeper transport audit](EDITOR_TRANSPORT_DEEP_AUDIT_2026-10-21.md) and [98 evidence-linked criteria](EDITOR_TRANSPORT_CHECKLIST_2026-10-21.md). Buildings/maps/scenarios in the older broad report are outside the present task. These are research findings and implementation criteria, not newly delivered features.
