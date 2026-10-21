@@ -13,7 +13,7 @@ sealed partial class EditorWindow
  void ResetVehicle(string? script)
  {
   if(!workspaceTransition)ResetWorkspace();originObjectId=VehicleCatalog.ObjectIdentity(script);
-  transportPoint=null;cargoFrame="RESOURCE_VISUALIZATION";cargoBone=null;
+  cabinAssemblyMenu.IsChecked=false;transportPoint=null;cargoFrame="RESOURCE_VISUALIZATION";cargoBone=null;
   NewHistoryDocument();
   previewWorkspace.Visibility=Visibility.Collapsed;mainPng=sidePng=null;
   activeSmoke=-1;activeCargo=-1;cargoModel=null;cargoMtl=cargoModelPath=null;showCargo=false;cargoFill=1;previewSettings=new();

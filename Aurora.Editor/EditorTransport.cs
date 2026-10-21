@@ -11,6 +11,8 @@ sealed record TransportPoint(string Key,int Occurrence,int Start,int Rotation=-1
 sealed partial class EditorWindow
 {
  TransportPoint? transportPoint;
+ bool CabinFrameRequested=>VehicleParts.HasCabinAssembly(vehicleConfiguration)&&(cabinAssemblyMenu.IsChecked||showCargo||gizmoVisible&&(activeCargo>=0||transportPoint?.Key.StartsWith("CRANE_",StringComparison.Ordinal)==true));
+ bool AlternateFrameRequested=>JointFrameRequested||CabinFrameRequested;
  bool JointLights=>vehicleConfiguration!=null&&VehicleScript.Fields(vehicleConfiguration).Any(f=>f.Key=="JOINT");
  readonly Dictionary<string,(DateTime Stamp,NativeModel Model)> frameModels=new(StringComparer.OrdinalIgnoreCase);
  readonly List<string> partWarnings=[];
@@ -21,7 +23,7 @@ sealed partial class EditorWindow
  readonly List<(string Prefix,Dictionary<string,MaterialSettings> Maps)> partMaterials=[];
  void AppendAssemblyParts(List<string> materials,List<object> entries,string? script=null,string? folder=null,IReadOnlyDictionary<string,MaterialSettings>? shared=null,bool independent=false)
  {
-  var rootSlots=materials.ToArray();partWarnings.Clear();partMaterials.Clear();script??=vehicleConfiguration;folder??=Path.GetDirectoryName(lods.Keys.First())!;shared??=settings;if(!independent&&JointFrameRequested||script==null)return;VehiclePart[] parts;try{parts=VehicleParts.Read(script);}catch(Exception ex){partWarnings.Add(ex.Message);return;}
+  var rootSlots=materials.ToArray();partWarnings.Clear();partMaterials.Clear();script??=vehicleConfiguration;folder??=Path.GetDirectoryName(lods.Keys.First())!;shared??=settings;if(!independent&&JointFrameRequested||script==null)return;VehiclePart[] parts;try{parts=VehicleParts.Read(script,!independent&&CabinFrameRequested);}catch(Exception ex){partWarnings.Add(ex.Message);return;}
   foreach(var part in parts)try{
    string path=VehicleAssets.Resolve(part.Model,folder,MediaFolder());var model=AssetModel(path);
    string prefix="__part_"+Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(path+"|"+part.Material)))[..12]+"__";int first=materials.Count;materials.AddRange(model.Materials.Select(m=>prefix+m));Dictionary<string,MaterialSettings> maps;

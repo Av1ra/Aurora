@@ -74,6 +74,7 @@ static class UiLanguage
 ["Цвет блика"]="Specular colour",
 ["Проверьте импорт OBJ"]="Check OBJ import",
 ["Просмотр сборки"]="Assembly preview",
+["Рабочие части кабины"]="Cabin working parts",
 ["Сборка и механизмы"]="Assembly and mechanisms",
 ["Связи и состав"]="Relations and trainset",
 ["Разместить в окне модели"]="Place in viewport",

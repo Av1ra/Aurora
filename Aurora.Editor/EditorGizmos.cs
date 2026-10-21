@@ -56,7 +56,7 @@ sealed partial class EditorWindow
   gizmoUpdating=true;foreach(var box in gizmoCoordinates){box.Minimum=activeCargo>=0&&gizmoMode=="scale"?0:-1e7;box.Maximum=activeCargo>=0&&gizmoMode=="scale"?1e6:1e7;}cargoUniformButton.IsChecked=cargoUniform;cargoAxisButton.IsChecked=!cargoUniform;cargoEndChoice.SelectedIndex=cargoEndpoint;var v=GizmoValue();gizmoCoordinates[0].Value=v.X;gizmoCoordinates[1].Value=v.Y;gizmoCoordinates[2].Value=v.Z;gizmoUpdating=false;
   if(!ready)return;await RefreshLighting();var p=GizmoPosition();var r=GizmoRotation();await view.ExecuteScriptAsync("gizmo("+JsonSerializer.Serialize(new{visible=gizmoVisible,editing=gizmoEditing,mode=gizmoMode,position=new[]{p.X,p.Y,p.Z},rotation=new[]{r.X,r.Y,r.Z},scale=activeCargo>=0?new[]{CargoScale().X,CargoScale().Y,CargoScale().Z}:new[]{1f,1f,1f},cargo=activeCargo,uniformScale=cargoUniform})+")");
  }
- async Task StartPivot(){transportPoint=null;activeSmoke=-1;activeCargo=-1;activeLamp=-1;gizmoVisible=true;gizmoEditing=false;gizmoMode="move";await Display();}
+ async Task StartPivot(){cabinAssemblyMenu.IsChecked=false;showCargo=false;transportPoint=null;activeSmoke=-1;activeCargo=-1;activeLamp=-1;gizmoVisible=true;gizmoEditing=false;gizmoMode="move";await Display();}
  void ReceiveGizmo(JsonElement element)
  {
   if(busy||!gizmoVisible||!element.TryGetProperty("position",out var p)||!element.TryGetProperty("rotation",out var r)||p.GetArrayLength()!=3||r.GetArrayLength()!=3)return;
