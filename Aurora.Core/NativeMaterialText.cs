@@ -16,6 +16,11 @@ public static class NativeMaterialText
  }
  public static string[] Names(string text){var names=Headers(Normalize(text)).Select(m=>m.Groups[1].Value.Trim()).ToArray();if(names.Length==0)throw new InvalidDataException("Invalid native material names");return names;}
  public static string Append(string text,string materials){int end=VehicleScript.ActiveLength(text);return text[..end]+"\n"+materials[..VehicleScript.ActiveLength(materials)]+text[end..];}
+ public static string Duplicate(string text,string source,string name)
+ {
+  text=Normalize(text);if(string.IsNullOrWhiteSpace(name)||name.IndexOfAny(['\r','\n','$'])>=0||Names(text).Contains(name))throw new InvalidDataException("Invalid new material name");
+  var range=Block(text,source);string block=text[range.Start..range.End];var header=Headers(block).Single().Groups[1];block=block[..header.Index]+name+block[(header.Index+header.Length)..];return Append(text,block);
+ }
  public static string AlignNames(string text,IReadOnlyList<string> names)
  {
   text=Normalize(text);var headers=Headers(text);var original=headers.Select(h=>h.Groups[1].Value.Trim()).ToArray();if(names.All(original.Contains))return text;if(original.Length!=names.Count||names.Distinct().Count()!=names.Count)throw new InvalidDataException("Material slot count differs from model");for(int i=0;i<original.Length;i++)if(names.Contains(original[i])&&names[i]!=original[i])throw new InvalidDataException("Ambiguous native material slot correspondence");for(int i=headers.Length-1;i>=0;i--){var group=headers[i].Groups[1];text=text[..group.Index]+names[i]+text[(group.Index+group.Length)..];}return text;

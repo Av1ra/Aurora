@@ -14,7 +14,7 @@ static class VariantExport
    for(int i=0;i<variants.Count;i++){
     var variant=variants[i];string folder=Path.Combine(work,i.ToString());Directory.CreateDirectory(folder);string nativeName=i==0?"material.mtl":"material_"+i+".mtl";
     string native=Path.Combine(folder,nativeName);string text=File.ReadAllText(variant.NativePath);
-    text=Regex.Replace(text,@"(?m)^\s*\$TEXTURE(?:_MTL)?\s+(\d+)\s+([^\r\n]+)",m=>"$TEXTURE_MTL "+m.Groups[1].Value+" "+MaterialFiles.Resolve(variant.NativePath,m.Groups[2].Value));File.WriteAllText(native,text);
+    text=VehicleAssets.MapMaterial(text,(r,local)=>MaterialFiles.ResolveNative(variant.NativePath,r,local));File.WriteAllText(native,text);
     await ModelExport.Export(lods,glass,variant.Settings,native,mask,maskMaterial,folder,image,script,useSourceScript:false,materialsOnly:skinTargets!=null,allowWorkspaceReferences:allowWorkspaceReferences);
     string output=Directory.GetDirectories(folder,"Aurora-Model-*").Single();var maps=Directory.GetFiles(output,"map-*").ToDictionary(p=>Path.GetFileName(p)!,p=>"v"+i+"-"+Path.GetFileName(p));
     foreach(string path in Directory.GetFiles(output)){

@@ -123,7 +123,7 @@ sealed partial class EditorWindow:Window
  async Task LoadTextures()
  {
   if(!ready||mtl==null||!File.Exists(mtl))return;processing=true;UpdateControls();
-  string text=File.ReadAllText(mtl);string? name=null;
+  string text=NativeMaterialText.Normalize(File.ReadAllText(mtl));text=text[..VehicleScript.ActiveLength(text)];string? name=null;
   foreach(var line in text.Split('\n'))
   {
    var material=Regex.Match(line,@"^\s*\$SUBMATERIAL\s+(.+?)\s*$");if(material.Success){name=material.Groups[1].Value;continue;}

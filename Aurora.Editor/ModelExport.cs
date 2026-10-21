@@ -82,9 +82,5 @@ static class ModelExport
   }
   catch{File.WriteAllText(Path.Combine(staging,"EXPORT-FAILED.txt"),"Export incomplete. Do not install this folder. Original files were not modified.");throw;}
  }
- static string AddMaterial(string text,string source,string name)
- {
-  var blocks=Regex.Matches(text,@"(?ms)^\s*\$SUBMATERIAL\s+([^\r\n]+)[\r\n]+.*?(?=^\s*\$SUBMATERIAL|\z)");
-  var block=blocks.Single(x=>x.Groups[1].Value.Trim()==source).Value;block=Regex.Replace(block,@"(?m)^\s*\$SUBMATERIAL\s+[^\r\n]+","$SUBMATERIAL "+name);block=block.Replace("$END","");int last=text.LastIndexOf("$END",StringComparison.Ordinal);if(last<0)throw new InvalidDataException("MTL $END missing");return text[..last]+text[(last+4)..]+"\n"+block+"\n$END\n";
- }
+ static string AddMaterial(string text,string source,string name)=>NativeMaterialText.Duplicate(text,source,name);
 }
