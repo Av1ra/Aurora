@@ -51,8 +51,11 @@ public sealed class VehicleCatalog
    string category=Path.GetRelativePath(media,path).Split(Path.DirectorySeparatorChar)[0];string objectId=(category.StartsWith("dlc",StringComparison.OrdinalIgnoreCase)||category.StartsWith("elc",StringComparison.OrdinalIgnoreCase)?category.ToUpperInvariant()+"_":"")+modelFolder;objects.Add(new(objectId,modelName.Length>0?modelName:modelFolder,type,path));
    var files=f.Where(x=>x.Key=="SOUND_PARAMS").Select(x=>x.Value).ToArray();if(files.Length>0){string name=Value(f,"NAME_STR").Trim('"');if(name.Length==0&&int.TryParse(Value(f,"NAME"),out int nameId))name=texts.GetValueOrDefault(nameId,"");if(name.Length==0)name=Path.GetFileName(Path.GetDirectoryName(path))!;string signature=id+"\n"+string.Join("\n",files);sounds.TryAdd(signature,new(ClassName(f,english)+" / "+name,id,files));}
   }
-  // Authoring a new type must not require an installed donor of that type.
-  foreach(string template in new[]{"$TYPE VEHICLETYPE_ROAD","$TYPE VEHICLETYPE_SHIP","$TYPE VEHICLETYPE_AIRPLANE","$TYPE VEHICLETYPE_HELICOPTER","$TYPE VEHICLETYPE_RAIL_LOCOMOTIVE\n$TRAINGROUP_LOCOMOTIVE","$TYPE VEHICLETYPE_RAIL_VAGON\n$TRAINGROUP_VAGON","$TYPE VEHICLETYPE_CABIN\n$CABIN_LIGHT","$TYPE VEHICLETYPE_CABIN\n$CABIN_HEAVY"}){var profile=DescribeClass(template+"\nend\n",english);classes.TryAdd(profile.Id,profile);}
+  // Installed examples win; all known roles remain available without a donor/DLC sample.
+  foreach(var profile in VehicleProfiles.All(english)){
+   classes.TryAdd(profile.Id,profile);classFields.TryAdd(profile.Id,new HashSet<string>(new[]{"TYPE"}.Concat(string.IsNullOrEmpty(profile.Transport)?[]:new[]{"RESOURCE_TRANSPORT_TYPE"}).Concat(profile.Flags)));
+   if(!string.IsNullOrEmpty(profile.Transport)){if(!values.TryGetValue("RESOURCE_TRANSPORT_TYPE",out var transports))values["RESOURCE_TRANSPORT_TYPE"]=transports=[];transports.Add(profile.Transport);}
+  }
   var entries=texts.Where(p=>p.Key is >=38998 and <=39044&&englishTexts.ContainsKey(p.Key)).Select(p=>new VehicleCountry(p.Key,p.Value,CountryCurrencies(p.Key))).ToArray();
   return new(){Texts=texts,ModelNames=modelNames,Objects=objects.OrderBy(o=>o.Name).ToArray(),Countries=entries,Classes=classes.Values.OrderBy(c=>c.Name).ToArray(),Sounds=sounds.Values.OrderBy(s=>s.Name).ToArray(),Values=values.ToDictionary(p=>p.Key,p=>p.Value.Order().ToArray()),ClassFields=classFields.ToDictionary(p=>p.Key,p=>p.Value.Order().ToArray())};
  }

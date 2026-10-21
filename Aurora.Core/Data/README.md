@@ -1,0 +1,5 @@
+TransportProfiles.json contains 88 transport configuration profiles in total, captured from installed native base game/DLC data and the existing minimal type profiles on 2026-10-21. It stores TYPE, RESOURCE_TRANSPORT_TYPE, role/group flags and their argument defaults only. It contains no models, textures, sounds or localized game text.
+
+Installed profiles take priority over this fallback. The embedded data allows authoring all known classes/roles when a particular donor or DLC example is absent; it does not grant DLC functionality, supply unavailable assets or establish in-game acceptance. The numbers are starting values from native examples, not a balance recommendation. Native unknown fields remain preserved separately.
+
+To refresh, inspect VehicleCatalog.Load against the installed corpus and export only these configuration fields; compare identities, role argument counts and the donor-free fixture tests before updating. Do not copy NAME, COUNTRY, prices, asset paths or whole game scripts into this schema.

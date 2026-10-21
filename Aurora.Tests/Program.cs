@@ -10,6 +10,8 @@ await VehicleChecks.Run(Check,Reject);
 await EditorRevisionChecks.Run(Check,Reject);
 ModelToolsChecks.Run(Check,Reject);
 VehicleWorkflowChecks.Run(Check,Reject);
+VehicleProfileChecks.Run(Check);
+await TransportAuthoringChecks.Run(Check);
 TransportCompletenessChecks.Run(Check,Reject,args.FirstOrDefault());
 VehicleAssetChecks.Run(Check,Reject,args.FirstOrDefault());
 TransportParameterChecks.Run(Check,Reject,args.FirstOrDefault());

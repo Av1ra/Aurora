@@ -1,0 +1,788 @@
+[
+  {
+    "Type": "VEHICLETYPE_AIRPLANE",
+    "Transport": "",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_AIRPLANE",
+    "Transport": "RESOURCE_TRANSPORT_GENERAL",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_AIRPLANE",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_CABIN",
+    "Transport": "RESOURCE_TRANSPORT_GENERAL",
+    "Flags": [
+      "CABIN_HEAVY"
+    ],
+    "Defaults": {
+      "CABIN_HEAVY": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_CABIN",
+    "Transport": "RESOURCE_TRANSPORT_GENERAL",
+    "Flags": [
+      "CABIN_LIGHT"
+    ],
+    "Defaults": {
+      "CABIN_LIGHT": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_CABIN",
+    "Transport": "RESOURCE_TRANSPORT_GRAVEL",
+    "Flags": [
+      "CABIN_HEAVY"
+    ],
+    "Defaults": {
+      "CABIN_HEAVY": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_CABIN",
+    "Transport": "RESOURCE_TRANSPORT_GRAVEL",
+    "Flags": [
+      "CABIN_LIGHT"
+    ],
+    "Defaults": {
+      "CABIN_LIGHT": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_CABIN",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [
+      "CABIN_HEAVY"
+    ],
+    "Defaults": {
+      "CABIN_HEAVY": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_CABIN",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [
+      "CABIN_LIGHT"
+    ],
+    "Defaults": {
+      "CABIN_LIGHT": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_CABIN",
+    "Transport": "RESOURCE_TRANSPORT_WASTE",
+    "Flags": [
+      "CABIN_HEAVY"
+    ],
+    "Defaults": {
+      "CABIN_HEAVY": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_CABIN",
+    "Transport": "RESOURCE_TRANSPORT_WASTE",
+    "Flags": [
+      "CABIN_LIGHT"
+    ],
+    "Defaults": {
+      "CABIN_LIGHT": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_CABIN",
+    "Transport": "",
+    "Flags": [
+      "CABIN_HEAVY"
+    ],
+    "Defaults": {
+      "CABIN_HEAVY": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_CABIN",
+    "Transport": "",
+    "Flags": [
+      "CABIN_LIGHT"
+    ],
+    "Defaults": {
+      "CABIN_LIGHT": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_HELICOPTER",
+    "Transport": "",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_HELICOPTER",
+    "Transport": "RESOURCE_TRANSPORT_GENERAL",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_HELICOPTER",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [
+      "TRAINGROUP_LOCOMOTIVE_STEAM",
+      "TRAINGROUP_MOTORVAGON"
+    ],
+    "Defaults": {
+      "TRAINGROUP_LOCOMOTIVE_STEAM": "",
+      "TRAINGROUP_MOTORVAGON": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [
+      "TRAINGROUP_METRO"
+    ],
+    "Defaults": {
+      "TRAINGROUP_METRO": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [
+      "TRAINGROUP_MOTORVAGON"
+    ],
+    "Defaults": {
+      "TRAINGROUP_MOTORVAGON": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [
+      "TRAINGROUP_TRAINSET"
+    ],
+    "Defaults": {
+      "TRAINGROUP_TRAINSET": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [
+      "TRAINGROUP_TRAM"
+    ],
+    "Defaults": {
+      "TRAINGROUP_TRAM": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+    "Transport": "",
+    "Flags": [
+      "SKILL_CONSTRUCTION_RAIL_CRANE2",
+      "TRAINGROUP_LOCOMOTIVE_STEAM",
+      "TRAINGROUP_TRACKBUILDER"
+    ],
+    "Defaults": {
+      "TRAINGROUP_TRACKBUILDER": "",
+      "SKILL_CONSTRUCTION_RAIL_CRANE2": "28 66 0.7",
+      "TRAINGROUP_LOCOMOTIVE_STEAM": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+    "Transport": "",
+    "Flags": [
+      "SKILL_CONSTRUCTION_RAIL_CRANE2",
+      "TRAINGROUP_TRACKBUILDER_STEAM"
+    ],
+    "Defaults": {
+      "TRAINGROUP_TRACKBUILDER_STEAM": "",
+      "SKILL_CONSTRUCTION_RAIL_CRANE2": "210 210 0.6"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+    "Transport": "",
+    "Flags": [
+      "SKILL_CONSTRUCTION_RAIL_CRANE",
+      "TRAINGROUP_TRACKBUILDER"
+    ],
+    "Defaults": {
+      "SKILL_CONSTRUCTION_RAIL_CRANE": "85 70",
+      "TRAINGROUP_TRACKBUILDER": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+    "Transport": "",
+    "Flags": [
+      "SKILL_CONSTRUCTION_RAIL_TRACK_LAYER",
+      "TRAINGROUP_TRACKBUILDER"
+    ],
+    "Defaults": {
+      "SKILL_CONSTRUCTION_RAIL_TRACK_LAYER": "175 30 5",
+      "TRAINGROUP_TRACKBUILDER": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+    "Transport": "",
+    "Flags": [
+      "SKILL_CONSTRUCTION_RAIL_TUNNEL_BORING",
+      "TRAINGROUP_TRACKBUILDER"
+    ],
+    "Defaults": {
+      "TRAINGROUP_TRACKBUILDER": "",
+      "SKILL_CONSTRUCTION_RAIL_TUNNEL_BORING": "260"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+    "Transport": "",
+    "Flags": [
+      "TRAINGROUP_LOCOMOTIVE"
+    ],
+    "Defaults": {
+      "TRAINGROUP_LOCOMOTIVE": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+    "Transport": "",
+    "Flags": [
+      "TRAINGROUP_LOCOMOTIVE_STEAM"
+    ],
+    "Defaults": {
+      "TRAINGROUP_LOCOMOTIVE_STEAM": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "RESOURCE_TRANSPORT_CEMENT",
+    "Flags": [
+      "TRAINGROUP_VAGON"
+    ],
+    "Defaults": {
+      "TRAINGROUP_VAGON": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "RESOURCE_TRANSPORT_COOLER",
+    "Flags": [
+      "TRAINGROUP_VAGON"
+    ],
+    "Defaults": {
+      "TRAINGROUP_VAGON": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "RESOURCE_TRANSPORT_COVERED",
+    "Flags": [
+      "TRAINGROUP_VAGON"
+    ],
+    "Defaults": {
+      "TRAINGROUP_VAGON": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "RESOURCE_TRANSPORT_GRAVEL",
+    "Flags": [
+      "TRAINGROUP_VAGON"
+    ],
+    "Defaults": {
+      "TRAINGROUP_VAGON": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "RESOURCE_TRANSPORT_LIVESTOCK",
+    "Flags": [
+      "TRAINGROUP_VAGON"
+    ],
+    "Defaults": {
+      "TRAINGROUP_VAGON": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "RESOURCE_TRANSPORT_OIL",
+    "Flags": [
+      "TRAINGROUP_VAGON"
+    ],
+    "Defaults": {
+      "TRAINGROUP_VAGON": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "RESOURCE_TRANSPORT_OPEN",
+    "Flags": [
+      "TRAINGROUP_VAGON"
+    ],
+    "Defaults": {
+      "TRAINGROUP_VAGON": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [
+      "TRAINGROUP_METRO"
+    ],
+    "Defaults": {
+      "TRAINGROUP_METRO": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [
+      "TRAINGROUP_TRAINSET"
+    ],
+    "Defaults": {
+      "TRAINGROUP_TRAINSET": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [
+      "TRAINGROUP_TRAM"
+    ],
+    "Defaults": {
+      "TRAINGROUP_TRAM": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [
+      "TRAINGROUP_VAGON"
+    ],
+    "Defaults": {
+      "TRAINGROUP_VAGON": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "RESOURCE_TRANSPORT_SEWAGE",
+    "Flags": [
+      "TRAINGROUP_VAGON"
+    ],
+    "Defaults": {
+      "TRAINGROUP_VAGON": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "RESOURCE_TRANSPORT_WASTE",
+    "Flags": [
+      "TRAINGROUP_VAGON"
+    ],
+    "Defaults": {
+      "TRAINGROUP_VAGON": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "RESOURCE_TRANSPORT_WATER",
+    "Flags": [
+      "TRAINGROUP_VAGON"
+    ],
+    "Defaults": {
+      "TRAINGROUP_VAGON": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "",
+    "Flags": [
+      "TRAINGROUP_LOCOMOTIVE"
+    ],
+    "Defaults": {
+      "TRAINGROUP_LOCOMOTIVE": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "",
+    "Flags": [
+      "TRAINGROUP_TRACKBUILDER"
+    ],
+    "Defaults": {
+      "TRAINGROUP_TRACKBUILDER": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_RAIL_VAGON",
+    "Transport": "",
+    "Flags": [
+      "TRAINGROUP_VAGON"
+    ],
+    "Defaults": {
+      "TRAINGROUP_VAGON": ""
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_CEMENT",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_CONCRETE",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_COOLER",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_COVERED",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_GENERAL",
+    "Flags": [
+      "SKILL_FORKLIFT"
+    ],
+    "Defaults": {
+      "SKILL_FORKLIFT": "1"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_GRAVEL",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_LIVESTOCK",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_OIL",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_OPEN",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_OPEN",
+    "Flags": [
+      "SKILL_WOODCARRING"
+    ],
+    "Defaults": {
+      "SKILL_WOODCARRING": "29"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [
+      "SKILL_AMBULANCE"
+    ],
+    "Defaults": {
+      "SKILL_AMBULANCE": "1"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [
+      "SKILL_PERSONAL"
+    ],
+    "Defaults": {
+      "SKILL_PERSONAL": "1"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [
+      "SKILL_POLICEBUS"
+    ],
+    "Defaults": {
+      "SKILL_POLICEBUS": "1"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [
+      "SKILL_POLICECAR"
+    ],
+    "Defaults": {
+      "SKILL_POLICECAR": "1"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_SEWAGE",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_WASTE",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_WASTE",
+    "Flags": [
+      "SKILL_WASTE_CONTAINER_BIG"
+    ],
+    "Defaults": {
+      "SKILL_WASTE_CONTAINER_BIG": "1"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_WASTE",
+    "Flags": [
+      "SKILL_WASTE_CONTAINER_SMALL"
+    ],
+    "Defaults": {
+      "SKILL_WASTE_CONTAINER_SMALL": "1"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "RESOURCE_TRANSPORT_WATER",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "",
+    "Flags": [
+      "SKILL_CONSTRUCTION_ASPHALT_LAYING"
+    ],
+    "Defaults": {
+      "SKILL_CONSTRUCTION_ASPHALT_LAYING": "45"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "",
+    "Flags": [
+      "SKILL_CONSTRUCTION_BULLDOZER"
+    ],
+    "Defaults": {
+      "SKILL_CONSTRUCTION_BULLDOZER": "58"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "",
+    "Flags": [
+      "SKILL_CONSTRUCTION_BULLDOZER",
+      "SKILL_CONSTRUCTION_GROUNDWORKS",
+      "SKILL_GRAVELMINING"
+    ],
+    "Defaults": {
+      "SKILL_GRAVELMINING": "21",
+      "SKILL_CONSTRUCTION_GROUNDWORKS": "15",
+      "SKILL_CONSTRUCTION_BULLDOZER": "12"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "",
+    "Flags": [
+      "SKILL_CONSTRUCTION_BULLDOZER",
+      "SKILL_GRAVELMINING"
+    ],
+    "Defaults": {
+      "SKILL_GRAVELMINING": "9",
+      "SKILL_CONSTRUCTION_BULLDOZER": "9"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "",
+    "Flags": [
+      "SKILL_CONSTRUCTION_CRANE"
+    ],
+    "Defaults": {
+      "SKILL_CONSTRUCTION_CRANE": "23"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "",
+    "Flags": [
+      "SKILL_CONSTRUCTION_GROUNDWORKS",
+      "SKILL_GRAVELMINING"
+    ],
+    "Defaults": {
+      "SKILL_GRAVELMINING": "37",
+      "SKILL_CONSTRUCTION_GROUNDWORKS": "37"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "",
+    "Flags": [
+      "SKILL_CONSTRUCTION_ROLLING"
+    ],
+    "Defaults": {
+      "SKILL_CONSTRUCTION_ROLLING": "18"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "",
+    "Flags": [
+      "SKILL_FIRETRUCK"
+    ],
+    "Defaults": {
+      "SKILL_FIRETRUCK": "9"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "",
+    "Flags": [
+      "SKILL_HARVESTING"
+    ],
+    "Defaults": {
+      "SKILL_HARVESTING": "24"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "",
+    "Flags": [
+      "SKILL_POLICECAR"
+    ],
+    "Defaults": {
+      "SKILL_POLICECAR": "1"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "",
+    "Flags": [
+      "SKILL_SEEDING"
+    ],
+    "Defaults": {
+      "SKILL_SEEDING": "28"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_ROAD",
+    "Transport": "",
+    "Flags": [
+      "SKILL_SNOWPLOW"
+    ],
+    "Defaults": {
+      "SKILL_SNOWPLOW": "21"
+    }
+  },
+  {
+    "Type": "VEHICLETYPE_SHIP",
+    "Transport": "",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_SHIP",
+    "Transport": "RESOURCE_TRANSPORT_COVERED",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_SHIP",
+    "Transport": "RESOURCE_TRANSPORT_GENERAL",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_SHIP",
+    "Transport": "RESOURCE_TRANSPORT_GRAVEL",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_SHIP",
+    "Transport": "RESOURCE_TRANSPORT_OIL",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_SHIP",
+    "Transport": "RESOURCE_TRANSPORT_OPEN",
+    "Flags": [],
+    "Defaults": {}
+  },
+  {
+    "Type": "VEHICLETYPE_SHIP",
+    "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+    "Flags": [],
+    "Defaults": {}
+  }
+]
