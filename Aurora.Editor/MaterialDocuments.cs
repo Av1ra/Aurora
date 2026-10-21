@@ -8,18 +8,9 @@ sealed record MaterialVariant(string Name,string NativePath,Dictionary<string,Ma
 static class MaterialDocuments
 {
  public static string? ResourceMaterial(string model){string folder=Path.GetDirectoryName(model)!;string stem=Path.GetFileNameWithoutExtension(model);string[] stems=[stem,Regex.Replace(stem,@"_vehicle$|_open$|\d+$","")];return stems.Select(n=>Path.Combine(folder,n+".mtl")).FirstOrDefault(File.Exists);}
- public static Dictionary<string,MaterialSettings> ResourceMaps(NativeModel model,string material){var native=Native(material);if(model.Materials.All(native.ContainsKey))return model.Materials.ToDictionary(n=>n,n=>native[n]);if(native.Count!=model.Materials.Length)throw new InvalidDataException("Cargo material count differs from model");var values=native.Values.ToArray();return model.Materials.Select((n,i)=>(n,i)).ToDictionary(p=>p.n,p=>values[p.i]);}
- public static string PairedName(string native)
- {
-  string stem=Path.GetFileNameWithoutExtension(native);
-  var match=Regex.Match(stem,@"^material(_\d+)?$",RegexOptions.IgnoreCase);
-  return match.Success?"material_pbr"+match.Groups[1].Value+".mtl":stem+"_pbr.mtl";
- }
- public static string? FindPbr(string native)
- {
-  string folder=Path.GetDirectoryName(Path.GetFullPath(native))!;
-  return new[]{Path.Combine(folder,PairedName(native)),Path.ChangeExtension(native,"pbr"),Path.Combine(folder,Path.GetFileNameWithoutExtension(native)+".pbr.mtl"),Path.Combine(folder,"pbr.mtl")}.FirstOrDefault(File.Exists);
- }
+ public static Dictionary<string,MaterialSettings> ResourceMaps(NativeModel model,string material){var native=Native(material);if(MaterialFiles.Companion(material) is string companion)native=Pbr(companion,native);if(model.Materials.All(native.ContainsKey))return model.Materials.ToDictionary(n=>n,n=>native[n]);if(native.Count!=model.Materials.Length)throw new InvalidDataException("Cargo material count differs from model");var values=native.Values.ToArray();return model.Materials.Select((n,i)=>(n,i)).ToDictionary(p=>p.n,p=>values[p.i]);}
+ public static string PairedName(string native)=>MaterialFiles.PairedName(native);
+ public static string? FindPbr(string native)=>MaterialFiles.Companion(native);
  public static Dictionary<string,MaterialSettings> Native(string file,NativeModel? model=null)
  {
   string text=File.ReadAllText(file);if(model!=null)text=NativeMaterialText.AlignNames(text,model.Materials);var result=new Dictionary<string,MaterialSettings>();string? name=null;

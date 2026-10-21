@@ -21,29 +21,13 @@ static class ModelExport
    var sourceMtl=NativeMaterialText.AlignNames(File.ReadAllText(mtl),lods.First().Value.Materials);var materialNames=Regex.Matches(sourceMtl,@"(?m)^\s*\$SUBMATERIAL\s+([^\r\n]+)").Select(x=>x.Groups[1].Value.Trim()).ToHashSet();
    var slots=lods.First().Value.Materials;lods=lods.ToDictionary(p=>p.Key,p=>p.Value.Materials.All(materialNames.Contains)?p.Value:p.Value.Materials.Length==slots.Length?ModelEditing.MaterialSlots(p.Value,slots):throw new InvalidDataException("LOD material slot count differs from primary"));
    foreach(var model in lods.Values)foreach(var material in model.Materials)if(!materialNames.Contains(material))throw new InvalidDataException("В MTL нет материала: "+material);
-   string outputMtl=sourceMtl;var copyNames=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
-   foreach(var pair in settings)foreach(var texture in new[]{(0,pair.Value.Base),(1,pair.Value.Specular),(2,pair.Value.Normal)})if(texture.Item2!=null)outputMtl=NativeMaterialText.SetTexture(outputMtl,pair.Key,texture.Item1,texture.Item2);
-   foreach(var pair in settings){var s=pair.Value;foreach(var value in new[]{("DIFFUSECOLOR",s.NativeDiffuse),("AMBIENTCOLOR",s.NativeAmbient),("SPECULARCOLOR",s.NativeSpecular),("SPECULARPOWER",s.NativePower is float power?new[]{power}:null)})if(value.Item2!=null)outputMtl=NativeMaterialText.SetProperty(outputMtl,pair.Key,value.Item1,value.Item2);}
+   var copyNames=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
    string CopyMap(string path)
    {
     path=Path.GetFullPath(path);if(copyNames.TryGetValue(path,out string? prior))return prior;
     string name="map-"+copyNames.Count+Path.GetExtension(path).ToLowerInvariant();File.Copy(path,Path.Combine(staging,name),false);copyNames[path]=name;return name;
    }
-   // Retain every original MTL texture reference, including paint/light channels.
-   outputMtl=Regex.Replace(outputMtl,@"(?m)^\s*\$TEXTURE(?:_MTL)?\s+(\d+)\s+([^\r\n]+)",match=>{string file=MaterialFiles.Resolve(mtl,match.Groups[2].Value);return "$TEXTURE_MTL "+match.Groups[1].Value+" "+CopyMap(file);});
-   var rules=new StringBuilder();string F(float value)=>value.ToString("0.###",CultureInfo.InvariantCulture);
-   foreach(var pair in settings)
-   {
-    if(!materialNames.Contains(pair.Key))throw new InvalidDataException("Unknown material setting");var s=pair.Value;
-    if(pair.Key.IndexOfAny(['{','}','\r','\n'])>=0)throw new InvalidDataException("Invalid material identifier");
-    rules.AppendLine("{material "+pair.Key).AppendLine(" {workflow = "+(s.Extra?.GetValueOrDefault("workflow")??"painter")+"}").AppendLine(" {preserve_native_diffuse = "+s.Native.ToString().ToLowerInvariant()+"}");
-    if(s.Extra!=null)foreach(var extra in s.Extra.Where(p=>p.Key!="workflow")){
-     if(!Regex.IsMatch(extra.Key,@"^\w+$")||extra.Value.IndexOfAny(['{','}','\r','\n'])>=0)throw new InvalidDataException("Invalid PBR property");
-     string value=extra.Key is "glass" or "glass_mask"&&extra.Value!="none"&&!extra.Value.StartsWith("aurora:",StringComparison.Ordinal)?CopyMap(extra.Value):extra.Value;rules.AppendLine(" {"+extra.Key+" = "+value+"}");
-    }
-    foreach(var item in new[]{("base_color",s.PbrBase??s.Base),("normal",s.PbrNormal??s.Normal),("orm",s.Orm),("metallic",s.MetalMap),("roughness",s.RoughMap),("ao",s.AoMap),("emissive",s.Emissive)})if(item.Item2!=null)rules.AppendLine(" {"+item.Item1+" = "+CopyMap(item.Item2)+"}");
-    rules.AppendLine(" {metallic_factor = "+F(s.Metallic)+"}").AppendLine(" {roughness_factor = "+F(s.Roughness)+"}").AppendLine(" {ao_factor = "+F(s.Ao)+"}").AppendLine(" {normal_strength = "+F(s.NormalStrength)+"}").AppendLine(" {normal_y = "+(s.NormalY<0?"directx":"opengl")+"}").AppendLine(" {emissive_strength = "+F(s.EmissiveStrength)+"}").AppendLine(" {ibl_strength = "+F(s.Ibl)+"}").AppendLine("}");
-   }
+   var(outputMtl,rules)=MaterialExport.Render(sourceMtl,mtl,settings,CopyMap);
    if(mask!=null&&!materialsOnly)
    {
     if(maskMaterial==null)throw new InvalidDataException("Mask material missing");

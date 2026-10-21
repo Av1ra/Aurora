@@ -12,6 +12,7 @@ sealed partial class EditorWindow
  void StoreVariant(){if(activeVariant>=0&&activeVariant<variants.Count&&mtl!=null)variants[activeVariant]=variants[activeVariant] with{NativePath=mtl,Settings=new(settings)};}
  void RegisterMaterialCommands()
  {
+  editorCommands["Материалы частей"]=(ConfigurePartMaterials,()=>HasModel);
   editorCommands["Создать материал…"]=(CreateMaterial,()=>HasModel);
   editorCommands["Создать вариант…"]=(CreateVariant,()=>HasModel&&mtl!=null);
   editorCommands["Назначить материал объекту"]=(AssignMaterial,()=>HasModel&&objects.SelectedItem!=null&&materialChoice.SelectedItem!=null);

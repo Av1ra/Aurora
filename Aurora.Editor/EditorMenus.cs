@@ -53,7 +53,7 @@ sealed partial class EditorWindow
   modifiers.Items.Add(MenuCommand("Фары и фонари"));
   modifiers.Items.Add(MenuCommand("Починить ориентацию…"));toolbar.Children.Add(ToolbarMenu("Модификаторы",modifiers));
   var materialPanel=new StackPanel{Spacing=10,MinWidth=260,MaxWidth=360};materialPanel.Children.Add(variantChoice);materialPanel.Children.Add(materialChoice);detachedMenuContents.Add(materialPanel);
-  foreach(string key in new[]{"Настроить PBR","Создать материал…","Создать вариант…","Назначить материал объекту"}){
+  foreach(string key in new[]{"Настроить PBR","Материалы частей","Создать материал…","Создать вариант…","Назначить материал объекту"}){
    var command=editorCommands[key];var button=new Button{Content=UiLanguage.Text(key=="Настроить PBR"?"Настройки материала":key),HorizontalAlignment=HorizontalAlignment.Stretch};commandButtons.Add((button,command.CanExecute));button.Click+=async(_,_)=>{CloseEditorFlyouts();await RunCommand(command.Action);};materialPanel.Children.Add(button);
   }
   toolbar.Children.Add(ToolbarMenu("Материалы",new Flyout{Content=materialPanel}));

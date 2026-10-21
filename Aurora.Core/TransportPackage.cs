@@ -22,7 +22,7 @@ public static class TransportPackage
     if(entry.Key==rootName){foreach(string file in Directory.GetFiles(source)){string name=Path.GetFileName(file);if(name.Equals("EXPORT-FAILED.txt",StringComparison.OrdinalIgnoreCase))throw new InvalidDataException("Incomplete root export");File.Copy(file,Path.Combine(target,name));}}
     else{
      File.Copy(Path.Combine(source,"main.nmf"),Path.Combine(target,"main.nmf"));
-     foreach(string material in Directory.GetFiles(source,"material*.mtl")){string text=VehicleAssets.MapMaterial(File.ReadAllText(material),r=>Copy(MaterialFiles.Resolve(material,r)));File.WriteAllText(Path.Combine(target,Path.GetFileName(material)),text,new UTF8Encoding(false));}
+     foreach(string material in Directory.GetFiles(source,"material*.mtl").Where(p=>Regex.IsMatch(Path.GetFileName(p),@"^material(?:_\d+)?\.mtl$",RegexOptions.IgnoreCase))){string text=VehicleAssets.MapMaterial(File.ReadAllText(material),r=>Copy(MaterialFiles.Resolve(material,r)));File.WriteAllText(Path.Combine(target,Path.GetFileName(material)),text,new UTF8Encoding(false));if(MaterialFiles.Companion(material) is string pbr){string rules=MaterialFiles.MapPbr(File.ReadAllText(pbr),r=>Copy(MaterialFiles.Resolve(pbr,r)));File.WriteAllText(Path.Combine(target,MaterialFiles.PairedName(material)),rules,new UTF8Encoding(false));}}
      if(!File.Exists(Path.Combine(target,"material.mtl")))throw new InvalidDataException("Vehicle material.mtl missing: "+entry.Key);
      foreach(string optional in new[]{"bbox.bin","preview.dds","preview_side.dds"})if(File.Exists(Path.Combine(source,optional)))File.Copy(Path.Combine(source,optional),Path.Combine(target,optional));
     }

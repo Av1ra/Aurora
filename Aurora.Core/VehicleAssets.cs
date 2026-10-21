@@ -21,8 +21,8 @@ public static class VehicleAssets
  {
   var packed=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
   string Asset(string path,bool material){path=Path.GetFullPath(path);if(packed.TryGetValue(path,out string? existing))return existing;byte[] bytes=File.ReadAllBytes(path);
-   if(material)bytes=Encoding.UTF8.GetBytes(MapMaterial(File.ReadAllText(path),r=>Path.GetFileName(Asset(MaterialFiles.Resolve(path,r),false))));
-   string name="assets/"+Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant()+Path.GetExtension(path).ToLowerInvariant();packed[path]=name;entries.TryAdd(name,bytes);return name;
+   byte[]? companion=null;if(material){bytes=Encoding.UTF8.GetBytes(MapMaterial(File.ReadAllText(path),r=>Path.GetFileName(Asset(MaterialFiles.Resolve(path,r),false))));if(MaterialFiles.Companion(path) is string pbr)companion=Encoding.UTF8.GetBytes(MaterialFiles.MapPbr(File.ReadAllText(pbr),r=>Path.GetFileName(Asset(MaterialFiles.Resolve(pbr,r),false))));}
+   string name="assets/"+Convert.ToHexString(SHA256.HashData(companion==null?bytes:[..bytes,0,..companion])).ToLowerInvariant()+Path.GetExtension(path).ToLowerInvariant();packed[path]=name;void Put(string key,byte[] value){if(!entries.TryAdd(key,value)&&!entries[key].SequenceEqual(value))throw new InvalidDataException("Project material dependency collision");}Put(name,bytes);if(companion!=null)Put("assets/"+MaterialFiles.PairedName(name),companion);return name;
   }
   return Map(script,r=>{string path=Resolve(r,sourceFolder,media);return Asset(path,Path.GetExtension(path).Equals(".mtl",StringComparison.OrdinalIgnoreCase));});
  }
@@ -30,8 +30,8 @@ public static class VehicleAssets
  {
   var copied=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
   string Copy(string reference,string folder){string path=Resolve(reference,folder,media);if(copied.TryGetValue(path,out string? prior))return prior;byte[] bytes=File.ReadAllBytes(path);string name="asset-"+Convert.ToHexString(SHA256.HashData(bytes))[..20].ToLowerInvariant()+Path.GetExtension(path).ToLowerInvariant();copied[path]=name;
-   if(Path.GetExtension(path).Equals(".mtl",StringComparison.OrdinalIgnoreCase)){string text=MapMaterial(File.ReadAllText(path),r=>Copy(MaterialFiles.Resolve(path,r),Path.GetDirectoryName(path)!));bytes=Encoding.UTF8.GetBytes(text);}
-   name="asset-"+Convert.ToHexString(SHA256.HashData(bytes))[..20].ToLowerInvariant()+Path.GetExtension(path).ToLowerInvariant();copied[path]=name;string target=Path.Combine(output,name);if(File.Exists(target)){if(!File.ReadAllBytes(target).SequenceEqual(bytes))throw new InvalidDataException("Vehicle dependency collision: "+name);}else File.WriteAllBytes(target,bytes);return name;
+   byte[]? companion=null;if(Path.GetExtension(path).Equals(".mtl",StringComparison.OrdinalIgnoreCase)){string text=MapMaterial(File.ReadAllText(path),r=>Copy(MaterialFiles.Resolve(path,r),Path.GetDirectoryName(path)!));bytes=Encoding.UTF8.GetBytes(text);if(MaterialFiles.Companion(path) is string pbr)companion=Encoding.UTF8.GetBytes(MaterialFiles.MapPbr(File.ReadAllText(pbr),r=>Copy(MaterialFiles.Resolve(pbr,r),Path.GetDirectoryName(pbr)!)));}
+   name="asset-"+Convert.ToHexString(SHA256.HashData(companion==null?bytes:[..bytes,0,..companion]))[..20].ToLowerInvariant()+Path.GetExtension(path).ToLowerInvariant();copied[path]=name;void Put(string file,byte[] value){string target=Path.Combine(output,file);if(File.Exists(target)){if(!File.ReadAllBytes(target).SequenceEqual(value))throw new InvalidDataException("Vehicle dependency collision: "+file);}else File.WriteAllBytes(target,value);}Put(name,bytes);if(companion!=null)Put(MaterialFiles.PairedName(name),companion);return name;
   }
   return Map(script,r=>Copy(r,sourceFolder));
  }

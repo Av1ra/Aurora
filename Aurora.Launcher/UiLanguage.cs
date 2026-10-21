@@ -10,6 +10,19 @@ static class UiLanguage
     public static bool Reload(){try{string value=File.ReadAllText(path).Trim();if(value is not ("en" or "ru"))return false;bool english=value=="en";if(english==English)return false;English=english;return true;}catch{return false;}}
     static readonly Dictionary<string,string> words=new()
     {
+["Материалы частей"]="Part materials",
+["Сначала настройте связанные части"]="Configure linked parts first",
+["У частей используется общий материал машины"]="Parts use the shared vehicle material",
+["Настройки материала части"]="Part material settings",
+["Стандартная текстура"]="Native texture",
+["Стандартные нормали"]="Native normals",
+["Стандартный блик"]="Native specular",
+["PBR: цвет"]="PBR: colour",
+["PBR: нормали"]="PBR: normals",
+["PBR: металличность"]="PBR: metallic",
+["PBR: шероховатость"]="PBR: roughness",
+["PBR: свечение"]="PBR: emissive",
+["Инвертировать Y нормалей"]="Invert normal Y",
 ["Комплект транспорта"]="Transport package",
 ["Включить связанные объекты"]="Include related objects",
 ["Имя папки машины"]="Vehicle folder name",
