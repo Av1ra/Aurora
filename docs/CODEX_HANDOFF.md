@@ -4,6 +4,8 @@ Checkpoint recorded: 2026-10-19. Canonical repository: `Av1ra/Aurora`, branch `m
 
 ## Read this first
 
+Latest installation: owner explicitly requested installation after the report. Production build-fc5ed9b9f2c54f248260172c7c010439 (4af678b3cd0f8c1830f650434823660884d7a68f) is now installed in game/Aurora; all 572 installed file hashes match. Installer completed successfully with apps closed. No launch/game acceptance was performed. This supersedes older not-installed statuses below.
+
 Owner requested winding down and a report. Work is stopped after final delivery; do not resume autonomous development without a new request. Read [the final report](TRANSPORT_SESSION_REPORT_2026-10-22.md). Delivered production build-fc5ed9b9f2c54f248260172c7c010439 is clean source 4af678b3cd0f8c1830f650434823660884d7a68f, Version0.2, verified native/package/signature/brand tests. Downloads/Aurora-0.2 contains the final ZIP and Setup; installed files were not replaced. Documentation commits after that source do not change the package.
 
 Latest continuation (2026-10-22): native material audit/repair, UTF-8 NMF names, active MTL terminators and exact TEXTURE/TEXTURE_MTL roots. See the newest section of TRANSPORT_IMPLEMENTATION_03.md and reproducible Packaging/MaterialAudit. Corpus: 1,073 objects, 3,854 variants; 124 partial objects remain explicitly unconfigured, 18 objects have genuinely missing textures, nine MAIN use unsupported streams. Tests and WinUI module pass. Current source is not installed; owner's two installed Launchers remain open. Continue transport work and package verification autonomously.
