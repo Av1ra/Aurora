@@ -74,6 +74,7 @@ static class UiLanguage
 ["Цвет блика"]="Specular colour",
 ["Проверьте импорт OBJ"]="Check OBJ import",
 ["Просмотр сборки"]="Assembly preview",
+["В MTL нет материала"]="Material missing from MTL",
 ["Объект механизма не найден"]="Mechanism mesh not found",
 ["Сбросить угол"]="Reset angle",
 ["Проверка оси"]="Axis check",

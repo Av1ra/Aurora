@@ -67,6 +67,7 @@ static class ModelExport
     string configuration=VehicleSoundFiles.Export(vehicleConfiguration??File.ReadAllText(script),sourceFolder,staging);
     _=VehicleParts.Read(configuration);
     configuration=VehicleAssets.Export(configuration,sourceFolder,staging);
+    configuration=VehicleSharedMaterials.Export(configuration,staging,NativeMaterialText.Names(outputMtl));
     configuration=VehicleScript.RewriteTokens(configuration,t=>Regex.IsMatch(t.Key,@"^LOD\d*$")&&t.Index==0?ModelFileNames.Resolve(modelNames,t.Value,sourceFolder):null);
     File.WriteAllText(Path.Combine(staging,"script.ini"),configuration,new UTF8Encoding(false));
    }

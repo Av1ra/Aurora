@@ -3,6 +3,15 @@ using System.Globalization;
 namespace Aurora.Core;
 public static class ModelEditing
 {
+ public static NativeModel NativeMaterialSlots(NativeModel model,string[] names)
+ {
+  var data=NativeMaterialData(model.Data,names);return ReferenceEquals(data,model.Data)?model:new(data);
+ }
+ public static byte[] NativeMaterialData(byte[] data,string[] names)
+ {
+  var materials=NativeModel.ReadMaterialNames(data);if(names.Distinct().Count()!=names.Length)throw new InvalidDataException("Duplicate native material names");if(materials.All(names.Contains)||names.All(materials.Contains))return data;
+  if(names.Length<materials.Length){var model=new NativeModel(data);if(model.Nodes.SelectMany(n=>n.Groups).All(g=>names.Contains(materials[g.Material])))return data;throw new InvalidDataException("Native material slots missing");}var mapped=materials.Select((name,i)=>names.Contains(name)?name:names[i]).ToArray();if(mapped.Distinct().Count()!=mapped.Length)throw new InvalidDataException("Ambiguous native material slot correspondence");var result=data.ToArray();for(int i=0;i<materials.Length;i++)Name(result,20+i*64,mapped[i]);return result;
+ }
  public static NativeModel MaterialSlots(NativeModel model,string[] names){if(names.Length!=model.Materials.Length||names.Distinct().Count()!=names.Length)throw new InvalidDataException("Invalid material slot mapping");var data=model.Data.ToArray();for(int i=0;i<names.Length;i++)Name(data,20+i*64,names[i]);return new(data);}
  public static NativeModel TransformUv(NativeModel model,IReadOnlyDictionary<string,System.Numerics.Vector4> transforms)
  {

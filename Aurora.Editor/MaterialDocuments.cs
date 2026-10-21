@@ -22,12 +22,12 @@ static class MaterialDocuments
   }
   if(result.Count==0)throw new InvalidDataException("No native submaterials in MTL");foreach(string material in result.Keys.ToArray())result[material]=result[material] with{NativeDiffuse=NativeMaterialText.Property(text,material,"DIFFUSECOLOR"),NativeAmbient=NativeMaterialText.Property(text,material,"AMBIENTCOLOR"),NativeSpecular=NativeMaterialText.Property(text,material,"SPECULARCOLOR"),NativePower=NativeMaterialText.Property(text,material,"SPECULARPOWER")?.FirstOrDefault()};return result;
  }
- public static Dictionary<string,MaterialSettings> Pbr(string file,IReadOnlyDictionary<string,MaterialSettings> current)
+ public static Dictionary<string,MaterialSettings> Pbr(string file,IReadOnlyDictionary<string,MaterialSettings> current,IReadOnlyDictionary<string,string>? aliases=null)
  {
   var result=current.ToDictionary(p=>p.Key,p=>p.Value);string? material=null;var defaults=new List<(string,string)>();var blocks=new Dictionary<string,List<(string,string)>>();
   foreach(string raw in File.ReadLines(file)){
    string line=raw.Trim();if(line.Length==0||line.StartsWith('#')||line.StartsWith("//",StringComparison.Ordinal))continue;
-   var header=Regex.Match(line,@"^\{material\s+(.+?)\s*$");if(header.Success){material=header.Groups[1].Value.Trim('"');if(!blocks.TryAdd(material,[]))throw new InvalidDataException("Duplicate PBR material: "+material);continue;}
+   var header=Regex.Match(line,@"^\{material\s+(.+?)\s*$");if(header.Success){material=header.Groups[1].Value.Trim('"');if(aliases?.TryGetValue(material,out string? mapped)==true)material=mapped;if(!blocks.TryAdd(material,[]))throw new InvalidDataException("Duplicate PBR material: "+material);continue;}
    if(line=="}"){material=null;continue;}
    var pair=Regex.Match(line,@"^\{\s*([\w]+)\s*=\s*(.*?)\s*\}$");if(!pair.Success)throw new InvalidDataException("Unsupported PBR line: "+line);
    (material==null?defaults:blocks[material]).Add((pair.Groups[1].Value,pair.Groups[2].Value.Trim('"')));

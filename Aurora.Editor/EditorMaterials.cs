@@ -26,8 +26,9 @@ sealed partial class EditorWindow
  {
   string folder=Path.GetDirectoryName(model)!;var files=Directory.GetFiles(folder,"*.mtl").Where(f=>Regex.IsMatch(Path.GetFileName(f),@"^material(?:_\d+)?\.mtl$",RegexOptions.IgnoreCase)).OrderBy(f=>Path.GetFileName(f).Length).ThenBy(f=>f).ToList();
   string direct=Path.ChangeExtension(model,"mtl");if(files.Count==0&&File.Exists(direct))files.Add(direct);
+  var aliases=new Dictionary<string,string>();if(files.Count>0){var names=NativeMaterialText.Names(File.ReadAllText(files[0]));var aligned=lods.ToDictionary(p=>p.Key,p=>ModelEditing.NativeMaterialSlots(p.Value,names));foreach(var p in aligned){for(int i=0;i<p.Value.Materials.Length;i++){string old=lods[p.Key].Materials[i],current=p.Value.Materials[i];if(old!=current){if(aliases.TryGetValue(old,out string? prior)&&prior!=current)throw new InvalidDataException("Ambiguous material alias: "+old);aliases[old]=current;}}}foreach(var p in aligned)lods[p.Key]=p.Value;}
   variants.Clear();variantChoice.Items.Clear();activeVariant=-1;
-  foreach(string file in files){var maps=MaterialDocuments.Native(file,lods.Values.First());string? paired=MaterialDocuments.FindPbr(file);if(paired!=null)maps=MaterialDocuments.Pbr(paired,maps);await NormalizeMaterialMaps(maps);variants.Add(new(Path.GetFileNameWithoutExtension(file),file,maps));variantChoice.Items.Add(variants.Count.ToString());}
+  foreach(string file in files){var maps=MaterialDocuments.Native(file,lods.Values.First());string? paired=MaterialDocuments.FindPbr(file);if(paired!=null)maps=MaterialDocuments.Pbr(paired,maps,aliases);await NormalizeMaterialMaps(maps);variants.Add(new(Path.GetFileNameWithoutExtension(file),file,maps));variantChoice.Items.Add(variants.Count.ToString());}
   if(variants.Count>0)ActivateVariant(0);else CreateDefaultVariant(lods.Values.SelectMany(m=>m.Materials).Distinct());
  }
  void CreateDefaultVariant(IEnumerable<string> names)
@@ -43,9 +44,9 @@ sealed partial class EditorWindow
  }
  async Task LoadNativeMaterial()
  {
-  string? path=await Pick(".mtl");if(path==null)return;var maps=MaterialDocuments.Native(path,lods.Values.First());await NormalizeMaterialMaps(maps);
-  foreach(string name in lods.Values.SelectMany(m=>m.Materials).Distinct())if(!maps.ContainsKey(name))throw new InvalidDataException("В MTL нет материала: "+name);
-  mtl=path;settings.Clear();foreach(var p in maps)settings[p.Key]=p.Value;StoreVariant();dirty=true;SetStatus("Материал загружен");
+  string? path=await Pick(".mtl");if(path==null)return;var slots=NativeMaterialText.Names(File.ReadAllText(path));var aligned=lods.ToDictionary(p=>p.Key,p=>ModelEditing.NativeMaterialSlots(p.Value,slots));var maps=MaterialDocuments.Native(path,aligned.Values.First());await NormalizeMaterialMaps(maps);
+  foreach(string name in aligned.Values.SelectMany(m=>m.Materials).Distinct())if(!maps.ContainsKey(name))throw new InvalidDataException("В MTL нет материала: "+name);
+  foreach(var p in aligned)lods[p.Key]=p.Value;mtl=path;settings.Clear();foreach(var p in maps)settings[p.Key]=p.Value;StoreVariant();dirty=true;SetStatus("Материал загружен");
  }
  async Task LoadPbrMaterial()
  {
@@ -59,7 +60,7 @@ sealed partial class EditorWindow
  async Task CreateMaterial()
  {
   string? name=await MaterialName("Создать материал…");if(name==null)return;
-  if(lods.Values.Any(m=>m.Materials.Contains(name)))throw new InvalidDataException("Material already exists");
+  if(lods.Values.Any(m=>m.Materials.Contains(name))||variants.Any(v=>v.Settings.ContainsKey(name)))throw new InvalidDataException("Material already exists");
   var changed=lods.ToDictionary(p=>p.Key,p=>ModelEditing.AddMaterial(p.Value,name));
   string blank=SessionFile("neutral.dds");if(!File.Exists(blank))File.WriteAllBytes(blank,DdsImage.Encode(new(1,1,[180,180,180,255])));
   string normal=SessionFile("neutral-normal.dds");if(!File.Exists(normal))File.WriteAllBytes(normal,DdsImage.Encode(new(1,1,[128,128,255,255])));
@@ -86,7 +87,7 @@ sealed partial class EditorWindow
   if(objects.SelectedItem is not string name||materialChoice.SelectedItem is not string material)return;
   var selected=CurrentModel().Nodes.Single(n=>n.Name==name);int group=-1;bool all=true;
   if(selected.Groups.Length>1){var panel=new StackPanel{Spacing=10};var regions=new ComboBox{ItemsSource=new[]{UiLanguage.Text("Весь объект")}.Concat(selected.Groups.Select((g,i)=>(i+1)+": "+CurrentModel().Materials[g.Material])).ToArray(),SelectedIndex=0,HorizontalAlignment=HorizontalAlignment.Stretch};SettingRow(panel,"Часть объекта",regions);var scope=new ComboBox{ItemsSource=new[]{UiLanguage.Text("Текущая модель"),UiLanguage.Text("Все LOD")},SelectedIndex=0,HorizontalAlignment=HorizontalAlignment.Stretch};SettingRow(panel,"Применить к",scope);if(await ShowDialog(VehicleDialog("Назначить материал объекту",panel))!=ContentDialogResult.Primary)return;group=regions.SelectedIndex-1;all=scope.SelectedIndex==1;}
-  var result=lods.ToDictionary(p=>p.Key,p=>{if((!all&&p.Key!=selectedLod)||!p.Value.Nodes.Any(n=>n.Name==name))return p.Value;if(group<0)return ModelEditing.Assign(p.Value,name,material);var node=p.Value.Nodes.Single(n=>n.Name==name);if(p.Key==selectedLod)return ModelEditing.AssignGroup(p.Value,name,group,material);string source=CurrentModel().Materials[selected.Groups[group].Material];var matches=node.Groups.Select((g,i)=>(g,i)).Where(g=>p.Value.Materials[g.g.Material]==source).ToArray();if(matches.Length!=1)throw new InvalidDataException(UiLanguage.Text("Неоднозначное соответствие материалов между LOD"));return ModelEditing.AssignGroup(p.Value,name,matches[0].i,material);});
+  var result=lods.ToDictionary(p=>p.Key,p=>{if((!all&&p.Key!=selectedLod)||!p.Value.Nodes.Any(n=>n.Name==name))return p.Value;var target=p.Value.Materials.Contains(material)?p.Value:ModelEditing.AddMaterial(p.Value,material);if(group<0)return ModelEditing.Assign(target,name,material);var node=target.Nodes.Single(n=>n.Name==name);if(p.Key==selectedLod)return ModelEditing.AssignGroup(target,name,group,material);string source=CurrentModel().Materials[selected.Groups[group].Material];var matches=node.Groups.Select((g,i)=>(g,i)).Where(g=>p.Value.Materials[g.g.Material]==source).ToArray();if(matches.Length!=1)throw new InvalidDataException(UiLanguage.Text("Неоднозначное соответствие материалов между LOD"));return ModelEditing.AssignGroup(target,name,matches[0].i,material);});
   foreach(var p in result)lods[p.Key]=p.Value;dirty=true;await Display();
  }
  async Task SaveNmfMaterials()

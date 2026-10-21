@@ -5,6 +5,10 @@ public record DrawGroup(int First,int Count,int Material);
 public sealed record MeshNode(string Name,int Offset,int End,int VertexCount,int IndexCount,int IndexOffset,int AttributeOffset,int FaceOffset,int GroupOffset,int Stride,int FaceStride,DrawGroup[] Groups,float[] Positions,float[] Normals,float[] Uv,ushort[] Indices);
 public sealed class NativeModel
 {
+ public static string[] ReadMaterialNames(byte[] data)
+ {
+  Require(data.Length>=20&&data.Length<=128*1024*1024,"NMF size invalid");Require(data.AsSpan(0,8).SequenceEqual("B3DMH\0"u8.ToArray().Concat("10"u8.ToArray()).ToArray())||data.AsSpan(0,8).SequenceEqual("fromObj\0"u8),"Unsupported NMF signature");int count=BitConverter.ToInt32(data,8);Require(count is >0 and <=512&&BitConverter.ToInt32(data,16)==data.Length&&20+count*64<=data.Length,"Invalid NMF material table");return Enumerable.Range(0,count).Select(i=>{int at=20+i*64,end=Array.IndexOf(data,(byte)0,at,64);Require(end>=at,"Unterminated NMF material");return Encoding.ASCII.GetString(data,at,end-at);}).ToArray();
+ }
  public byte[] Data{get;}
  public string[] Materials{get;}
  public List<MeshNode> Nodes{get;}=[];
