@@ -10,6 +10,18 @@ static class UiLanguage
     public static bool Reload(){try{string value=File.ReadAllText(path).Trim();if(value is not ("en" or "ru"))return false;bool english=value=="en";if(english==English)return false;English=english;return true;}catch{return false;}}
     static readonly Dictionary<string,string> words=new()
     {
+["Объекты комплекта"]="Package objects",
+["Имя объекта"]="Object name",
+["Открыть объект"]="Open object",
+["Добавить OBJ/NMF…"]="Add OBJ/NMF\u2026",
+["Добавить проект…"]="Add project\u2026",
+["Добавляйте отдельный объект, а не весь комплект"]="Add a single object instead of a whole package",
+["Имя объекта должно быть уникальным и содержать латинские буквы, цифры, _ или -"]="Use a unique object name with ASCII letters, numbers, _ or -",
+["Объект используется в составе"]="The object is referenced by another vehicle",
+["Настройте скрипт объекта"]="Configure the object script",
+["Не более 64 объектов транспорта"]="Maximum 64 vehicle objects",
+["Экспортируйте связанные объекты проекта комплектом транспорта"]="Export referenced project objects as a transport package",
+["Слишком большой комплект для формата проекта"]="Workspace exceeds archive limits",
 ["Материалы частей"]="Part materials",
 ["Сначала настройте связанные части"]="Configure linked parts first",
 ["У частей используется общий материал машины"]="Parts use the shared vehicle material",

@@ -1,0 +1,32 @@
+using Aurora.Core;
+using System.Numerics;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+namespace Aurora.Editor;
+sealed record PreviewCamera(float Yaw,float Pitch,float Roll,float Fov,float X,float Y,float Z,float Distance);
+sealed record PreviewSettings(bool Automatic=true,float Fov=20,float Yaw=-45,float Pitch=30,float SideYaw=-90,float SidePitch=0,PreviewCamera? MainCamera=null,PreviewCamera? SideCamera=null);
+sealed record ProjectModel(string Name,string Asset,string[] Glass);
+sealed record ProjectVariant(string Name,string Native,Dictionary<string,MaterialSettings> Settings);
+sealed record ProjectCargo(string Model,string Material,bool Show,float Fill,string Frame="RESOURCE_VISUALIZATION",string? Bone=null);
+sealed record EditorProject(int Schema,ProjectModel[] Models,ProjectVariant[] Variants,int ActiveVariant,int SelectedLod,string? Mask,string? MaskMaterial,string? Vehicle,float[] Transform,float[]? Pivot=null,float[]? PivotRotation=null,float[][]? LampRotations=null,ProjectCargo? Cargo=null,PreviewSettings? Previews=null,string? NativeObject=null);
+sealed record ProjectData(EditorProject Document,Dictionary<string,NativeModel> Models,Dictionary<string,HashSet<string>> Glass,MaterialVariant[] Variants,string? Vehicle,string? Mask,NativeModel? Cargo,string? CargoPath,string? CargoMaterial)
+{
+ public static Dictionary<string,byte[]> RebaseObject(Dictionary<string,byte[]> entries,string previous,string next){var result=new Dictionary<string,byte[]>(entries,StringComparer.OrdinalIgnoreCase);var json=System.Text.Json.Nodes.JsonNode.Parse(entries["document.json"])??throw new InvalidDataException("Invalid vehicle document");if(json["Vehicle"]?.GetValue<string>() is string script)json["Vehicle"]=TransportPackage.MapObjectReferences(script,r=>r=="aurora:"+previous?"aurora:"+next:null);result["document.json"]=JsonSerializer.SerializeToUtf8Bytes(json);return result;}
+ public static ProjectData Load(IReadOnlyDictionary<string,byte[]> entries,Func<string,string> path)
+ {
+  if(!entries.TryGetValue("document.json",out var document))throw new InvalidDataException("Project document missing");var p=JsonSerializer.Deserialize<EditorProject>(document)??throw new InvalidDataException("Invalid project document");
+  if(p.Schema!=1||p.Models==null||p.Models.Length is <1 or >64||p.Variants==null||p.Variants.Length is <1 or >64||p.ActiveVariant<0||p.ActiveVariant>=p.Variants.Length||p.SelectedLod<0||p.SelectedLod>=p.Models.Length||p.Transform==null||p.Transform.Length!=16||p.Transform.Any(x=>!float.IsFinite(x)))throw new InvalidDataException("Invalid project state");
+  if(p.LampRotations!=null&&p.LampRotations.Length!=4)throw new InvalidDataException("Invalid project lamp slots");
+  foreach(var value in new[]{p.Pivot,p.PivotRotation}.Concat(p.LampRotations??[]))if(value!=null&&(value.Length!=3||value.Any(n=>!float.IsFinite(n))))throw new InvalidDataException("Invalid project pivot");
+  if(p.Models.Any(m=>m==null||m.Glass==null||Path.GetFileName(m.Name)!=m.Name||!AuroraProjectArchive.IsPortablePath(m.Name)||!m.Name.EndsWith(".nmf",StringComparison.OrdinalIgnoreCase))||p.Models.Select(m=>m.Name).Distinct(StringComparer.OrdinalIgnoreCase).Count()!=p.Models.Length)throw new InvalidDataException("Invalid project model name");
+  if(p.Cargo!=null&&(p.Cargo.Frame is not ("RESOURCE_VISUALIZATION" or "RESOURCE_VISUALIZATION_JOINT" or "RESOURCE_VISUALIZATION_BONE" or "CARGOVEHICLE_VISUALIZATION" or "CARGOVEHICLE_VISUALIZATION_JOINT")||!float.IsFinite(p.Cargo.Fill)||p.Cargo.Fill<0||p.Cargo.Fill>1))throw new InvalidDataException("Invalid cargo frame");
+  if(p.Previews is {} preview){if(!float.IsFinite(preview.Fov)||preview.Fov<5||preview.Fov>120||new[]{preview.Yaw,preview.Pitch,preview.SideYaw,preview.SidePitch}.Any(v=>!float.IsFinite(v)))throw new InvalidDataException("Invalid preview settings");foreach(var c in new[]{preview.MainCamera,preview.SideCamera})if(c!=null&&(new[]{c.Yaw,c.Pitch,c.Roll,c.Fov,c.X,c.Y,c.Z,c.Distance}.Any(v=>!float.IsFinite(v))||c.Fov<5||c.Fov>120||c.Distance<=0))throw new InvalidDataException("Invalid preview camera");}
+  foreach(var v in p.Variants){if(v==null||v.Settings==null)throw new InvalidDataException("Invalid project materials");foreach(var s in v.Settings.Values){if(s==null||new[]{s.Metallic,s.Roughness,s.Ao,s.NormalStrength,s.EmissiveStrength,s.Ibl,s.HeightStrength,s.NativePower??0}.Any(n=>!float.IsFinite(n))||new[]{s.NativeDiffuse,s.NativeAmbient,s.NativeSpecular}.Any(c=>c!=null&&(c.Length!=4||c.Any(n=>!float.IsFinite(n)))))throw new InvalidDataException("Invalid material settings");}}
+  var files=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);foreach(var entry in entries){if(!AuroraProjectArchive.IsPortablePath(entry.Key))throw new InvalidDataException("Invalid project asset path");string output=path(entry.Key);Directory.CreateDirectory(Path.GetDirectoryName(output)!);File.WriteAllBytes(output,entry.Value);files.Add(entry.Key,output);}
+  string? Asset(string? name)=>name==null?null:files.TryGetValue(name,out var file)?file:throw new InvalidDataException("Project asset missing: "+name);
+  var models=new Dictionary<string,NativeModel>();var glass=new Dictionary<string,HashSet<string>>();foreach(var m in p.Models){var model=new NativeModel(File.ReadAllBytes(Asset(m.Asset)!));string key=path("loaded/"+m.Name);Directory.CreateDirectory(Path.GetDirectoryName(key)!);File.WriteAllBytes(key,model.Data);models[key]=model;glass[key]=m.Glass.ToHashSet();if(m.Glass.Any(n=>!model.Nodes.Any(node=>node.Name==n)))throw new InvalidDataException("Unknown glass object in project");}
+  var variants=p.Variants.Select(v=>new MaterialVariant(v.Name,Asset(v.Native)!,v.Settings.ToDictionary(x=>x.Key,x=>MaterialDocuments.Remap(x.Value,Asset)))).ToArray();
+  string? script=p.Vehicle==null?null:VehicleAssets.Map(VehicleSoundFiles.Map(p.Vehicle,r=>files.TryGetValue(r,out var sound)?sound:r),r=>files.TryGetValue(r,out var file)?file:r);if(script!=null)script=VehicleScript.RewriteTokens(script,t=>Regex.IsMatch(t.Key,@"^LOD\d*$")&&t.Index==0&&files.TryGetValue(t.Value,out var lod)?lod:null);
+  return new(p,models,glass,variants,script,Asset(p.Mask),p.Cargo==null?null:new NativeModel(File.ReadAllBytes(Asset(p.Cargo.Model)!)),p.Cargo==null?null:Asset(p.Cargo.Model),p.Cargo==null?null:Asset(p.Cargo.Material));
+ }
+}

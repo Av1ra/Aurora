@@ -5,7 +5,7 @@ static class NativeTransportExportChecks
 {
  public static async Task Run(Action<bool,string> check,string? native)
  {
-  if(native==null||VehicleAssets.Media(native) is not string media)return;var catalog=VehicleCatalog.Load(media,true);string root=Path.Combine(Path.GetTempPath(),"Aurora-native-exports-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(root);
+  if(native==null||VehicleAssets.Media(native) is not string media)return;var catalog=VehicleCatalog.Load(media,true);check(catalog.Objects.All(o=>VehicleCatalog.ObjectIdentity(o.Script)==o.Id),"native object identity remains stable across single-project and workspace serialization");string root=Path.Combine(Path.GetTempPath(),"Aurora-native-exports-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(root);
   try{
    foreach(string type in new[]{"VEHICLETYPE_ROAD","VEHICLETYPE_RAIL_LOCOMOTIVE","VEHICLETYPE_RAIL_VAGON","VEHICLETYPE_SHIP","VEHICLETYPE_AIRPLANE","VEHICLETYPE_HELICOPTER","VEHICLETYPE_CABIN"}){
     bool tested=false;var failures=new List<string>();foreach(var vehicle in catalog.Objects.Where(o=>o.Type==type)){

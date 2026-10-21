@@ -7,9 +7,10 @@ using System.Diagnostics;
 namespace Aurora.Editor;
 static class ModelExport
 {
- public static async Task Export(Dictionary<string,NativeModel> lods,Dictionary<string,HashSet<string>> glass,Dictionary<string,MaterialSettings> settings,string mtl,string? mask,string? maskMaterial,string destination,Func<string,Task<RgbaImage>> image,string? vehicleConfiguration=null,bool useSourceScript=true,bool materialsOnly=false)
+ public static async Task Export(Dictionary<string,NativeModel> lods,Dictionary<string,HashSet<string>> glass,Dictionary<string,MaterialSettings> settings,string mtl,string? mask,string? maskMaterial,string destination,Func<string,Task<RgbaImage>> image,string? vehicleConfiguration=null,bool useSourceScript=true,bool materialsOnly=false,bool allowWorkspaceReferences=false)
  {
   if(materialsOnly&&(mask!=null||glass.Values.Any(g=>g.Count>0)))throw new InvalidDataException("A skin cannot change geometry or glass objects");
+  if(!materialsOnly&&!allowWorkspaceReferences&&vehicleConfiguration!=null&&TransportPackage.References(vehicleConfiguration).Any(r=>r.StartsWith("aurora:",StringComparison.Ordinal)))throw new InvalidDataException("Export referenced project objects as a transport package");
   var modelNames=ModelFileNames.Allocate(lods.Keys);
   if(mask!=null&&glass.Values.Any(x=>x.Count>0))throw new InvalidDataException("Выберите один способ стекла: объекты или альфа-маска.");
   if(glass.Values.Any(x=>x.Count>0)&&glass.Values.Any(x=>x.Count==0))throw new InvalidDataException("Отметьте стеклянные объекты во всех LOD.");

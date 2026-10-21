@@ -4,6 +4,8 @@ Checkpoint recorded: 2026-10-19. Canonical repository: `Av1ra/Aurora`, branch `m
 
 ## Read this first
 
+Latest source continuation: [multi-object portable transport projects](TRANSPORT_IMPLEMENTATION_03.md), including strict project decoding, self-authored trainsets, native/PBR materials of linked parts and seven-class export checks. Production receipts remain separate; do not claim this source is installed. Continue the owner's autonomous task without stopping at intermediate builds.
+
 Owner explicitly corrected premature stopping: **continue implementation and self-verification autonomously until the requested result; do not end after a package or ask the owner to test.** Economy means targeted work, not stopping. [Batch 02 working state and remaining tasks](TRANSPORT_IMPLEMENTATION_02.md) is the current continuation point. UI input was detected in the launched standalone Editor; no further GUI input was sent after refresh. Core/file/export work continues. Current new source is not yet a newly installed package.
 
 Current implementation: [transport batch 01](TRANSPORT_IMPLEMENTATION_01.md). Owner rejected launcher proposals; do not implement LAUNCHER_REQUIRED_TOOLS.md. Transport code now fixes terminators, cabin discovery/identity, repeated cargo restrictions, multi-argument skill fields, native country/availability preservation and mesh mechanism references. Scope is still incomplete; animations deferred, economical related batches requested. Tests include 1,073 native script roundtrips and bundled WinUI compilation; installed receipt is separate in STATUS.md.

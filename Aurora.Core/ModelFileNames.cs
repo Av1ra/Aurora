@@ -1,6 +1,7 @@
 namespace Aurora.Core;
 public static class ModelFileNames
 {
+ public static string ResolveForProject(IReadOnlyDictionary<string,string> names,string reference,string sourceFolder,Func<string,string> packRaw){try{return Resolve(names,reference,sourceFolder);}catch(InvalidDataException){return packRaw(VehicleAssets.Resolve(reference,sourceFolder));}}
  public static Dictionary<string,string> Allocate(IEnumerable<string> paths)
  {
   var result=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);var used=new HashSet<string>(StringComparer.OrdinalIgnoreCase);int index=0;

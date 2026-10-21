@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace Aurora.Editor;
 static class VariantExport
 {
- public static async Task<string> Write(IReadOnlyList<MaterialVariant> variants,Dictionary<string,NativeModel> lods,Dictionary<string,HashSet<string>> glass,string? mask,string? maskMaterial,string? script,string destination,Func<string,Task<RgbaImage>> image,Func<MaterialVariant,Task<(byte[] Main,byte[] Side)>>? previews=null,IReadOnlyList<string>? skinTargets=null)
+ public static async Task<string> Write(IReadOnlyList<MaterialVariant> variants,Dictionary<string,NativeModel> lods,Dictionary<string,HashSet<string>> glass,string? mask,string? maskMaterial,string? script,string destination,Func<string,Task<RgbaImage>> image,Func<MaterialVariant,Task<(byte[] Main,byte[] Side)>>? previews=null,IReadOnlyList<string>? skinTargets=null,bool allowWorkspaceReferences=false)
  {
   if(variants.Count==0)throw new InvalidDataException("Выберите материал.");
   if(skinTargets!=null&&(skinTargets.Count!=variants.Count||skinTargets.Any(t=>!Regex.IsMatch(t,@"^(?:[0-9]+/)?[A-Za-z0-9_.-]+$"))))throw new InvalidDataException("Invalid vehicle skin target");
@@ -15,7 +15,7 @@ static class VariantExport
     var variant=variants[i];string folder=Path.Combine(work,i.ToString());Directory.CreateDirectory(folder);string nativeName=i==0?"material.mtl":"material_"+i+".mtl";
     string native=Path.Combine(folder,nativeName);string text=File.ReadAllText(variant.NativePath);
     text=Regex.Replace(text,@"(?m)^\s*\$TEXTURE(?:_MTL)?\s+(\d+)\s+([^\r\n]+)",m=>"$TEXTURE_MTL "+m.Groups[1].Value+" "+MaterialFiles.Resolve(variant.NativePath,m.Groups[2].Value));File.WriteAllText(native,text);
-    await ModelExport.Export(lods,glass,variant.Settings,native,mask,maskMaterial,folder,image,script,useSourceScript:false,materialsOnly:skinTargets!=null);
+    await ModelExport.Export(lods,glass,variant.Settings,native,mask,maskMaterial,folder,image,script,useSourceScript:false,materialsOnly:skinTargets!=null,allowWorkspaceReferences:allowWorkspaceReferences);
     string output=Directory.GetDirectories(folder,"Aurora-Model-*").Single();var maps=Directory.GetFiles(output,"map-*").ToDictionary(p=>Path.GetFileName(p)!,p=>"v"+i+"-"+Path.GetFileName(p));
     foreach(string path in Directory.GetFiles(output)){
      string name=Path.GetFileName(path);if(name=="aurora-model.json"||(previews!=null&&name is "preview.dds" or "preview_side.dds"))continue;

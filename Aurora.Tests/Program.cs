@@ -16,6 +16,8 @@ TransportParameterChecks.Run(Check,Reject,args.FirstOrDefault());
 CargoFrameChecks.Run(Check,Reject);
 MaterialPropertyChecks.Run(Check,Reject);
 TransportPackageChecks.Run(Check,Reject);
+TransportWorkspaceChecks.Run(Check,Reject);
+await WorkspaceExportChecks.Run(Check,Reject);
 await NativeTransportExportChecks.Run(Check,args.FirstOrDefault());
 VehicleCatalogChecks.Run(Check,Reject,args.FirstOrDefault());
 var root=Path.Combine(Path.GetTempPath(),"Aurora-tests-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(root);

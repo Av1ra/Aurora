@@ -9,8 +9,6 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Numerics;
 namespace Aurora.Editor;
-sealed record PreviewCamera(float Yaw,float Pitch,float Roll,float Fov,float X,float Y,float Z,float Distance);
-sealed record PreviewSettings(bool Automatic=true,float Fov=20,float Yaw=-45,float Pitch=30,float SideYaw=-90,float SidePitch=0,PreviewCamera? MainCamera=null,PreviewCamera? SideCamera=null);
 sealed partial class EditorWindow
 {
  PreviewSettings previewSettings=new();
@@ -86,7 +84,7 @@ sealed partial class EditorWindow
  static async Task<byte[]> PreviewDds(byte[] png,int height){using var stream=new InMemoryRandomAccessStream();using(var writer=new DataWriter(stream.GetOutputStreamAt(0))){writer.WriteBytes(png);await writer.StoreAsync();}var decoder=await BitmapDecoder.CreateAsync(stream);if(decoder.PixelWidth!=256||decoder.PixelHeight!=height)throw new InvalidDataException("Unexpected preview size");var data=await decoder.GetPixelDataAsync(BitmapPixelFormat.Rgba8,BitmapAlphaMode.Straight,new BitmapTransform(),ExifOrientationMode.IgnoreExifOrientation,ColorManagementMode.DoNotColorManage);return DdsImage.Encode(new(256,height,data.DetachPixelData()));}
  async Task<(byte[] Main,byte[] Side)> RenderVariantPreviews(MaterialVariant variant)
  {
-  StoreVariant();int previous=activeVariant;string? previousLod=selectedLod;bool cargo=showCargo;bool visible=gizmoVisible;try{ActivateVariant(variants.FindIndex(v=>v.Name==variant.Name));SelectLod(lods.Keys.First());showCargo=false;gizmoVisible=false;await Display();return(await RenderPreview(256,previewSettings.Yaw,previewSettings.Pitch),await RenderPreview(128,previewSettings.SideYaw,previewSettings.SidePitch));}
-  finally{ActivateVariant(previous);if(previousLod!=null)SelectLod(previousLod);showCargo=cargo;gizmoVisible=visible;await Display();}
+  string savedView=JsonSerializer.Deserialize<string>(await view.ExecuteScriptAsync("JSON.stringify(savedCamera())"))??throw new InvalidDataException("Viewport camera missing");StoreVariant();int previous=activeVariant;string? previousLod=selectedLod;bool cargo=showCargo;bool visible=gizmoVisible;try{ActivateVariant(variants.FindIndex(v=>v.Name==variant.Name));SelectLod(lods.Keys.First());showCargo=false;gizmoVisible=false;await Display();return(await RenderPreview(256,previewSettings.Yaw,previewSettings.Pitch),await RenderPreview(128,previewSettings.SideYaw,previewSettings.SidePitch));}
+  finally{ActivateVariant(previous);if(previousLod!=null)SelectLod(previousLod);showCargo=cargo;gizmoVisible=visible;await Display();await view.ExecuteScriptAsync("restoreCamera("+savedView+")");}
  }
 }

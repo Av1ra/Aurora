@@ -12,6 +12,7 @@ sealed partial class EditorWindow
  Matrix4x4 documentTransform=Matrix4x4.Identity;
  void ResetVehicle(string? script)
  {
+  if(!workspaceTransition)ResetWorkspace();originObjectId=VehicleCatalog.ObjectIdentity(script);
   transportPoint=null;cargoFrame="RESOURCE_VISUALIZATION";cargoBone=null;
   NewHistoryDocument();
   previewWorkspace.Visibility=Visibility.Collapsed;mainPng=sidePng=null;
