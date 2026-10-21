@@ -6,6 +6,7 @@ static class ObjImportChecks
 {
  public static void Run(Action<bool,string> check,Action<Action,string> reject)
  {
+  string sizeFixture=Path.Combine(Path.GetTempPath(),"Aurora-oversized-"+Guid.NewGuid().ToString("N")+".obj");try{using(var stream=File.Create(sizeFixture))stream.SetLength(64L*1024*1024+1);reject(()=>ObjImporter.Read(sizeFixture),"oversized OBJ rejected before parsing or allocating its geometry");}finally{File.Delete(sizeFixture);}
   const string vertices="v 0 0 0\nv 1 0 0\nv 1 1 0\nv 0 1 0\n";
   var imported=ObjImporter.Parse(vertices+"vt 0 .25\nvt 1 .25\nvt 1 .75\nvt 0 .75\no Body\nusemtl Paint\nf 1/1 2/2 3/3 4/4\no Window\nusemtl Glass\nf -4 -3 -2\n");
   var model=imported.Model;

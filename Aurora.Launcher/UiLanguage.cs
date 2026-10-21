@@ -162,6 +162,8 @@ static class UiLanguage
 
 ["Без ограничения по году"]="No end year",
 ["Разрешённые грузы…"]="Allowed resources…",
+["Коэффициент скорости"]="Speed factor",
+["Скорость уборки снега"]="Snow clearing speed",
 ["Производительность"]="Productivity",
 ["Рабочие"]="Workers",
 ["Проверьте параметры техники"]="Check vehicle parameters",

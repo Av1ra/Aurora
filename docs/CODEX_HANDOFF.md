@@ -4,6 +4,8 @@ Checkpoint recorded: 2026-10-19. Canonical repository: `Av1ra/Aurora`, branch `m
 
 ## Read this first
 
+Current continuation includes donor-free class/role profiles (88 classes, 22 roles), cabin working frames, diagnostic dumper/mixer poses and shared materials of all linked parts. All seven types roundtrip own OBJ -> portable workspace -> local export without a game donor. Latest delivered, separately verified production is 5278f095c46654d028a2cd9e522182a707b6bf35, build-68282d0ccbb2449eab186edc7912cceb; installed files remain older while the owner's Launcher processes are open. New role/import fixes follow that delivery. Continue broad native material/import checking and self-tests; do not stop or request owner testing at an intermediate package.
+
 Latest source continuation: [multi-object portable transport projects](TRANSPORT_IMPLEMENTATION_03.md), including strict project decoding, self-authored trainsets, native/PBR materials of linked parts and seven-class export checks. Production receipts remain separate; do not claim this source is installed. Continue the owner's autonomous task without stopping at intermediate builds.
 
 Owner explicitly corrected premature stopping: **continue implementation and self-verification autonomously until the requested result; do not end after a package or ask the owner to test.** Economy means targeted work, not stopping. [Batch 02 working state and remaining tasks](TRANSPORT_IMPLEMENTATION_02.md) is the current continuation point. UI input was detected in the launched standalone Editor; no further GUI input was sent after refresh. Core/file/export work continues. Current new source is not yet a newly installed package.

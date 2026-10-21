@@ -8,6 +8,7 @@ public record ObjImportResult(NativeModel Model,Dictionary<string,string> Materi
 
 public static class ObjImporter
 {
+ public static ObjImportResult Read(string path){if(new FileInfo(path).Length>64L*1024*1024)throw new InvalidDataException("OBJ exceeds 64 MiB");return Parse(File.ReadAllText(path));}
  readonly record struct Corner(int Position,int Uv,int Normal);
  sealed record Face(Corner[] Corners,int Material,int Smoothing,int Id,Vector3 Normal);
  sealed class Part(string name){public string Name=name;public List<Face> Faces=[];}
