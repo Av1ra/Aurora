@@ -26,7 +26,7 @@ sealed partial class EditorWindow
   string folder=Path.GetDirectoryName(model)!;var files=Directory.GetFiles(folder,"*.mtl").Where(f=>Regex.IsMatch(Path.GetFileName(f),@"^material(?:_\d+)?\.mtl$",RegexOptions.IgnoreCase)).OrderBy(f=>Path.GetFileName(f).Length).ThenBy(f=>f).ToList();
   string direct=Path.ChangeExtension(model,"mtl");if(files.Count==0&&File.Exists(direct))files.Add(direct);
   variants.Clear();variantChoice.Items.Clear();activeVariant=-1;
-  foreach(string file in files){var maps=MaterialDocuments.Native(file);string? paired=MaterialDocuments.FindPbr(file);if(paired!=null)maps=MaterialDocuments.Pbr(paired,maps);await NormalizeMaterialMaps(maps);variants.Add(new(Path.GetFileNameWithoutExtension(file),file,maps));variantChoice.Items.Add(variants.Count.ToString());}
+  foreach(string file in files){var maps=MaterialDocuments.Native(file,lods.Values.First());string? paired=MaterialDocuments.FindPbr(file);if(paired!=null)maps=MaterialDocuments.Pbr(paired,maps);await NormalizeMaterialMaps(maps);variants.Add(new(Path.GetFileNameWithoutExtension(file),file,maps));variantChoice.Items.Add(variants.Count.ToString());}
   if(variants.Count>0)ActivateVariant(0);else CreateDefaultVariant(lods.Values.SelectMany(m=>m.Materials).Distinct());
  }
  void CreateDefaultVariant(IEnumerable<string> names)
@@ -36,13 +36,13 @@ sealed partial class EditorWindow
  }
  async Task NormalizeMaterialMaps(Dictionary<string,MaterialSettings> maps)
  {
-  var converted=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
-  async Task<string?> Map(string? path){if(path==null||Path.GetExtension(path).Equals(".dds",StringComparison.OrdinalIgnoreCase))return path;if(converted.TryGetValue(path,out var found))return found;string output=SessionFile("texture-"+Guid.NewGuid().ToString("N")+".dds");File.WriteAllBytes(output,DdsImage.Encode(await ReadImage(path)));converted[path]=output;return output;}
-  foreach(string key in maps.Keys.ToArray()){var s=maps[key];maps[key]=s with{Base=await Map(s.Base),Normal=await Map(s.Normal),Specular=await Map(s.Specular),Orm=await Map(s.Orm),MetalMap=await Map(s.MetalMap),RoughMap=await Map(s.RoughMap),AoMap=await Map(s.AoMap),Emissive=await Map(s.Emissive),PbrBase=await Map(s.PbrBase),PbrNormal=await Map(s.PbrNormal)};}
+  var converted=new Dictionary<(string Path,bool Normal,bool Srgb),string>();
+  async Task<string?> Map(string? path,bool normalMap=false,bool srgb=false){if(path==null||Path.GetExtension(path).Equals(".dds",StringComparison.OrdinalIgnoreCase))return path;var key=(Path.GetFullPath(path).ToUpperInvariant(),normalMap,srgb);if(converted.TryGetValue(key,out var found))return found;string output=SessionFile("texture-"+Guid.NewGuid().ToString("N")+".dds");File.WriteAllBytes(output,DdsImage.Encode(await ReadImage(path),mipmaps:true,normalMap:normalMap,srgb:srgb));converted[key]=output;return output;}
+  foreach(string key in maps.Keys.ToArray()){var s=maps[key];if(s.Height!=null&&s.Normal==null){string convertedNormal=SessionFile("normal-"+Guid.NewGuid().ToString("N")+".dds");File.WriteAllBytes(convertedNormal,DdsImage.Encode(DdsImage.NormalFromHeight(await ReadImage(s.Height),s.HeightStrength),mipmaps:true,normalMap:true));s=s with{Normal=convertedNormal,Height=null};}maps[key]=s with{Base=await Map(s.Base,srgb:true),Normal=await Map(s.Normal,normalMap:true),Specular=await Map(s.Specular),Orm=await Map(s.Orm),MetalMap=await Map(s.MetalMap),RoughMap=await Map(s.RoughMap),AoMap=await Map(s.AoMap),Emissive=await Map(s.Emissive,srgb:true),PbrBase=await Map(s.PbrBase,srgb:true),PbrNormal=await Map(s.PbrNormal,normalMap:true)};}
  }
  async Task LoadNativeMaterial()
  {
-  string? path=await Pick(".mtl");if(path==null)return;var maps=MaterialDocuments.Native(path);await NormalizeMaterialMaps(maps);
+  string? path=await Pick(".mtl");if(path==null)return;var maps=MaterialDocuments.Native(path,lods.Values.First());await NormalizeMaterialMaps(maps);
   foreach(string name in lods.Values.SelectMany(m=>m.Materials).Distinct())if(!maps.ContainsKey(name))throw new InvalidDataException("В MTL нет материала: "+name);
   mtl=path;settings.Clear();foreach(var p in maps)settings[p.Key]=p.Value;StoreVariant();dirty=true;SetStatus("Материал загружен");
  }
@@ -90,11 +90,11 @@ sealed partial class EditorWindow
  }
  async Task SaveNmfMaterials()
  {
-  StoreVariant();var panel=new StackPanel{Spacing=10,MinWidth=280};var mode=new ComboBox{Header=UiLanguage.Text("Материалы"),ItemsSource=new[]{UiLanguage.Text("Один материал"),UiLanguage.Text("Несколько материалов")},SelectedIndex=variants.Count>1?1:0,HorizontalAlignment=HorizontalAlignment.Stretch};panel.Children.Add(mode);
+  StoreVariant();var panel=new StackPanel{Spacing=10,MinWidth=280};var mode=new ComboBox{Header=UiLanguage.Text("Материалы"),ItemsSource=new[]{UiLanguage.Text("Один материал"),UiLanguage.Text("Несколько материалов"),UiLanguage.Text("Пакет окраски"),UiLanguage.Text("Комплект транспорта")},SelectedIndex=variants.Count>1?1:0,HorizontalAlignment=HorizontalAlignment.Stretch};panel.Children.Add(mode);
   var checks=variants.Select((v,i)=>new CheckBox{Content=(i+1).ToString(),IsChecked=i==activeVariant}).ToArray();foreach(var box in checks)panel.Children.Add(box);
   var dialog=VehicleDialog("Сохранить NMF…",panel);ValidateVehicleDialog(dialog,panel,()=>{int count=checks.Count(c=>c.IsChecked==true);if(count==0||(mode.SelectedIndex==0&&count!=1))throw new InvalidDataException(UiLanguage.Text("Выберите материал."));});
   if(await ShowDialog(dialog)!=ContentDialogResult.Primary)return;string? folder=await Folder();if(folder==null)return;
-  processing=true;UpdateControls();var selected=variants.Where((_,i)=>checks[i].IsChecked==true).ToArray();string output=await VariantExport.Write(selected,lods,glassObjects,mask,maskMaterial,vehicleConfiguration,folder,ReadImage,previewSettings.Automatic?RenderVariantPreviews:null);SetStatus("Готово",output);
+  var selected=variants.Where((_,i)=>checks[i].IsChecked==true).ToArray();string[]? targets=null;if(mode.SelectedIndex==2){var skin=await SkinTargets(selected);if(skin==null)return;selected=skin.Value.Variants;targets=skin.Value.Targets;}(string Item,string Name,bool Related)? transport=null;if(mode.SelectedIndex==3){transport=await TransportExportSettings();if(transport==null)return;}processing=true;UpdateControls();string output=await VariantExport.Write(selected,lods,glassObjects,mask,maskMaterial,vehicleConfiguration,folder,ReadImage,previewSettings.Automatic?RenderVariantPreviews:null,targets);if(transport!=null)output=await ExportTransport(output,transport.Value.Item,transport.Value.Name,transport.Value.Related);SetStatus("Готово",output);
   // A game export is not the editable document. Only Save project clears dirty.
  }
 }

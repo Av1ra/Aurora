@@ -4,14 +4,14 @@ using System.Security.Cryptography;
 using System.Text;
 
 namespace Aurora.Core;
-public record ObjImportResult(NativeModel Model,Dictionary<string,string> MaterialNames,string[] Libraries);
+public record ObjImportResult(NativeModel Model,Dictionary<string,string> MaterialNames,string[] Libraries,int MissingUvCorners=0);
 
 public static class ObjImporter
 {
  readonly record struct Corner(int Position,int Uv,int Normal);
  sealed record Face(Corner[] Corners,int Material,int Smoothing,int Id,Vector3 Normal);
  sealed class Part(string name){public string Name=name;public List<Face> Faces=[];}
- readonly record struct VertexKey(Corner Corner,int Smooth,int Face);
+ readonly record struct VertexKey(Corner Corner,int Smooth,int Face,int Material);
  sealed class Chunk(string name){public string Name=name;public List<Vector3> P=[],N=[];public List<Vector2> U=[];public List<ushort> I=[];public List<DrawGroup> Groups=[];public Dictionary<VertexKey,ushort> Vertices=[];}
  static float Number(string text){if(!float.TryParse(text,NumberStyles.Float,CultureInfo.InvariantCulture,out float n)||!float.IsFinite(n)||MathF.Abs(n)>1e7f)throw new InvalidDataException("Invalid OBJ coordinate");return n;}
  static Vector3 Position(string[] words){if(words.Length is not (4 or 5))throw new InvalidDataException("OBJ vertex needs XYZ and optional W");float w=words.Length==5?Number(words[4]):1;if(MathF.Abs(w)<1e-10f)throw new InvalidDataException("OBJ vertex W is zero");var p=new Vector3(Number(words[1]),Number(words[2]),Number(words[3]))/w;if(!float.IsFinite(p.X)||!float.IsFinite(p.Y)||!float.IsFinite(p.Z)||MathF.Max(MathF.Abs(p.X),MathF.Max(MathF.Abs(p.Y),MathF.Abs(p.Z)))>1e7f)throw new InvalidDataException("OBJ vertex is outside supported coordinates");return p;}
@@ -57,7 +57,7 @@ public static class ObjImporter
    string Name(){string stem=Identifier(part.Name);string name=stem;int i=2;while(!names.Add(name)){string suffix="_"+i++;name=stem[..Math.Min(stem.Length,63-suffix.Length)]+suffix;}return name;}
    var chunk=new Chunk(Name());chunks.Add(chunk);
    foreach(var group in part.Faces.GroupBy(f=>f.Material))foreach(var face in group){var polygon=Triangulate(face.Corners,positions);foreach(var triangle in polygon.Triangles){
-    var keys=triangle.Select(i=>{var c=face.Corners[i];return new VertexKey(c,c.Normal>=0?0:face.Smoothing,c.Normal>=0||face.Smoothing>0?0:face.Id);}).ToArray();
+    var keys=triangle.Select(i=>{var c=face.Corners[i];return new VertexKey(c,c.Normal>=0?0:face.Smoothing,c.Normal>=0||face.Smoothing>0?0:face.Id,face.Material);}).ToArray();
     if(chunk.P.Count+keys.Distinct().Count(k=>!chunk.Vertices.ContainsKey(k))>65536){chunk=new(Name());chunks.Add(chunk);}
     int first=chunk.I.Count;
     foreach(var key in keys){if(!chunk.Vertices.TryGetValue(key,out ushort index)){index=checked((ushort)chunk.P.Count);chunk.Vertices[key]=index;var c=key.Corner;var normal=c.Normal>=0?normals[c.Normal]:face.Smoothing>0?smooth[(c.Position,face.Smoothing)]:face.Normal;if(normal.LengthSquared()<1e-12f)throw new InvalidDataException("OBJ smoothing normals cancel to zero");chunk.P.Add(positions[c.Position]);chunk.N.Add(Vector3.Normalize(normal));chunk.U.Add(c.Uv>=0?uv[c.Uv]:Vector2.Zero);}chunk.I.Add(index);}
@@ -65,7 +65,7 @@ public static class ObjImporter
    }}
   }
   if(chunks.Count>2048)throw new InvalidDataException("OBJ needs too many NMF objects");
-  return new(new NativeModel(Write(chunks,materials.Values.ToArray())),materials,libraries.ToArray());
+  return new(new NativeModel(Write(chunks,materials.Values.ToArray())),materials,libraries.ToArray(),parts.Sum(p=>p.Faces.Sum(f=>f.Corners.Count(c=>c.Uv<0))));
  }
  sealed record Polygon(Vector3 Normal,List<int[]> Triangles);
  static Polygon Triangulate(Corner[] corners,List<Vector3> source)

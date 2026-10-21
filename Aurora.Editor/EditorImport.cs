@@ -18,13 +18,16 @@ sealed partial class EditorWindow
  async Task ImportObj(string path,bool asLod=false)
  {
   processing=true;UpdateControls();var result=await Task.Run(()=>{if(new FileInfo(path).Length>64*1024*1024)throw new InvalidDataException("OBJ exceeds 64 MiB");return ObjImporter.Parse(File.ReadAllText(path));});
+  var dimensions=new Microsoft.UI.Xaml.Controls.TextBlock();var unit=new ComboBox{ItemsSource=new[]{UiLanguage.Text("Метры"),UiLanguage.Text("Сантиметры"),UiLanguage.Text("Миллиметры")},SelectedIndex=0};double[] scales=[1,.01,.001];var positions=result.Model.Nodes.SelectMany(n=>Enumerable.Range(0,n.VertexCount).Select(i=>new System.Numerics.Vector3(n.Positions[i*3],n.Positions[i*3+1],n.Positions[i*3+2]))).ToArray();var size=positions.Aggregate(System.Numerics.Vector3.Max)-positions.Aggregate(System.Numerics.Vector3.Min);void Dimensions()=>dimensions.Text=string.Join(" × ",new[]{size.X,size.Y,size.Z}.Select(v=>(v*scales[unit.SelectedIndex]).ToString("0.0",System.Globalization.CultureInfo.CurrentCulture)))+" m";unit.SelectionChanged+=(_,_)=>Dimensions();Dimensions();var importPanel=new StackPanel{Spacing=8};SettingRow(importPanel,"Единицы OBJ",unit);importPanel.Children.Add(dimensions);var importDialog=VehicleDialog("Импортировать OBJ…",importPanel);if(await ShowDialog(importDialog)!=ContentDialogResult.Primary)return;float scale=(float)scales[unit.SelectedIndex];if(scale!=1)result=result with{Model=ModelOrientation.Apply(result.Model,System.Numerics.Matrix4x4.CreateScale(scale))};
+  var warnings=new List<string>();var transforms=new Dictionary<string,System.Numerics.Vector4>();var importedMaps=MaterialDocuments.Obj(path,result,transforms,warnings);result=result with{Model=ModelEditing.TransformUv(result.Model,transforms)};
+  if(result.MissingUvCorners>0)warnings.Add(UiLanguage.Text("Нет UV у части граней")+": "+result.MissingUvCorners);
   string virtualNmf=Path.ChangeExtension(path,".nmf");
   if(asLod){
    if(lods.ContainsKey(virtualNmf))throw new InvalidDataException(UiLanguage.Text("Модель с таким именем уже загружена."));
    if(result.Model.Materials.Except(lods.Values.SelectMany(model=>model.Materials),StringComparer.Ordinal).Any())throw new InvalidDataException(UiLanguage.Text("Материалы OBJ для LOD должны совпадать с основной моделью."));
    lods[virtualNmf]=documentTransform==System.Numerics.Matrix4x4.Identity?result.Model:ModelOrientation.Apply(result.Model,documentTransform);glassObjects[virtualNmf]=[];AddLodChoice(virtualNmf);SelectLod(virtualNmf);
   }else{
-   var importedMaps=MaterialDocuments.Obj(path,result);await NormalizeMaterialMaps(importedMaps);
+   await NormalizeMaterialMaps(importedMaps);
    // Use private session assets; the source OBJ/MTL directories remain read-only.
    string diffuse=SessionFile("default-diffuse.dds"),specular=SessionFile("default-specular.dds"),normal=SessionFile("default-normal.dds");
    File.WriteAllBytes(diffuse,DdsImage.Encode(new(1,1,[180,180,180,255])));File.WriteAllBytes(specular,DdsImage.Encode(new(1,1,[255,255,255,255])));File.WriteAllBytes(normal,DdsImage.Encode(new(1,1,[128,128,255,255])));
@@ -35,14 +38,14 @@ sealed partial class EditorWindow
    string? paired=MaterialDocuments.FindPbr(Path.ChangeExtension(path,"mtl"));if(paired!=null){var maps=MaterialDocuments.Pbr(paired,settings);await NormalizeMaterialMaps(maps);settings.Clear();foreach(var p in maps)settings[p.Key]=p.Value;}
    variants.Clear();variantChoice.Items.Clear();variants.Add(new("material",generated,new(settings)));variantChoice.Items.Add("1");activeVariant=0;variantChoice.SelectedIndex=0;
   }
-  dirty=true;SetStatus("OBJ импортирован");await Display();
+  dirty=true;SetStatus("OBJ импортирован");await Display();if(warnings.Count>0)SetStatus("Проверьте импорт OBJ",string.Join("; ",warnings));
  }
  async Task ImportTexture(string channel)
  {
   if(materialChoice.SelectedItem is not string material)throw new InvalidDataException(UiLanguage.Text("Выберите материал"));
   var path=await Pick(".dds",".png",".jpg",".jpeg",".bmp",".tif",".tiff");if(path==null)return;
   processing=true;UpdateControls();var image=await ReadImage(path);string texture=path;
-  if(!Path.GetExtension(path).Equals(".dds",StringComparison.OrdinalIgnoreCase)){texture=SessionFile("texture-"+Guid.NewGuid().ToString("N")+".dds");File.WriteAllBytes(texture,DdsImage.Encode(image));}
+  if(!Path.GetExtension(path).Equals(".dds",StringComparison.OrdinalIgnoreCase)){texture=SessionFile("texture-"+Guid.NewGuid().ToString("N")+".dds");File.WriteAllBytes(texture,DdsImage.Encode(image,mipmaps:true,normalMap:channel=="Normal",srgb:channel=="Diffuse"));}
   var current=settings.GetValueOrDefault(material)??new();string preview;
   var next=channel switch{
    "Diffuse"=>current with{Base=texture,Native=false},"Normal"=>current with{Normal=texture},"Specular"=>current with{Specular=texture},

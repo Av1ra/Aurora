@@ -66,7 +66,7 @@ sealed partial class EditorWindow:Window
   RegisterCommand("Сбросить стекло",async()=>{if(selectedLod!=null)glassObjects[selectedLod].Clear();mask=null;maskMaterial=null;dirty=true;await Display();},()=>HasModel&&(mask!=null||(selectedLod!=null&&glassObjects[selectedLod].Count>0)));
   RegisterCommand("Сохранить мод…",Export,()=>HasModel&&mtl!=null);
   BuildMenuLayout(grid);
-  view.CoreWebView2Initialized+=(_,_)=>{view.CoreWebView2.NavigationStarting+=(_,e)=>{if(!ViewportNavigation.IsAllowed(e.Uri,viewportHtml))e.Cancel=true;};view.CoreWebView2.Settings.AreDevToolsEnabled=false;view.CoreWebView2.Settings.AreDefaultContextMenusEnabled=false;view.CoreWebView2.WebMessageReceived+=async(_,e)=>{try{using var json=JsonDocument.Parse(e.WebMessageAsJson);if(json.RootElement.TryGetProperty("error",out var viewportError))SetStatus("Viewport",viewportError.GetString());if(json.RootElement.TryGetProperty("ready",out var readyProperty)){ready=true;await view.ExecuteScriptAsync("document.getElementById('hint').textContent="+JsonSerializer.Serialize(UiLanguage.Text("Перетаскивание: вращение. Колесо: масштаб. Щелчок: выбор объекта.")));if(startupModel is string path){startupModel=null;await RunCommand(()=>OpenDocument(path));}else await Display();}if(json.RootElement.TryGetProperty("cameraFov",out var cf))cameraFov.Text="FOV: "+cf.GetInt32();ReceivePreview(json.RootElement);await ReceiveHistory(json.RootElement);if(json.RootElement.TryGetProperty("gizmo",out var gizmoMessage)){ReceiveGizmo(gizmoMessage);await RefreshLighting();}if(!JointFrameRequested&&json.RootElement.TryGetProperty("selected",out var index)&&index.TryGetInt32(out int i)&&i>=-1&&i<objects.Items.Count)objects.SelectedIndex=i;}catch{}};};
+  view.CoreWebView2Initialized+=(_,_)=>{view.CoreWebView2.NavigationStarting+=(_,e)=>{if(!ViewportNavigation.IsAllowed(e.Uri,viewportHtml))e.Cancel=true;};view.CoreWebView2.Settings.AreDevToolsEnabled=false;view.CoreWebView2.Settings.AreDefaultContextMenusEnabled=false;view.CoreWebView2.WebMessageReceived+=async(_,e)=>{try{using var json=JsonDocument.Parse(e.WebMessageAsJson);if(json.RootElement.TryGetProperty("error",out var viewportError))SetStatus("Viewport",viewportError.GetString());if(json.RootElement.TryGetProperty("ready",out var readyProperty)){ready=true;await view.ExecuteScriptAsync("document.getElementById('hint').textContent="+JsonSerializer.Serialize(UiLanguage.Text("Перетаскивание: вращение. Колесо: масштаб. Щелчок: выбор объекта.")));if(startupModel is string path){startupModel=null;await RunCommand(()=>OpenDocument(path));}else await Display();}if(json.RootElement.TryGetProperty("cameraFov",out var cf))cameraFov.Text="FOV: "+cf.GetInt32();ReceivePreview(json.RootElement);await ReceiveHistory(json.RootElement);if(json.RootElement.TryGetProperty("gizmo",out var gizmoMessage)){ReceiveGizmo(gizmoMessage);if(transportPoint!=null&&gizmoMessage.TryGetProperty("phase",out var phase)&&phase.GetString()=="end")await Display();else await RefreshLighting();}if(!JointFrameRequested&&json.RootElement.TryGetProperty("selected",out var index)&&index.TryGetInt32(out int i)&&i>=-1&&i<objects.Items.Count)objects.SelectedIndex=i;}catch{}};};
   AppWindow.Closing+=async(_,e)=>{if(!dirty||closeApproved)return;e.Cancel=true;if(closePrompt||busy)return;closePrompt=true;try{if(await ConfirmDiscard(true)){closeApproved=true;Close();}}finally{closePrompt=false;}};
   Activated+=async(_,e)=>{if(e.WindowActivationState==WindowActivationState.Deactivated||!UiLanguage.Reload())return;UiLanguage.Apply(grid);RefreshMenuLanguage();if(activeDialog!=null)UiLanguage.Apply(activeDialog);RefreshStatus();UpdateControls();if(ready)try{await UpdateViewportLanguage();}catch{}};
   RefreshMenuLanguage();UpdateControls();LoadedView();
@@ -108,7 +108,7 @@ sealed partial class EditorWindow:Window
   foreach(var pair in parsed.OrderBy(p=>p.Key.Equals(path,StringComparison.OrdinalIgnoreCase)?0:1)){lods[pair.Key]=pair.Value;glassObjects[pair.Key]=[];AddLodChoice(pair.Key);}
   selectedLod=path;SelectLod(path);
   await LoadMaterialVariants(path);
-  dirty=false;MarkHistorySaved();await Display();SetStatus("Загружено моделей и LOD",lods.Count.ToString(CultureInfo.InvariantCulture)+(loadErrors.Count>0?"\n"+string.Join("\n",loadErrors):""));
+  dirty=false;MarkHistorySaved();await Display();loadErrors.AddRange(partWarnings);SetStatus("Загружено моделей и LOD",lods.Count.ToString(CultureInfo.InvariantCulture)+(loadErrors.Count>0?"\n"+string.Join("\n",loadErrors):""));
  }
  async Task Display()
  {
@@ -118,7 +118,7 @@ sealed partial class EditorWindow:Window
   await view.ExecuteScriptAsync("load("+sceneJson+")");await view.ExecuteScriptAsync("wireframe("+(wireframeMenu.IsChecked?"true":"false")+")");await view.ExecuteScriptAsync("select("+objects.SelectedIndex+")");await LoadTextures();
   foreach(var pair in settings)await ApplyPreview(pair.Key,pair.Value);
   for(int i=0;i<model.Nodes.Count;i++)if(!JointFrameRequested&&glassObjects[selectedLod].Contains(model.Nodes[i].Name))await view.ExecuteScriptAsync("glassObject("+i+",true)");
-  await LoadCargoTextures();await RefreshGizmo();
+  await LoadCargoTextures();await LoadPartTextures();await RefreshGizmo();if(partWarnings.Count>0)SetStatus("Просмотр сборки",string.Join("\n",partWarnings));
  }
  async Task LoadTextures()
  {
@@ -145,7 +145,7 @@ sealed partial class EditorWindow:Window
  }
  async Task ApplyPreview(string name,MaterialSettings s)
  {
-  await view.ExecuteScriptAsync("material("+JsonSerializer.Serialize(name)+","+JsonSerializer.Serialize(new{metallic=s.Metallic,roughness=s.Roughness,ao=s.Ao,normalY=s.NormalY,normalStrength=s.NormalStrength,emissionStrength=s.EmissiveStrength,iblStrength=s.Ibl})+")");
+  await view.ExecuteScriptAsync("material("+JsonSerializer.Serialize(name)+","+JsonSerializer.Serialize(new{metallic=s.Metallic,roughness=s.Roughness,ao=s.Ao,normalY=s.NormalY,normalStrength=s.NormalStrength,emissionStrength=s.EmissiveStrength,iblStrength=s.Ibl,diffuseColour=s.NativeDiffuse,ambientColour=s.NativeAmbient,specularColour=s.NativeSpecular})+")");
   foreach(var map in new[]{("texture",s.PbrBase??s.Base),("normalMap",s.PbrNormal??s.Normal),("ormMap",s.Orm),("metalMap",s.MetalMap),("roughMap",s.RoughMap),("aoMap",s.AoMap),("emissiveMap",s.Emissive),("specularMap",s.Specular)})if(map.Item2!=null)await PreviewTexture(name,await ReadImage(map.Item2),map.Item1);
  }
  async Task ConfigurePbr()
@@ -161,6 +161,9 @@ sealed partial class EditorWindow:Window
   var native=new ToggleSwitch{Header=new TextBlock{Text=UiLanguage.Text("Сохранять штатную цветовую текстуру"),TextWrapping=TextWrapping.Wrap},IsOn=s.Native};panel.Children.Add(native);
   string? baseMap=s.Base,normal=s.Normal,orm=s.Orm,metalMap=s.MetalMap,roughMap=s.RoughMap,aoMap=s.AoMap,emissive=s.Emissive,specular=s.Specular,pbrBase=s.PbrBase,pbrNormal=s.PbrNormal;
   var maps=new StackPanel{Spacing=8};var nativeMaps=new StackPanel{Spacing=8};var advanced=new StackPanel{Spacing=8};
+  NumberBox[] ColorRow(string label,float[]? value){var row=new StackPanel{Orientation=Orientation.Horizontal,Spacing=5};var boxes=Enumerable.Range(0,4).Select(i=>new NumberBox{Header="RGBA"[i].ToString(),Value=value?.ElementAtOrDefault(i)??1,Width=65,SpinButtonPlacementMode=NumberBoxSpinButtonPlacementMode.Hidden}).ToArray();foreach(var box in boxes)row.Children.Add(box);SettingRow(nativeMaps,label,row);return boxes;}
+  var diffuseColor=ColorRow("Цвет поверхности",s.NativeDiffuse);var ambientColor=ColorRow("Фоновый цвет",s.NativeAmbient);var specularColor=ColorRow("Цвет блика",s.NativeSpecular);var nativePower=new NumberBox{Value=s.NativePower??16,Minimum=0,SpinButtonPlacementMode=NumberBoxSpinButtonPlacementMode.Hidden};SettingRow(nativeMaps,"Сила блика",nativePower);
+
   void MapRow(string label,Func<string?> current,Action<string?> assign,Panel? target=null){
    var row=new Grid{ColumnSpacing=12};row.ColumnDefinitions.Add(new(){Width=new GridLength(140)});row.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});
    var filename=new TextBlock{VerticalAlignment=VerticalAlignment.Center,TextTrimming=TextTrimming.CharacterEllipsis,Opacity=.75};
@@ -179,8 +182,8 @@ sealed partial class EditorWindow:Window
   var dialog=new ContentDialog{Title=UiLanguage.Text("Настройки материала")+": "+name,Content=dialogBody,PrimaryButtonText=UiLanguage.Text("Применить"),CloseButtonText=UiLanguage.Text("Отмена"),XamlRoot=((FrameworkElement)Content).XamlRoot};
   string? reload=null;foreach(var entry in new[]{("Загрузить стандартный MTL…","native"),("Загрузить PBR MTL…","pbr")}){var button=new Button{Content=UiLanguage.Text(entry.Item1),HorizontalAlignment=HorizontalAlignment.Stretch};button.Click+=(_,_)=>{reload=entry.Item2;dialog.Hide();};panel.Children.Insert(0,button);}
   UiLanguage.Apply(panel);
-  var choice=await ShowDialog(dialog);if(reload!=null){if(reload=="native")await LoadNativeMaterial();else await LoadPbrMaterial();await ConfigurePbr();return;}if(choice!=ContentDialogResult.Primary)return;
-  var updated=new Dictionary<string,MaterialSettings>{{name,s with{Base=baseMap,Normal=normal,Orm=orm,Metallic=(float)metal.Value,Roughness=(float)rough.Value,Ao=(float)ao.Value,NormalStrength=(float)strength.Value,Native=native.IsOn,MetalMap=metalMap,RoughMap=roughMap,AoMap=aoMap,Emissive=emissive,EmissiveStrength=(float)emission.Value,Ibl=(float)ibl.Value,NormalY=normalY.SelectedIndex==0?-1:1,Specular=specular,PbrBase=pbrBase,PbrNormal=pbrNormal}}};await NormalizeMaterialMaps(updated);dirty=true;settings[name]=updated[name];StoreVariant();
+  dialog.PrimaryButtonClick+=(_,e)=>{if(diffuseColor.Concat(ambientColor).Concat(specularColor).Append(nativePower).Any(b=>!double.IsFinite(b.Value))){e.Cancel=true;dialogError.Message=UiLanguage.Text("Проверьте значения материала");dialogError.IsOpen=true;}};var choice=await ShowDialog(dialog);if(reload!=null){if(reload=="native")await LoadNativeMaterial();else await LoadPbrMaterial();await ConfigurePbr();return;}if(choice!=ContentDialogResult.Primary)return;
+  var updated=new Dictionary<string,MaterialSettings>{{name,s with{Base=baseMap,Normal=normal,Orm=orm,Metallic=(float)metal.Value,Roughness=(float)rough.Value,Ao=(float)ao.Value,NormalStrength=(float)strength.Value,Native=native.IsOn,MetalMap=metalMap,RoughMap=roughMap,AoMap=aoMap,Emissive=emissive,EmissiveStrength=(float)emission.Value,Ibl=(float)ibl.Value,NormalY=normalY.SelectedIndex==0?-1:1,Specular=specular,PbrBase=pbrBase,PbrNormal=pbrNormal,NativeDiffuse=diffuseColor.Select(b=>(float)b.Value).ToArray(),NativeAmbient=ambientColor.Select(b=>(float)b.Value).ToArray(),NativeSpecular=specularColor.Select(b=>(float)b.Value).ToArray(),NativePower=(float)nativePower.Value}}};await NormalizeMaterialMaps(updated);dirty=true;settings[name]=updated[name];StoreVariant();
   await Display();
  }
  async Task Export()

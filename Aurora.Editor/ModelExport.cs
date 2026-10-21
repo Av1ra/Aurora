@@ -7,8 +7,9 @@ using System.Diagnostics;
 namespace Aurora.Editor;
 static class ModelExport
 {
- public static async Task Export(Dictionary<string,NativeModel> lods,Dictionary<string,HashSet<string>> glass,Dictionary<string,MaterialSettings> settings,string mtl,string? mask,string? maskMaterial,string destination,Func<string,Task<RgbaImage>> image,string? vehicleConfiguration=null,bool useSourceScript=true)
+ public static async Task Export(Dictionary<string,NativeModel> lods,Dictionary<string,HashSet<string>> glass,Dictionary<string,MaterialSettings> settings,string mtl,string? mask,string? maskMaterial,string destination,Func<string,Task<RgbaImage>> image,string? vehicleConfiguration=null,bool useSourceScript=true,bool materialsOnly=false)
  {
+  if(materialsOnly&&(mask!=null||glass.Values.Any(g=>g.Count>0)))throw new InvalidDataException("A skin cannot change geometry or glass objects");
   var modelNames=ModelFileNames.Allocate(lods.Keys);
   if(mask!=null&&glass.Values.Any(x=>x.Count>0))throw new InvalidDataException("Выберите один способ стекла: объекты или альфа-маска.");
   if(glass.Values.Any(x=>x.Count>0)&&glass.Values.Any(x=>x.Count==0))throw new InvalidDataException("Отметьте стеклянные объекты во всех LOD.");
@@ -17,14 +18,16 @@ static class ModelExport
   string staging=target+".building";Directory.CreateDirectory(staging);
   try
   {
-   var sourceMtl=File.ReadAllText(mtl);var materialNames=Regex.Matches(sourceMtl,@"(?m)^\s*\$SUBMATERIAL\s+([^\r\n]+)").Select(x=>x.Groups[1].Value.Trim()).ToHashSet();
+   var sourceMtl=NativeMaterialText.AlignNames(File.ReadAllText(mtl),lods.First().Value.Materials);var materialNames=Regex.Matches(sourceMtl,@"(?m)^\s*\$SUBMATERIAL\s+([^\r\n]+)").Select(x=>x.Groups[1].Value.Trim()).ToHashSet();
+   var slots=lods.First().Value.Materials;lods=lods.ToDictionary(p=>p.Key,p=>p.Value.Materials.All(materialNames.Contains)?p.Value:p.Value.Materials.Length==slots.Length?ModelEditing.MaterialSlots(p.Value,slots):throw new InvalidDataException("LOD material slot count differs from primary"));
    foreach(var model in lods.Values)foreach(var material in model.Materials)if(!materialNames.Contains(material))throw new InvalidDataException("В MTL нет материала: "+material);
    string outputMtl=sourceMtl;var copyNames=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
    foreach(var pair in settings)foreach(var texture in new[]{(0,pair.Value.Base),(1,pair.Value.Specular),(2,pair.Value.Normal)})if(texture.Item2!=null)outputMtl=NativeMaterialText.SetTexture(outputMtl,pair.Key,texture.Item1,texture.Item2);
+   foreach(var pair in settings){var s=pair.Value;foreach(var value in new[]{("DIFFUSECOLOR",s.NativeDiffuse),("AMBIENTCOLOR",s.NativeAmbient),("SPECULARCOLOR",s.NativeSpecular),("SPECULARPOWER",s.NativePower is float power?new[]{power}:null)})if(value.Item2!=null)outputMtl=NativeMaterialText.SetProperty(outputMtl,pair.Key,value.Item1,value.Item2);}
    string CopyMap(string path)
    {
     path=Path.GetFullPath(path);if(copyNames.TryGetValue(path,out string? prior))return prior;
-    string name="map-"+copyNames.Count+"-"+Path.GetFileName(path);File.Copy(path,Path.Combine(staging,name),false);copyNames[path]=name;return name;
+    string name="map-"+copyNames.Count+Path.GetExtension(path).ToLowerInvariant();File.Copy(path,Path.Combine(staging,name),false);copyNames[path]=name;return name;
    }
    // Retain every original MTL texture reference, including paint/light channels.
    outputMtl=Regex.Replace(outputMtl,@"(?m)^\s*\$TEXTURE(?:_MTL)?\s+(\d+)\s+([^\r\n]+)",match=>{string file=MaterialFiles.Resolve(mtl,match.Groups[2].Value);return "$TEXTURE_MTL "+match.Groups[1].Value+" "+CopyMap(file);});
@@ -41,7 +44,7 @@ static class ModelExport
     foreach(var item in new[]{("base_color",s.PbrBase??s.Base),("normal",s.PbrNormal??s.Normal),("orm",s.Orm),("metallic",s.MetalMap),("roughness",s.RoughMap),("ao",s.AoMap),("emissive",s.Emissive)})if(item.Item2!=null)rules.AppendLine(" {"+item.Item1+" = "+CopyMap(item.Item2)+"}");
     rules.AppendLine(" {metallic_factor = "+F(s.Metallic)+"}").AppendLine(" {roughness_factor = "+F(s.Roughness)+"}").AppendLine(" {ao_factor = "+F(s.Ao)+"}").AppendLine(" {normal_strength = "+F(s.NormalStrength)+"}").AppendLine(" {normal_y = "+(s.NormalY<0?"directx":"opengl")+"}").AppendLine(" {emissive_strength = "+F(s.EmissiveStrength)+"}").AppendLine(" {ibl_strength = "+F(s.Ibl)+"}").AppendLine("}");
    }
-   if(mask!=null)
+   if(mask!=null&&!materialsOnly)
    {
     if(maskMaterial==null)throw new InvalidDataException("Mask material missing");
     var rgba=await image(mask);if(!rgba.Pixels.Where((_,i)=>i%4==3).Any(a=>a==0)||!rgba.Pixels.Where((_,i)=>i%4==3).Any(a=>a>0))throw new InvalidDataException("В маске нужна альфа 0 вне окон и ненулевая альфа на окнах.");
@@ -60,7 +63,7 @@ static class ModelExport
     string body=" {glass_mask = glass.dds}"+Environment.NewLine;if(settings.ContainsKey(maskMaterial)){string marker="{material "+maskMaterial+Environment.NewLine;rules.Replace(marker,marker+body);}else rules.AppendLine("{material "+maskMaterial).Append(body).AppendLine(" {preserve_native_diffuse = true}\n}");
     rules.AppendLine("{material "+glassName+"\n {glass = glass.dds}\n {opacity = 1}\n {roughness_factor = 0.15}\n {metallic_factor = 0}\n}");
    }
-   else
+   else if(!materialsOnly)
    {
     bool withGlass=glass.Values.Any(x=>x.Count>0);
     foreach(var pair in lods)File.WriteAllBytes(Path.Combine(staging,modelNames[pair.Key]),withGlass?pair.Value.AssignGlass(glass[pair.Key]):pair.Value.Data);
@@ -71,11 +74,13 @@ static class ModelExport
     }
    }
    string mtlName=Path.GetFileName(mtl);File.WriteAllText(Path.Combine(staging,mtlName),outputMtl,new UTF8Encoding(false));File.WriteAllText(Path.Combine(staging,Path.ChangeExtension(mtlName,"pbr")),rules.ToString(),new UTF8Encoding(false));
+   if(materialsOnly){Directory.Move(staging,target);return;}
    string sourceFolder=Path.GetDirectoryName(lods.Keys.First())!;
    string script=Path.Combine(sourceFolder,"script.ini");
    if(vehicleConfiguration!=null||(useSourceScript&&File.Exists(script)))
    {
     string configuration=VehicleSoundFiles.Export(vehicleConfiguration??File.ReadAllText(script),sourceFolder,staging);
+    _=VehicleParts.Read(configuration);
     configuration=VehicleAssets.Export(configuration,sourceFolder,staging);
     configuration=VehicleScript.RewriteTokens(configuration,t=>Regex.IsMatch(t.Key,@"^LOD\d*$")&&t.Index==0?ModelFileNames.Resolve(modelNames,t.Value,sourceFolder):null);
     File.WriteAllText(Path.Combine(staging,"script.ini"),configuration,new UTF8Encoding(false));

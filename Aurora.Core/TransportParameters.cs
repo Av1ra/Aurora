@@ -1,13 +1,13 @@
 using System.Globalization;
 namespace Aurora.Core;
 
-public sealed record TransportArgument(string Label,string Default="0",string? Extension=null,bool Mesh=false,bool Fixed=false);
+public sealed record TransportArgument(string Label,string Default="0",string? Extension=null,bool Mesh=false,bool Fixed=false,bool Text=false,bool Hidden=false,double UiScale=1);
 public sealed record TransportParameter(string Key,string Name,string Group,string[] Types,TransportArgument[] Arguments,bool Repeated=false)
 {
  public bool Applies(string type)=>Types.Length==0||Types.Contains(type);
- public TransportParameter For(string script,int occurrence){int count=VehicleScript.Tokens(script).Count(t=>t.Key==Key&&t.Occurrence==occurrence);return Key=="CRANE_STATIC"&&count==4?this with{Arguments=[Arguments[0],new("X"),new("Y"),new("Z")]}:Key=="CRANE_DYNAMIC2"&&count==1?this with{Arguments=[Arguments[0]]}:this;}
+ public TransportParameter For(string script,int occurrence){int count=VehicleScript.Tokens(script).Count(t=>t.Key==Key&&t.Occurrence==occurrence);return Key=="CRANE_STATIC"&&count==4?this with{Arguments=[Arguments[0],new("X"),new("Y"),new("Z")]}:Key is "CRANE_DYNAMIC2" or "CARGO_PLATFORM"&&count==1?this with{Arguments=[Arguments[0]]}:this;}
  public string[] Read(string script,int occurrence){var tokens=VehicleScript.Tokens(script).Where(t=>t.Key==Key&&t.Occurrence==occurrence).ToArray();if(tokens.Length<Arguments.Length)throw new InvalidDataException("Unsupported vehicle argument layout: "+Key);return tokens.Take(Arguments.Length).Select(t=>t.Value).ToArray();}
- public string Write(string script,int occurrence,IReadOnlyList<string> values){if(values.Count!=Arguments.Length)throw new InvalidDataException("Invalid argument count: "+Key);for(int i=0;i<values.Count;i++){var a=Arguments[i];if(a.Fixed&&values[i]!=a.Default)throw new InvalidDataException("Invalid parameter marker: "+Key);if(a.Extension==null&&!a.Mesh&&!a.Fixed&&(!double.TryParse(values[i],NumberStyles.Float,CultureInfo.InvariantCulture,out double n)||!double.IsFinite(n)))throw new InvalidDataException("Invalid number: "+a.Label);}return VehicleScript.SetArguments(script,Key,occurrence,values);}
+ public string Write(string script,int occurrence,IReadOnlyList<string> values){if(values.Count!=Arguments.Length)throw new InvalidDataException("Invalid argument count: "+Key);var original=VehicleScript.Tokens(script).Where(t=>t.Key==Key&&t.Occurrence==occurrence).Take(Arguments.Length).Select(t=>t.Value).ToArray();for(int i=0;i<values.Count;i++){if(i<original.Length&&values[i]==original[i])continue;var a=Arguments[i];if(a.Fixed&&values[i]!=a.Default)throw new InvalidDataException("Invalid parameter marker: "+Key);if(a.Extension==null&&!a.Mesh&&!a.Fixed&&!a.Text&&(!double.TryParse(values[i],NumberStyles.Float,CultureInfo.InvariantCulture,out double n)||!double.IsFinite(n)||a.Label=="Масштаб"&&n<=0))throw new InvalidDataException("Invalid number: "+a.Label);}return VehicleScript.SetArguments(script,Key,occurrence,values);}
 }
 public static class TransportParameters
 {
@@ -36,12 +36,20 @@ public static class TransportParameters
   new("DRIVER","Водитель","Точки",road,Point()),new("DRIVER_JOINT","Водитель присоединённой части","Точки",road,Point()),
   new("TRACKTOR_TOOL_POINT","Крепление навесного инструмента","Точки",road,Point()),
   new("WATER_POINT","Пожарная струя","Точки",road,Point(),true),new("SIREN_POINT","Проблесковый маяк","Точки",road,Point(),true),
+  new("LIGHT_FORWARD","Передний огонь","Точки",[],Point(),true),new("LIGHT_BACKWARD","Задний огонь","Точки",[],Point(),true),
   new("LIGHT_BLINKER","Поворотник","Точки",[],Point(),true),new("LIGHT_BLINKER_TRAILER","Поворотник прицепа","Точки",road,Point(),true),
+  new("PARTICLE_JETPOINT","Реактивное сопло","Авиация",plane,Point(),true),
+  new("PARTICLE_MOVEMENT_JOINT","Дым присоединённой части","Точки",road,[new("Эффект","vehicle_medium",Text:true),..Point()],true),
+  new("HORSE","Лошадь","Конная тяга",road,[..Point(),new("Упряжь","DLC3_h_single",Text:true)],true),
+  new("HORSE_MATERIAL","Материал лошади","Конная тяга",road,[F("Материал",".mtl")]),
+  new("SINGLE_HORSE_POWER","Мощность одной лошади","Конная тяга",road,[N("Мощность","2")]),
+  new("CARGO_PLATFORM","Грузовая платформа вертолёта","Авиация",heli,[F("Модель"),new("","0",Hidden:true),new("","0",Hidden:true)]),
+  new("TUNNELING_TEETH","Режущая головка","Поезда",rail,[]),
   new("TRAIN_FORWARD_AXIS_DISTANCE","Передняя ось","Поезда",rail,[N("Расстояние, м")]),new("TRAIN_BACKWARD_AXIS_DISTANCE","Задняя ось","Поезда",rail,[N("Расстояние, м")]),
   new("TRAIN_BBOX_FORWARD_CORRECTION","Передняя граница стыковки","Поезда",rail,[N("Поправка, м")]),new("TRAIN_BBOX_BACKWARD_CORRECTION","Задняя граница стыковки","Поезда",rail,[N("Поправка, м")]),
   new("PREVIEW_OFFSET","Смещение превью кабины","Кабины",["VEHICLETYPE_CABIN"],[N("Смещение")]),
   new("PREVIEW_ZOOM","Масштаб превью кабины","Кабины",["VEHICLETYPE_CABIN"],[N("Масштаб","1")]),
   Wave("WAVEPOINTFRONT","Носовая волна"),Wave("WAVEPOINTBACK","Кормовая волна")
  ];
- static TransportParameter Wave(string key,string name)=>new(key,name,"Суда",ship,[new("","position",Fixed:true),..Point(),new("","coordstep",Fixed:true),N("Шаг волны","0.001"),new("","bumpfactor",Fixed:true),N("Высота волны","1"),new("","srcsize",Fixed:true),N("Начальный размер","1"),new("","dstsize",Fixed:true),N("Конечный размер","10"),new("","maxtime",Fixed:true),N("Время жизни, с","10")],true);
+ static TransportParameter Wave(string key,string name)=>new(key,name,"Суда",ship,[new("","position",Fixed:true),..Point(),new("","coordstep",Fixed:true),new("Шаг волны","0.001",UiScale:1000),new("","bumpfactor",Fixed:true),N("Высота волны","1"),new("","srcsize",Fixed:true),N("Начальный размер","1"),new("","dstsize",Fixed:true),N("Конечный размер","10"),new("","maxtime",Fixed:true),N("Время жизни, с","10")],true);
 }

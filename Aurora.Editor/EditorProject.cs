@@ -19,7 +19,7 @@ sealed partial class EditorWindow
   editorCommands["Сохранить проект…"]=(SaveProject,()=>HasModel);
   editorCommands["Открыть проект…"]=(async()=>{var path=await Pick(".aur");if(path!=null&&await ConfirmDiscard())await OpenProject(path);},()=>ready);
  }
- static MaterialSettings MapSettings(MaterialSettings s,Func<string?,string?> map)=>s with{Base=map(s.Base),Normal=map(s.Normal),Specular=map(s.Specular),PbrBase=map(s.PbrBase),PbrNormal=map(s.PbrNormal),Orm=map(s.Orm),MetalMap=map(s.MetalMap),RoughMap=map(s.RoughMap),AoMap=map(s.AoMap),Emissive=map(s.Emissive),Extra=s.Extra?.ToDictionary(p=>p.Key,p=>p.Key is "glass" or "glass_mask"&&p.Value!="none"&&!p.Value.StartsWith("aurora:",StringComparison.Ordinal)?map(p.Value)!:p.Value)};
+ static MaterialSettings MapSettings(MaterialSettings s,Func<string?,string?> map)=>s with{Height=map(s.Height),Base=map(s.Base),Normal=map(s.Normal),Specular=map(s.Specular),PbrBase=map(s.PbrBase),PbrNormal=map(s.PbrNormal),Orm=map(s.Orm),MetalMap=map(s.MetalMap),RoughMap=map(s.RoughMap),AoMap=map(s.AoMap),Emissive=map(s.Emissive),Extra=s.Extra?.ToDictionary(p=>p.Key,p=>p.Key is "glass" or "glass_mask"&&p.Value!="none"&&!p.Value.StartsWith("aurora:",StringComparison.Ordinal)?map(p.Value)!:p.Value)};
  async Task SaveProject()
  {
   StoreVariant();var picker=new Windows.Storage.Pickers.FileSavePicker{SuggestedFileName="Aurora-model"};picker.FileTypeChoices.Add("Aurora project",new[]{".aur"});WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));var file=await picker.PickSaveFileAsync();if(file==null)return;

@@ -1,5 +1,6 @@
 using Aurora.Core;
 using System.Globalization;
+using System.Numerics;
 using System.Text.RegularExpressions;
 namespace Aurora.Editor;
 
@@ -19,15 +20,15 @@ static class MaterialDocuments
   string folder=Path.GetDirectoryName(Path.GetFullPath(native))!;
   return new[]{Path.Combine(folder,PairedName(native)),Path.ChangeExtension(native,"pbr"),Path.Combine(folder,Path.GetFileNameWithoutExtension(native)+".pbr.mtl"),Path.Combine(folder,"pbr.mtl")}.FirstOrDefault(File.Exists);
  }
- public static Dictionary<string,MaterialSettings> Native(string file)
+ public static Dictionary<string,MaterialSettings> Native(string file,NativeModel? model=null)
  {
-  var result=new Dictionary<string,MaterialSettings>();string? name=null;
-  foreach(string line in File.ReadLines(file)){
+  string text=File.ReadAllText(file);if(model!=null)text=NativeMaterialText.AlignNames(text,model.Materials);var result=new Dictionary<string,MaterialSettings>();string? name=null;
+  foreach(string line in text.Split('\n')){
    var header=Regex.Match(line,@"^\s*\$SUBMATERIAL\s+(.+?)\s*$");if(header.Success){name=header.Groups[1].Value;if(!result.TryAdd(name,new()))throw new InvalidDataException("Duplicate material: "+name);continue;}
    var map=Regex.Match(line,@"^\s*\$TEXTURE(?:_MTL)?\s+([012])\s+(.+?)\s*$");if(name==null||!map.Success)continue;
    string path=MaterialFiles.Resolve(file,map.Groups[2].Value);var value=result[name];result[name]=map.Groups[1].Value switch{"0"=>value with{Base=path},"1"=>value with{Specular=path},_=>value with{Normal=path}};
   }
-  if(result.Count==0)throw new InvalidDataException("No native submaterials in MTL");return result;
+  if(result.Count==0)throw new InvalidDataException("No native submaterials in MTL");foreach(string material in result.Keys.ToArray())result[material]=result[material] with{NativeDiffuse=NativeMaterialText.Property(text,material,"DIFFUSECOLOR"),NativeAmbient=NativeMaterialText.Property(text,material,"AMBIENTCOLOR"),NativeSpecular=NativeMaterialText.Property(text,material,"SPECULARCOLOR"),NativePower=NativeMaterialText.Property(text,material,"SPECULARPOWER")?.FirstOrDefault()};return result;
  }
  public static Dictionary<string,MaterialSettings> Pbr(string file,IReadOnlyDictionary<string,MaterialSettings> current)
  {
@@ -53,22 +54,19 @@ static class MaterialDocuments
    result[name]=s with{Extra=extra};
   }return result;
  }
- public static Dictionary<string,MaterialSettings> Obj(string obj,ObjImportResult imported)
+ public static Dictionary<string,MaterialSettings> Obj(string obj,ObjImportResult imported,Dictionary<string,Vector4>? transforms=null,List<string>? warnings=null)
  {
   var result=new Dictionary<string,MaterialSettings>();
   foreach(string reference in imported.Libraries.SelectMany(reference=>{try{return new[]{MaterialFiles.Resolve(obj,reference)};}catch(FileNotFoundException){return Regex.Matches(reference,"\"[^\"]+\"|\\S+").Select(m=>MaterialFiles.Resolve(obj,m.Value.Trim('"'))).ToArray();}})){
    string library=reference;string? name=null;
    foreach(string raw in File.ReadLines(library)){
     string line=raw.Trim();if(line.StartsWith("newmtl ",StringComparison.Ordinal)){string source=line[7..].Trim();name=imported.MaterialNames.GetValueOrDefault(source);if(name!=null)result.TryAdd(name,new());continue;}
-    if(name==null)continue;var pair=Regex.Match(line,@"^(map_Kd|map_Ks|map_Bump|map_bump|bump|norm|map_Pr|map_Pm|map_Ka|map_Ke)\s+(.+)$");if(!pair.Success)continue;
-    string referenceMap=pair.Groups[2].Value.Trim().Trim('"');
-    // Common exporter map options precede the filename. Parse their arity so
-    // filenames containing spaces are not split into unrelated texture paths.
-    referenceMap=Regex.Replace(referenceMap,@"^-(?:bm|clamp|blendu|blendv|imfchan|type)\s+\S+\s+","");
-    referenceMap=Regex.Replace(referenceMap,@"^-(?:s|o|t)\s+[-+.\deE]+(?:\s+[-+.\deE]+){0,2}\s+","");
-    if(referenceMap.StartsWith('-'))throw new InvalidDataException("Unsupported OBJ map options: "+referenceMap);
-    string path=MaterialFiles.Resolve(library,referenceMap);var s=result[name];result[name]=pair.Groups[1].Value switch{
-     "map_Kd"=>s with{Base=path},"map_Ks"=>s with{Specular=path},"map_Pr"=>s with{RoughMap=path},"map_Pm"=>s with{MetalMap=path},"map_Ka"=>s with{AoMap=path},"map_Ke"=>s with{Emissive=path},_=>s with{Normal=path}};
+    if(name==null)continue;var scalar=Regex.Match(line,@"^(Kd|Ks|Ka|Ns)\s+(.+)$");if(scalar.Success){string key=scalar.Groups[1].Value;int count=key=="Ns"?1:3;var values=scalar.Groups[2].Value.Split((char[]?)null,StringSplitOptions.RemoveEmptyEntries).Take(count).Select(v=>float.Parse(v,CultureInfo.InvariantCulture)).ToArray();if(values.Length!=count||values.Any(v=>!float.IsFinite(v)))throw new InvalidDataException("Invalid OBJ material value: "+line);float[] color=[..values,1];var existing=result[name];result[name]=key switch{"Kd"=>existing with{NativeDiffuse=color},"Ks"=>existing with{NativeSpecular=color},"Ka"=>existing with{NativeAmbient=color},_=>existing with{NativePower=values[0]}};continue;}var pair=Regex.Match(line,@"^(map_Kd|map_Ks|map_Bump|map_bump|bump|norm|map_Pr|map_Pm|map_Ka|map_Ke)\s+(.+)$");if(!pair.Success)continue;
+    var options=ObjTextureMap.Parse(pair.Groups[2].Value);var transform=new Vector4(options.Scale,options.Offset.X,options.Offset.Y);
+    if(transforms!=null){if(transforms.TryGetValue(name,out var previous)&&previous!=transform)throw new InvalidDataException("Different texture transforms in material: "+name);transforms[name]=transform;}else if(transform!=new Vector4(1,1,0,0))throw new InvalidDataException("Texture transform requires UV conversion: "+name);
+    foreach(string warning in options.Warnings)warnings?.Add(name+": "+warning);if(options.Clamp)warnings?.Add(name+": clamp");
+    string path=MaterialFiles.Resolve(library,options.File);var s=result[name];result[name]=pair.Groups[1].Value switch{
+     "map_Kd"=>s with{Base=path},"map_Ks"=>s with{Specular=path},"map_Pr"=>s with{RoughMap=path},"map_Pm"=>s with{MetalMap=path},"map_Ka"=>s with{AoMap=path},"map_Ke"=>s with{Emissive=path},"norm"=>s with{Normal=path},_=>s with{Height=path,HeightStrength=options.Bump}};
    }
   }return result;
  }

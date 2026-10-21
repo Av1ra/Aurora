@@ -3,11 +3,29 @@ namespace Aurora.Core;
 public record RgbaImage(int Width,int Height,byte[] Pixels);
 public static class DdsImage
 {
- public static byte[] Encode(RgbaImage image)
+ public static RgbaImage NormalFromHeight(RgbaImage image,float strength=1)
+ {
+  if(image.Width<1||image.Height<1||image.Pixels.Length!=checked(image.Width*image.Height*4)||!float.IsFinite(strength))throw new InvalidDataException("Invalid height map");
+  float H(int x,int y){int at=(((y%image.Height+image.Height)%image.Height)*image.Width+(x%image.Width+image.Width)%image.Width)*4;return (image.Pixels[at]*.2126f+image.Pixels[at+1]*.7152f+image.Pixels[at+2]*.0722f)/255;}
+  var pixels=new byte[image.Pixels.Length];for(int y=0;y<image.Height;y++)for(int x=0;x<image.Width;x++){var n=System.Numerics.Vector3.Normalize(new(-(H(x+1,y)-H(x-1,y))*strength,(H(x,y+1)-H(x,y-1))*strength,1));int at=(y*image.Width+x)*4;pixels[at]=(byte)Math.Clamp((int)MathF.Round((n.X*.5f+.5f)*255),0,255);pixels[at+1]=(byte)Math.Clamp((int)MathF.Round((n.Y*.5f+.5f)*255),0,255);pixels[at+2]=(byte)Math.Clamp((int)MathF.Round((n.Z*.5f+.5f)*255),0,255);pixels[at+3]=255;}return new(image.Width,image.Height,pixels);
+ }
+ public static byte[] Encode(RgbaImage image,bool mipmaps=false,bool normalMap=false,bool srgb=false)
  {
   if(image.Width<1||image.Height<1||image.Width>8192||image.Height>8192||image.Pixels.Length!=image.Width*image.Height*4)throw new InvalidDataException("Invalid RGBA image");
-  var result=new byte[128+image.Pixels.Length];"DDS "u8.CopyTo(result);void W(int at,uint value)=>BinaryPrimitives.WriteUInt32LittleEndian(result.AsSpan(at,4),value);
-  W(4,124);W(8,0x100f);W(12,(uint)image.Height);W(16,(uint)image.Width);W(20,(uint)image.Width*4);W(76,32);W(80,0x41);W(88,32);W(92,0xff);W(96,0xff00);W(100,0xff0000);W(104,0xff000000);W(108,0x1000);image.Pixels.CopyTo(result,128);return result;
+  int size=image.Pixels.Length,count=1,width=image.Width,height=image.Height;while(mipmaps&&(width>1||height>1)){width=Math.Max(1,width/2);height=Math.Max(1,height/2);size=checked(size+width*height*4);count++;}
+  var result=new byte[128+size];"DDS "u8.CopyTo(result);void W(int at,uint value)=>BinaryPrimitives.WriteUInt32LittleEndian(result.AsSpan(at,4),value);
+  W(4,124);W(8,count>1?0x2100fu:0x100fu);W(12,(uint)image.Height);W(16,(uint)image.Width);W(20,(uint)image.Width*4);W(28,(uint)count);W(76,32);W(80,0x41);W(88,32);W(92,0xff);W(96,0xff00);W(100,0xff0000);W(104,0xff000000);W(108,count>1?0x401008u:0x1000u);int offset=128;var level=image;for(int i=0;i<count;i++){level.Pixels.CopyTo(result,offset);offset+=level.Pixels.Length;if(i+1<count)level=Reduce(level,normalMap,srgb);}return result;
+ }
+ static RgbaImage Reduce(RgbaImage image,bool normalMap,bool srgb)
+ {
+  int width=Math.Max(1,image.Width/2),height=Math.Max(1,image.Height/2);var pixels=new byte[width*height*4];
+  static double Linear(double v)=>v<=.04045?v/12.92:Math.Pow((v+.055)/1.055,2.4);
+  static byte Byte(double v)=>(byte)Math.Clamp((int)Math.Round(v*255),0,255);
+  static double Gamma(double v)=>v<=.0031308?12.92*v:1.055*Math.Pow(v,1/2.4)-.055;
+  for(int y=0;y<height;y++)for(int x=0;x<width;x++){
+   double r=0,g=0,b=0,a=0;int count=0;for(int sy=y*image.Height/height;sy<(y+1)*image.Height/height;sy++)for(int sx=x*image.Width/width;sx<(x+1)*image.Width/width;sx++){int p=(sy*image.Width+sx)*4;double R=image.Pixels[p]/255d,G=image.Pixels[p+1]/255d,B=image.Pixels[p+2]/255d;r+=normalMap?R*2-1:srgb?Linear(R):R;g+=normalMap?G*2-1:srgb?Linear(G):G;b+=normalMap?B*2-1:srgb?Linear(B):B;a+=image.Pixels[p+3]/255d;count++;}
+   r/=count;g/=count;b/=count;a/=count;if(normalMap){double length=Math.Sqrt(r*r+g*g+b*b);if(length>1e-9){r/=length;g/=length;b/=length;}else{r=g=0;b=1;}r=r*.5+.5;g=g*.5+.5;b=b*.5+.5;}else if(srgb){r=Gamma(r);g=Gamma(g);b=Gamma(b);}int target=(y*width+x)*4;pixels[target]=Byte(r);pixels[target+1]=Byte(g);pixels[target+2]=Byte(b);pixels[target+3]=Byte(a);
+  }return new(width,height,pixels);
  }
  public static RgbaImage Decode(byte[] data)
  {

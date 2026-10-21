@@ -21,19 +21,18 @@ public static class VehicleLights
  public static string Transform(string script,Matrix4x4 transform)
  {
   if(transform==Matrix4x4.Identity)return script;
-  // Main cargo frames are understood; unknown joint/attachment sections still
-  // reject a partial transformation rather than leaving stale coordinates.
-  var known=new HashSet<string>(StringComparer.Ordinal){"TYPE","SOUND_PARAMS","NAME","NAME_STR","DESCRIPTION","COST_RUB","COST_USD","COST_WORK","RESOURCE_CAPACITY","RESOURCE_TRANSPORT_TYPE","RESOURCE_ALLOW_ONLY","RESOURCE_VISUALIZATION","AVAILABLE","COUNTRY","LIFESPAN","PURCHASE_EXCLUDE","DRIVER","LIGHT_FORWARD","LIGHT_BACKWARD","LIGHT_BLINKER","PARTICLE_MOVEMENT","PARTICLE_ENGINE","FAMILY"};
+  var points=new Dictionary<string,int>(StringComparer.Ordinal){["LIGHT_FORWARD"]=0,["LIGHT_BACKWARD"]=0,["LIGHT_BLINKER"]=0,["DRIVER"]=0,["PARTICLE_MOVEMENT"]=1,["PARTICLE_ENGINE"]=1,["WATER_POINT"]=0,["SIREN_POINT"]=0,["TRACKTOR_TOOL_POINT"]=0,["MOVEMENT_WHEEL_FRONT"]=0,["MOVEMENT_WHEEL_BACK"]=0,["PARTICLE_JETPOINT"]=0,["HORSE"]=0,["DUMPER_DECK_PIVOT"]=1,["MIXER_DRUM"]=1};
+  var known=new HashSet<string>(StringComparer.Ordinal){"TYPE","SOUND_PARAMS","SOUND_PARAMS_WORKSHOP","NAME","NAME_STR","DESCRIPTION","COST_RUB","COST_USD","COST_WORK","RESOURCE_CAPACITY","RESOURCE_TRANSPORT_TYPE","RESOURCE_ALLOW_ONLY","RESOURCE_VISUALIZATION","CARGOVEHICLE_VISUALIZATION","AVAILABLE","COUNTRY","COUNTRY_STR","LIFESPAN","PURCHASE_EXCLUDE","FAMILY","MOVEMENT_SPEED","MOVEMENT_POWER_KW","MOVEMENT_EMPTY_WEIGHT","MOVEMENT_CONSPUMPTION","MOVEMENT_HILL_ACCELERATION","MOVEMENT_HILL_SPEED","TAKEOFF_DISTANCE","CABIN_LIGHT","CABIN_HEAVY","TRACTION_ELECTRIC","SINGLE_HORSE_POWER","HORSE_MATERIAL"};
   foreach(var field in VehicleScript.Fields(script)){
-   string key=field.Key;if(!known.Contains(key)&&!key.StartsWith("MOVEMENT_",StringComparison.Ordinal)&&!key.StartsWith("SKILL_",StringComparison.Ordinal)&&!Regex.IsMatch(key,@"^(LOD\d*|LODDISTANCE\d*)$"))throw new InvalidDataException("Pivot: неподдерживаемая секция script.ini: "+key);
+   string key=field.Key;if(!known.Contains(key)&&!points.ContainsKey(key)&&!key.StartsWith("SKILL_",StringComparison.Ordinal)&&!key.StartsWith("TRAINGROUP_",StringComparison.Ordinal)&&!Regex.IsMatch(key,@"^(LOD\d*|LODDISTANCE\d*)$"))throw new InvalidDataException("Pivot: неподдерживаемая секция script.ini: "+key);
   }
-  string updated=script;foreach(var field in VehicleScript.Fields(script).Where(f=>f.Key is "LIGHT_FORWARD" or "LIGHT_BACKWARD" or "LIGHT_BLINKER" or "DRIVER" or "PARTICLE_MOVEMENT" or "PARTICLE_ENGINE")){
-   string suffix=field.Value,prefix="";
-   if(field.Key.StartsWith("PARTICLE_",StringComparison.Ordinal)){int split=suffix.IndexOfAny([' ','\t']);if(split<0)throw new InvalidDataException("Invalid particle position");prefix=suffix[..split]+" ";suffix=suffix[(split+1)..];}
-   var p=Position(suffix);if(p.Y<=-999)continue;
-   updated=VehicleScript.Set(updated,field.Key,field.Occurrence,prefix+Coordinates(Vector3.Transform(p,transform)));
+  string updated=script;var tokens=VehicleScript.Tokens(script);foreach(var field in VehicleScript.Fields(script).Where(f=>points.ContainsKey(f.Key))){
+   var args=tokens.Where(t=>t.Key==field.Key&&t.Occurrence==field.Occurrence).Select(t=>t.Value).ToArray();int start=points[field.Key];if(args.Length<start+3)throw new InvalidDataException("Invalid pivot point: "+field.Key);
+   foreach(int at in field.Key=="MIXER_DRUM"?new[]{start,start+3}:new[]{start}){if(args.Length<at+3)throw new InvalidDataException("Invalid mixer axis");var position=Position(string.Join(" ",args.Skip(at).Take(3)));if(position.Y<=-999)continue;Coordinates(Vector3.Transform(position,transform)).Split(' ').CopyTo(args,at);}
+   updated=VehicleScript.SetArguments(updated,field.Key,field.Occurrence,args);
   }
   foreach(var field in VehicleScript.Fields(script).Where(f=>f.Key=="RESOURCE_VISUALIZATION"))updated=VehicleScript.SetCargo(updated,VehicleScript.TransformCargo(VehicleScript.Cargo(script,field.Occurrence)!,transform),field.Occurrence);
+  foreach(var field in VehicleScript.Fields(script).Where(f=>f.Key=="CARGOVEHICLE_VISUALIZATION")){var box=VehicleCargoBox.Read(script,field.Key,field.Occurrence)??throw new InvalidDataException("Missing cargo box");var corners=new[]{box.Min,new Vector3(box.Min.X,box.Min.Y,box.Max.Z),new Vector3(box.Min.X,box.Max.Y,box.Min.Z),new Vector3(box.Min.X,box.Max.Y,box.Max.Z),new Vector3(box.Max.X,box.Min.Y,box.Min.Z),new Vector3(box.Max.X,box.Min.Y,box.Max.Z),new Vector3(box.Max.X,box.Max.Y,box.Min.Z),box.Max}.Select(v=>Vector3.Transform(v,transform)).ToArray();if(MathF.Abs(transform.M12)+MathF.Abs(transform.M13)+MathF.Abs(transform.M21)+MathF.Abs(transform.M23)+MathF.Abs(transform.M31)+MathF.Abs(transform.M32)>1e-5f)throw new InvalidDataException("Pivot: vehicle cargo box cannot represent a rotated platform");updated=VehicleCargoBox.Write(updated,field.Key,field.Occurrence,new(corners.Aggregate(Vector3.Min),corners.Aggregate(Vector3.Max)));}
   return updated;
  }
 }
