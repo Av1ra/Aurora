@@ -4,6 +4,8 @@ Checkpoint recorded: 2026-10-19. Canonical repository: `Av1ra/Aurora`, branch `m
 
 ## Read this first
 
+Owner approved all [22 additional transport requirements](EDITOR_TRANSPORT_ADDITIONAL_22.md) as important, keeping research caveats and deferred animations. Current discussion moved to [necessary launcher tools](LAUNCHER_REQUIRED_TOOLS.md): twelve source-grounded proposals, not implementation authorization. Existing signature/install/update/conflict checks must be reused. Notable issue: UpdateService compares product Version only, so it cannot distinguish successive 0.2 builds through that contract.
+
 Latest research extension: [22 further transport requirements](EDITOR_TRANSPORT_ADDITIONAL_22.md), distinguishing confirmed source limitations from untested risks/research. Owner approved the previous seven additions as important. Notable new findings: missing cabins catalog root, missing cabin subtype identity, OBJ/MTL data loss paths, mesh rename script references, LOD topology assumptions and skin export. The earlier bbox risk is narrowed: normal pivot baking already triggers bounds rebuilding. No runtime changes.
 
 Latest owner priority: [complete transport authoring requirements](EDITOR_TRANSPORT_AUTHORING_REQUIREMENTS.md). Recent convenience brainstorming, PBR extensions and the in-game sandbox are parked. Animation authoring/playback is a later stage by explicit owner clarification. Current analysis focuses on native transport configuration, linked parts and export, with optional donors. The older 98-item checklist includes deferred work and is not the immediate scope in full.
