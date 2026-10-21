@@ -10,6 +10,7 @@ await VehicleChecks.Run(Check,Reject);
 await EditorRevisionChecks.Run(Check,Reject);
 ModelToolsChecks.Run(Check,Reject);
 VehicleWorkflowChecks.Run(Check,Reject);
+TransportCompletenessChecks.Run(Check,Reject,args.FirstOrDefault());
 VehicleCatalogChecks.Run(Check,Reject,args.FirstOrDefault());
 var root=Path.Combine(Path.GetTempPath(),"Aurora-tests-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(root);
 using var key=ECDsa.Create(ECCurve.NamedCurves.nistP256);string pem=key.ExportSubjectPublicKeyInfoPem();

@@ -10,6 +10,15 @@ static class UiLanguage
     public static bool Reload(){try{string value=File.ReadAllText(path).Trim();if(value is not ("en" or "ru"))return false;bool english=value=="en";if(english==English)return false;English=english;return true;}catch{return false;}}
     static readonly Dictionary<string,string> words=new()
     {
+["Без ограничения по году"]="No end year",
+["Разрешённые грузы…"]="Allowed resources…",
+["Производительность"]="Productivity",
+["Рабочие"]="Workers",
+["Проверьте параметры техники"]="Check vehicle parameters",
+["Влияние уклона на скорость"]="Slope effect on speed",
+["Влияние уклона на разгон"]="Slope effect on acceleration",
+["Вместимость, пассажиров"]="Capacity, passengers",
+["Грузоподъёмность, т"]="Cargo capacity, t",
 ["Назад к превью"]="Back to preview",
 ["Колесо — FOV"]="Wheel — FOV",
 ["Мышь — поворот"]="Mouse — rotate",

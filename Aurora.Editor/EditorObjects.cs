@@ -15,7 +15,7 @@ sealed partial class EditorWindow
   if(objects.SelectedItem is not string oldName)return;
   var box=new ComboBox{Header=UiLanguage.Text("Имя"),IsEditable=true,Text=oldName,HorizontalAlignment=HorizontalAlignment.Stretch,MinWidth=300};foreach(string preset in new[]{"tire_leftShape","tire_rightShape","tire2Shape","tireShape","body"})box.Items.Add(preset);
   var dialog=VehicleDialog("Переименовать объект…",box);if(await ShowDialog(dialog)!=ContentDialogResult.Primary)return;string name=box.Text.Trim();
-  var changed=lods.ToDictionary(p=>p.Key,p=>ModelEditing.Rename(p.Value,oldName,name));foreach(var p in changed){lods[p.Key]=p.Value;if(glassObjects[p.Key].Remove(oldName))glassObjects[p.Key].Add(name);}dirty=true;await Display();objects.SelectedItem=name;
+  var changed=lods.ToDictionary(p=>p.Key,p=>ModelEditing.Rename(p.Value,oldName,name));string? script=vehicleConfiguration==null?null:VehicleScript.RenamePart(vehicleConfiguration,oldName,name);foreach(var p in changed){lods[p.Key]=p.Value;if(glassObjects[p.Key].Remove(oldName))glassObjects[p.Key].Add(name);}vehicleConfiguration=script;vehicleConfigurationEdited|=script!=null;dirty=true;await Display();objects.SelectedItem=name;
  }
  async Task SplitObject()
  {

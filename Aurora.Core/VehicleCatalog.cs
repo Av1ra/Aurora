@@ -22,13 +22,14 @@ public sealed class VehicleCatalog
   for(int i=0;i<count;i++){var row=data.AsSpan(12+i*10,10);int id=BinaryPrimitives.ReadInt32BigEndian(row),offset=BinaryPrimitives.ReadInt32BigEndian(row[4..]);int length=BinaryPrimitives.ReadUInt16BigEndian(row[8..]);long at=start+offset*2L;if(offset<0||at+length*2L>data.Length)throw new InvalidDataException("Invalid game text entry");result[id]=Encoding.BigEndianUnicode.GetString(data,(int)at,length*2).TrimEnd('\0');}return result;
  }
  static string Value(VehicleField[] fields,string key)=>fields.FirstOrDefault(f=>f.Key==key)?.Value??"";
- static string[] ClassFlags(VehicleField[] fields)=>fields.Where(f=>f.Key.StartsWith("SKILL_",StringComparison.Ordinal)||f.Key.StartsWith("TRAINGROUP_",StringComparison.Ordinal)).Select(f=>f.Key).Order().ToArray();
+ static bool IsClassFlag(string key)=>key.StartsWith("SKILL_",StringComparison.Ordinal)||key.StartsWith("TRAINGROUP_",StringComparison.Ordinal)||key is "CABIN_LIGHT" or "CABIN_HEAVY";
+ static string[] ClassFlags(VehicleField[] fields)=>fields.Where(f=>IsClassFlag(f.Key)).Select(f=>f.Key).Distinct().Order().ToArray();
  public static string ClassId(string script){var f=VehicleScript.Fields(script);return string.Join("|",new[]{Value(f,"TYPE"),Value(f,"RESOURCE_TRANSPORT_TYPE")}.Concat(ClassFlags(f)));}
  public static string Label(string key,bool english)=>labels.TryGetValue(key,out var text)?(english?text.En:text.Ru):key;
  static string ClassName(VehicleField[] f,bool en)
  {
   string type=Value(f,"TYPE"),transport=Value(f,"RESOURCE_TRANSPORT_TYPE");var flags=ClassFlags(f);string? special=flags.FirstOrDefault(k=>k.StartsWith("SKILL_",StringComparison.Ordinal));string? train=flags.FirstOrDefault(k=>k.StartsWith("TRAINGROUP_",StringComparison.Ordinal));
-  string name=special!=null?Label(special,en):train!=null?Label(train,en):type=="VEHICLETYPE_ROAD"&&transport=="RESOURCE_TRANSPORT_PASSANGER"?(en?"Bus":"Автобус"):Label(type,en);
+  string name=special!=null?Label(special,en):train!=null?Label(train,en):type=="VEHICLETYPE_CABIN"?Label(flags.FirstOrDefault(k=>k is "CABIN_LIGHT" or "CABIN_HEAVY")??type,en):type=="VEHICLETYPE_ROAD"&&transport=="RESOURCE_TRANSPORT_PASSANGER"?(en?"Bus":"Автобус"):Label(type,en);
   if(transport.Length>0&&transport!="RESOURCE_TRANSPORT_PASSANGER")name+=" / "+Label(transport,en);return name;
  }
  public static VehicleClass DescribeClass(string script,bool english){var f=VehicleScript.Fields(script);return new(ClassId(script),Value(f,"TYPE"),Value(f,"RESOURCE_TRANSPORT_TYPE"),ClassFlags(f),ClassName(f,english),f.Where(x=>ClassFlags(f).Contains(x.Key)).ToDictionary(x=>x.Key,x=>x.Value));}
@@ -36,7 +37,7 @@ public sealed class VehicleCatalog
  {
   var englishTexts=ReadTexts(Path.Combine(media,"sovietEnglish.btf"));var texts=new Dictionary<int,string>(englishTexts);if(!english)foreach(var p in ReadTexts(Path.Combine(media,"sovietRussian.btf")))texts[p.Key]=p.Value;
   var modelNames=new Dictionary<string,string>();var classes=new Dictionary<string,VehicleClass>();var sounds=new Dictionary<string,VehicleSound>();var values=new Dictionary<string,HashSet<string>>();var classFields=new Dictionary<string,HashSet<string>>();
-  string[] roots=["vehicles","trains","ships","airplanes","helicopters"];
+  string[] roots=["vehicles","trains","ships","airplanes","helicopters","cabins"];
   var bases=new[]{media}.Concat(Directory.GetDirectories(media).Where(d=>Path.GetFileName(d).StartsWith("dlc",StringComparison.OrdinalIgnoreCase)||Path.GetFileName(d).StartsWith("elc",StringComparison.OrdinalIgnoreCase)));
   foreach(string folder in bases.SelectMany(b=>roots.Select(r=>Path.Combine(b,r))).Where(Directory.Exists))foreach(string path in Directory.EnumerateFiles(folder,"script.ini",SearchOption.AllDirectories)){
    string script=File.ReadAllText(path);var f=VehicleScript.Fields(script);string type=Value(f,"TYPE");if(type.Length==0)continue;string id=ClassId(script);
@@ -53,13 +54,16 @@ public sealed class VehicleCatalog
  public static string[] CountryCurrencies(int id)=>id is 38998 or 38999?["RUB","USD"]:new[]{39000,39004,39006,39007,39008,39009,39010,39011,39012,39013,39014,39015,39019,39020,39021,39025,39026,39027,39028,39029,39042}.Contains(id)?["RUB"]:["USD"];
  public static string ApplyClass(string script,VehicleClass selected)
  {
-  if(ClassId(script)==selected.Id)return script;var fields=VehicleScript.Fields(script);foreach(var field in fields.Where(f=>f.Key.StartsWith("SKILL_",StringComparison.Ordinal)||f.Key.StartsWith("TRAINGROUP_",StringComparison.Ordinal)).Reverse())script=VehicleScript.Set(script,field.Key,field.Occurrence,null);
+  if(ClassId(script)==selected.Id)return script;var fields=VehicleScript.Fields(script);foreach(var field in fields.Where(f=>IsClassFlag(f.Key)).Reverse())script=VehicleScript.Set(script,field.Key,field.Occurrence,null);
   script=VehicleScript.Set(script,"TYPE",0,selected.Type);script=VehicleScript.Set(script,"RESOURCE_TRANSPORT_TYPE",0,string.IsNullOrEmpty(selected.Transport)?null:selected.Transport);foreach(string flag in selected.Flags)script=VehicleScript.Set(script,flag,0,fields.FirstOrDefault(f=>f.Key==flag)?.Value??selected.Defaults?.GetValueOrDefault(flag)??"");return script;
  }
- public static string ApplyPurchase(string script,string currency,int country,int first,int last,double price)
+ public static string ApplyPurchase(string script,string currency,int country,int first,int last,double price,string? countryName=null)
  {
-  if(currency is not ("RUB" or "USD")||first<1900||last>2100||first>last||price<=0||!double.IsFinite(price))throw new InvalidDataException("Invalid purchase settings");
-  script=VehicleScript.Set(script,currency=="RUB"?"COST_USD":"COST_RUB",0,null);script=VehicleScript.Set(script,"COUNTRY_STR",0,null);script=VehicleScript.Set(script,"COUNTRY",0,country.ToString(CultureInfo.InvariantCulture));script=VehicleScript.Set(script,"AVAILABLE",0,$"{first} {last}");return VehicleScript.Set(script,"COST_"+currency,0,price.ToString("G12",CultureInfo.InvariantCulture));
+  string originalYears=Value(VehicleScript.Fields(script),"AVAILABLE");bool nativeYears=originalYears.Split((char[]?)null,StringSplitOptions.RemoveEmptyEntries).SequenceEqual(new[]{first.ToString(CultureInfo.InvariantCulture),last.ToString(CultureInfo.InvariantCulture)});
+  if(currency is not ("RUB" or "USD")||(first<1900||first>2100)&&!nativeYears||last>2100&&last!=3000&&!nativeYears||first>last||price<=0||!double.IsFinite(price)||countryName!=null&&(string.IsNullOrWhiteSpace(countryName)||countryName.IndexOfAny(['\r','\n','"'])>=0))throw new InvalidDataException("Invalid purchase settings");
+  script=VehicleScript.Set(script,currency=="RUB"?"COST_USD":"COST_RUB",0,null);
+  script=VehicleScript.Set(script,"COUNTRY_STR",0,countryName==null?null:"\""+countryName+"\"");script=VehicleScript.Set(script,"COUNTRY",0,countryName==null?country.ToString(CultureInfo.InvariantCulture):null);
+  script=VehicleScript.Set(script,"AVAILABLE",0,$"{first} {last}");return VehicleScript.Set(script,"COST_"+currency,0,price.ToString("G12",CultureInfo.InvariantCulture));
  }
  public static string ApplySounds(string script,VehicleSound sound)
  {
@@ -85,6 +89,7 @@ public sealed class VehicleCatalog
  }
  static readonly Dictionary<string,(string Ru,string En)> labels=new()
  {
+  ["VEHICLETYPE_CABIN"]=("Кабина канатной дороги","Cableway cabin"),["CABIN_LIGHT"]=("Лёгкая кабина","Light cabin"),["CABIN_HEAVY"]=("Тяжёлая кабина","Heavy cabin"),
   ["VEHICLETYPE_ROAD"]=("Грузовик","Truck"),["VEHICLETYPE_RAIL_LOCOMOTIVE"]=("Локомотив","Locomotive"),["VEHICLETYPE_RAIL_VAGON"]=("Вагон","Wagon"),["VEHICLETYPE_SHIP"]=("Судно","Ship"),["VEHICLETYPE_AIRPLANE"]=("Самолёт","Airplane"),["VEHICLETYPE_HELICOPTER"]=("Вертолёт","Helicopter"),
   ["RESOURCE_TRANSPORT_PASSANGER"]=("Пассажиры","Passengers"),["RESOURCE_TRANSPORT_COVERED"]=("Крытый кузов","Covered cargo"),["RESOURCE_TRANSPORT_OPEN"]=("Открытый кузов","Open cargo"),["RESOURCE_TRANSPORT_GENERAL"]=("Смешанные грузы","General cargo"),["RESOURCE_TRANSPORT_GRAVEL"]=("Сыпучие грузы","Aggregates"),["RESOURCE_TRANSPORT_CEMENT"]=("Цемент","Cement"),["RESOURCE_TRANSPORT_OIL"]=("Нефтепродукты","Oil products"),["RESOURCE_TRANSPORT_SEWAGE"]=("Сточные воды","Sewage"),["RESOURCE_TRANSPORT_WATER"]=("Вода","Water"),["RESOURCE_TRANSPORT_COOLER"]=("Рефрижератор","Refrigerated cargo"),["RESOURCE_TRANSPORT_CONCRETE"]=("Бетон","Concrete"),["RESOURCE_TRANSPORT_LIVESTOCK"]=("Скот","Livestock"),["RESOURCE_TRANSPORT_WASTE"]=("Отходы","Waste"),
   ["SKILL_PERSONAL"]=("Легковой автомобиль","Personal car"),["SKILL_FIRETRUCK"]=("Пожарная машина","Fire engine"),["SKILL_AMBULANCE"]=("Скорая помощь","Ambulance"),["SKILL_POLICECAR"]=("Полицейская машина","Police car"),["SKILL_POLICEBUS"]=("Полицейский автобус","Police bus"),["SKILL_FORKLIFT"]=("Погрузчик","Forklift"),["SKILL_SNOWPLOW"]=("Снегоуборочная машина","Snowplow"),["SKILL_CONSTRUCTION_CRANE"]=("Кран","Crane"),["SKILL_CONSTRUCTION_GROUNDWORKS"]=("Экскаватор","Excavator"),["SKILL_CONSTRUCTION_BULLDOZER"]=("Бульдозер","Bulldozer"),["SKILL_CONSTRUCTION_ROLLING"]=("Каток","Road roller"),["SKILL_CONSTRUCTION_ASPHALT_LAYING"]=("Асфальтоукладчик","Asphalt paver"),["SKILL_GRAVELMINING"]=("Карьерный экскаватор","Quarry excavator"),["SKILL_SEEDING"]=("Трактор","Tractor"),["SKILL_HARVESTING"]=("Комбайн","Harvester"),["SKILL_WOODCARRING"]=("Лесовоз","Logging truck"),["SKILL_WASTE_CONTAINER_BIG"]=("Мусоровоз больших контейнеров","Large container truck"),["SKILL_WASTE_CONTAINER_SMALL"]=("Мусоровоз","Garbage truck"),["SKILL_CONSTRUCTION_RAIL_CRANE"]=("Железнодорожный кран","Rail crane"),["SKILL_CONSTRUCTION_RAIL_CRANE2"]=("Железнодорожный кран","Rail crane"),["SKILL_CONSTRUCTION_RAIL_TRACK_LAYER"]=("Путеукладчик","Track layer"),["SKILL_CONSTRUCTION_RAIL_TUNNEL_BORING"]=("Тоннелепроходческая машина","Tunnel boring machine"),
