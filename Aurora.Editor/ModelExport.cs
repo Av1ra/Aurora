@@ -19,9 +19,9 @@ static class ModelExport
   string staging=target+".building";Directory.CreateDirectory(staging);
   try
   {
-   var sourceMtl=NativeMaterialText.AlignNames(File.ReadAllText(mtl),lods.First().Value.Materials);var materialNames=Regex.Matches(sourceMtl,@"(?m)^\s*\$SUBMATERIAL\s+([^\r\n]+)").Select(x=>x.Groups[1].Value.Trim()).ToHashSet();
-   var slots=lods.First().Value.Materials;lods=lods.ToDictionary(p=>p.Key,p=>p.Value.Materials.All(materialNames.Contains)?p.Value:p.Value.Materials.Length==slots.Length?ModelEditing.MaterialSlots(p.Value,slots):throw new InvalidDataException("LOD material slot count differs from primary"));
-   foreach(var model in lods.Values)foreach(var material in model.Materials)if(!materialNames.Contains(material))throw new InvalidDataException("В MTL нет материала: "+material);
+   var sourceMtl=NativeMaterialText.AlignNames(File.ReadAllText(mtl),lods.First().Value.Nodes.SelectMany(n=>n.Groups).Select(g=>lods.First().Value.Materials[g.Material]).Distinct().ToArray());var materialNames=NativeMaterialText.Names(sourceMtl).ToHashSet();
+   var slots=lods.First().Value.Materials;lods=lods.ToDictionary(p=>p.Key,p=>p.Value.Nodes.SelectMany(n=>n.Groups).All(g=>materialNames.Contains(p.Value.Materials[g.Material]))?p.Value:p.Value.Materials.Length==slots.Length?ModelEditing.MaterialSlots(p.Value,slots):throw new InvalidDataException("LOD material slot count differs from primary"));
+   foreach(var model in lods.Values)foreach(var material in model.Nodes.SelectMany(n=>n.Groups).Select(g=>model.Materials[g.Material]).Distinct())if(!materialNames.Contains(material))throw new InvalidDataException("В MTL нет материала: "+material);
    var copyNames=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
    string CopyMap(string path)
    {

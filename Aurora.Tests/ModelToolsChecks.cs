@@ -5,6 +5,7 @@ static class ModelToolsChecks
  public static void Run(Action<bool,string> check,Action<Action,string> reject)
  {
   var model=ObjImporter.Parse("v -3 2 -4\nv 5 3 -4\nv -3 6 8\nf 1 2 3").Model;
+  var unicode=ModelEditing.MaterialSlots(model,["koło"]);unicode=ModelEditing.Rename(unicode,unicode.Nodes[0].Name,"żuraw");check(new NativeModel(unicode.Data).Materials.Single()=="koło"&&NativeModel.ReadMaterialNames(unicode.Data).Single()=="koło"&&new NativeModel(unicode.Data).Nodes[0].Name=="żuraw","native UTF-8 material and mesh names survive reader, writer and reload");reject(()=>ModelEditing.MaterialSlots(model,[new string('ł',32)]),"native names enforce the 63-byte UTF-8 limit rather than character count");
   check(ModelOrientation.BottomPivot(model)==new Vector3(1,2,2),"pivot centre uses horizontal midpoint and minimum height");
   var first=(Model:model,Pivot:Vector3.Zero);var moved=(Model:model,Pivot:new Vector3(1,2,3));var fixedModel=ModelOrientation.Apply(model,Matrix4x4.CreateTranslation(-moved.Pivot));var applied=(Model:fixedModel,Pivot:Vector3.Zero);
   var history=new EditHistory<(NativeModel Model,Vector3 Pivot)>((a,b)=>ReferenceEquals(a.Model,b.Model)&&a.Pivot==b.Pivot,_=>1,3,16);

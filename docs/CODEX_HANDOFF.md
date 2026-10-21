@@ -4,6 +4,8 @@ Checkpoint recorded: 2026-10-19. Canonical repository: `Av1ra/Aurora`, branch `m
 
 ## Read this first
 
+Latest continuation (2026-10-22): native material audit/repair, UTF-8 NMF names, active MTL terminators and exact TEXTURE/TEXTURE_MTL roots. See the newest section of TRANSPORT_IMPLEMENTATION_03.md and reproducible Packaging/MaterialAudit. Corpus: 1,073 objects, 3,854 variants; 124 partial objects remain explicitly unconfigured, 18 objects have genuinely missing textures, nine MAIN use unsupported streams. Tests and WinUI module pass. Current source is not installed; owner's two installed Launchers remain open. Continue transport work and package verification autonomously.
+
 Current continuation includes donor-free class/role profiles (88 classes, 22 roles), cabin working frames, diagnostic dumper/mixer poses and shared materials of all linked parts. All seven types roundtrip own OBJ -> portable workspace -> local export without a game donor. Latest delivered, separately verified production is 5278f095c46654d028a2cd9e522182a707b6bf35, build-68282d0ccbb2449eab186edc7912cceb; installed files remain older while the owner's Launcher processes are open. New role/import fixes follow that delivery. Continue broad native material/import checking and self-tests; do not stop or request owner testing at an intermediate package.
 
 Latest source continuation: [multi-object portable transport projects](TRANSPORT_IMPLEMENTATION_03.md), including strict project decoding, self-authored trainsets, native/PBR materials of linked parts and seven-class export checks. Production receipts remain separate; do not claim this source is installed. Continue the owner's autonomous task without stopping at intermediate builds.

@@ -5,9 +5,11 @@ public record DrawGroup(int First,int Count,int Material);
 public sealed record MeshNode(string Name,int Offset,int End,int VertexCount,int IndexCount,int IndexOffset,int AttributeOffset,int FaceOffset,int GroupOffset,int Stride,int FaceStride,DrawGroup[] Groups,float[] Positions,float[] Normals,float[] Uv,ushort[] Indices);
 public sealed class NativeModel
 {
+ static readonly UTF8Encoding nameEncoding=new(false,true);
+ public static string DecodeName(ReadOnlySpan<byte> bytes){try{return nameEncoding.GetString(bytes);}catch(DecoderFallbackException){return Encoding.Latin1.GetString(bytes);}}
  public static string[] ReadMaterialNames(byte[] data)
  {
-  Require(data.Length>=20&&data.Length<=128*1024*1024,"NMF size invalid");Require(data.AsSpan(0,8).SequenceEqual("B3DMH\0"u8.ToArray().Concat("10"u8.ToArray()).ToArray())||data.AsSpan(0,8).SequenceEqual("fromObj\0"u8),"Unsupported NMF signature");int count=BitConverter.ToInt32(data,8);Require(count is >0 and <=512&&BitConverter.ToInt32(data,16)==data.Length&&20+count*64<=data.Length,"Invalid NMF material table");return Enumerable.Range(0,count).Select(i=>{int at=20+i*64,end=Array.IndexOf(data,(byte)0,at,64);Require(end>=at,"Unterminated NMF material");return Encoding.ASCII.GetString(data,at,end-at);}).ToArray();
+  Require(data.Length>=20&&data.Length<=128*1024*1024,"NMF size invalid");Require(data.AsSpan(0,8).SequenceEqual("B3DMH\0"u8.ToArray().Concat("10"u8.ToArray()).ToArray())||data.AsSpan(0,8).SequenceEqual("fromObj\0"u8),"Unsupported NMF signature");int count=BitConverter.ToInt32(data,8);Require(count is >0 and <=512&&BitConverter.ToInt32(data,16)==data.Length&&20+count*64<=data.Length,"Invalid NMF material table");return Enumerable.Range(0,count).Select(i=>{int at=20+i*64,end=Array.IndexOf(data,(byte)0,at,64);Require(end>=at,"Unterminated NMF material");return DecodeName(data.AsSpan(at,end-at));}).ToArray();
  }
  public byte[] Data{get;}
  public string[] Materials{get;}
@@ -56,14 +58,14 @@ public sealed class NativeModel
  public int I(int at)=>BitConverter.ToInt32(Data,at);
  public ushort U(int at)=>BitConverter.ToUInt16(Data,at);
  public float F(int at)=>BitConverter.ToSingle(Data,at);
- string Name(int at){Require(at>=0&&at+64<=Data.Length,"Truncated NMF name");int end=Array.IndexOf(Data,(byte)0,at,64);Require(end>=at,"Unterminated NMF name");return Encoding.ASCII.GetString(Data,at,end-at);}
+ string Name(int at){Require(at>=0&&at+64<=Data.Length,"Truncated NMF name");int end=Array.IndexOf(Data,(byte)0,at,64);Require(end>=at,"Unterminated NMF name");return DecodeName(Data.AsSpan(at,end-at));}
 
  public byte[] AssignGlass(ISet<string> nodeNames,string glassName="Aurora_Glass")
  {
   Require(!Materials.Contains(glassName),"Choose the original NMF, not a previously exported glass model");
   Require(Nodes.Any(x=>nodeNames.Contains(x.Name)),"Selected glass object is missing from this LOD");
   using var stream=new MemoryStream();using var writer=new BinaryWriter(stream);
-  writer.Write(Data,0,20+Materials.Length*64);writer.Write(Encoding.ASCII.GetBytes(glassName).Concat(new byte[64-glassName.Length]).ToArray());
+  byte[] glassBytes=new UTF8Encoding(false,true).GetBytes(glassName);Require(glassBytes.Length is >0 and <=63&&!glassName.Any(char.IsControl),"Invalid glass material name");writer.Write(Data,0,20+Materials.Length*64);writer.Write(glassBytes.Concat(new byte[64-glassBytes.Length]).ToArray());
   foreach(var node in Nodes)
   {
    var block=Data.AsSpan(node.Offset,node.End-node.Offset).ToArray();

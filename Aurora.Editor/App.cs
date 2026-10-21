@@ -127,10 +127,10 @@ sealed partial class EditorWindow:Window
   foreach(var line in text.Split('\n'))
   {
    var material=Regex.Match(line,@"^\s*\$SUBMATERIAL\s+(.+?)\s*$");if(material.Success){name=material.Groups[1].Value;continue;}
-   var texture=Regex.Match(line,@"^\s*\$TEXTURE(?:_MTL)?\s+([012])\s+(.+?)\s*$");
+   var texture=Regex.Match(line,@"^\s*\$TEXTURE(?<local>_MTL)?\s+([012])\s+(.+?)\s*$");
    if(name!=null&&texture.Success)
    {
-    try{var file=MaterialFiles.Resolve(mtl,texture.Groups[2].Value);var image=await ReadImage(file);string channel=texture.Groups[1].Value switch{"1"=>"specularMap","2"=>"normalMap",_=>"texture"};await PreviewTexture(name,image,channel);}catch(Exception ex){SetStatus("Текстура",ex.Message);}
+    try{var file=MaterialFiles.ResolveNative(mtl,texture.Groups[2].Value,texture.Groups["local"].Success);var image=await ReadImage(file);string channel=texture.Groups[1].Value switch{"1"=>"specularMap","2"=>"normalMap",_=>"texture"};await PreviewTexture(name,image,channel);}catch(Exception ex){SetStatus("Текстура",ex.Message);}
    }
   }
  }
@@ -183,7 +183,7 @@ sealed partial class EditorWindow:Window
   string? reload=null;foreach(var entry in new[]{("Загрузить стандартный MTL…","native"),("Загрузить PBR MTL…","pbr")}){var button=new Button{Content=UiLanguage.Text(entry.Item1),HorizontalAlignment=HorizontalAlignment.Stretch};button.Click+=(_,_)=>{reload=entry.Item2;dialog.Hide();};panel.Children.Insert(0,button);}
   UiLanguage.Apply(panel);
   dialog.PrimaryButtonClick+=(_,e)=>{if(diffuseColor.Concat(ambientColor).Concat(specularColor).Append(nativePower).Any(b=>!double.IsFinite(b.Value))){e.Cancel=true;dialogError.Message=UiLanguage.Text("Проверьте значения материала");dialogError.IsOpen=true;}};var choice=await ShowDialog(dialog);if(reload!=null){if(reload=="native")await LoadNativeMaterial();else await LoadPbrMaterial();await ConfigurePbr();return;}if(choice!=ContentDialogResult.Primary)return;
-  var updated=new Dictionary<string,MaterialSettings>{{name,s with{Base=baseMap,Normal=normal,Orm=orm,Metallic=(float)metal.Value,Roughness=(float)rough.Value,Ao=(float)ao.Value,NormalStrength=(float)strength.Value,Native=native.IsOn,MetalMap=metalMap,RoughMap=roughMap,AoMap=aoMap,Emissive=emissive,EmissiveStrength=(float)emission.Value,Ibl=(float)ibl.Value,NormalY=normalY.SelectedIndex==0?-1:1,Specular=specular,PbrBase=pbrBase,PbrNormal=pbrNormal,NativeDiffuse=diffuseColor.Select(b=>(float)b.Value).ToArray(),NativeAmbient=ambientColor.Select(b=>(float)b.Value).ToArray(),NativeSpecular=specularColor.Select(b=>(float)b.Value).ToArray(),NativePower=(float)nativePower.Value}}};await NormalizeMaterialMaps(updated);dirty=true;settings[name]=updated[name];StoreVariant();
+  var updated=new Dictionary<string,MaterialSettings>{{name,s with{Base=baseMap,Normal=normal,Orm=orm,Metallic=(float)metal.Value,Roughness=(float)rough.Value,Ao=(float)ao.Value,NormalStrength=(float)strength.Value,Native=native.IsOn,MetalMap=metalMap,RoughMap=roughMap,AoMap=aoMap,Emissive=emissive,EmissiveStrength=(float)emission.Value,Ibl=(float)ibl.Value,NormalY=normalY.SelectedIndex==0?-1:1,Specular=specular,PbrBase=pbrBase,PbrNormal=pbrNormal,NativeDiffuse=diffuseColor.Select(b=>(float)b.Value).ToArray(),NativeAmbient=ambientColor.Select(b=>(float)b.Value).ToArray(),NativeSpecular=specularColor.Select(b=>(float)b.Value).ToArray(),NativePower=(float)nativePower.Value}}};await NormalizeMaterialMaps(updated);if(!MaterialDefined(name,mtl))EnsureMaterialDefinition(name);dirty=true;settings[name]=updated[name];StoreVariant();
   await Display();
  }
  async Task Export()

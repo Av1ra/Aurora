@@ -41,7 +41,7 @@ sealed partial class EditorWindow
  {
   var materials=model.Materials.ToList();var entries=new List<object>();
   if(!CabinFrameRequested)foreach(var n in MechanismPreviewNodes(model))entries.Add(new{n.Name,n.Positions,n.Normals,n.Uv,Indices=n.Indices.Select(i=>(int)i).ToArray(),n.Groups,Cargo=false});
-  AppendAssemblyParts(materials,entries);if(JointFrameRequested)foreach(string name in model.Nodes.SelectMany(n=>n.Groups).Select(g=>model.Materials[g.Material]).Distinct().Where(n=>!settings.ContainsKey(n)))partWarnings.Add(UiLanguage.Text("В MTL нет материала")+": "+name);
+  AppendAssemblyParts(materials,entries);foreach(string name in model.Nodes.SelectMany(n=>n.Groups).Select(g=>model.Materials[g.Material]).Distinct().Where(n=>!settings.ContainsKey(n)))partWarnings.Add(UiLanguage.Text("В MTL нет материала")+": "+name);
   if(showCargo&&cargoModel!=null&&vehicleConfiguration!=null&&cargoFrame.Contains("JOINT",StringComparison.Ordinal)==JointFrameRequested){
    int first=materials.Count;materials.AddRange(cargoModel.Materials.Select(m=>"__cargo__"+m));int count=VehicleScript.Fields(vehicleConfiguration).Count(f=>f.Key==cargoFrame);
    for(int slot=0;slot<count;slot++){

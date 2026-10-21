@@ -7,12 +7,11 @@ static class MaterialExport
 {
  public static (string Native,StringBuilder Rules) Render(string sourceMtl,string mtl,IReadOnlyDictionary<string,MaterialSettings> settings,Func<string,string> CopyMap)
  {
-  var materialNames=Regex.Matches(sourceMtl,@"(?m)^\s*\$SUBMATERIAL\s+([^\r\n]+)").Select(m=>m.Groups[1].Value.Trim()).ToHashSet();
-   string outputMtl=sourceMtl;
+  sourceMtl=NativeMaterialText.Normalize(sourceMtl);var materialNames=NativeMaterialText.Names(sourceMtl).ToHashSet();string outputMtl=sourceMtl;
    foreach(var pair in settings)foreach(var texture in new[]{(0,pair.Value.Base),(1,pair.Value.Specular),(2,pair.Value.Normal)})if(texture.Item2!=null)outputMtl=NativeMaterialText.SetTexture(outputMtl,pair.Key,texture.Item1,texture.Item2);
    foreach(var pair in settings){var s=pair.Value;foreach(var value in new[]{("DIFFUSECOLOR",s.NativeDiffuse),("AMBIENTCOLOR",s.NativeAmbient),("SPECULARCOLOR",s.NativeSpecular),("SPECULARPOWER",s.NativePower is float power?new[]{power}:null)})if(value.Item2!=null)outputMtl=NativeMaterialText.SetProperty(outputMtl,pair.Key,value.Item1,value.Item2);}
    // Retain every original MTL texture reference, including paint/light channels.
-   outputMtl=Regex.Replace(outputMtl,@"(?m)^\s*\$TEXTURE(?:_MTL)?\s+(\d+)\s+([^\r\n]+)",match=>{string file=MaterialFiles.Resolve(mtl,match.Groups[2].Value);return "$TEXTURE_MTL "+match.Groups[1].Value+" "+CopyMap(file);});
+   outputMtl=VehicleAssets.MapMaterial(outputMtl,(r,local)=>CopyMap(MaterialFiles.ResolveNative(mtl,r,local)));
    var rules=new StringBuilder();string F(float value)=>value.ToString("0.###",CultureInfo.InvariantCulture);
    foreach(var pair in settings)
    {

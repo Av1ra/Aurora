@@ -9,6 +9,7 @@ public static class VehicleScript
 {
  static readonly Regex headers=new(@"(?im)^[\t \uFEFF]*\$([A-Z_0-9]+)[\t ]*([^\r\n]*)");
  static readonly Regex terminator=new(@"(?im)^[\t \uFEFF]*(?:\$END|end)[\t ]*(?:(?://|#|--)[^\r\n]*)?\r?$");
+ public static int ActiveLength(string script)=>terminator.Match(script) is {Success:true} m?m.Index:script.Length;
  static Match[] Headers(string script){int end=terminator.Match(script) is {Success:true} m?m.Index:script.Length;return headers.Matches(script).Where(m=>m.Index<end).ToArray();}
  static int Comment(string text){bool quote=false;for(int i=0;i<text.Length;i++){if(text[i]=='"')quote=!quote;if(!quote&&(i==0||char.IsWhiteSpace(text[i-1]))&&(text[i]=='#'||i+1<text.Length&&(text.Substring(i,2)=="//"||text.Substring(i,2)=="--")))return i;}return text.Length;}
  static string Data(string text)=>text[..Comment(text)].Trim();

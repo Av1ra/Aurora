@@ -1,0 +1,186 @@
+{
+  "Objects": 1073,
+  "Variants": 3854,
+  "Columns": [
+    "Objects",
+    "RigidMain",
+    "MaterialImportPass",
+    "NoMTL"
+  ],
+  "Counts": {
+    "VEHICLETYPE_SHIP": [
+      28,
+      28,
+      25,
+      0
+    ],
+    "VEHICLETYPE_RAIL_LOCOMOTIVE": [
+      117,
+      116,
+      113,
+      0
+    ],
+    "VEHICLETYPE_RAIL_VAGON": [
+      109,
+      107,
+      104,
+      0
+    ],
+    "VEHICLETYPE_ROAD": [
+      773,
+      767,
+      758,
+      0
+    ],
+    "VEHICLETYPE_AIRPLANE": [
+      27,
+      27,
+      27,
+      0
+    ],
+    "VEHICLETYPE_HELICOPTER": [
+      8,
+      8,
+      8,
+      0
+    ],
+    "VEHICLETYPE_CABIN": [
+      11,
+      11,
+      11,
+      0
+    ]
+  },
+  "Unsupported": [
+    {
+      "Id": "russian_vagon_falls_gravel",
+      "Reason": "Invalid NMF header"
+    },
+    {
+      "Id": "DLC3_maz_200_oil_water",
+      "Reason": "Unsupported animated/external NMF node"
+    },
+    {
+      "Id": "DLC3_maz_200_oil",
+      "Reason": "Unsupported animated/external NMF node"
+    },
+    {
+      "Id": "DLC3_maz_200_oil_sewage",
+      "Reason": "Unsupported animated/external NMF node"
+    },
+    {
+      "Id": "russian_vagon_raj_cement",
+      "Reason": "Invalid NMF header"
+    },
+    {
+      "Id": "covered_t138",
+      "Reason": "Unsupported NMF trailing streams"
+    },
+    {
+      "Id": "covered_t148",
+      "Reason": "Unsupported NMF trailing streams"
+    },
+    {
+      "Id": "russian_loco_t3m2my",
+      "Reason": "Unsupported NMF trailing streams"
+    },
+    {
+      "Id": "bus_zis_155",
+      "Reason": "Unsupported animated/external NMF node"
+    }
+  ],
+  "PartialObjects": 124,
+  "PartialVariants": 631,
+  "TextureFailures": [
+    {
+      "Id": "russian_vagon_cement",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Reason": "MTL texture not found: <game>/media_soviet\\blanlspecular.dds"
+    },
+    {
+      "Id": "daneferry",
+      "Type": "VEHICLETYPE_SHIP",
+      "Reason": "MTL texture not found: <game>/media_soviet\\ships\\daneferry\\alpha.dds"
+    },
+    {
+      "Id": "DLC3_kanalmotorschiff_bavaria_xii",
+      "Type": "VEHICLETYPE_SHIP",
+      "Reason": "MTL texture not found: <game>/media_soviet\\dlc3\\vehicles\\kanalmotorschiff_bavaria_xii\\spec_hatches.dds"
+    },
+    {
+      "Id": "DLC3_kanalmotorschiff_aggregate",
+      "Type": "VEHICLETYPE_SHIP",
+      "Reason": "MTL texture not found: <game>/media_soviet\\dlc3\\vehicles\\kanalmotorschiff_bavaria_xii\\spec_hatches.dds"
+    },
+    {
+      "Id": "DLC3_oil_fi626",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: <game>/media_soviet\\dlc3\\vehicles\\open_fi626\\oil_norm.dds"
+    },
+    {
+      "Id": "DLC3_oil_fi626_water",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: <game>/media_soviet\\dlc3\\vehicles\\open_fi626\\oil_norm.dds"
+    },
+    {
+      "Id": "DLC3_oil_fi666_trailer",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: <game>/media_soviet\\dlc3\\vehicles\\open_fi626\\oil_norm.dds"
+    },
+    {
+      "Id": "garbage_big_kmz_5320",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: <game>/media_soviet\\vehicles\\garbage_big_lz100\\specgarbage.dds"
+    },
+    {
+      "Id": "oil_mck",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: <game>/media_soviet\\vehicles\\oil_mck\\refrig.dds"
+    },
+    {
+      "Id": "garbage_big_mckR",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: <game>/media_soviet\\vehicles\\garbage_big_lz100\\specgarbage.dds"
+    },
+    {
+      "Id": "DLC3_russian_metro_ABv",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Reason": "MTL texture not found: <game>/media_soviet\\trains\\russian_metro_AB\\diffuse.dds"
+    },
+    {
+      "Id": "DLC3_russian_service_dampfdrehkran",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Reason": "MTL texture not found: <game>/media_soviet\\trains\\russian_service_weimar\\lano.dds"
+    },
+    {
+      "Id": "DLC3_west_diesel_RSD1",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Reason": "MTL texture not found: <game>/media_soviet\\dlc3\\vehicles\\west_diesel_RSD1\\TE_specular.dds"
+    },
+    {
+      "Id": "garbage_big_skd_706mts",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: <game>/media_soviet\\vehicles\\garbage_big_lz100\\specgarbage.dds"
+    },
+    {
+      "Id": "DLC3_west_service_steamcrane",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Reason": "MTL texture not found: <game>/media_soviet\\trains\\russian_service_weimar\\lano.dds"
+    },
+    {
+      "Id": "DLC3_garbage_big_t111",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: <game>/media_soviet\\vehicles\\garbage_big_lz100\\specgarbage.dds"
+    },
+    {
+      "Id": "garbage_big_t815_ztz",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: <game>/media_soviet\\vehicles\\garbage_big_lz100\\specgarbage.dds"
+    },
+    {
+      "Id": "DLC3_russian_service_weimar_vagon2",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Reason": "MTL texture not found: <game>/media_soviet\\trains\\russian_service_weimar_vagon\\diffuse.dds"
+    }
+  ]
+}

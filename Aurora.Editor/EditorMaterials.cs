@@ -26,7 +26,7 @@ sealed partial class EditorWindow
  {
   string folder=Path.GetDirectoryName(model)!;var files=Directory.GetFiles(folder,"*.mtl").Where(f=>Regex.IsMatch(Path.GetFileName(f),@"^material(?:_\d+)?\.mtl$",RegexOptions.IgnoreCase)).OrderBy(f=>Path.GetFileName(f).Length).ThenBy(f=>f).ToList();
   string direct=Path.ChangeExtension(model,"mtl");if(files.Count==0&&File.Exists(direct))files.Add(direct);
-  var aliases=new Dictionary<string,string>();if(files.Count>0){var names=NativeMaterialText.Names(File.ReadAllText(files[0]));var aligned=lods.ToDictionary(p=>p.Key,p=>ModelEditing.NativeMaterialSlots(p.Value,names));foreach(var p in aligned){for(int i=0;i<p.Value.Materials.Length;i++){string old=lods[p.Key].Materials[i],current=p.Value.Materials[i];if(old!=current){if(aliases.TryGetValue(old,out string? prior)&&prior!=current)throw new InvalidDataException("Ambiguous material alias: "+old);aliases[old]=current;}}}foreach(var p in aligned)lods[p.Key]=p.Value;}
+  var aliases=new Dictionary<string,string>();if(files.Count>0){var names=NativeMaterialText.Names(File.ReadAllText(files[0]));var aligned=lods.ToDictionary(p=>p.Key,p=>ModelEditing.NativeMaterialSlots(p.Value,names,allowPartial:true));foreach(var p in aligned){for(int i=0;i<p.Value.Materials.Length;i++){string old=lods[p.Key].Materials[i],current=p.Value.Materials[i];if(old!=current){if(aliases.TryGetValue(old,out string? prior)&&prior!=current)throw new InvalidDataException("Ambiguous material alias: "+old);aliases[old]=current;}}}foreach(var p in aligned)lods[p.Key]=p.Value;}
   variants.Clear();variantChoice.Items.Clear();activeVariant=-1;
   foreach(string file in files){var maps=MaterialDocuments.Native(file,lods.Values.First());string? paired=MaterialDocuments.FindPbr(file);if(paired!=null)maps=MaterialDocuments.Pbr(paired,maps,aliases);await NormalizeMaterialMaps(maps);variants.Add(new(Path.GetFileNameWithoutExtension(file),file,maps));variantChoice.Items.Add(variants.Count.ToString());}
   if(variants.Count>0)ActivateVariant(0);else CreateDefaultVariant(lods.Values.SelectMany(m=>m.Materials).Distinct());
@@ -44,9 +44,8 @@ sealed partial class EditorWindow
  }
  async Task LoadNativeMaterial()
  {
-  string? path=await Pick(".mtl");if(path==null)return;var slots=NativeMaterialText.Names(File.ReadAllText(path));var aligned=lods.ToDictionary(p=>p.Key,p=>ModelEditing.NativeMaterialSlots(p.Value,slots));var maps=MaterialDocuments.Native(path,aligned.Values.First());await NormalizeMaterialMaps(maps);
-  foreach(string name in aligned.Values.SelectMany(m=>m.Materials).Distinct())if(!maps.ContainsKey(name))throw new InvalidDataException("В MTL нет материала: "+name);
-  foreach(var p in aligned)lods[p.Key]=p.Value;mtl=path;settings.Clear();foreach(var p in maps)settings[p.Key]=p.Value;StoreVariant();dirty=true;SetStatus("Материал загружен");
+  string? path=await Pick(".mtl");if(path==null)return;var slots=NativeMaterialText.Names(File.ReadAllText(path));var aligned=lods.ToDictionary(p=>p.Key,p=>ModelEditing.NativeMaterialSlots(p.Value,slots,allowPartial:true));var maps=MaterialDocuments.Native(path,aligned.Values.First());await NormalizeMaterialMaps(maps);
+  foreach(var p in aligned)lods[p.Key]=p.Value;mtl=path;settings.Clear();foreach(var p in maps)settings[p.Key]=p.Value;StoreVariant();dirty=true;await Display();SetStatus("Материал загружен",partWarnings.Count>0?string.Join("\n",partWarnings):null);
  }
  async Task LoadPbrMaterial()
  {
@@ -54,28 +53,29 @@ sealed partial class EditorWindow
  }
  async Task<string?> MaterialName(string title)
  {
-  var box=new TextBox{Header=UiLanguage.Text("Имя"),MaxLength=63};var dialog=VehicleDialog(title,box);
-  if(await ShowDialog(dialog)!=ContentDialogResult.Primary)return null;string name=box.Text.Trim();if(name.Length==0||ObjImporter.Identifier(name)!=name)throw new InvalidDataException(UiLanguage.Text("Используйте латиницу, цифры и знак подчёркивания."));return name;
+  var box=new TextBox{Header=UiLanguage.Text("Имя"),MaxLength=63,Text=materialChoice.SelectedItem is string selected&&!MaterialDefined(selected,mtl)?selected:""};var dialog=VehicleDialog(title,box);
+  if(await ShowDialog(dialog)!=ContentDialogResult.Primary)return null;string name=box.Text.Trim();if(name.Length==0||!lods.Values.Any(m=>m.Materials.Contains(name))&&ObjImporter.Identifier(name)!=name)throw new InvalidDataException(UiLanguage.Text("Используйте латиницу, цифры и знак подчёркивания."));return name;
  }
+ bool MaterialDefined(string name,string? file)=>file!=null&&File.Exists(file)&&NativeMaterialText.Names(File.ReadAllText(file)).Contains(name);
  async Task CreateMaterial()
  {
-  string? name=await MaterialName("Создать материал…");if(name==null)return;
-  if(lods.Values.Any(m=>m.Materials.Contains(name))||variants.Any(v=>v.Settings.ContainsKey(name)))throw new InvalidDataException("Material already exists");
-  var changed=lods.ToDictionary(p=>p.Key,p=>ModelEditing.AddMaterial(p.Value,name));
+  string? name=await MaterialName("Создать материал…");if(name==null)return;if(MaterialDefined(name,mtl))throw new InvalidDataException("Material already exists");EnsureMaterialDefinition(name);await Display();materialChoice.SelectedItem=name;
+ }
+ void EnsureMaterialDefinition(string name)
+ {
+  var changed=lods.ToDictionary(p=>p.Key,p=>p.Value.Materials.Contains(name)?p.Value:ModelEditing.AddMaterial(p.Value,name));
   string blank=SessionFile("neutral.dds");if(!File.Exists(blank))File.WriteAllBytes(blank,DdsImage.Encode(new(1,1,[180,180,180,255])));
   string normal=SessionFile("neutral-normal.dds");if(!File.Exists(normal))File.WriteAllBytes(normal,DdsImage.Encode(new(1,1,[128,128,255,255])));
   StoreVariant();if(variants.Count==0){variants.Add(new("material","",new()));variantChoice.Items.Add("1");activeVariant=0;}
   var updatedVariants=new List<MaterialVariant>();
-  for(int i=0;i<variants.Count;i++){
-   var variant=variants[i];string text=File.Exists(variant.NativePath)?File.ReadAllText(variant.NativePath):"$END\n";
-   int end=text.LastIndexOf("$END",StringComparison.Ordinal);if(end<0)throw new InvalidDataException("MTL $END missing");
+  foreach(var variant in variants){
+   if(MaterialDefined(name,variant.NativePath)){updatedVariants.Add(variant);continue;}
+   string text=File.Exists(variant.NativePath)?File.ReadAllText(variant.NativePath):"$END\n";
    string added=NativeMaterialText.Create([name],blank,blank,normal);string output=SessionFile("material-"+Guid.NewGuid().ToString("N")+".mtl");
-   // Resolve pre-existing references before relocating a native file into a session.
-   if(File.Exists(variant.NativePath))text=Regex.Replace(text,@"(?m)^\s*\$TEXTURE(?:_MTL)?\s+(\d+)\s+([^\r\n]+)",m=>"$TEXTURE_MTL "+m.Groups[1].Value+" "+MaterialFiles.Resolve(variant.NativePath,m.Groups[2].Value));
-   end=text.LastIndexOf("$END",StringComparison.Ordinal);File.WriteAllText(output,text[..end]+added+text[(end+4)..]);var maps=new Dictionary<string,MaterialSettings>(variant.Settings){{name,new(Base:blank,Specular:blank,Normal:normal)}};updatedVariants.Add(variant with{NativePath=output,Settings=maps});
+   if(File.Exists(variant.NativePath))text=VehicleAssets.MapMaterial(text,(r,local)=>MaterialFiles.ResolveNative(variant.NativePath,r,local));
+   File.WriteAllText(output,NativeMaterialText.Append(text,added));var maps=new Dictionary<string,MaterialSettings>(variant.Settings);maps.TryAdd(name,new(Base:blank,Specular:blank,Normal:normal));updatedVariants.Add(variant with{NativePath=output,Settings=maps});
   }
-  foreach(var pair in changed)lods[pair.Key]=pair.Value;variants.Clear();variants.AddRange(updatedVariants);
-  ActivateVariant(activeVariant);dirty=true;await Display();materialChoice.SelectedItem=name;
+  foreach(var pair in changed)lods[pair.Key]=pair.Value;variants.Clear();variants.AddRange(updatedVariants);ActivateVariant(activeVariant);dirty=true;
  }
  async Task CreateVariant()
  {

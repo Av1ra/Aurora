@@ -14,11 +14,11 @@ static class MaterialDocuments
  public static string? FindPbr(string native)=>MaterialFiles.Companion(native);
  public static Dictionary<string,MaterialSettings> Native(string file,NativeModel? model=null)
  {
-  string text=File.ReadAllText(file);if(model!=null)text=NativeMaterialText.AlignNames(text,model.Materials);var result=new Dictionary<string,MaterialSettings>();string? name=null;
+  string text=NativeMaterialText.Normalize(File.ReadAllText(file));text=text[..VehicleScript.ActiveLength(text)];if(model!=null){var declared=NativeMaterialText.Names(text);if(declared.Length==model.Materials.Length&&!model.Materials.All(declared.Contains)&&!declared.Where((name,i)=>model.Materials.Contains(name)&&model.Materials[i]!=name).Any())text=NativeMaterialText.AlignNames(text,model.Materials);}var result=new Dictionary<string,MaterialSettings>();string? name=null;
   foreach(string line in text.Split('\n')){
    var header=Regex.Match(line,@"^\s*\$SUBMATERIAL\s+(.+?)\s*$");if(header.Success){name=header.Groups[1].Value;if(!result.TryAdd(name,new()))throw new InvalidDataException("Duplicate material: "+name);continue;}
-   var map=Regex.Match(line,@"^\s*\$TEXTURE(?:_MTL)?\s+([012])\s+(.+?)\s*$");if(name==null||!map.Success)continue;
-   string path=MaterialFiles.Resolve(file,map.Groups[2].Value);var value=result[name];result[name]=map.Groups[1].Value switch{"0"=>value with{Base=path},"1"=>value with{Specular=path},_=>value with{Normal=path}};
+   var map=Regex.Match(line,@"^\s*\$TEXTURE(?<local>_MTL)?\s+([012])\s+(.+?)\s*$");if(name==null||!map.Success)continue;
+   string path=MaterialFiles.ResolveNative(file,map.Groups[2].Value,map.Groups["local"].Success);var value=result[name];result[name]=map.Groups[1].Value switch{"0"=>value with{Base=path},"1"=>value with{Specular=path},_=>value with{Normal=path}};
   }
   if(result.Count==0)throw new InvalidDataException("No native submaterials in MTL");foreach(string material in result.Keys.ToArray())result[material]=result[material] with{NativeDiffuse=NativeMaterialText.Property(text,material,"DIFFUSECOLOR"),NativeAmbient=NativeMaterialText.Property(text,material,"AMBIENTCOLOR"),NativeSpecular=NativeMaterialText.Property(text,material,"SPECULARCOLOR"),NativePower=NativeMaterialText.Property(text,material,"SPECULARPOWER")?.FirstOrDefault()};return result;
  }
