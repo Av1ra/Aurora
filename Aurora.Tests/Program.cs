@@ -13,6 +13,7 @@ VehicleWorkflowChecks.Run(Check,Reject);
 TransportCompletenessChecks.Run(Check,Reject,args.FirstOrDefault());
 VehicleAssetChecks.Run(Check,Reject,args.FirstOrDefault());
 TransportParameterChecks.Run(Check,Reject,args.FirstOrDefault());
+MechanismAxisChecks.Run(Check,Reject,args.FirstOrDefault());
 CargoFrameChecks.Run(Check,Reject);
 MaterialPropertyChecks.Run(Check,Reject);
 TransportPackageChecks.Run(Check,Reject);

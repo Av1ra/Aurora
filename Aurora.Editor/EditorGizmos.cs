@@ -29,7 +29,7 @@ sealed partial class EditorWindow
   pivotCentreButton=Action("Автоцентрирование",async()=>{mainPivot=ModelOrientation.BottomPivot(lods.First().Value);dirty=true;await RefreshGizmo();});gizmoActions.Children.Add(pivotCentreButton);
   pivotApplyButton=Action("Исправить pivot",ApplyPivot);gizmoActions.Children.Add(pivotApplyButton);gizmoActions.Children.Add(Action("Готово",async()=>{gizmoVisible=false;gizmoEditing=false;transportPoint=null;await Display();}));
   for(int i=0;i<3;i++){int axis=i;var box=new NumberBox{Header="XYZ"[i].ToString(),Value=0,Width=108,SmallChange=.1,SpinButtonPlacementMode=NumberBoxSpinButtonPlacementMode.Hidden,NumberFormatter=new Windows.Globalization.NumberFormatting.DecimalFormatter{FractionDigits=1,IntegerDigits=1,IsGrouped=false,NumberRounder=new Windows.Globalization.NumberFormatting.IncrementNumberRounder{Increment=.1,RoundingAlgorithm=Windows.Globalization.NumberFormatting.RoundingAlgorithm.RoundHalfUp}}};box.ValueChanged+=async(_,_)=>{if(gizmoUpdating||busy||!gizmoVisible||!double.IsFinite(box.Value))return;if(activeCargo>=0&&gizmoMode=="scale"&&box.Value<0){await RefreshGizmo();return;}var v=GizmoValue();v=axis switch{0=>new((float)box.Value,v.Y,v.Z),1=>new(v.X,(float)box.Value,v.Z),_=>new(v.X,v.Y,(float)box.Value)};if(!float.IsFinite(v.X)||!float.IsFinite(v.Y)||!float.IsFinite(v.Z))return;var before=CaptureSnapshot();SetGizmoValue(v);dirty=true;CommitHistory(before);if(transportPoint!=null)await Display();else await RefreshGizmo();};gizmoCoordinates[i]=box;gizmoNumbers.Children.Add(box);}
-  viewport.Children.Add(cargoPalette);viewport.Children.Add(gizmoActions);viewport.Children.Add(gizmoNumbers);
+  BuildMechanismControls();viewport.Children.Add(cargoPalette);viewport.Children.Add(gizmoActions);viewport.Children.Add(gizmoNumbers);
  }
  Vector3 GizmoPosition()=>transportPoint!=null?TransportPointPosition():activeSmoke>=0?SmokePosition():activeCargo>=0?CargoPosition():activeLamp<0?mainPivot:lampSlots[activeLamp]?.Position??mainPivot;
  Vector3 GizmoRotation()=>transportPoint!=null?TransportRotation():activeSmoke>=0?Vector3.Zero:activeCargo>=0?CargoRotation():activeLamp<0?mainRotation:lampRotations[activeLamp];
@@ -43,7 +43,7 @@ sealed partial class EditorWindow
  }
  async Task RefreshGizmo()
  {
-  RefreshCargoPalette();
+  RefreshCargoPalette();RefreshMechanismControls();
   gizmoActions.Visibility=gizmoVisible?Visibility.Visible:Visibility.Collapsed;gizmoModes.Visibility=gizmoEditing?Visibility.Visible:Visibility.Collapsed;gizmoNumbers.Visibility=gizmoVisible&&gizmoEditing?Visibility.Visible:Visibility.Collapsed;
   // Native headlights are positional emitters; rotation belongs to model pivot.
   if(activeLamp>=0||activeSmoke>=0)gizmoMode="move";
@@ -54,7 +54,7 @@ sealed partial class EditorWindow
   if(pivotEditButton!=null)pivotEditButton.Visibility=transportPoint==null&&activeCargo<0&&activeSmoke<0?Visibility.Visible:Visibility.Collapsed;
   cargoScaleModes.Visibility=activeCargo>=0&&gizmoMode=="scale"?Visibility.Visible:Visibility.Collapsed;cargoEndChoice.Visibility=activeCargo>=0&&!VehicleBoxFrame?Visibility.Visible:Visibility.Collapsed;
   gizmoUpdating=true;foreach(var box in gizmoCoordinates){box.Minimum=activeCargo>=0&&gizmoMode=="scale"?0:-1e7;box.Maximum=activeCargo>=0&&gizmoMode=="scale"?1e6:1e7;}cargoUniformButton.IsChecked=cargoUniform;cargoAxisButton.IsChecked=!cargoUniform;cargoEndChoice.SelectedIndex=cargoEndpoint;var v=GizmoValue();gizmoCoordinates[0].Value=v.X;gizmoCoordinates[1].Value=v.Y;gizmoCoordinates[2].Value=v.Z;gizmoUpdating=false;
-  if(!ready)return;await RefreshLighting();var p=GizmoPosition();var r=GizmoRotation();await view.ExecuteScriptAsync("gizmo("+JsonSerializer.Serialize(new{visible=gizmoVisible,editing=gizmoEditing,mode=gizmoMode,position=new[]{p.X,p.Y,p.Z},rotation=new[]{r.X,r.Y,r.Z},scale=activeCargo>=0?new[]{CargoScale().X,CargoScale().Y,CargoScale().Z}:new[]{1f,1f,1f},cargo=activeCargo,uniformScale=cargoUniform})+")");
+  if(!ready)return;await RefreshLighting();var p=GizmoPosition();var r=GizmoRotation();await view.ExecuteScriptAsync("gizmo("+JsonSerializer.Serialize(new{visible=gizmoVisible,editing=gizmoEditing,mode=gizmoMode,position=new[]{p.X,p.Y,p.Z},rotation=new[]{r.X,r.Y,r.Z},scale=activeCargo>=0?new[]{CargoScale().X,CargoScale().Y,CargoScale().Z}:new[]{1f,1f,1f},cargo=activeCargo,uniformScale=cargoUniform,axis=MechanismAxisPoints()})+")");
  }
  async Task StartPivot(){cabinAssemblyMenu.IsChecked=false;showCargo=false;transportPoint=null;activeSmoke=-1;activeCargo=-1;activeLamp=-1;gizmoVisible=true;gizmoEditing=false;gizmoMode="move";await Display();}
  void ReceiveGizmo(JsonElement element)

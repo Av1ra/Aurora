@@ -19,6 +19,7 @@ function drawGizmo(){
  if(!gizmoContext)return;const c=gizmoContext,scale=Math.min(2,window.devicePixelRatio||1);gizmoCanvas.width=Math.max(1,Math.round(canvas.clientWidth*scale));gizmoCanvas.height=Math.max(1,Math.round(canvas.clientHeight*scale));c.scale(scale,scale);gizmoSegments=[];
  drawPreviewCameraFrame(c);
  if(!scene||!gizmoState.visible)return;const position=gizmoState.position,origin=gizmoProject(position);if(!origin)return;
+ if(gizmoState.axis){const a=gizmoProject(gizmoState.axis[0]),b=gizmoProject(gizmoState.axis[1]);if(a&&b){c.save();c.strokeStyle='#e5c967';c.fillStyle='#e5c967';c.lineWidth=2;c.beginPath();c.moveTo(...a);c.lineTo(...b);c.stroke();for(const [label,p]of [['A',a],['B',b]]){c.beginPath();c.arc(...p,3,0,Math.PI*2);c.fill();c.fillText(label,p[0]+6,p[1]-6);}c.restore();}}
  const size=scene.extent*.26,axes=[[1,0,0],[0,1,0],[0,0,1]],colours=['#e65151','#64c56c','#5292ee'];
  function line(a,b,axis,angle){if(!a||!b)return;c.beginPath();c.moveTo(...a);c.lineTo(...b);c.stroke();if(gizmoState.editing)gizmoSegments.push({a,b,axis,angle});}
  axes.forEach((axis,i)=>{
