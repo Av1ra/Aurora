@@ -1,0 +1,29 @@
+using Aurora.Core;
+static class VehicleAssetChecks
+{
+ public static void Run(Action<bool,string> check,Action<Action,string> reject,string? native=null)
+ {
+  string root=Path.Combine(Path.GetTempPath(),"Aurora-assets-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(root);
+  try{
+   string a=Path.Combine(root,"a"),b=Path.Combine(root,"b"),output=Path.Combine(root,"out");foreach(string folder in new[]{a,b,output})Directory.CreateDirectory(folder);
+   File.WriteAllBytes(Path.Combine(a,"joint.nmf"),[1,2,3]);File.WriteAllBytes(Path.Combine(b,"joint.nmf"),[4,5,6]);File.WriteAllBytes(Path.Combine(a,"paint.dds"),[7]);File.WriteAllBytes(Path.Combine(b,"paint.dds"),[8]);
+   foreach(string folder in new[]{a,b})File.WriteAllText(Path.Combine(folder,"material.mtl"),"$SUBMATERIAL body\n$TEXTURE_MTL 0 paint.dds\n$END\n");
+   string script="$TYPE VEHICLETYPE_ROAD\r\n$JOINT \"a/joint.nmf\" 0.7 1.2 // keep\r\n$PROPELER_LOW 1 b/joint.nmf b/material.mtl\r\n$CRANE_STATIC\r\na/joint.nmf\r\n$ALPHA a/joint.nmf\r\n$LOD1 untouched.nmf\r\n$UNKNOWN opaque\r\n$END\r\n$ALPHA missing.nmf\r\n";
+   check(VehicleScript.RewriteTokens(script,_=>null)==script,"token traversal retains quoted paths, unknown fields, CRLF and post-terminator bytes");
+   string exported=VehicleAssets.Export(script,root,output);var refs=VehicleScript.Tokens(exported).Where(VehicleAssets.IsModelReference).ToArray();
+   check(refs.Length==5&&refs.All(r=>File.Exists(Path.Combine(output,r.Value)))&&refs.Where(r=>r.Value.EndsWith(".nmf")).Select(r=>r.Value).Distinct().Count()==2,"linked model files are copied without same-basename collisions and shared assets deduplicate");
+   string material=File.ReadAllText(Path.Combine(output,refs.Single(r=>r.Value.EndsWith(".mtl")).Value));string texture=material.Split('\n').Single(l=>l.StartsWith("$TEXTURE_MTL")).Split(' ')[2];
+   check(File.ReadAllBytes(Path.Combine(output,texture)).SequenceEqual(new byte[]{8})&&exported.Contains("0.7 1.2 // keep")&&exported.Contains("$LOD1 untouched.nmf")&&exported.EndsWith("$ALPHA missing.nmf\r\n"),"linked material textures travel with dependencies without changing parameters or LOD references");
+   string collision=VehicleAssets.Export("$CRANE_STATIC a/material.mtl\n$CRANE_DYNAMIC b/material.mtl 0 0 0\n$END\n",root,output);check(VehicleScript.Tokens(collision).Where(VehicleAssets.IsModelReference).Select(t=>t.Value).Distinct().Count()==2,"identical material source text with different local textures remains distinct");
+   reject(()=>VehicleAssets.Export("$ALPHA missing.nmf\n$END\n",root,output),"missing linked model cannot silently produce an incomplete export");
+   string mechanism="$DUMPER_DECK_PIVOT\nbody\n0 1 2 // pivot\n$END\n";var spec=TransportParameters.All.Single(p=>p.Key=="DUMPER_DECK_PIVOT");var args=spec.Read(mechanism,0);check(spec.Write(mechanism,0,args)==mechanism,"typed mechanism settings preserve unchanged multiline native bytes");args[2]="1.5";string updated=spec.Write(mechanism,0,args);check(updated.Contains("0 1.5 2 // pivot")&&!updated.Contains("$DUMPER_DECK_PIVOT body"),"typed mechanism setting updates the original coordinate in place");
+   check(VehicleScript.RemoveEntry(updated,"DUMPER_DECK_PIVOT",0)=="$END\n","removing a mechanism removes its whole block, leaving the terminator");
+   var entries=new Dictionary<string,byte[]>();string packed=VehicleAssets.Pack(script,root,entries);string archive=Path.Combine(root,"linked.aur");entries["script.ini"]=System.Text.Encoding.UTF8.GetBytes(packed);AuroraProjectArchive.Write(archive,entries);Directory.Delete(a,true);Directory.Delete(b,true);
+   var restored=AuroraProjectArchive.Read(archive);string unpack=Path.Combine(root,"restored");var files=new Dictionary<string,string>();foreach(var pair in restored){string file=Path.Combine(unpack,pair.Key.Replace('/',Path.DirectorySeparatorChar));Directory.CreateDirectory(Path.GetDirectoryName(file)!);File.WriteAllBytes(file,pair.Value);files[pair.Key]=file;}
+   string unpacked=VehicleAssets.Map(System.Text.Encoding.UTF8.GetString(restored["script.ini"]),r=>files[r]);string independent=Path.Combine(root,"independent");Directory.CreateDirectory(independent);string exportedAgain=VehicleAssets.Export(unpacked,unpack,independent);check(VehicleScript.Tokens(exportedAgain).Where(VehicleAssets.IsModelReference).All(t=>File.Exists(Path.Combine(independent,t.Value))),"encrypted project exports linked models and material textures after every source folder is deleted");
+  }finally{Directory.Delete(root,true);}
+  if(native!=null&&VehicleAssets.Media(Path.GetDirectoryName(native)??native) is string media){
+   foreach(string relative in new[]{"vehicles/covered_rnt_agk/main.nmf","vehicles/oil_rnt_agk/main.nmf","helicopters/mi8/screwcon.nmf","helicopters/mi8/screwhi.nmf","helicopters/mi8/screwlo.nmf"}){string path=Path.Combine(media,relative.Replace('/',Path.DirectorySeparatorChar));if(!File.Exists(path))continue;var model=new NativeModel(File.ReadAllBytes(path));var baked=ModelOrientation.Apply(model,System.Numerics.Matrix4x4.Identity);check(model.Nodes.Count>0&&model.Nodes.Count==baked.Nodes.Count&&model.Nodes.Zip(baked.Nodes).All(p=>p.First.Uv.SequenceEqual(p.Second.Uv)&&p.First.Positions.SequenceEqual(p.Second.Positions)&&p.First.Indices.SequenceEqual(p.Second.Indices)),"additional rigid native stream reads and bakes without losing mesh/UV/index data: "+relative);}
+  }
+ }
+}

@@ -4,6 +4,8 @@ Checkpoint recorded: 2026-10-19. Canonical repository: `Av1ra/Aurora`, branch `m
 
 ## Read this first
 
+Owner explicitly corrected premature stopping: **continue implementation and self-verification autonomously until the requested result; do not end after a package or ask the owner to test.** Economy means targeted work, not stopping. [Batch 02 working state and remaining tasks](TRANSPORT_IMPLEMENTATION_02.md) is the current continuation point. UI input was detected in the launched standalone Editor; no further GUI input was sent after refresh. Core/file/export work continues. Current new source is not yet a newly installed package.
+
 Current implementation: [transport batch 01](TRANSPORT_IMPLEMENTATION_01.md). Owner rejected launcher proposals; do not implement LAUNCHER_REQUIRED_TOOLS.md. Transport code now fixes terminators, cabin discovery/identity, repeated cargo restrictions, multi-argument skill fields, native country/availability preservation and mesh mechanism references. Scope is still incomplete; animations deferred, economical related batches requested. Tests include 1,073 native script roundtrips and bundled WinUI compilation; installed receipt is separate in STATUS.md.
 
 Batch 01 is now installed: source 33631f028e3d1b9f78838b1e5f4bbf17b4c5ca1c, production build-e7ee2cc7907b4f1b9b13ea588919cd50, all 572 installed files verified. Both Downloads/Aurora-0.2 delivery files match. Current packages remain version0.2; no live visual/game acceptance, no Release. Next implementation focus is linked parts/local frames and portable dependencies, not launcher proposals or animation authoring. Preserve the owner's latest token economy request.

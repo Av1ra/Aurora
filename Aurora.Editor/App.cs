@@ -66,7 +66,7 @@ sealed partial class EditorWindow:Window
   RegisterCommand("Сбросить стекло",async()=>{if(selectedLod!=null)glassObjects[selectedLod].Clear();mask=null;maskMaterial=null;dirty=true;await Display();},()=>HasModel&&(mask!=null||(selectedLod!=null&&glassObjects[selectedLod].Count>0)));
   RegisterCommand("Сохранить мод…",Export,()=>HasModel&&mtl!=null);
   BuildMenuLayout(grid);
-  view.CoreWebView2Initialized+=(_,_)=>{view.CoreWebView2.NavigationStarting+=(_,e)=>{if(!ViewportNavigation.IsAllowed(e.Uri,viewportHtml))e.Cancel=true;};view.CoreWebView2.Settings.AreDevToolsEnabled=false;view.CoreWebView2.Settings.AreDefaultContextMenusEnabled=false;view.CoreWebView2.WebMessageReceived+=async(_,e)=>{try{using var json=JsonDocument.Parse(e.WebMessageAsJson);if(json.RootElement.TryGetProperty("error",out var viewportError))SetStatus("Viewport",viewportError.GetString());if(json.RootElement.TryGetProperty("ready",out var readyProperty)){ready=true;await view.ExecuteScriptAsync("document.getElementById('hint').textContent="+JsonSerializer.Serialize(UiLanguage.Text("Перетаскивание: вращение. Колесо: масштаб. Щелчок: выбор объекта.")));if(startupModel is string path){startupModel=null;await RunCommand(()=>OpenDocument(path));}else await Display();}if(json.RootElement.TryGetProperty("cameraFov",out var cf))cameraFov.Text="FOV: "+cf.GetInt32();ReceivePreview(json.RootElement);await ReceiveHistory(json.RootElement);if(json.RootElement.TryGetProperty("gizmo",out var gizmoMessage)){ReceiveGizmo(gizmoMessage);await RefreshLighting();}if(json.RootElement.TryGetProperty("selected",out var index)&&index.TryGetInt32(out int i)&&i>=-1&&i<objects.Items.Count)objects.SelectedIndex=i;}catch{}};};
+  view.CoreWebView2Initialized+=(_,_)=>{view.CoreWebView2.NavigationStarting+=(_,e)=>{if(!ViewportNavigation.IsAllowed(e.Uri,viewportHtml))e.Cancel=true;};view.CoreWebView2.Settings.AreDevToolsEnabled=false;view.CoreWebView2.Settings.AreDefaultContextMenusEnabled=false;view.CoreWebView2.WebMessageReceived+=async(_,e)=>{try{using var json=JsonDocument.Parse(e.WebMessageAsJson);if(json.RootElement.TryGetProperty("error",out var viewportError))SetStatus("Viewport",viewportError.GetString());if(json.RootElement.TryGetProperty("ready",out var readyProperty)){ready=true;await view.ExecuteScriptAsync("document.getElementById('hint').textContent="+JsonSerializer.Serialize(UiLanguage.Text("Перетаскивание: вращение. Колесо: масштаб. Щелчок: выбор объекта.")));if(startupModel is string path){startupModel=null;await RunCommand(()=>OpenDocument(path));}else await Display();}if(json.RootElement.TryGetProperty("cameraFov",out var cf))cameraFov.Text="FOV: "+cf.GetInt32();ReceivePreview(json.RootElement);await ReceiveHistory(json.RootElement);if(json.RootElement.TryGetProperty("gizmo",out var gizmoMessage)){ReceiveGizmo(gizmoMessage);await RefreshLighting();}if(!JointFrameRequested&&json.RootElement.TryGetProperty("selected",out var index)&&index.TryGetInt32(out int i)&&i>=-1&&i<objects.Items.Count)objects.SelectedIndex=i;}catch{}};};
   AppWindow.Closing+=async(_,e)=>{if(!dirty||closeApproved)return;e.Cancel=true;if(closePrompt||busy)return;closePrompt=true;try{if(await ConfirmDiscard(true)){closeApproved=true;Close();}}finally{closePrompt=false;}};
   Activated+=async(_,e)=>{if(e.WindowActivationState==WindowActivationState.Deactivated||!UiLanguage.Reload())return;UiLanguage.Apply(grid);RefreshMenuLanguage();if(activeDialog!=null)UiLanguage.Apply(activeDialog);RefreshStatus();UpdateControls();if(ready)try{await UpdateViewportLanguage();}catch{}};
   RefreshMenuLanguage();UpdateControls();LoadedView();
@@ -96,24 +96,28 @@ sealed partial class EditorWindow:Window
  async Task Load(string path)
  {
   processing=true;UpdateControls();
-  // Load siblings so LOD files cannot silently disappear from an export.
-  var siblings=Directory.GetFiles(Path.GetDirectoryName(path)!,"*.nmf").Where(p=>p.Equals(path,StringComparison.OrdinalIgnoreCase)||Regex.IsMatch(Path.GetFileName(p),@"^lod.*\.nmf$",RegexOptions.IgnoreCase)).ToArray();
-  var parsed=await Task.Run(()=>siblings.ToDictionary(x=>x,x=>new NativeModel(File.ReadAllBytes(x))));
+  // The primary model can still be inspected when a separate LOD is missing
+  // or unsupported. Its script reference stays intact for replacement/export.
+  var loadErrors=new List<string>();string folder=Path.GetDirectoryName(path)!;string scriptFile=Path.Combine(folder,"script.ini");
+  var siblings=Directory.GetFiles(folder,"*.nmf").Where(p=>p.Equals(path,StringComparison.OrdinalIgnoreCase)||Regex.IsMatch(Path.GetFileName(p),@"^lod.*\.nmf$",RegexOptions.IgnoreCase)).ToHashSet(StringComparer.OrdinalIgnoreCase);
+  if(File.Exists(scriptFile)){string rawScript=File.ReadAllText(scriptFile);loadErrors.AddRange(VehicleLights.Warnings(rawScript).Concat(VehicleCargoBox.Warnings(rawScript)).Select(w=>UiLanguage.Text("Нестандартная запись в исходном скрипте")+": "+w));}
+  if(File.Exists(scriptFile))foreach(var lod in VehicleLods.Read(File.ReadAllText(scriptFile)))try{siblings.Add(VehicleAssets.Resolve(lod.Model,folder,VehicleAssets.Media(folder)??MediaFolder()));}catch(Exception ex){loadErrors.Add(lod.Model+": "+ex.Message);}
+  var parsed=await Task.Run(()=>{var result=new Dictionary<string,NativeModel>{{path,new NativeModel(File.ReadAllBytes(path))}};foreach(string file in siblings.Where(p=>!p.Equals(path,StringComparison.OrdinalIgnoreCase)))try{result[file]=new NativeModel(File.ReadAllBytes(file));}catch(Exception ex){loadErrors.Add(Path.GetFileName(file)+": "+ex.Message);}return result;});
   lods.Clear();glassObjects.Clear();settings.Clear();lodChoice.Items.Clear();mask=null;maskMaterial=null;
   ResetVehicle(Path.Combine(Path.GetDirectoryName(path)!,"script.ini"));
   foreach(var pair in parsed.OrderBy(p=>p.Key.Equals(path,StringComparison.OrdinalIgnoreCase)?0:1)){lods[pair.Key]=pair.Value;glassObjects[pair.Key]=[];AddLodChoice(pair.Key);}
   selectedLod=path;SelectLod(path);
   await LoadMaterialVariants(path);
-  dirty=false;MarkHistorySaved();SetStatus("Загружено моделей и LOD",lods.Count.ToString(CultureInfo.InvariantCulture));await Display();
+  dirty=false;MarkHistorySaved();await Display();SetStatus("Загружено моделей и LOD",lods.Count.ToString(CultureInfo.InvariantCulture)+(loadErrors.Count>0?"\n"+string.Join("\n",loadErrors):""));
  }
  async Task Display()
  {
-  processing=true;UpdateControls();if(!ready||selectedLod==null)return;string? selectedObject=objects.SelectedItem as string,selectedMaterial=materialChoice.SelectedItem as string;var model=CurrentModel();objects.Items.Clear();foreach(var node in model.Nodes)objects.Items.Add(node.Name);materialChoice.Items.Clear();foreach(var name in model.Materials)materialChoice.Items.Add(name);objects.SelectedItem=selectedObject!=null&&objects.Items.Contains(selectedObject)?selectedObject:null;if(materialChoice.Items.Count>0)materialChoice.SelectedItem=selectedMaterial!=null&&materialChoice.Items.Contains(selectedMaterial)?selectedMaterial:materialChoice.Items[0];
+  processing=true;UpdateControls();if(!ready||selectedLod==null)return;string? selectedObject=objects.SelectedItem as string,selectedMaterial=materialChoice.SelectedItem as string;var model=ViewportModel();objects.IsEnabled=!JointFrameRequested;objects.Items.Clear();foreach(var node in model.Nodes)objects.Items.Add(node.Name);materialChoice.Items.Clear();foreach(var name in model.Materials)materialChoice.Items.Add(name);objects.SelectedItem=!JointFrameRequested&&selectedObject!=null&&objects.Items.Contains(selectedObject)?selectedObject:null;if(materialChoice.Items.Count>0)materialChoice.SelectedItem=selectedMaterial!=null&&materialChoice.Items.Contains(selectedMaterial)?selectedMaterial:materialChoice.Items[0];
   var scene=BuildViewportScene(model);
   string sceneJson=await Task.Run(()=>JsonSerializer.Serialize(scene));
   await view.ExecuteScriptAsync("load("+sceneJson+")");await view.ExecuteScriptAsync("wireframe("+(wireframeMenu.IsChecked?"true":"false")+")");await view.ExecuteScriptAsync("select("+objects.SelectedIndex+")");await LoadTextures();
   foreach(var pair in settings)await ApplyPreview(pair.Key,pair.Value);
-  for(int i=0;i<model.Nodes.Count;i++)if(glassObjects[selectedLod].Contains(model.Nodes[i].Name))await view.ExecuteScriptAsync("glassObject("+i+",true)");
+  for(int i=0;i<model.Nodes.Count;i++)if(!JointFrameRequested&&glassObjects[selectedLod].Contains(model.Nodes[i].Name))await view.ExecuteScriptAsync("glassObject("+i+",true)");
   await LoadCargoTextures();await RefreshGizmo();
  }
  async Task LoadTextures()

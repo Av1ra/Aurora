@@ -7,6 +7,7 @@ if(args[0]=="--checks"){
  File.WriteAllText(args[2],JsonSerializer.Serialize(findings,new JsonSerializerOptions{WriteIndented=true})+"\n");Console.WriteLine(JsonSerializer.Serialize(findings));return;
 }
 var media=args[0];var roots=new[]{"vehicles","trains","ships","airplanes","helicopters","cabins","buildings","resources","containers","trees","fences","paths","buildingeditor"};
+if(args.Contains("--transport"))roots=roots.Take(6).ToArray();
 var bases=new[]{media}.Concat(Directory.GetDirectories(media).Where(p=>System.Text.RegularExpressions.Regex.IsMatch(Path.GetFileName(p),@"^(dlc|elc)\d+$"))).ToArray();
 var report=new Dictionary<string,object>();
 foreach(string root in roots){int total=0,opened=0;var errors=new Dictionary<string,List<string>>();var meshNames=new Dictionary<string,int>();

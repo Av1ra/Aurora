@@ -1,0 +1,38 @@
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+namespace Aurora.Core;
+
+public static class VehicleAssets
+{
+ static readonly HashSet<string> extensions=new(StringComparer.OrdinalIgnoreCase){".nmf",".naf",".mtl"};
+ public static bool IsModelReference(VehicleToken token)=>!Regex.IsMatch(token.Key,@"^LOD\d*$")&&extensions.Contains(Path.GetExtension(token.Value));
+ public static string? Media(string start){for(string? folder=Path.GetFullPath(start);folder!=null;folder=Path.GetDirectoryName(folder)){if(Path.GetFileName(folder).Equals("media_soviet",StringComparison.OrdinalIgnoreCase))return folder;string media=Path.Combine(folder,"media_soviet");if(Directory.Exists(Path.Combine(media,"vehicles")))return media;}return null;}
+ public static string Resolve(string reference,string sourceFolder,string? media=null)
+ {
+  reference=reference.Replace('/',Path.DirectorySeparatorChar);if(Path.IsPathRooted(reference)){if(File.Exists(reference))return Path.GetFullPath(reference);throw new FileNotFoundException("Vehicle asset not found: "+reference,reference);}
+  string local=Path.GetFullPath(Path.Combine(sourceFolder,reference));if(File.Exists(local))return local;
+  media??=Media(sourceFolder);if(media!=null){string game=Path.GetFullPath(Path.Combine(media,reference));if(File.Exists(game))return game;}
+  throw new FileNotFoundException("Vehicle asset not found: "+reference,reference);
+ }
+ public static string Map(string script,Func<string,string> map)=>VehicleScript.RewriteTokens(script,t=>IsModelReference(t)?map(t.Value):null);
+ public static string MapMaterial(string text,Func<string,string> map)=>Regex.Replace(text,@"(?m)^(\s*\$TEXTURE(?:_MTL)?\s+\d+\s+)([^\r\n]+)",m=>"$TEXTURE_MTL "+Regex.Match(m.Groups[1].Value,@"\d+").Value+" "+map(m.Groups[2].Value.Trim().Trim('"')));
+ public static string Pack(string script,string sourceFolder,Dictionary<string,byte[]> entries,string? media=null)
+ {
+  var packed=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
+  string Asset(string path,bool material){path=Path.GetFullPath(path);if(packed.TryGetValue(path,out string? existing))return existing;byte[] bytes=File.ReadAllBytes(path);
+   if(material)bytes=Encoding.UTF8.GetBytes(MapMaterial(File.ReadAllText(path),r=>Path.GetFileName(Asset(MaterialFiles.Resolve(path,r),false))));
+   string name="assets/"+Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant()+Path.GetExtension(path).ToLowerInvariant();packed[path]=name;entries.TryAdd(name,bytes);return name;
+  }
+  return Map(script,r=>{string path=Resolve(r,sourceFolder,media);return Asset(path,Path.GetExtension(path).Equals(".mtl",StringComparison.OrdinalIgnoreCase));});
+ }
+ public static string Export(string script,string sourceFolder,string output,string? media=null)
+ {
+  var copied=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
+  string Copy(string reference,string folder){string path=Resolve(reference,folder,media);if(copied.TryGetValue(path,out string? prior))return prior;byte[] bytes=File.ReadAllBytes(path);string name="asset-"+Convert.ToHexString(SHA256.HashData(bytes))[..20].ToLowerInvariant()+Path.GetExtension(path).ToLowerInvariant();copied[path]=name;
+   if(Path.GetExtension(path).Equals(".mtl",StringComparison.OrdinalIgnoreCase)){string text=MapMaterial(File.ReadAllText(path),r=>Copy(MaterialFiles.Resolve(path,r),Path.GetDirectoryName(path)!));bytes=Encoding.UTF8.GetBytes(text);}
+   name="asset-"+Convert.ToHexString(SHA256.HashData(bytes))[..20].ToLowerInvariant()+Path.GetExtension(path).ToLowerInvariant();copied[path]=name;string target=Path.Combine(output,name);if(File.Exists(target)){if(!File.ReadAllBytes(target).SequenceEqual(bytes))throw new InvalidDataException("Vehicle dependency collision: "+name);}else File.WriteAllBytes(target,bytes);return name;
+  }
+  return Map(script,r=>Copy(r,sourceFolder));
+ }
+}

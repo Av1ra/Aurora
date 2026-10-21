@@ -9,7 +9,7 @@ static class ModelExport
 {
  public static async Task Export(Dictionary<string,NativeModel> lods,Dictionary<string,HashSet<string>> glass,Dictionary<string,MaterialSettings> settings,string mtl,string? mask,string? maskMaterial,string destination,Func<string,Task<RgbaImage>> image,string? vehicleConfiguration=null,bool useSourceScript=true)
  {
-  if(lods.Keys.Select(Path.GetFileName).Distinct(StringComparer.OrdinalIgnoreCase).Count()!=lods.Count)throw new InvalidDataException("LOD filenames must be unique");
+  var modelNames=ModelFileNames.Allocate(lods.Keys);
   if(mask!=null&&glass.Values.Any(x=>x.Count>0))throw new InvalidDataException("Выберите один способ стекла: объекты или альфа-маска.");
   if(glass.Values.Any(x=>x.Count>0)&&glass.Values.Any(x=>x.Count==0))throw new InvalidDataException("Отметьте стеклянные объекты во всех LOD.");
   string target=Path.Combine(destination,"Aurora-Model-"+DateTime.Now.ToString("yyyyMMdd-HHmmss"));if(Directory.Exists(target))throw new IOException("Output folder already exists");
@@ -48,7 +48,7 @@ static class ModelExport
     File.WriteAllBytes(Path.Combine(staging,"glass.dds"),DdsImage.Encode(rgba));
     // Imported OBJ and future pivot edits may exist only in memory.
     string maskSources=Path.Combine(staging,"mask-sources");Directory.CreateDirectory(maskSources);
-    var sourceModels=lods.Select(pair=>{string file=Path.Combine(maskSources,Path.GetFileName(pair.Key));File.WriteAllBytes(file,pair.Value.Data);return file;}).ToArray();
+    var sourceModels=lods.Select(pair=>{string file=Path.Combine(maskSources,modelNames[pair.Key]);File.WriteAllBytes(file,pair.Value.Data);return file;}).ToArray();
     var request=new{Models=sourceModels,Material=maskMaterial,Mask=Path.Combine(staging,"glass.dds"),Output=staging};
     string requestFile=Path.Combine(staging,"mask-request.json");File.WriteAllText(requestFile,JsonSerializer.Serialize(request));
     string backend=Path.Combine(AppContext.BaseDirectory,"Editor","Backend","Aurora.ModelBackend.exe");if(!File.Exists(backend))backend=Path.Combine(AppContext.BaseDirectory,"Backend","Aurora.ModelBackend.exe");
@@ -63,7 +63,7 @@ static class ModelExport
    else
    {
     bool withGlass=glass.Values.Any(x=>x.Count>0);
-    foreach(var pair in lods)File.WriteAllBytes(Path.Combine(staging,Path.GetFileName(pair.Key)),withGlass?pair.Value.AssignGlass(glass[pair.Key]):pair.Value.Data);
+    foreach(var pair in lods)File.WriteAllBytes(Path.Combine(staging,modelNames[pair.Key]),withGlass?pair.Value.AssignGlass(glass[pair.Key]):pair.Value.Data);
     if(withGlass)
     {
      outputMtl=AddMaterial(outputMtl,lods.First().Value.Materials[lods.First().Value.Nodes.First(n=>glass[lods.First().Key].Contains(n.Name)).Groups[0].Material],"Aurora_Glass");
@@ -76,7 +76,8 @@ static class ModelExport
    if(vehicleConfiguration!=null||(useSourceScript&&File.Exists(script)))
    {
     string configuration=VehicleSoundFiles.Export(vehicleConfiguration??File.ReadAllText(script),sourceFolder,staging);
-    configuration=Regex.Replace(configuration,@"(?m)^(\s*\$LOD\d*\s+)([^\r\n]+)",m=>{string file=Path.GetFileName(m.Groups[2].Value.Trim().Replace('/',Path.DirectorySeparatorChar));if(!File.Exists(Path.Combine(staging,file)))throw new InvalidDataException("Добавьте LOD, указанный в script.ini: "+file);return m.Groups[1].Value+file;});
+    configuration=VehicleAssets.Export(configuration,sourceFolder,staging);
+    configuration=VehicleScript.RewriteTokens(configuration,t=>Regex.IsMatch(t.Key,@"^LOD\d*$")&&t.Index==0?ModelFileNames.Resolve(modelNames,t.Value,sourceFolder):null);
     File.WriteAllText(Path.Combine(staging,"script.ini"),configuration,new UTF8Encoding(false));
    }
    foreach(var optional in new[]{"bbox.bin","preview.dds","preview_side.dds"})if(File.Exists(Path.Combine(sourceFolder,optional)))File.Copy(Path.Combine(sourceFolder,optional),Path.Combine(staging,optional));
@@ -85,7 +86,7 @@ static class ModelExport
     var bounds=new float[6];for(int axis=0;axis<3;axis++){bounds[axis]=primary.Nodes.Min(n=>n.Positions.Where((_,i)=>i%3==axis).Min());bounds[axis+3]=primary.Nodes.Max(n=>n.Positions.Where((_,i)=>i%3==axis).Max());}
     using var bbox=new BinaryWriter(File.Create(Path.Combine(staging,"bbox.bin")));foreach(float value in bounds)bbox.Write(value);
    }
-   File.WriteAllText(Path.Combine(staging,"aurora-model.json"),JsonSerializer.Serialize(new{Schema=1,Requires="aurora.graphics",Version="0.1.0",Models=lods.Keys.Select(Path.GetFileName),Material=mtlName,Glass=mask!=null?"mask":glass.Values.Any(x=>x.Count>0)?"objects":"none"},new JsonSerializerOptions{WriteIndented=true}));
+   File.WriteAllText(Path.Combine(staging,"aurora-model.json"),JsonSerializer.Serialize(new{Schema=1,Requires="aurora.graphics",Version="0.2",Models=modelNames.Values,Material=mtlName,Glass=mask!=null?"mask":glass.Values.Any(x=>x.Count>0)?"objects":"none"},new JsonSerializerOptions{WriteIndented=true}));
    Directory.Move(staging,target);
   }
   catch{File.WriteAllText(Path.Combine(staging,"EXPORT-FAILED.txt"),"Export incomplete. Do not install this folder. Original files were not modified.");throw;}

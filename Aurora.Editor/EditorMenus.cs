@@ -57,7 +57,7 @@ sealed partial class EditorWindow
    var command=editorCommands[key];var button=new Button{Content=UiLanguage.Text(key=="Настроить PBR"?"Настройки материала":key),HorizontalAlignment=HorizontalAlignment.Stretch};commandButtons.Add((button,command.CanExecute));button.Click+=async(_,_)=>{CloseEditorFlyouts();await RunCommand(command.Action);};materialPanel.Children.Add(button);
   }
   toolbar.Children.Add(ToolbarMenu("Материалы",new Flyout{Content=materialPanel}));
-  var modelSettings=new MenuFlyout();foreach(string key in new[]{"Настройки модели","Настройки превью…"})modelSettings.Items.Add(MenuCommand(key,key=="Настройки превью…"?"Превью":key));toolbar.Children.Add(ToolbarMenu("Скрипты",modelSettings));
+  editorCommands["Сборка и механизмы"]=(ConfigureTransport,()=>HasModel);editorCommands["Связи и состав"]=(ConfigureConsist,()=>HasModel);var modelSettings=new MenuFlyout();foreach(string key in new[]{"Настройки модели","Сборка и механизмы","Связи и состав","Настройки превью…"})modelSettings.Items.Add(MenuCommand(key,key=="Настройки превью…"?"Превью":key));toolbar.Children.Add(ToolbarMenu("Скрипты",modelSettings));
   grid.Children.Add(new ScrollViewer{Content=toolbar,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,VerticalScrollBarVisibility=ScrollBarVisibility.Disabled,HorizontalScrollMode=ScrollMode.Auto});
 
   var footer=new Grid{Margin=new Thickness(14,8,14,8),ColumnSpacing=16,RowSpacing=4};footer.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});footer.ColumnDefinitions.Add(new(){Width=GridLength.Auto});footer.RowDefinitions.Add(new(){Height=GridLength.Auto});footer.RowDefinitions.Add(new(){Height=GridLength.Auto});

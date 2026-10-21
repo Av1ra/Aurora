@@ -29,8 +29,8 @@ static class TransportCompletenessChecks
   string root=Path.Combine(Path.GetTempPath(),"Aurora-cabins-"+Guid.NewGuid().ToString("N"));
   try{
    foreach(string kind in new[]{"LIGHT","HEAVY"}){string folder=Path.Combine(root,"cabins",kind);Directory.CreateDirectory(folder);File.WriteAllText(Path.Combine(folder,"script.ini"),"$TYPE VEHICLETYPE_CABIN\n$CABIN_"+kind+"\n$RESOURCE_TRANSPORT_TYPE RESOURCE_TRANSPORT_PASSANGER\n$END\n");}
-   var catalog=VehicleCatalog.Load(root,false);check(catalog.Classes.Length==2&&catalog.Classes.Select(c=>c.Id).Distinct().Count()==2,"native cabins are scanned and light/heavy identities remain distinct");
-   string source="$TYPE VEHICLETYPE_CABIN\n$CABIN_LIGHT\n$UNKNOWN keep\n$END\n";string changed=VehicleCatalog.ApplyClass(source,catalog.Classes.Single(c=>c.Flags.Contains("CABIN_HEAVY")));
+   var catalog=VehicleCatalog.Load(root,false);check(catalog.Classes.Count(c=>c.Type=="VEHICLETYPE_CABIN"&&c.Transport=="RESOURCE_TRANSPORT_PASSANGER")==2&&catalog.Classes.Select(c=>c.Id).Distinct().Count()==catalog.Classes.Length,"native cabins are scanned and light/heavy identities remain distinct");
+   string source="$TYPE VEHICLETYPE_CABIN\n$CABIN_LIGHT\n$UNKNOWN keep\n$END\n";string changed=VehicleCatalog.ApplyClass(source,catalog.Classes.Single(c=>c.Flags.Contains("CABIN_HEAVY")&&c.Transport=="RESOURCE_TRANSPORT_PASSANGER"));
    check(changed.Contains("$CABIN_HEAVY")&&!changed.Contains("$CABIN_LIGHT")&&changed.Contains("$UNKNOWN keep"),"cabin subtype change replaces exclusive flag and retains unrelated fields");
   }finally{if(Directory.Exists(root))Directory.Delete(root,true);}
   if(native!=null){string? media=Path.GetFullPath(native);while(media!=null&&Path.GetFileName(media)!="media_soviet")media=Path.GetDirectoryName(media);if(media!=null){

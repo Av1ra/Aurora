@@ -1,0 +1,19 @@
+using Aurora.Core;
+using System.Numerics;
+static class TransportParameterChecks
+{
+ public static void Run(Action<bool,string> check,Action<Action,string> reject,string? native)
+ {
+  string script="$TYPE VEHICLETYPE_RAIL_LOCOMOTIVE\n$TRAINSET vagon\n$TRAINSET_REVERSE head\n$TRAINSET vagon\n$UNKNOWN keep\n$END\n";var units=VehicleConsist.Read(script);check(units.Length==3&&units[1].Reverse&&VehicleConsist.Write(script,units)==script,"unchanged mixed trainset order is preserved byte-for-byte");var changed=VehicleConsist.Write(script,[units[1],units[0],units[0]]);check(VehicleConsist.Read(changed).SequenceEqual(new[]{units[1],units[0],units[0]})&&changed.Contains("$UNKNOWN keep"),"train units reorder, repeat and reverse without losing unrelated data");
+  reject(()=>VehicleConsist.Write(script,[new("two words")]),"invalid multi-word train reference");
+  var model=ObjImporter.Parse("v 0 0 0\nv 1 0 0\nv 0 1 0\nv 1 1 0\no Body\nusemtl Paint\nf 1 2 3\nusemtl Glass\nf 2 4 3\n").Model;var edited=ModelEditing.AssignGroup(model,"Body",1,"Paint");check(model.Nodes[0].Groups[1].Material==1&&edited.Nodes[0].Groups[1].Material==0&&model.Nodes[0].Groups[0]==edited.Nodes[0].Groups[0]&&model.Nodes[0].Indices.SequenceEqual(edited.Nodes[0].Indices),"material assignment can target one draw group without changing geometry or adjacent groups");
+  var names=ModelFileNames.Allocate(["C:/source/truck.nmf","C:/a/main.nmf","C:/b/main.nmf"]);check(names.Values.First()=="main.nmf"&&names.Values.Distinct(StringComparer.OrdinalIgnoreCase).Count()==3,"export naming reserves canonical main and disambiguates colliding LOD names");
+  if(native==null||VehicleAssets.Media(Path.GetDirectoryName(native)??native) is not string media)return;
+  string[] roots=["vehicles","trains","ships","airplanes","helicopters","cabins"];var bases=new[]{media}.Concat(Directory.GetDirectories(media).Where(d=>Path.GetFileName(d).StartsWith("dlc",StringComparison.OrdinalIgnoreCase)||Path.GetFileName(d).StartsWith("elc",StringComparison.OrdinalIgnoreCase)));int verified=0;var failures=new List<string>();
+  foreach(string folder in bases.SelectMany(b=>roots.Select(r=>Path.Combine(b,r))).Where(Directory.Exists))foreach(string file in Directory.EnumerateFiles(folder,"script.ini",SearchOption.AllDirectories)){
+   string text=File.ReadAllText(file);try{if(VehicleLights.Write(text,VehicleLights.Read(text))!=text)throw new Exception("unchanged lamp data changed");}catch(Exception ex){failures.Add(Path.GetRelativePath(media,file)+" lights: "+ex.Message);}foreach(var field in VehicleScript.Fields(text)){var spec=TransportParameters.All.FirstOrDefault(p=>p.Key==field.Key)?.For(text,field.Occurrence);if(spec==null){try{if(field.Key is "RESOURCE_VISUALIZATION" or "RESOURCE_VISUALIZATION_JOINT" or "RESOURCE_VISUALIZATION_BONE"){var layout=VehicleScript.Cargo(text,field.Occurrence,field.Key);if(VehicleScript.SetCargo(text,layout,field.Occurrence,field.Key)!=text)throw new Exception("cargo bytes changed");verified++;}else if(field.Key is "CARGOVEHICLE_VISUALIZATION" or "CARGOVEHICLE_VISUALIZATION_JOINT"){var box=VehicleCargoBox.Read(text,field.Key,field.Occurrence);if(VehicleCargoBox.Write(text,field.Key,field.Occurrence,box)!=text)throw new Exception("platform bytes changed");verified++;}}catch(Exception ex){failures.Add(Path.GetRelativePath(media,file)+" "+field.Key+": "+ex.Message);}continue;}try{var args=spec.Read(text,field.Occurrence);if(spec.Write(text,field.Occurrence,args)!=text)throw new Exception("unchanged bytes changed");verified++;}catch(Exception ex){failures.Add(Path.GetRelativePath(media,file)+" "+field.Key+": "+ex.Message);}}
+  }
+  if(failures.Count>0)throw new Exception("Typed transport layout failures: "+string.Join("; ",failures.Take(8)));
+  check(verified>500,"typed linked models, mechanisms, vehicle points and class fields roundtrip native layouts: "+verified);
+ }
+}

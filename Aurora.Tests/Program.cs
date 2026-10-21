@@ -11,6 +11,9 @@ await EditorRevisionChecks.Run(Check,Reject);
 ModelToolsChecks.Run(Check,Reject);
 VehicleWorkflowChecks.Run(Check,Reject);
 TransportCompletenessChecks.Run(Check,Reject,args.FirstOrDefault());
+VehicleAssetChecks.Run(Check,Reject,args.FirstOrDefault());
+TransportParameterChecks.Run(Check,Reject,args.FirstOrDefault());
+CargoFrameChecks.Run(Check,Reject);
 VehicleCatalogChecks.Run(Check,Reject,args.FirstOrDefault());
 var root=Path.Combine(Path.GetTempPath(),"Aurora-tests-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(root);
 using var key=ECDsa.Create(ECCurve.NamedCurves.nistP256);string pem=key.ExportSubjectPublicKeyInfoPem();
@@ -57,14 +60,14 @@ if(args.Length>0)
   var sourceHashes=exportFiles.ToDictionary(p=>p,p=>SHA256.HashData(File.ReadAllBytes(p)));
   var exportGlass=exportModels.Keys.ToDictionary(p=>p,p=>new HashSet<string>());
   string nmfOutput=NmfExport.Write(exportModels,exportGlass,root);
-  Check(exportFiles.All(p=>File.ReadAllBytes(Path.Combine(nmfOutput,Path.GetFileName(p))).SequenceEqual(exportModels[p].Data)),"NMF-only export retains every LOD byte-for-byte");
+  var exportNames=ModelFileNames.Allocate(exportFiles);Check(exportFiles.All(p=>File.ReadAllBytes(Path.Combine(nmfOutput,exportNames[p])).SequenceEqual(exportModels[p].Data)),"NMF-only export retains every LOD byte-for-byte under canonical names");
   foreach(var pair in exportModels)exportGlass[pair.Key].Add(pair.Value.Nodes[0].Name);
   string glassOutput=NmfExport.Write(exportModels,exportGlass,root);
-  Check(exportFiles.All(p=>new NativeModel(File.ReadAllBytes(Path.Combine(glassOutput,Path.GetFileName(p)))).Materials.Contains("Aurora_Glass")),"NMF-only export applies object glass to every LOD");
+  Check(exportFiles.All(p=>new NativeModel(File.ReadAllBytes(Path.Combine(glassOutput,exportNames[p]))).Materials.Contains("Aurora_Glass")),"NMF-only export applies object glass to every LOD");
   Check(exportFiles.All(p=>sourceHashes[p].SequenceEqual(SHA256.HashData(File.ReadAllBytes(p)))),"NMF exports never modify source files");
   if(exportModels.Count>1){exportGlass[exportFiles[0]].Clear();Reject(()=>NmfExport.Write(exportModels,exportGlass,root),"incomplete glass assignments across exported LODs");}
   var duplicate=exportModels.Take(1).Single();var duplicates=new Dictionary<string,NativeModel>{{duplicate.Key,duplicate.Value},{Path.Combine(root,Path.GetFileName(duplicate.Key)),duplicate.Value}};
-  Reject(()=>NmfExport.Write(duplicates,new Dictionary<string,HashSet<string>>(),root),"duplicate LOD filenames before writing output");
+  string duplicateOutput=NmfExport.Write(duplicates,new Dictionary<string,HashSet<string>>(),root);Check(Directory.GetFiles(duplicateOutput,"*.nmf").Length==2&&File.Exists(Path.Combine(duplicateOutput,"main.nmf")),"same-basename models receive distinct export names");
  }
 }
 Console.WriteLine("AURORA_TESTS_PASS");

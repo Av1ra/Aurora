@@ -19,9 +19,8 @@ sealed partial class EditorWindow
  }
  async Task SplitObject()
  {
-  if(objects.SelectedItem is not string name)return;processing=true;UpdateControls();
-  var changed=await Task.Run(()=>lods.ToDictionary(p=>p.Key,p=>p.Value.Nodes.Any(n=>n.Name==name)?ModelEditing.Split(p.Value,name):p.Value));
-  var counts=changed.Where(p=>lods[p.Key].Nodes.Any(n=>n.Name==name)).Select(p=>p.Value.Nodes.Count-lods[p.Key].Nodes.Count).Distinct().ToArray();if(counts.Length!=1)throw new InvalidDataException(UiLanguage.Text("Число частей должно совпадать во всех LOD."));
+  if(objects.SelectedItem is not string name)return;var scope=new ComboBox{ItemsSource=new[]{UiLanguage.Text("Текущая модель"),UiLanguage.Text("Все LOD")},SelectedIndex=0,HorizontalAlignment=HorizontalAlignment.Stretch};if(await ShowDialog(VehicleDialog("Разделить несвязанные меши",scope))!=ContentDialogResult.Primary)return;bool all=scope.SelectedIndex==1;processing=true;UpdateControls();
+  var changed=await Task.Run(()=>lods.ToDictionary(p=>p.Key,p=>{if((!all&&p.Key!=selectedLod)||!p.Value.Nodes.Any(n=>n.Name==name))return p.Value;try{return ModelEditing.Split(p.Value,name);}catch(InvalidDataException ex)when(all&&ex.Message=="Объект уже связан."){return p.Value;}}));
   foreach(var p in changed){if(glassObjects[p.Key].Remove(name)){var original=lods[p.Key].Nodes.Select(n=>n.Name).ToHashSet();foreach(var n in p.Value.Nodes.Where(n=>!original.Contains(n.Name)))glassObjects[p.Key].Add(n.Name);}lods[p.Key]=p.Value;}
   dirty=true;await Display();
  }

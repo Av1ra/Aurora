@@ -83,7 +83,9 @@ sealed partial class EditorWindow
  async Task AssignMaterial()
  {
   if(objects.SelectedItem is not string name||materialChoice.SelectedItem is not string material)return;
-  var result=lods.ToDictionary(p=>p.Key,p=>p.Value.Nodes.Any(n=>n.Name==name)?ModelEditing.Assign(p.Value,name,material):p.Value);
+  var selected=CurrentModel().Nodes.Single(n=>n.Name==name);int group=-1;bool all=true;
+  if(selected.Groups.Length>1){var panel=new StackPanel{Spacing=10};var regions=new ComboBox{ItemsSource=new[]{UiLanguage.Text("Весь объект")}.Concat(selected.Groups.Select((g,i)=>(i+1)+": "+CurrentModel().Materials[g.Material])).ToArray(),SelectedIndex=0,HorizontalAlignment=HorizontalAlignment.Stretch};SettingRow(panel,"Часть объекта",regions);var scope=new ComboBox{ItemsSource=new[]{UiLanguage.Text("Текущая модель"),UiLanguage.Text("Все LOD")},SelectedIndex=0,HorizontalAlignment=HorizontalAlignment.Stretch};SettingRow(panel,"Применить к",scope);if(await ShowDialog(VehicleDialog("Назначить материал объекту",panel))!=ContentDialogResult.Primary)return;group=regions.SelectedIndex-1;all=scope.SelectedIndex==1;}
+  var result=lods.ToDictionary(p=>p.Key,p=>{if((!all&&p.Key!=selectedLod)||!p.Value.Nodes.Any(n=>n.Name==name))return p.Value;if(group<0)return ModelEditing.Assign(p.Value,name,material);var node=p.Value.Nodes.Single(n=>n.Name==name);if(p.Key==selectedLod)return ModelEditing.AssignGroup(p.Value,name,group,material);string source=CurrentModel().Materials[selected.Groups[group].Material];var matches=node.Groups.Select((g,i)=>(g,i)).Where(g=>p.Value.Materials[g.g.Material]==source).ToArray();if(matches.Length!=1)throw new InvalidDataException(UiLanguage.Text("Неоднозначное соответствие материалов между LOD"));return ModelEditing.AssignGroup(p.Value,name,matches[0].i,material);});
   foreach(var p in result)lods[p.Key]=p.Value;dirty=true;await Display();
  }
  async Task SaveNmfMaterials()

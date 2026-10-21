@@ -25,7 +25,7 @@ public sealed class NativeModel
    Require(I(offset+228)==1,"Embedded multi-LOD node not supported; use separate LOD NMF files");
    int nv=I(offset+236),ni=I(offset+240),ng=I(offset+244),flags=I(offset+252);
    Require(I(offset+248)==0&&I(offset+256)==0&&nv is >0 and <=65536&&ni is >0 and <=3000000&&ni%3==0&&ng is >0 and <=512,"Unsupported skin or invalid geometry");
-   int stride=flags is 0x40139 or 0x4013a?56:flags==0x108?32:0,faceStride=stride==56?40:0;
+   int stride=flags is 0x40139 or 0x4013a or 0x13a?56:flags==0x4011a?44:flags==0x108?32:0,faceStride=(flags&0x40000)!=0?40:0;
    Require(stride!=0,"Unsupported NMF vertex stream: "+flags.ToString("x"));
    int ix=offset+260,attr=checked(ix+ni*2),face=checked(attr+nv*stride),groups=checked(face+ni/3*faceStride);
    Require(groups+ng*12==end,"Unsupported NMF trailing streams");
@@ -39,7 +39,7 @@ public sealed class NativeModel
     var normal=Vector3.TransformNormal(new(F(attr+nv*12+v*12),F(attr+nv*12+v*12+4),F(attr+nv*12+v*12+8)),normalMatrix);
     Require(float.IsFinite(p.X)&&float.IsFinite(p.Y)&&float.IsFinite(p.Z),"Nonfinite vertex");
     positions[v*3]=p.X;positions[v*3+1]=p.Y;positions[v*3+2]=p.Z;normals[v*3]=normal.X;normals[v*3+1]=normal.Y;normals[v*3+2]=normal.Z;
-    int uvAt=attr+nv*(stride==56?48:24)+v*8;uv[v*2]=F(uvAt);uv[v*2+1]=F(uvAt+4);
+    int uvAt=attr+nv*(stride-8)+v*8;uv[v*2]=F(uvAt);uv[v*2+1]=F(uvAt+4);
    }
    var indices=new ushort[ni];for(int i=0;i<ni;i++){indices[i]=U(ix+i*2);Require(indices[i]<nv,"Invalid NMF vertex index");}
    var draw=new DrawGroup[ng];int consumed=0;
