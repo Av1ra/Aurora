@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using Aurora.Core;
 namespace Aurora.Launcher;
-record LauncherRelease(string Version,string Asset,string Sha256,string Signature);
+record LauncherRelease(string Version,string Asset,string Sha256,string Signature,string? BuildId=null);
 sealed class UpdateService
 {
  const string Repo="Av1ra/Aurora";
@@ -19,14 +19,28 @@ sealed class UpdateService
   foreach(var item in list.RootElement.EnumerateArray())if(!item.GetProperty("draft").GetBoolean())return JsonDocument.Parse(item.GetRawText());
   return null;
  }
+ // Product version remains 0.2; signed release metadata identifies each build.
+ internal static string? InstalledBuildId(){
+  string path=Path.Combine(AppContext.BaseDirectory,"build-info.json");
+  if(!File.Exists(path))return null;
+  try{using var json=JsonDocument.Parse(File.ReadAllText(path));return json.RootElement.GetProperty("Commit").GetString();}
+  catch(Exception ex) when(ex is IOException or JsonException or KeyNotFoundException or InvalidOperationException){return null;}
+ }
+ internal static byte[] ReleaseSignaturePayload(LauncherRelease release)=>
+  System.Text.Encoding.UTF8.GetBytes(string.IsNullOrEmpty(release.BuildId)
+    ? release.Version+"\n"+release.Asset+"\n"+release.Sha256
+    : "Aurora-release-v2\n"+release.Version+"\n"+release.Asset+"\n"+release.Sha256+"\n"+release.BuildId);
  public async Task<LauncherRelease?> Check()
  {
   using var json=await PublishedRelease();if(json==null){latest=null;return null;}
   var assets=json.RootElement.GetProperty("assets").EnumerateArray().ToArray();
   string url=assets.Single(x=>x.GetProperty("name").GetString()=="aurora-update.json").GetProperty("browser_download_url").GetString()!;
   latest=JsonSerializer.Deserialize<LauncherRelease>(await http.GetStringAsync(url))??throw new InvalidDataException("Missing release metadata");
-  if(!Version.TryParse(latest.Version,out var version)||version<=Version.Parse(ModCatalog.LauncherVersion))return null;
+  if(!Version.TryParse(latest.Version,out var version)||version<Version.Parse(ModCatalog.LauncherVersion))return null;
   if(!System.Text.RegularExpressions.Regex.IsMatch(latest.Asset,@"^Aurora-[0-9.]+-win-x64\.zip$"))throw new InvalidDataException("Invalid update asset");
+  if(latest.BuildId!=null&&!System.Text.RegularExpressions.Regex.IsMatch(latest.BuildId,@"^[a-fA-F0-9]{40}$"))throw new InvalidDataException("Invalid update build ID");
+  if(version==Version.Parse(ModCatalog.LauncherVersion)&&
+     (string.IsNullOrEmpty(latest.BuildId)||string.Equals(latest.BuildId,InstalledBuildId(),StringComparison.OrdinalIgnoreCase)))return null;
   return latest;
  }
  public async Task<string?> DownloadVerified(string key)
@@ -37,7 +51,7 @@ sealed class UpdateService
  async Task<string> Download(LauncherRelease release,string key)
  {
   using var signature=ECDsa.Create();signature.ImportFromPem(key);
-  var signed=System.Text.Encoding.UTF8.GetBytes(release.Version+"\n"+release.Asset+"\n"+release.Sha256);
+  var signed=ReleaseSignaturePayload(release);
   if(!signature.VerifyData(signed,Convert.FromBase64String(release.Signature),HashAlgorithmName.SHA256))throw new InvalidDataException("Invalid update signature");
   var root=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Aurora","updates",Guid.NewGuid().ToString("N"));Directory.CreateDirectory(root);
   var archive=Path.Combine(root,"update.zip");
