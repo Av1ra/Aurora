@@ -228,7 +228,9 @@ public static class WorkshopUpdates
         finally
         {
             // Old files are temporary only; no mods/aurora-backups directory.
-            Directory.Delete(transaction, recursive: true);
+            try { Directory.Delete(transaction, recursive: true); }
+            catch (IOException) { /* Locked cleanup must not mask successful install or rollback failure. */ }
+            catch (UnauthorizedAccessException) { /* Antivirus/Steam can transiently retain file handles. */ }
         }
     }
 }
