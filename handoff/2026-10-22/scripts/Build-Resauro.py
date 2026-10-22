@@ -44,11 +44,14 @@ with tempfile.TemporaryDirectory(prefix='Aurora-handoff-') as temp:
             permitted(name,data)
             output.writestr(name,data)
             records.append({'Path':name,'Bytes':len(data),'Sha256':sha(data)})
-        names=git('ls-files','-z').decode().split('\0')
-        for name in sorted(n for n in names if n):
-            p=repo/name
-            if not p.is_file():raise ValueError(f'Missing tracked source: {name}')
-            add('Aurora/'+name,p.read_bytes())
+        # Preserve committed bytes, independent of the source checkout's autocrlf cache.
+        with zipfile.ZipFile(io.BytesIO(git('archive','--format=zip','HEAD'))) as aurora:
+            for entry in aurora.infolist():
+                if entry.is_dir():continue
+                data=aurora.read(entry)
+                if entry.filename=='handoff/2026-10-22/package/Aurora-0.2-win-x64.zip':
+                    data=(repo/entry.filename).read_bytes()
+                add('Aurora/'+entry.filename,data)
         with zipfile.ZipFile(io.BytesIO(graphics_bytes)) as graphics:
             for entry in graphics.infolist():
                 if not entry.is_dir():add('GameData/'+entry.filename,graphics.read(entry))
@@ -69,7 +72,7 @@ Aurora-history.bundle — Git-история main. Закрытые publisher ke
 
 Для продолжения с Git-историей в PowerShell:
   $env:GIT_LFS_SKIP_SMUDGE='1'
-  git clone --branch main ./Aurora-history.bundle ./Aurora-work
+  git clone --config core.autocrlf=false --branch main ./Aurora-history.bundle ./Aurora-work
   Remove-Item Env:GIT_LFS_SKIP_SMUDGE
   Copy-Item ./Aurora/* ./Aurora-work/ -Recurse -Force
   Copy-Item ./Aurora/.gitattributes ./Aurora-work/ -Force
