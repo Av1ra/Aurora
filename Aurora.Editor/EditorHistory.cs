@@ -17,7 +17,7 @@ sealed partial class EditorWindow
  {
   StoreVariant();var materialVariants=variants.Select(v=>v with{Settings=new(v.Settings)}).ToArray();return new(new(lods),glassObjects.ToDictionary(p=>p.Key,p=>new HashSet<string>(p.Value)),materialVariants,activeVariant,selectedLod,objects.SelectedItem as string,materialChoice.SelectedItem as string,mtl,mask,maskMaterial,vehicleConfiguration,documentTransform,mainPivot,mainRotation,lampSlots.ToArray(),lampRotations.ToArray(),extraLights.ToArray(),activeLamp,gizmoVisible,gizmoEditing,gizmoMode,JsonSerializer.Serialize(materialVariants),cargoModel,cargoModelPath,cargoMtl,showCargo,cargoFill,previewSettings,activeCargo,cargoEndpoint,cargoUniform,activeSmoke,transportPoint,cargoFrame,cargoBone,CaptureWorkspaceHistory(),JsonSerializer.Serialize(animationClips),JsonSerializer.Serialize(mechanismRotations));
  }
- void NewHistoryDocument(){documentEpoch++;history.Clear();dragBefore=savedSnapshot=null;}
+ void NewHistoryDocument(){ResetEffectTests();documentEpoch++;history.Clear();dragBefore=savedSnapshot=null;}
  void MarkHistorySaved()=>savedSnapshot=HasModel?CaptureSnapshot():null;
  void CommitHistory(EditorSnapshot before){var after=CaptureSnapshot();history.Commit(before,after);dirty=workspaceDirty||savedSnapshot==null||!SameSnapshot(after,savedSnapshot);UpdateControls();}
  void RegisterHistoryCommands()

@@ -3,7 +3,7 @@ namespace Aurora.Editor;
 sealed partial class EditorWindow
 {
  readonly Microsoft.UI.Xaml.Controls.InfoBar editorNotice=new(){IsOpen=false,IsClosable=true,VerticalAlignment=Microsoft.UI.Xaml.VerticalAlignment.Top,Margin=new Microsoft.UI.Xaml.Thickness(12)};
- static bool IsLightParameter(string key)=>key.StartsWith("LIGHT_",StringComparison.Ordinal)||key is "SIREN_POINT" or "WATER_POINT" or "PARTICLE_JETPOINT";
+ static bool IsLightParameter(string key)=>key.StartsWith("LIGHT_",StringComparison.Ordinal)||key is "SIREN_POINT";
  static string MechanismDescription(string key)=>key switch{
   "DUMPER_DECK_PIVOT"=>"Поднимаемый кузов основной машины. Выберите его меш и разместите ось во viewport.",
   "DUMPER_JOINTDECK_PIVOT"=>"Поднимаемый кузов прицепа. Настройка выполняется в координатах прицепа.",

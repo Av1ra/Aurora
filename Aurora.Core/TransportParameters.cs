@@ -11,6 +11,12 @@ public sealed record TransportParameter(string Key,string Name,string Group,stri
 }
 public static class TransportParameters
 {
+ public static string Section(TransportParameter p)=>p.Key.StartsWith("LODJOINT",StringComparison.Ordinal)?"jointLods":p.Key.StartsWith("LIGHT_",StringComparison.Ordinal)||p.Key=="SIREN_POINT"?"lights":p.Key is "WATER_POINT" or "PARTICLE_JETPOINT" or "PARTICLE_MOVEMENT_JOINT"?"effects":p.Group switch{"Сборка"=>"assembly","Механизмы"=>"mechanisms","Конная тяга"=>"horses","Авиация"=>"aviation","Поезда"=>"rail","Суда"=>"waves","Кабины"=>"cabins",_=>"points"};
+ public static bool Available(TransportParameter p,string script)
+ {
+  var fields=VehicleScript.Fields(script);if(fields.Any(f=>f.Key==p.Key))return true;string type=fields.FirstOrDefault(f=>f.Key=="TYPE")?.Value??"";if(!p.Applies(type))return false;
+  return p.Key switch{"WATER_POINT"=>fields.Any(f=>f.Key=="SKILL_FIRETRUCK"),"PARTICLE_MOVEMENT_JOINT" or "DRIVER_JOINT" or "LIGHT_BLINKER_TRAILER"=>fields.Any(f=>f.Key=="JOINT"),_=>true};
+ }
  static TransportArgument N(string name,string value="0")=>new(name,value);
  static TransportArgument F(string name,string ext=".nmf")=>new(name,"",ext);
  static TransportArgument[] Point(string prefix="")=>[N(prefix+"X"),N(prefix+"Y"),N(prefix+"Z")];

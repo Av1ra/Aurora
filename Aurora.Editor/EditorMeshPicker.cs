@@ -15,13 +15,14 @@ sealed partial class EditorWindow
  }
  async Task<string?> PickMeshInViewport(string draft,bool joint)
  {
-  string? previous=vehicleConfiguration,oldLod=selectedLod,oldSelection=objects.SelectedItem as string;var oldPoint=transportPoint;bool oldVisible=gizmoVisible;var parent=(Grid)view.Parent;
+  string? previous=vehicleConfiguration,oldLod=selectedLod,oldSelection=objects.SelectedItem as string;var oldPoint=transportPoint;bool oldVisible=gizmoVisible;var oldTimeline=animationPanel.Visibility;var oldNumbers=gizmoNumbers.Visibility;var oldEffects=effectBar?.Visibility;var parent=(Grid)view.Parent;
   meshPick=new(TaskCreationOptions.RunContinuationsAsynchronously);
   try{
+   animationPanel.Visibility=gizmoNumbers.Visibility=Visibility.Collapsed;if(effectBar!=null)effectBar.Visibility=Visibility.Collapsed;processing=false;UpdateControls();
    vehicleConfiguration=draft;transportPoint=null;meshPickJoint=joint;gizmoVisible=false;SelectLod(lods.Keys.First());await Display();meshPickValue=null;
    meshPickPanel=new(){Orientation=Orientation.Horizontal,Spacing=8,HorizontalAlignment=HorizontalAlignment.Center,VerticalAlignment=VerticalAlignment.Bottom,Margin=new Thickness(12)};
    var choose=new Button{Content=UiLanguage.Text("Выбрать"),IsEnabled=false};meshChooseButton=choose;var cancel=new Button{Content=UiLanguage.Text("Отмена")};meshPickPanel.Children.Add(choose);meshPickPanel.Children.Add(cancel);
    choose.Click+=(_,_)=>{if(meshPickValue!=null)meshPick?.TrySetResult(meshPickValue);};cancel.Click+=(_,_)=>meshPick?.TrySetResult(null);parent.Children.Add(meshPickPanel);return await meshPick.Task;
-  }finally{if(meshPickPanel!=null)parent.Children.Remove(meshPickPanel);meshPickPanel=null;meshChooseButton=null;meshPick=null;meshPickJoint=false;vehicleConfiguration=previous;transportPoint=oldPoint;gizmoVisible=oldVisible;if(oldLod!=null)SelectLod(oldLod);await Display();if(oldSelection!=null&&objects.Items.Contains(oldSelection))objects.SelectedItem=oldSelection;}
+  }finally{if(meshPickPanel!=null)parent.Children.Remove(meshPickPanel);meshPickPanel=null;meshChooseButton=null;meshPick=null;meshPickJoint=false;UpdateControls();animationPanel.Visibility=oldTimeline;gizmoNumbers.Visibility=oldNumbers;if(effectBar!=null&&oldEffects!=null)effectBar.Visibility=oldEffects.Value;vehicleConfiguration=previous;transportPoint=oldPoint;gizmoVisible=oldVisible;if(oldLod!=null)SelectLod(oldLod);await Display();if(oldSelection!=null&&objects.Items.Contains(oldSelection))objects.SelectedItem=oldSelection;}
  }
 }
