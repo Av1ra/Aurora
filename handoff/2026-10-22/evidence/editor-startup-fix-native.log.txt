@@ -1,0 +1,9 @@
+PASS parent folder appends Aurora, trailing slash and existing Aurora folder do not duplicate it
+PASS custom Unicode folder, exact retirement, unknown files, no fixture global preference writes
+PASS ZIP traversal/absolute/drive/backslash rejection
+PASS locked file rollback; AURORA_NATIVE_INSTALLER_PASS
+C:\Users\AVR\AppData\Local\Temp\Aurora-native-tests-4chwcdig
+PASS Steam original renamed to exe_orig and bridge installed
+PASS second install updates bridge, original preserved without duplicates
+PASS unexpected Steam-modified game entry never overwritten
+PASS original Steam executable restored explicitly

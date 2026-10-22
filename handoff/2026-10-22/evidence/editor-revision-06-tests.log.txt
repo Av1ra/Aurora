@@ -1,0 +1,589 @@
+PASS rejected oversized OBJ rejected before parsing or allocating its geometry
+PASS OBJ preserves object/material boundaries and negative indices
+PASS OBJ converts UV origin and calculates unit face normals
+PASS OBJ emits the native cooker rigid stream and identity pivots
+PASS concave OBJ triangulation preserves area and winding in both directions
+PASS OBJ smoothing groups average adjacent face normals
+PASS OBJ flat shading preserves hard edges
+PASS explicit OBJ normals are retained
+PASS OBJ BOM and Unicode identifiers map to stable native names
+PASS rejected malformed/nonplanar/degenerate OBJ
+PASS rejected malformed/nonplanar/degenerate OBJ
+PASS rejected malformed/nonplanar/degenerate OBJ
+PASS rejected malformed/nonplanar/degenerate OBJ
+PASS rejected malformed/nonplanar/degenerate OBJ
+PASS rejected malformed/nonplanar/degenerate OBJ
+PASS rejected malformed/nonplanar/degenerate OBJ
+PASS large OBJ splits into native 16-bit objects without dropping triangles
+PASS specular import changes only its native material slot, retaining other materials
+PASS texture import adds a missing native channel
+PASS rejected unknown texture material
+PASS complete OBJ export retains a distinct native specular texture
+PASS complete OBJ export serializes in-memory NMF/LOD without source writes
+PASS OBJ export calculates native bounds instead of reusing an unrelated hitbox
+PASS LOD OBJ conversion creates an in-memory native model without changing source files
+PASS converted LOD obeys the document pivot transform and parses as native NMF
+PASS replacing an OBJ LOD supplies the new native geometry
+PASS LOD picker still accepts an existing NMF without recooking it
+PASS rejected LOD OBJ with incompatible material names
+PASS removing a LOD compacts surviving slots and preserves joint LOD data
+PASS export writes replacement NMF and distance while excluding removed LODs
+PASS axis correction maps front/up without mirroring 0/2
+PASS axis correction maps front/up without mirroring 0/3
+PASS axis correction maps front/up without mirroring 0/4
+PASS axis correction maps front/up without mirroring 0/5
+PASS axis correction maps front/up without mirroring 1/2
+PASS axis correction maps front/up without mirroring 1/3
+PASS axis correction maps front/up without mirroring 1/4
+PASS axis correction maps front/up without mirroring 1/5
+PASS axis correction maps front/up without mirroring 2/0
+PASS axis correction maps front/up without mirroring 2/1
+PASS axis correction maps front/up without mirroring 2/4
+PASS axis correction maps front/up without mirroring 2/5
+PASS axis correction maps front/up without mirroring 3/0
+PASS axis correction maps front/up without mirroring 3/1
+PASS axis correction maps front/up without mirroring 3/4
+PASS axis correction maps front/up without mirroring 3/5
+PASS axis correction maps front/up without mirroring 4/0
+PASS axis correction maps front/up without mirroring 4/1
+PASS axis correction maps front/up without mirroring 4/2
+PASS axis correction maps front/up without mirroring 4/3
+PASS axis correction maps front/up without mirroring 5/0
+PASS axis correction maps front/up without mirroring 5/1
+PASS axis correction maps front/up without mirroring 5/2
+PASS axis correction maps front/up without mirroring 5/3
+PASS rejected parallel forward/up axes
+PASS pivot bake retains source, UVs, winding and materials
+PASS pivot centres model and places base on ground
+PASS baked rigid stream is stable on repeated serialization
+PASS pivot bake retains native per-part placement before normalization
+PASS native normal transform uses inverse transpose for scaled parts
+PASS native light assignment precedes end and retains physics and blinkers
+PASS pivot transforms lights/driver/particles and preserves disabled emitters
+PASS removing lights does not resurrect original positions
+PASS rejected non-vehicle script template
+PASS rejected unsupported active spatial script sections instead of silently corrupting them
+PASS rejected nonfinite light position
+PASS full export saves edited game lights, rewrites LOD links and preserves source script
+PASS same pivot across LODs with rebuilt native hitbox
+PASS editor snapshot does not silently re-read an untransformed script from disk
+PASS native MTL hydrates editable settings for all three slots
+PASS native and PBR colours remain separate on import
+PASS numbered companion names match game material variants
+PASS Wavefront libraries hydrate maps by usemtl identifier
+PASS disconnected wheel meshes split in stable left-to-right order
+PASS wheel rename preserves placement
+PASS new submaterial assignment only affects selected object
+PASS rejected duplicate object name
+PASS encrypted passwordless project retains exact portable entries
+PASS project entries reject Windows streams and device aliases
+PASS rejected tampered project authentication
+PASS rejected project traversal entry
+PASS automatic per-variant previews export at native filenames and dimensions
+PASS skin export has one model and individually paired numbered materials
+PASS second skin retains its own PBR maps/scalars without cross-variant collisions
+PASS standalone skin export contains indexed native and PBR materials without geometry or vehicle script
+PASS native UTF-8 material and mesh names survive reader, writer and reload
+PASS rejected native names enforce the 63-byte UTF-8 limit rather than character count
+PASS pivot centre uses horizontal midpoint and minimum height
+PASS undo applied pivot restores original native geometry reference
+PASS undo draft restores prior pivot
+PASS redo restores draft and applied geometry
+PASS new edit invalidates redo branch
+PASS new document clears history
+PASS undo history is bounded
+PASS script editing preserves repeated fields, native lights and unknown directives
+PASS script handles BOM, lowercase, next-line scalar, quoted comments and ignores inactive tail
+PASS scalar edit preserves comments, unknown fields and inactive tail
+PASS unchanged next-line scalar is byte-preserving
+PASS lamp reader shares active case-insensitive script parsing
+PASS lamp writer inserts before commented terminator and preserves inactive tail
+PASS new vehicle parameter is inserted before native end
+PASS rejected multiline header argument
+PASS native cargo min/max position and scale roundtrip
+PASS multiple cargo areas retain independent coordinates
+PASS removing a cargo area retains the other and vehicle lights
+PASS pivot correction preserves native cargo placement and rotation
+PASS pivot correction preserves native cargo placement and rotation
+PASS pivot correction preserves native cargo placement and rotation
+PASS literal vehicle names and cargo no longer block supported pivot correction
+PASS LOD rows pair their model and matching distance without including joint fields
+PASS task-based settings preserve hidden native descriptions and mechanism data
+PASS rejected negative LOD distance
+PASS native movement smoke coordinates parse independently of effect identifiers
+PASS smoke point edits preserve the other emitter and native lamps
+PASS remove one smoke emitter
+PASS custom native sound INI is copied with a portable reference at model export
+PASS custom sound INI travels inside the encrypted portable project
+PASS rejected unrecognized sound INI
+PASS all seven transport types and native class profiles exist with no donor models, sounds or DLC files
+PASS all known transport roles remain available and localized without installed examples
+PASS donor-free presets retain multiple rail-crane arguments and transport cargo categories
+PASS role switches, documented work parameters and unknown crane2 arguments remain distinct
+PASS installed role profile takes priority over embedded starting values
+PASS OBJ authoring, one portable project and complete local export without a game donor: VEHICLETYPE_AIRPLANE
+PASS OBJ authoring, one portable project and complete local export without a game donor: VEHICLETYPE_CABIN
+PASS OBJ authoring, one portable project and complete local export without a game donor: VEHICLETYPE_HELICOPTER
+PASS OBJ authoring, one portable project and complete local export without a game donor: VEHICLETYPE_RAIL_LOCOMOTIVE
+PASS OBJ authoring, one portable project and complete local export without a game donor: VEHICLETYPE_RAIL_VAGON
+PASS OBJ authoring, one portable project and complete local export without a game donor: VEHICLETYPE_ROAD
+PASS OBJ authoring, one portable project and complete local export without a game donor: VEHICLETYPE_SHIP
+PASS transport terminator excludes trailing fields: end
+PASS insertion preserves unknown body and post-terminator bytes: end
+PASS multiline value preserves its comment: end
+PASS LOD written before native terminator: end
+PASS transport terminator excludes trailing fields: $END
+PASS insertion preserves unknown body and post-terminator bytes: $END
+PASS multiline value preserves its comment: $END
+PASS LOD written before native terminator: $END
+PASS transport terminator excludes trailing fields: $end # stop
+PASS insertion preserves unknown body and post-terminator bytes: $end # stop
+PASS multiline value preserves its comment: $end # stop
+PASS LOD written before native terminator: $end # stop
+PASS transport terminator excludes trailing fields: END // stop
+PASS insertion preserves unknown body and post-terminator bytes: END // stop
+PASS multiline value preserves its comment: END // stop
+PASS LOD written before native terminator: END // stop
+PASS rejected terminator is not an editable setting
+PASS mesh rename updates inline and multiline mechanism names without changing opaque fields
+PASS unchanged multiple resources retain exact script bytes
+PASS resource list can grow without losing unrelated fields
+PASS allow any resource removes every previous restriction
+PASS textual country and unlimited availability survive purchase edits
+PASS rejected new arbitrary out-of-range availability is rejected
+PASS existing native expiry beyond UI range can be retained
+PASS unchanged early-start native years survive without extending manual input range
+PASS pivot accepts dollar terminator without treating it as unknown section
+PASS native cabins are scanned and light/heavy identities remain distinct
+PASS cabin subtype change replaces exclusive flag and retains unrelated fields
+PASS native transport scripts preserve unchanged fields and accept pre-terminator insertion: 1073 files;
+PASS token traversal retains quoted paths, unknown fields, CRLF and post-terminator bytes
+PASS linked model files are copied without same-basename collisions and shared assets deduplicate
+PASS linked material textures travel with dependencies without changing parameters or LOD references
+PASS identical material source text with different local textures remains distinct
+PASS rejected missing linked model cannot silently produce an incomplete export
+PASS typed mechanism settings preserve unchanged multiline native bytes
+PASS typed mechanism setting updates the original coordinate in place
+PASS removing a mechanism removes its whole block, leaving the terminator
+PASS linked PBR companion texture is local after export
+PASS linked PBR companion texture is local after export
+PASS equal native materials with different PBR companions cannot collapse into one dependency
+PASS encrypted project exports linked models and material textures after every source folder is deleted
+PASS additional rigid native stream reads and bakes without losing mesh/UV/index data: vehicles/covered_rnt_agk/main.nmf
+PASS additional rigid native stream reads and bakes without losing mesh/UV/index data: vehicles/oil_rnt_agk/main.nmf
+PASS additional rigid native stream reads and bakes without losing mesh/UV/index data: helicopters/mi8/screwcon.nmf
+PASS additional rigid native stream reads and bakes without losing mesh/UV/index data: helicopters/mi8/screwhi.nmf
+PASS additional rigid native stream reads and bakes without losing mesh/UV/index data: helicopters/mi8/screwlo.nmf
+PASS unchanged mixed trainset order is preserved byte-for-byte
+PASS train units reorder, repeat and reverse without losing unrelated data
+PASS rejected invalid multi-word train reference
+PASS material assignment can target one draw group without changing geometry or adjacent groups
+PASS export naming reserves canonical main and disambiguates colliding LOD names
+PASS type change clears recognized incompatible aircraft data while preserving unknown and shared fields
+PASS cabin type does not inherit road movement fields
+PASS unchanged ordered sound layers preserve comments and quoted paths
+PASS sound asset remapping respects terminator and paths containing spaces
+PASS sound diagnostics distinguish overlapping layer parameters and unavailable registered events
+PASS helicopter static assembly applies scale, native radians and placement
+PASS cabin purchase model does not duplicate working bucket
+PASS cabin working frame includes bucket and trolley with native placement
+PASS incomplete cabin does not hide main model and road crane keeps purchase part
+PASS pivot baking transforms aircraft support points, preserves annotations and disabled sentinels
+PASS rejected unknown movement section cannot bypass pivot safety checks
+PASS typed linked models, mechanisms, vehicle points and class fields roundtrip native layouts: 5672
+PASS mixer pose fixes both axis endpoints and rotates around the offset axis
+PASS rejected coincident mixer axis points rejected
+PASS rejected nonfinite diagnostic pose rejected
+PASS mechanism view leaves other meshes and source NMF geometry unchanged
+PASS rejected missing mechanism mesh cannot pose another object
+PASS native dumper/mixer and joint-local axes preserve size while posing the configured mesh: 36; native missing/ambiguous mesh references: 1
+PASS native slot canonicalization preserves geometry and source when MTL also contains trailer materials
+PASS rejected partial shared-material mapping with conflicting indices rejected
+PASS PBR alias follows canonical root material without replacing trailer material
+PASS shared table remapping preserves opaque nodes, original assets, independent part material and terminator
+PASS native Skoda with root material alias exports root, joint and all three shared materials
+PASS shared native MTL covers main and joint material tables: 55; normalized root aliases: 2; native missing joint materials: 1
+PASS independent cargo frame preserves negative coordinates and exact unchanged bytes: RESOURCE_VISUALIZATION
+PASS independent cargo frame preserves negative coordinates and exact unchanged bytes: RESOURCE_VISUALIZATION_JOINT
+PASS independent cargo frame preserves negative coordinates and exact unchanged bytes: RESOURCE_VISUALIZATION_BONE
+PASS joint cargo edits do not move body cargo or replace bone binding
+PASS vehicle platform preserves reversed Z corners and negative height
+PASS platform move and scale retain original axis direction and planar height
+PASS rejected unsupported cargo box key
+PASS cargo edits preserve inline native layout and comments
+PASS unchanged native material property retains exact formatting and unknown vectors
+PASS native color edit is scoped to its material and preserves trailing comments
+PASS missing native property inserts without terminating later materials
+PASS rejected nonfinite native material color
+PASS identical duplicate native properties preserve unchanged source text
+PASS editing duplicate native properties updates both copies and keeps annotations
+PASS rejected conflicting duplicate material values require explicit correction
+PASS native material slot alias aligns to NMF while preserving properties
+PASS rejected ambiguous partial material slot mapping
+PASS odd-size DDS mip chain has valid count, lengths and unchanged base level
+PASS normal-map mip filtering retains normalized flat normals
+PASS color mipmaps average in linear light and preserve alpha
+PASS OBJ texture options support arbitrary order, negative offsets and quoted filenames
+PASS rejected nonfinite texture scale
+PASS rejected unknown map options
+PASS height map conversion creates tangent normal map instead of using grayscale normals
+PASS material UV transform preserves other material vertices and OBJ V convention
+PASS missing OBJ texture coordinates are reported
+PASS OBJ materials without texture maps retain color and shininess
+PASS water and trailer exhaust belong to effects, indicators to lights, and horse traction to its own equipment section
+PASS effect choices require a firetruck role or trailer while existing records remain repairable
+PASS native positive-X left indicator stays on the left after moving and rotating the main pivot
+PASS animation smoothly changes on intermediate frames instead of holding until the final key
+PASS animation endpoints clamp and smooth interpolation eases between keys
+PASS linear animation interpolation is available independently of smooth easing
+PASS NAF header stores explicit FPS, inclusive frame count and one named transform matrix per bone per frame
+PASS NAF interpolated transform includes pivot and translation at the midpoint
+PASS animated NMF writes explicit bone records, rigid weights and the native skinned vertex format
+PASS NAF and animated NMF share exactly the same exported bone identifier
+PASS editor reopens its animated NMF with correct rest geometry and UV streams
+PASS glass reassignment preserves bone nodes and variable-length skinned draw groups
+PASS rejected splitting imported skinned geometry cannot silently discard its rig
+PASS rejected pivot baking cannot silently discard a native animated skeleton
+PASS rejected out-of-range skin bone reference
+PASS vehicle pivot correction preserves wheel local origins and rotates its axle instead of collapsing every pivot to zero
+PASS node frame preservation retains globally transformed wheel geometry
+PASS node frame preservation retains globally transformed wheel geometry
+PASS node frame preservation retains globally transformed wheel geometry
+PASS inverse pivot correction restores the saved coordinate frame without reverting later material edits
+PASS numbered native rear wheel meshes are included without matching unrelated mesh names
+PASS two disconnected wheels in one mesh receive separate hub centres and non-overlapping vertex masks
+PASS animation axis can be freely oriented in 3D while retaining an interpolated local rotation channel
+PASS splitting an animated object keeps every piece on the original trajectory and moves cargo only once
+PASS rejected oversized animation split fails before committing geometry
+PASS rejected zero animation FPS
+PASS rejected animation key beyond duration
+PASS rejected duplicate animation frame
+PASS rejected zero animation scale
+PASS encrypted project restores keyframes, action binding and editable mechanism axis orientation
+PASS implicit main-model NAF survives project extraction and canonical filename changes
+PASS work action export writes a paired animated NMF/NAF with selected FPS and replaces stale action references
+PASS project dependencies and transport export retain the exact NAF next to its renamed NMF
+PASS garbage animation choices follow the configured transport role instead of appearing on every road vehicle
+PASS attached actions export only moving components and leave the static vehicle without duplicate geometry
+PASS cargo follows the exported stable bone through the native cargo binding
+PASS bone identifiers remain stable when a different action uses a different track order
+PASS rejected attached animation cannot silently remove the entire static vehicle
+PASS rejected road work animation cannot be assigned to an incompatible transport type
+PASS rejected two clips cannot silently overwrite the same game action
+PASS native materials ignore duplicate names and properties after the first terminator
+PASS native material edits preserve the entire inactive suffix and unknown active fields
+PASS material asset export only resolves reachable textures and preserves inactive text
+PASS new material is inserted before the first terminator, not inside an inactive appended document
+PASS glass material duplication stays before the first terminator and preserves inactive duplicate source blocks
+PASS identical active duplicate material blocks normalize without losing custom fields
+PASS rejected conflicting duplicate material blocks require repair instead of guessing precedence
+PASS contained repeated material declarations preserve full texture and property definitions
+PASS native import and serializer roundtrip a material with missing unreachable textures
+PASS native texture directive chooses the explicit local or game root even when both files exist
+PASS packing and portable export preserve distinct local and game texture references
+PASS rejected missing game texture never silently substitutes an unrelated local texture
+PASS native material with repeated or inactive blocks imports: dlc3/vehicles/service_mixer_t24/material.mtl
+PASS native material with repeated or inactive blocks imports: vehicles/open_rmn_8135f/material_2.mtl
+PASS partial native material import retains unmatched and unused NMF slots without assigning unrelated textures
+PASS rejected empty native material definitions cannot silently match all model slots
+PASS editable import preserves ambiguous material slots for manual assignment
+PASS rejected strict material export still rejects ambiguous slot mapping
+PASS incomplete native material definitions roundtrip a portable repair project without fabricated materials
+PASS multi-variant export never resolves missing inactive texture references
+PASS adding a missing material definition permits export while an unused NMF slot needs no invented MTL block
+PASS transport package resolves cyclic native family/trainset references, repeats and reversed head with Workshop ID/object paths
+PASS transport package registers every object and records remaining external targets
+PASS packaged LOD survives source removal
+PASS packaged material texture survives source removal
+PASS packaged LOD survives source removal
+PASS packaged PBR texture survives source removal
+PASS packaged material texture survives source removal
+PASS packaged material texture survives source removal
+PASS rejected invalid Workshop package identity
+PASS transport workspace deduplicates shared assets across independent vehicles
+PASS workspace retains active object, independent documents and local asset addresses
+PASS single-vehicle legacy Aurora projects open as one-object workspace
+PASS rejected workspace payload hash mismatch
+PASS rejected nonportable workspace object name
+PASS shared workspace assets do not consume the undo budget again for every point change
+PASS multiple vehicle workspace survives encrypted passwordless Aurora archive roundtrip
+PASS imported workspace object rebases its self-reference without redirecting other sections
+PASS workspace vehicle geometry, native colour and textures restore after source removal: head
+PASS workspace vehicle geometry, native colour and textures restore after source removal: tail
+PASS independent authored objects roundtrip one encrypted workspace and export a registered self-contained trainset
+PASS unopened LOD bytes remain available for later replacement in project
+PASS unopened LOD is packed as opaque project dependency rather than blocking project save
+PASS rejected missing per-object project material asset
+PASS rejected single model export cannot leak unresolved project object references
+PASS native object identity remains stable across single-project and workspace serialization
+PASS installed native transport export, local models and textures: VEHICLETYPE_ROAD / tractor_1950
+PASS native rigid export fixture exists for VEHICLETYPE_ROAD
+PASS installed native transport export, local models and textures: VEHICLETYPE_RAIL_LOCOMOTIVE / russian_loco_060da
+PASS native rigid export fixture exists for VEHICLETYPE_RAIL_LOCOMOTIVE
+PASS installed native transport export, local models and textures: VEHICLETYPE_RAIL_VAGON / russian_tram_102na_v
+PASS native rigid export fixture exists for VEHICLETYPE_RAIL_VAGON
+PASS installed native transport export, local models and textures: VEHICLETYPE_SHIP / danube
+PASS native rigid export fixture exists for VEHICLETYPE_SHIP
+PASS installed native transport export, local models and textures: VEHICLETYPE_AIRPLANE / an14
+PASS native rigid export fixture exists for VEHICLETYPE_AIRPLANE
+PASS installed native transport export, local models and textures: VEHICLETYPE_HELICOPTER / g31
+PASS native rigid export fixture exists for VEHICLETYPE_HELICOPTER
+PASS installed native transport export, local models and textures: VEHICLETYPE_CABIN / gravel_big
+PASS native rigid export fixture exists for VEHICLETYPE_CABIN
+PASS native big-endian text names with English fallback
+PASS vehicle catalog scans DLC and rail roots with localized model names and class-tagged sound sets
+PASS country blocs are explicit and never inferred from native price currency
+PASS unchanged class preserves native skill strength and all script records
+PASS native field profiles remain isolated by transport class
+PASS guided purchase rewrites native currency, country and inclusive years without dropping other settings
+PASS rejected reversed production years
+PASS rejected production year outside owner range
+PASS class change replaces skill and cargo category together
+PASS sound presets replace the complete native sound stack
+PASS passenger and liquid classes have no false visible cargo tools
+PASS cargo restrictions select native models without mixing covered and bulk transport
+PASS restricted packaged and mixed waste resources retain their compatible visual models
+PASS rejected truncated game localization index
+PASS installed native fleet catalog resolves countries, classes and sound presets
+PASS native class roundtrip Автобус
+PASS native class roundtrip Асфальтоукладчик
+PASS native class roundtrip Бульдозер
+PASS native class roundtrip Бульдозер
+PASS native class roundtrip Бульдозер
+PASS native class roundtrip Вагон
+PASS native class roundtrip Вагон
+PASS native class roundtrip Вагон
+PASS native class roundtrip Вагон
+PASS native class roundtrip Вагон / Вода
+PASS native class roundtrip Вагон / Крытый кузов
+PASS native class roundtrip Вагон / Нефтепродукты
+PASS native class roundtrip Вагон / Открытый кузов
+PASS native class roundtrip Вагон / Отходы
+PASS native class roundtrip Вагон / Рефрижератор
+PASS native class roundtrip Вагон / Скот
+PASS native class roundtrip Вагон / Сточные воды
+PASS native class roundtrip Вагон / Сыпучие грузы
+PASS native class roundtrip Вагон / Цемент
+PASS native class roundtrip Вертолёт
+PASS native class roundtrip Вертолёт
+PASS native class roundtrip Вертолёт / Смешанные грузы
+PASS native class roundtrip Грузовик
+PASS native class roundtrip Грузовик / Бетон
+PASS native class roundtrip Грузовик / Вода
+PASS native class roundtrip Грузовик / Крытый кузов
+PASS native class roundtrip Грузовик / Нефтепродукты
+PASS native class roundtrip Грузовик / Открытый кузов
+PASS native class roundtrip Грузовик / Отходы
+PASS native class roundtrip Грузовик / Рефрижератор
+PASS native class roundtrip Грузовик / Скот
+PASS native class roundtrip Грузовик / Сточные воды
+PASS native class roundtrip Грузовик / Сыпучие грузы
+PASS native class roundtrip Грузовик / Цемент
+PASS native class roundtrip Железнодорожный кран
+PASS native class roundtrip Железнодорожный кран
+PASS native class roundtrip Железнодорожный кран
+PASS native class roundtrip Каток
+PASS native class roundtrip Комбайн
+PASS native class roundtrip Кран
+PASS native class roundtrip Лёгкая кабина
+PASS native class roundtrip Лёгкая кабина
+PASS native class roundtrip Лёгкая кабина / Отходы
+PASS native class roundtrip Лёгкая кабина / Смешанные грузы
+PASS native class roundtrip Лёгкая кабина / Сыпучие грузы
+PASS native class roundtrip Легковой автомобиль
+PASS native class roundtrip Лесовоз / Открытый кузов
+PASS native class roundtrip Локомотив
+PASS native class roundtrip Локомотив
+PASS native class roundtrip Локомотив
+PASS native class roundtrip Метро
+PASS native class roundtrip Метро
+PASS native class roundtrip Моторвагон
+PASS native class roundtrip Мусоровоз / Отходы
+PASS native class roundtrip Мусоровоз больших контейнеров / Отходы
+PASS native class roundtrip Паровоз
+PASS native class roundtrip Паровоз
+PASS native class roundtrip Погрузчик / Смешанные грузы
+PASS native class roundtrip Поезд
+PASS native class roundtrip Поезд
+PASS native class roundtrip Пожарная машина
+PASS native class roundtrip Полицейская машина
+PASS native class roundtrip Полицейская машина
+PASS native class roundtrip Полицейский автобус
+PASS native class roundtrip Путеукладчик
+PASS native class roundtrip Путеукладчик
+PASS native class roundtrip Самолёт
+PASS native class roundtrip Самолёт
+PASS native class roundtrip Самолёт / Смешанные грузы
+PASS native class roundtrip Скорая помощь
+PASS native class roundtrip Снегоуборочная машина
+PASS native class roundtrip Судно
+PASS native class roundtrip Судно
+PASS native class roundtrip Судно / Крытый кузов
+PASS native class roundtrip Судно / Нефтепродукты
+PASS native class roundtrip Судно / Открытый кузов
+PASS native class roundtrip Судно / Смешанные грузы
+PASS native class roundtrip Судно / Сыпучие грузы
+PASS native class roundtrip Тоннелепроходческая машина
+PASS native class roundtrip Трактор
+PASS native class roundtrip Трамвай
+PASS native class roundtrip Трамвай
+PASS native class roundtrip Тяжёлая кабина
+PASS native class roundtrip Тяжёлая кабина
+PASS native class roundtrip Тяжёлая кабина / Отходы
+PASS native class roundtrip Тяжёлая кабина / Смешанные грузы
+PASS native class roundtrip Тяжёлая кабина / Сыпучие грузы
+PASS native class roundtrip Экскаватор
+PASS all offered cargo resources exist in installed game
+PASS native cargo geometry and resolved material maps generalcargo_vehicle.nmf
+PASS native cargo geometry and resolved material maps yellowcake.nmf
+PASS native cargo geometry and resolved material maps boards.nmf
+PASS native cargo geometry and resolved material maps bricks.nmf
+PASS native cargo geometry and resolved material maps steel.nmf
+PASS native cargo geometry and resolved material maps prefabpanels.nmf
+PASS native cargo geometry and resolved material maps wood.nmf
+PASS native cargo geometry and resolved material maps aluminium.nmf
+PASS native cargo geometry and resolved material maps waste1.nmf
+PASS native cargo geometry and resolved material maps waste_gravel_vehicle.nmf
+PASS native cargo geometry and resolved material maps waste_steel_vehicle.nmf
+PASS native cargo geometry and resolved material maps waste_aluminium_vehicle.nmf
+PASS native cargo geometry and resolved material maps waste_plastic.nmf
+PASS native cargo geometry and resolved material maps livestock_vehicle.nmf
+PASS native cargo geometry and resolved material maps gravel_vehicle.nmf
+PASS native cargo geometry and resolved material maps rawgravel_vehicle.nmf
+PASS native cargo geometry and resolved material maps coal_vehicle.nmf
+PASS native cargo geometry and resolved material maps rawcoal_vehicle.nmf
+PASS native cargo geometry and resolved material maps iron_vehicle.nmf
+PASS native cargo geometry and resolved material maps rawiron_vehicle.nmf
+PASS native cargo geometry and resolved material maps bauxite_vehicle.nmf
+PASS native cargo geometry and resolved material maps rawbauxite_vehicle.nmf
+PASS native cargo geometry and resolved material maps uranium_vehicle.nmf
+PASS valid publisher signature and SHA
+PASS rejected tampered DLL
+PASS rejected untrusted publisher
+PASS rejected future incompatible module
+PASS rejected config traversal
+PASS rejected unsafe path ../x
+PASS rejected unsafe path /x
+PASS rejected unsafe path c:/x
+PASS rejected unsafe path a\..\x
+PASS rejected unsafe path a//x
+PASS rejected unsafe path x:stream
+PASS empty library yields empty menu
+PASS rejected destination collision
+PASS partial install rolls back old DLL
+PASS signed module installs with preserved user INI
+PASS one-pixel DDS lossless RGBA alpha
+PASS rejected truncated NMF
+PASS pivot bake retains native parts and materials
+PASS native pivot retains triangles, UVs and material assignment
+PASS native pivot retains all transformed vertices
+PASS native pivot retains triangles, UVs and material assignment
+PASS native pivot retains all transformed vertices
+PASS native pivot retains triangles, UVs and material assignment
+PASS native pivot retains all transformed vertices
+PASS native pivot retains triangles, UVs and material assignment
+PASS native pivot retains all transformed vertices
+PASS native pivot retains triangles, UVs and material assignment
+PASS native pivot retains all transformed vertices
+PASS native pivot retains triangles, UVs and material assignment
+PASS native pivot retains all transformed vertices
+PASS glass preserves model structure bus_ikr_66/lod.nmf
+PASS geometry/UV/transform unchanged
+PASS geometry/UV/transform unchanged
+PASS geometry/UV/transform unchanged
+PASS geometry/UV/transform unchanged
+PASS geometry/UV/transform unchanged
+PASS geometry/UV/transform unchanged
+PASS pivot bake retains native parts and materials
+PASS native pivot retains triangles, UVs and material assignment
+PASS native pivot retains all transformed vertices
+PASS native pivot retains triangles, UVs and material assignment
+PASS native pivot retains all transformed vertices
+PASS native pivot retains triangles, UVs and material assignment
+PASS native pivot retains all transformed vertices
+PASS native pivot retains triangles, UVs and material assignment
+PASS native pivot retains all transformed vertices
+PASS native pivot retains triangles, UVs and material assignment
+PASS native pivot retains all transformed vertices
+PASS native pivot retains triangles, UVs and material assignment
+PASS native pivot retains all transformed vertices
+PASS glass preserves model structure bus_ikr_66/main.nmf
+PASS geometry/UV/transform unchanged
+PASS geometry/UV/transform unchanged
+PASS geometry/UV/transform unchanged
+PASS geometry/UV/transform unchanged
+PASS geometry/UV/transform unchanged
+PASS geometry/UV/transform unchanged
+NMF_CORPUS accepted=2 rejected=0
+PASS native corpus has supported models
+PASS NMF-only export retains every LOD byte-for-byte under canonical names
+PASS NMF-only export applies object glass to every LOD
+PASS NMF exports never modify source files
+PASS rejected incomplete glass assignments across exported LODs
+PASS same-basename models receive distinct export names
+AURORA_TESTS_PASS
+PASS signed numeric module metadata
+PASS signed alpha module stage
+PASS rejected invalid module stage
+PASS rejected numeric control in old schema
+PASS rejected invalid numeric bounds
+PASS Workshop overrides bundled equal-version module
+PASS tampered Workshop update rejected with fallback
+PASS registered Steam ID locates complete workshop_wip payload
+PASS incomplete Workshop source is reported, never treated as complete
+PASS complete Steam subscription wins over incomplete workshop_wip
+PASS unregistered Steam IDs are ignored
+PASS no popup while aurora-module.json is missing
+PASS incomplete registered Workshop release triggers no prompt
+PASS first installation offered with exact declared release date
+PASS first installation does not invent a previous version
+PASS installed matching Workshop payload produces no repeat popup
+PASS installed version recorded separately from release
+PASS release date change alone triggers a comparison prompt
+PASS date-only change is recorded and not offered again
+PASS changed DLL triggers update even when version unchanged
+PASS changed DLL copied and receipt updated
+PASS popup compares installed and available versions and release dates
+PASS rejected changed files between scan and install
+PASS stale update did not overwrite installed state
+PASS new release installed and no longer offered
+PASS older Workshop release does not downgrade installed game
+PASS metadata cannot impersonate a different registered ID
+PASS empty registered Workshop folder never triggers a popup
+PASS manifest can retire one previously registered DLL
+PASS obsolete previously tracked DLL removed from the game
+PASS untracked files and user settings remain untouched
+PASS no persistent or temporary backup directories remain after successful update
+PASS modified files are preserved and removed from the managed inventory
+PASS temporary rollback staging removed after preserving user edits
+PASS signed control dependencies supported
+PASS rejected missing prerequisite control
+PASS rejected cyclic control dependencies
+PASS rejected duplicate control identity
+PASS legacy manifest without dependencies still supported
+PASS matching Workshop runtime remains launch-compatible
+PASS rejected old signed fallback cannot replace newer Workshop runtime
+PASS conflicting Workshop DLL preserved without mutation
+PASS rejected user-modified Workshop runtime not silently overwritten
+PASS rejected old fallback cannot resurrect retired Workshop DLL
+PASS retired file remains absent
+PASS matching signed package may repair missing exact runtime files
+PASS matching Workshop offer is installable with its signed runtime
+PASS Workshop offer cannot promise a missing signed runtime
+PASS changed Workshop bytes need a matching signed package
+PASS retired Workshop files cannot be silently restored by an install offer
+PASS unchanged signed module snapshot accepted
+PASS rejected same-version signed metadata refresh requires rescan
+PASS rejected stale module install plan rejected before writes
+PASS stale install leaves game files untouched
+PASS 100-percent window size retains logical dimensions
+PASS 150-percent window scales with WinUI controls
+PASS large editor fits the monitor work area at high DPI
+PASS unknown DPI falls back to standard scale
+PASS small work area never produces negative dimensions
+PASS viewport permits initial blank document
+PASS viewport permits its exact encoded document
+PASS viewport permits explicit UTF-8 document encoding
+PASS viewport rejects data before trusted document is assigned
+PASS viewport rejects different encoded HTML
+PASS viewport rejects web and dropped file navigation

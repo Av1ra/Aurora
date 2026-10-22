@@ -1,0 +1,57 @@
+{
+  "Schema": 1,
+  "Date": "2026-10-22",
+  "Aurora": {
+    "Repository": "https://github.com/Av1ra/Aurora.git",
+    "SnapshotHead": "3d826f324bc8ab144019df8588fd21ec66ef67a8",
+    "InstalledSource": "c45db8149f0b91f82688cdb7c0897bee0de75ce7",
+    "Build": "build-c111dafe03994c7d9de2d17e0adcb5c6",
+    "Version": "0.2",
+    "VerifiedFiles": 572
+  },
+  "Graphics": {
+    "Repository": "https://github.com/Av1ra/GameData.git",
+    "Revision": "c72d027dd4449cda05da10b56850657f74d10561",
+    "Source": "SovietRepublic/MODS/PBR.dll/SRC/Product",
+    "UiPolicyRevision": "ce684080d356f5d729bb9c45a79df152ac54c89c",
+    "TrackedChanges": false,
+    "PbrSha256": "ab056ec1525887bd777fd1452238441949081f0a2f49de2e5e900f7bbf51e798",
+    "VfsSha256": "38c6c9f9fe381052254c4e451eca7a25fe208b1f68865e01f4e30a14a1b024ba"
+  },
+  "Profiles": {
+    "Count": 88,
+    "TransportTypes": [
+      "VEHICLETYPE_AIRPLANE",
+      "VEHICLETYPE_CABIN",
+      "VEHICLETYPE_HELICOPTER",
+      "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "VEHICLETYPE_RAIL_VAGON",
+      "VEHICLETYPE_ROAD",
+      "VEHICLETYPE_SHIP"
+    ]
+  },
+  "Package": {
+    "Aurora-0.2-win-x64.zip": {
+      "Bytes": 99149415,
+      "Sha256": "abff1148e8027bb93bbe3440b8992fd868c8767d8061b70efa24323d22cb3222"
+    },
+    "Aurora-Setup.exe": {
+      "Bytes": 413696,
+      "Sha256": "e2da4206470e958e6e2082a0bf3e16b0362321602aff7a8d802a029595c77bcf"
+    },
+    "aurora-update.json": {
+      "Bytes": 266,
+      "Sha256": "8c7a8fb6737c6229a292d67eed00f6c41fd384ce804918051ad908f6fa81a708"
+    },
+    "SHA256SUMS.txt": {
+      "Bytes": 260,
+      "Sha256": "5ce54a5b4706937546f803a99158798ae22e943e508b005f544014d7fed06b59"
+    }
+  },
+  "Assets": {
+    "RequestedImages": 31,
+    "CopiedImages": 31,
+    "PsdSha256": "cd04e454ff7ac0712d88e04508f03776f9f605e2b77f3fed2d660459ba0952c2",
+    "PsdLayers": 123
+  }
+}

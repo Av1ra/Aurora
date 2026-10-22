@@ -1,0 +1,2 @@
+PASS real diagnostic light/water sprite shaders and keyframe playback in isolated WebGL
+PASS real WebGL2 shader compilation and viewport readiness in isolated headless Edge

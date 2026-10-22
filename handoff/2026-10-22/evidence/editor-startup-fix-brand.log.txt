@@ -1,0 +1,2 @@
+PASS embedded PNG executable icons: 8 Aurora executables
+PASS branded Python CLI package still executes after resource embedding

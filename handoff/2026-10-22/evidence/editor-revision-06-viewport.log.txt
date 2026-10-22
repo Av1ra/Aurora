@@ -1,0 +1,12 @@
+PASS viewport scene ownership, texture lifetime, DPI picking and background deselection
+PASS actual move arrows, rotation rings, editor messages and tool-frame handedness
+PASS native-size FOV previews, transparent capture, camera restoration and undo drag transactions
+PASS visual cargo axis/uniform scale, live vertices and native transform convention
+PASS cargo resource switching keeps vehicle framing stable
+PASS wireframe edges, toggle restoration and solid export previews
+PASS smooth held-key camera, roll/reset/FOV limits, saved poses, handler restoration and native lamp sprite pass
+PASS high-resolution camera inspection retains native-size export behavior
+PASS cargo-only replacement and keyframe poses retain vehicle VAOs, textures and camera; cargo follows the animated body
+PASS playback FPS advances intermediate frames, stop freezes pose, and oriented animation axes match native matrix convention
+PASS indicators stay off before activation, blink after activation and stay off after deactivation despite queued frames
+PASS a selected wheel rotates about its hub while other components of the same mesh remain unchanged; reset restores every wheel without VAO recreation

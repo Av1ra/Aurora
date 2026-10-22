@@ -1,0 +1,1610 @@
+{
+  "Schema": 1,
+  "Scope": "Aurora tracked tree outside handoff; UTF-8 text canonicalized to LF for cross-platform checkout, binaries raw",
+  "Files": [
+    {
+      "Path": ".clang-format",
+      "HashMode": "Utf8LF",
+      "Bytes": 39,
+      "Sha256": "673e355d906cde6400cee822557e8366472ea1841d3f14ad720e0fca08018b1d"
+    },
+    {
+      "Path": ".github/workflows/build.yml",
+      "HashMode": "Utf8LF",
+      "Bytes": 1943,
+      "Sha256": "46e7be3a68a1c7ad16e160269c0e18d2c194b5194f37486493e84623efe09c1d",
+      "Lines": 49
+    },
+    {
+      "Path": ".gitignore",
+      "HashMode": "Utf8LF",
+      "Bytes": 111,
+      "Sha256": "1df8e37051b530fd29be144238b53f9385b4ec72149ed9f65cf1b7597d373267"
+    },
+    {
+      "Path": "AGENTS.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 3383,
+      "Sha256": "88356c3afa886997dae89cee97edd601568a3b9c6fe87707d48b3dd879a4bccb",
+      "Lines": 28
+    },
+    {
+      "Path": "Aurora.Bootstrap/Bootstrap.cpp",
+      "HashMode": "Utf8LF",
+      "Bytes": 7493,
+      "Sha256": "14e870cbfd9ca705323d665eb28c0b4efd5e920271c1a9bdeefa7caba0709bee",
+      "Lines": 87
+    },
+    {
+      "Path": "Aurora.Core/AnimatedNmf.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 3213,
+      "Sha256": "69e2ba40cfcd676dcccc01c2da01f52a2a815ca2e07e65c74f9691a200e6fb9b",
+      "Lines": 28
+    },
+    {
+      "Path": "Aurora.Core/AnimationBindings.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 4441,
+      "Sha256": "933b8570ff5aeb704d9503391b033028bcf4383193b41dc40f068d128d83976c",
+      "Lines": 24
+    },
+    {
+      "Path": "Aurora.Core/AnimationTimeline.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 5234,
+      "Sha256": "16dce72cb2057579294e7706460608471a298bc6b5116963193a9971fe846955",
+      "Lines": 45
+    },
+    {
+      "Path": "Aurora.Core/Aurora.Core.csproj",
+      "HashMode": "Utf8LF",
+      "Bytes": 312,
+      "Sha256": "604f0c679a4ed453a2d482da8c740619f71266c5589ab70725162b43ff423c5b",
+      "Lines": 1
+    },
+    {
+      "Path": "Aurora.Core/AuroraProjectArchive.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 3301,
+      "Sha256": "fa1d0d8073bee0971e0c72e51dac08dee1b5fe32f0379cf203cc80106e4cc895",
+      "Lines": 26
+    },
+    {
+      "Path": "Aurora.Core/Data/README.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 1024,
+      "Sha256": "4285a1d7cd68f1ada93256a39b760095996b9261f33cca9cc467fc233522b8c2",
+      "Lines": 5
+    },
+    {
+      "Path": "Aurora.Core/Data/TransportProfiles.json",
+      "HashMode": "Utf8LF",
+      "Bytes": 15414,
+      "Sha256": "37b604adaeea7411c53df9fb743af707bf72a41fed67c4d65cde84452755a2ca",
+      "Lines": 788
+    },
+    {
+      "Path": "Aurora.Core/DdsImage.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 7248,
+      "Sha256": "34bab1d57d67e0a35a956ddd9a3974849a7a260e18b611cad72ce2046ab6b42f",
+      "Lines": 71
+    },
+    {
+      "Path": "Aurora.Core/EditHistory.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 1201,
+      "Sha256": "211e90aabde57161c41cf5567768ddbf0122926a96cc7f7801aaebee7b27b53d",
+      "Lines": 13
+    },
+    {
+      "Path": "Aurora.Core/LodModelImport.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 886,
+      "Sha256": "a9a02caa4e58223f1a4b2112f2fb38add4471cbf5e0c4fd2d76fa3412ab94995",
+      "Lines": 13
+    },
+    {
+      "Path": "Aurora.Core/MaterialFiles.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2729,
+      "Sha256": "198de567a667e41b9460bcd4d657e3566834c70194bddfa4a36eaa0b751050dd",
+      "Lines": 26
+    },
+    {
+      "Path": "Aurora.Core/MechanismAxis.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2490,
+      "Sha256": "9d743f92502c32012ea38b3696760ea0add24e8f3bb359dc0f3ffb03bb786a6e",
+      "Lines": 23
+    },
+    {
+      "Path": "Aurora.Core/ModCatalog.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 7551,
+      "Sha256": "ef17ce2108b7ce8cc5d4983cc8ee22d60e187a7d07346a04379fce00780244b6",
+      "Lines": 105
+    },
+    {
+      "Path": "Aurora.Core/ModelEditing.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 8482,
+      "Sha256": "ba9db7ddbdeb9616e69d7b06784a7cd5c3625010c1cb140527a3468e5269dd0c",
+      "Lines": 52
+    },
+    {
+      "Path": "Aurora.Core/ModelFileNames.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 1908,
+      "Sha256": "b8b15f802bccc916778a24d764a55e2ae3bca0b4717a3e088617c4d63db3633d",
+      "Lines": 18
+    },
+    {
+      "Path": "Aurora.Core/ModelOrientation.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 4762,
+      "Sha256": "8a5495d3afb25b64dd53775ee745bc97144dfe241041d3ebfb697fa5fe1c9dbc",
+      "Lines": 47
+    },
+    {
+      "Path": "Aurora.Core/ModuleInstaller.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2164,
+      "Sha256": "24148cb169b7dbf80670e623822a3ca8f1d4d35d6f9568aaa91b45845b1f1e4c",
+      "Lines": 33
+    },
+    {
+      "Path": "Aurora.Core/ModuleRuntimeCompatibility.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 3738,
+      "Sha256": "c6b392bc67b455af880672e39a9b3ffc862ee848d44f9a12e1c1508247069ba1",
+      "Lines": 59
+    },
+    {
+      "Path": "Aurora.Core/NativeMaterialText.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 6749,
+      "Sha256": "5a90e61cb46046ddeef6ecd909ba7e2e8301f3e86463daac2f8c995682ef2c05",
+      "Lines": 47
+    },
+    {
+      "Path": "Aurora.Core/NativeModel.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 7882,
+      "Sha256": "463a5901e7e8e9f0449fe8fb4db10e393640afac784679ebb66836ed9979a3ab",
+      "Lines": 77
+    },
+    {
+      "Path": "Aurora.Core/NmfExport.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 1839,
+      "Sha256": "ea985450b3821cb15c64f18569838b64789c6a23342ab9b91f25a32a1fe16507",
+      "Lines": 23
+    },
+    {
+      "Path": "Aurora.Core/ObjImporter.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 12593,
+      "Sha256": "8b33578927321463699b2084b939557d57a1933bd932bc704c2dc16e134442a8",
+      "Lines": 108
+    },
+    {
+      "Path": "Aurora.Core/ObjTextureMap.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2436,
+      "Sha256": "ff3af0c5415098a0a361e53b50a0ac1468e5f6aca5ef21721a5806186c887d2d",
+      "Lines": 35
+    },
+    {
+      "Path": "Aurora.Core/SteamDiscovery.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 3904,
+      "Sha256": "109363e957880188858076f44ed4f03d1a71587ac7275d0adad64a149a78c357",
+      "Lines": 81
+    },
+    {
+      "Path": "Aurora.Core/TransportPackage.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 6161,
+      "Sha256": "93f48be0857e6ea7ad6c5b84e961a6766c58ea33548a2f844655ad2260124951",
+      "Lines": 41
+    },
+    {
+      "Path": "Aurora.Core/TransportParameters.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 9187,
+      "Sha256": "1c2d7b798023f0cbc20a029a062f3396d94d6d454619355c0e60ac314b17b5de",
+      "Lines": 61
+    },
+    {
+      "Path": "Aurora.Core/TransportWorkspace.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 3449,
+      "Sha256": "0ab3e7b9049c90202829f3e6f4dcfe9d8826e9f4fd1d4f8a37209a70fac588e5",
+      "Lines": 23
+    },
+    {
+      "Path": "Aurora.Core/VehicleAssets.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 5674,
+      "Sha256": "5d524b0712be7765da72f8aa960baeb6023513016d7d34b2f0fb4343a19e8ad0",
+      "Lines": 41
+    },
+    {
+      "Path": "Aurora.Core/VehicleCargoBox.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2928,
+      "Sha256": "7e3d96d2e0cd503a501d8d1746b76ec07e7df9363564a5e46de5e39e8dee788f",
+      "Lines": 16
+    },
+    {
+      "Path": "Aurora.Core/VehicleCatalog.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 19417,
+      "Sha256": "5c0fe8cf5f2b7de8ef09706bb28682bd60c1112c5df9136781d5a8676f4dea4d",
+      "Lines": 110
+    },
+    {
+      "Path": "Aurora.Core/VehicleConsist.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 1047,
+      "Sha256": "8689fe0672693549bab7d47d5aa51ea3280f2bd288375c0dd706c355591fa8e0",
+      "Lines": 12
+    },
+    {
+      "Path": "Aurora.Core/VehicleLights.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 6839,
+      "Sha256": "91152aa1ed9982f2aaa88fe964ac47969263065bfa0b569b002c914650db3dbb",
+      "Lines": 40
+    },
+    {
+      "Path": "Aurora.Core/VehicleLods.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 1573,
+      "Sha256": "9740460d7ae88bf9b8f088a917871064a3a190f00c0bae1bd2bcf54b2f134a89",
+      "Lines": 10
+    },
+    {
+      "Path": "Aurora.Core/VehicleParts.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2767,
+      "Sha256": "fb8b673969e2f0f2813a2956d58a1fdb16121717833442d22409309a6c465cec",
+      "Lines": 21
+    },
+    {
+      "Path": "Aurora.Core/VehicleProfiles.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 907,
+      "Sha256": "636a8ade3274c4517f4ec26b291afafb3d2298aed0404174940b753518844ac5",
+      "Lines": 13
+    },
+    {
+      "Path": "Aurora.Core/VehicleRoleParameters.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 1050,
+      "Sha256": "1bf6748fbbb0ec1e5bf898b15925233adba355f282f20a188bfd415e1d3c88ec",
+      "Lines": 17
+    },
+    {
+      "Path": "Aurora.Core/VehicleScript.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 13113,
+      "Sha256": "4d6432b69fc82cbc19cfed4a2481da960a15caa2a459a66b03b5e6acd7e0ddd8",
+      "Lines": 101
+    },
+    {
+      "Path": "Aurora.Core/VehicleSharedMaterials.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 1064,
+      "Sha256": "f8ba68f79dcb52c41458d2073296a2d106f9c4a52bf95158b415fc8cbc05872c",
+      "Lines": 11
+    },
+    {
+      "Path": "Aurora.Core/VehicleSmoke.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 1263,
+      "Sha256": "82b1033a56f2357536842db4b0863274b194585afee7bb051be98a8187589d87",
+      "Lines": 9
+    },
+    {
+      "Path": "Aurora.Core/VehicleSoundFiles.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 3215,
+      "Sha256": "d4a7fc7af0bcb0587f488743cf58fe982215e37c15cc632258720bc9c16f2ed8",
+      "Lines": 16
+    },
+    {
+      "Path": "Aurora.Core/ViewportNavigation.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 899,
+      "Sha256": "a47f41cc61e56a9bc34c01c4d5c1b0d79ad6e13b18bfc7a9657a6c61f0af8814",
+      "Lines": 22
+    },
+    {
+      "Path": "Aurora.Core/WheelDiagnostics.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 3151,
+      "Sha256": "4fe473e59add2fffe1a84f5bb244b91b4f9880e7d10ba831fd0a55deb49f882a",
+      "Lines": 28
+    },
+    {
+      "Path": "Aurora.Core/WorkshopUpdates.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 12919,
+      "Sha256": "1c75ab72cba59477eb3eef41def5812a8251ca86baecb6fff37b7cbaffbce1b5",
+      "Lines": 234
+    },
+    {
+      "Path": "Aurora.Editor.Module/Aurora.Editor.Module.csproj",
+      "HashMode": "Utf8LF",
+      "Bytes": 3066,
+      "Sha256": "4af62db6e68519c97c098f6dcc003446b7d8cdbeedaeb1d170c82438058dfdb4",
+      "Lines": 13
+    },
+    {
+      "Path": "Aurora.Editor/App.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 30544,
+      "Sha256": "fd1bdc6e111141d5e1709b6af4e7ff48223241fc1eaea96d7c1a029683950439",
+      "Lines": 196
+    },
+    {
+      "Path": "Aurora.Editor/App.xaml",
+      "HashMode": "Utf8LF",
+      "Bytes": 433,
+      "Sha256": "1bf52800cad705d3e7781ec05ae12212de0cfecde1aa7398416f0fb0aecd9117",
+      "Lines": 1
+    },
+    {
+      "Path": "Aurora.Editor/Assets/gizmo.js",
+      "HashMode": "Utf8LF",
+      "Bytes": 15133,
+      "Sha256": "8ab7154067c85eaa9a8023fd86e81fbc984b1f5049ef7b35fb50aefaed5668c3",
+      "Lines": 91
+    },
+    {
+      "Path": "Aurora.Editor/Assets/previews.js",
+      "HashMode": "Utf8LF",
+      "Bytes": 11662,
+      "Sha256": "7d55ff010bc9b8a0db504d3ae5ca1b71d3dd321add6e2e14954a6a4442121765",
+      "Lines": 47
+    },
+    {
+      "Path": "Aurora.Editor/Assets/viewport.html",
+      "HashMode": "Utf8LF",
+      "Bytes": 12102,
+      "Sha256": "3da8296d208afd45af1300661f8bd317caf907675097e65fea07c44a9799ecf4",
+      "Lines": 31
+    },
+    {
+      "Path": "Aurora.Editor/Aurora.Editor.csproj",
+      "HashMode": "Utf8LF",
+      "Bytes": 1312,
+      "Sha256": "7f1fd1f7ccffb122a369e8aeaec182f07eca44c4f1ade83232a0c199ff31b600",
+      "Lines": 6
+    },
+    {
+      "Path": "Aurora.Editor/EditorAnimation.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 16730,
+      "Sha256": "14b3e129275c6f6d1d774f085e8f891bf59d9291b50a7dfd7bf26389fc7a090d",
+      "Lines": 76
+    },
+    {
+      "Path": "Aurora.Editor/EditorCargo.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 12695,
+      "Sha256": "a64be101559877d32734541977c4b4dc90bdb85027297202e49083b1054b1443",
+      "Lines": 63
+    },
+    {
+      "Path": "Aurora.Editor/EditorEffects.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 5511,
+      "Sha256": "f70b3fba4464611861c8cfb6400e591f9cc335cf0ae88777c20a10f5f011f27a",
+      "Lines": 39
+    },
+    {
+      "Path": "Aurora.Editor/EditorGizmos.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 19542,
+      "Sha256": "ac66d301fa3d70089ea88796eecc3c0a30ae9064d11675b888c015605d897613",
+      "Lines": 124
+    },
+    {
+      "Path": "Aurora.Editor/EditorHistory.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 8293,
+      "Sha256": "1784e9cb4af8908101ebbfe42fccf60edc5d9b254932665daa199ddab4a2c96d",
+      "Lines": 47
+    },
+    {
+      "Path": "Aurora.Editor/EditorImport.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 7229,
+      "Sha256": "796a7b52038236b01a91e556bc83503013fff5952835905bad03adde066d4329",
+      "Lines": 56
+    },
+    {
+      "Path": "Aurora.Editor/EditorLods.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 4514,
+      "Sha256": "53bc921939d8d5bf09b2e38c5bfd64620657a01d784feccd0966a921681f0d18",
+      "Lines": 13
+    },
+    {
+      "Path": "Aurora.Editor/EditorMaterials.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 13075,
+      "Sha256": "0efe9490a16dfaa8ab884df5c9eefeee6d1a3a1005f3bc09806e00bb8efee573",
+      "Lines": 103
+    },
+    {
+      "Path": "Aurora.Editor/EditorMechanismNames.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2070,
+      "Sha256": "0656ed30ea26195fe21b5f2b94559aad0120486006f564f10632bd38f9cf1818",
+      "Lines": 21
+    },
+    {
+      "Path": "Aurora.Editor/EditorMechanisms.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 4072,
+      "Sha256": "7ba2553664657a9496bf0909f2e82e90f9afe39bb1e41cda3abf99fa6f242cd6",
+      "Lines": 42
+    },
+    {
+      "Path": "Aurora.Editor/EditorMenus.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 15336,
+      "Sha256": "e4566d8cf3fbe2f88617031df2617c0569d0fc8432386725dc479f6a1efe6d20",
+      "Lines": 125
+    },
+    {
+      "Path": "Aurora.Editor/EditorMeshPicker.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2507,
+      "Sha256": "690dbe50e33a1a439dfa4b284bc6ca3f93815cd86b029748fbff9017f74cf911",
+      "Lines": 28
+    },
+    {
+      "Path": "Aurora.Editor/EditorModelSettings.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 27721,
+      "Sha256": "23170cdc6bf971247b26a86a793a08f9d8c87aa247cdc1c90ed199bdb7fc9009",
+      "Lines": 86
+    },
+    {
+      "Path": "Aurora.Editor/EditorObjects.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2906,
+      "Sha256": "7c9873bd7b67ce0f0e7d742b3c3940c85fb440dd4832bffcc9b8a17bdd71d684",
+      "Lines": 28
+    },
+    {
+      "Path": "Aurora.Editor/EditorPartMaterials.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 9288,
+      "Sha256": "cf26cfdfe8c428b5007f5ba577bef451c22bcd3ff9334ed3835b10d31ae166c8",
+      "Lines": 34
+    },
+    {
+      "Path": "Aurora.Editor/EditorPreviews.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 14261,
+      "Sha256": "f2a01eb485149b038de2150d369993de555a5dc20af9b2f3e6739bc0b4b66b1d",
+      "Lines": 91
+    },
+    {
+      "Path": "Aurora.Editor/EditorProject.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 7318,
+      "Sha256": "10a5a75c21046f036c314dd44cf35c205fa8b5603e9c96075e61a280670be709",
+      "Lines": 51
+    },
+    {
+      "Path": "Aurora.Editor/EditorSkinExport.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 3189,
+      "Sha256": "b8494328aebdf97b771d8c83a188262e44b3e693a381a38acd764484d684ee91",
+      "Lines": 16
+    },
+    {
+      "Path": "Aurora.Editor/EditorSmoke.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 3076,
+      "Sha256": "f6f9cf8f04c351b7b5d2b071590a479c3d9d0bf8fc20ecad253d8ca704e2db7d",
+      "Lines": 13
+    },
+    {
+      "Path": "Aurora.Editor/EditorSounds.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 4390,
+      "Sha256": "c0a6fd72e9a69f28e6b8053129ae0aedae22054da6550bb66ece345edf1cea94",
+      "Lines": 23
+    },
+    {
+      "Path": "Aurora.Editor/EditorTransport.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 23953,
+      "Sha256": "857e36013d55fdb51df1a1342d750fca7a7149715e0f605c21d8898c6510389f",
+      "Lines": 96
+    },
+    {
+      "Path": "Aurora.Editor/EditorTransportExport.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 4010,
+      "Sha256": "36e48c734a2026db3a91c1f740d1c0b7d00af57e3be8848bcd93d7902dde1ddf",
+      "Lines": 30
+    },
+    {
+      "Path": "Aurora.Editor/EditorVehicle.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 9830,
+      "Sha256": "167b25dc7328baa5516948b825f50018b12ae729ef587e86c4d1928f6932676d",
+      "Lines": 126
+    },
+    {
+      "Path": "Aurora.Editor/EditorWorkspace.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 7776,
+      "Sha256": "b83406e2520c7f58e854f67171a00be10341fb31708c118c8c442b5089f8192d",
+      "Lines": 43
+    },
+    {
+      "Path": "Aurora.Editor/MaterialDocuments.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 9091,
+      "Sha256": "911349a2d2e73b378299525ee671ec404c47c2307dff47bbe1e5798bd4f56a80",
+      "Lines": 65
+    },
+    {
+      "Path": "Aurora.Editor/MaterialExport.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 3041,
+      "Sha256": "0393a559fabb3c89e0fcb35d5375d90bac630b9fac7ee950e546a61ca3620586",
+      "Lines": 30
+    },
+    {
+      "Path": "Aurora.Editor/MaterialSettings.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 589,
+      "Sha256": "7055b42a149a8d5d9e22f10d7ef6bfa5b9d4e3f263cc3a5d0c03fc30339c71cb",
+      "Lines": 2
+    },
+    {
+      "Path": "Aurora.Editor/ModelExport.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 9808,
+      "Sha256": "48182c9d93c94568ab6761b454baa11f6f9feaa5426d9e22d1af250878dbcec7",
+      "Lines": 88
+    },
+    {
+      "Path": "Aurora.Editor/ProjectDocument.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 7112,
+      "Sha256": "fd1bb54d1d51a332e26251a547a94fb8355f0433ffe1780655b47283b846cae5",
+      "Lines": 34
+    },
+    {
+      "Path": "Aurora.Editor/VariantExport.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 3808,
+      "Sha256": "e589406b745969af156c7368534240aea1e052f682f9ad6105df03f147224042",
+      "Lines": 37
+    },
+    {
+      "Path": "Aurora.Editor/app.manifest",
+      "HashMode": "Utf8LF",
+      "Bytes": 756,
+      "Sha256": "2439e8c64fcad2fd58ea87dd93af7fa54f2b8736b73eeb0421378e3f07245856"
+    },
+    {
+      "Path": "Aurora.ExportTests/Aurora.ExportTests.csproj",
+      "HashMode": "Utf8LF",
+      "Bytes": 389,
+      "Sha256": "a400b3d3b9c6a0a3b3f33e93f7c240cf03e1be4677a5534d6bf73ad126d25e46",
+      "Lines": 1
+    },
+    {
+      "Path": "Aurora.ExportTests/Program.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2598,
+      "Sha256": "65f01fc6d1a8940b675baadea53053a377fcf517f8a9d6fb5c298bce768b25e6",
+      "Lines": 26
+    },
+    {
+      "Path": "Aurora.Launcher/App.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 39026,
+      "Sha256": "6652a58f3e10f1ff6fd2a0ab38f80a57a309009269fac4affee4e2e28531c4c8",
+      "Lines": 337
+    },
+    {
+      "Path": "Aurora.Launcher/App.xaml",
+      "HashMode": "Utf8LF",
+      "Bytes": 435,
+      "Sha256": "9bf54c4a9c0ab45cbc788206e3ae18daec21d7e5673b3c2cd92ab8990f1239fa",
+      "Lines": 1
+    },
+    {
+      "Path": "Aurora.Launcher/Assets/publisher.pem",
+      "HashMode": "Utf8LF",
+      "Bytes": 177,
+      "Sha256": "41cec3e6089ead4b25da46424c8ddb5d49366c42a02fcaa99bc2419080672ca1"
+    },
+    {
+      "Path": "Aurora.Launcher/Aurora.Launcher.csproj",
+      "HashMode": "Utf8LF",
+      "Bytes": 1216,
+      "Sha256": "dd0b1a46e527b9160f346b8d0c92448724740242e65dfccb2beb91aaa6ad6bde",
+      "Lines": 5
+    },
+    {
+      "Path": "Aurora.Launcher/ConsoleWindow.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 10258,
+      "Sha256": "6148257a5ac4716e973259a82276f7fa561e12fb0928d8fb344fbe0c133552ad",
+      "Lines": 83
+    },
+    {
+      "Path": "Aurora.Launcher/EditorHost.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 897,
+      "Sha256": "8a4fcd7543ce0347ee046702c67d8b2646a82992d579acfa4ac3c6d1b0a62782",
+      "Lines": 18
+    },
+    {
+      "Path": "Aurora.Launcher/GameConsoleHost.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 1613,
+      "Sha256": "376f02877897bd94fe539ba1b5c192011ae564363710d0510224a8ba809a910e",
+      "Lines": 35
+    },
+    {
+      "Path": "Aurora.Launcher/InstallationPaths.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 484,
+      "Sha256": "08a0fc76ed666190fbd66bb8cf220bd6f58e7acf5243709776e49fc0ce7898c8",
+      "Lines": 6
+    },
+    {
+      "Path": "Aurora.Launcher/UiLanguage.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 51410,
+      "Sha256": "b452a7ebf9467fe21e8ea698fc2a1f12651b2919f022d9640e770e472881c7d3",
+      "Lines": 632
+    },
+    {
+      "Path": "Aurora.Launcher/UpdateService.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 4561,
+      "Sha256": "8158abe7bd3f87b674857e27786f1ecd93daff74713e7792d42797fa49b839b9",
+      "Lines": 64
+    },
+    {
+      "Path": "Aurora.Launcher/app.manifest",
+      "HashMode": "Utf8LF",
+      "Bytes": 758,
+      "Sha256": "25478117a7127f61d232f13d807e6158e1b2cabe143b310a37117cafac388622"
+    },
+    {
+      "Path": "Aurora.Publisher/Aurora.Publisher.csproj",
+      "HashMode": "Utf8LF",
+      "Bytes": 231,
+      "Sha256": "8e4e8b0fd5dd13460f0b73e427a1275cf86c9da085f6729d4d5e60ca85c230d8",
+      "Lines": 1
+    },
+    {
+      "Path": "Aurora.Publisher/Program.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2386,
+      "Sha256": "7e8a1f5d8018b32095797fb7ba834edc5d10f83995937d463018a708467f9e2b",
+      "Lines": 36
+    },
+    {
+      "Path": "Aurora.Setup.Native/Entry.cpp",
+      "HashMode": "Utf8LF",
+      "Bytes": 4263,
+      "Sha256": "e97d36690443296ac6707ccc37ed7ebee6205632e7691ece64602de608dba2c1",
+      "Lines": 114
+    },
+    {
+      "Path": "Aurora.Setup.Native/Setup.cpp",
+      "HashMode": "Utf8LF",
+      "Bytes": 32300,
+      "Sha256": "01abf33877dbb4675d4f9b68b66f073ccd0186cee2fbfc57046ccaf9f234cff8",
+      "Lines": 808
+    },
+    {
+      "Path": "Aurora.Setup.Native/setup.manifest",
+      "HashMode": "Utf8LF",
+      "Bytes": 787,
+      "Sha256": "0cee1cd9a0b1612758f68d93fd752408aff0ae1c932d36bbc462ce958e6774c6"
+    },
+    {
+      "Path": "Aurora.Tests/AnimationExportChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 6291,
+      "Sha256": "1a8f11b369e738303a5e14fcdde47d7b3268ad8198e2c170303928409f5cf3cb",
+      "Lines": 36
+    },
+    {
+      "Path": "Aurora.Tests/AnimationTimelineChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 8680,
+      "Sha256": "d5c97a563c64a7610a6c1babf54d0af89e123aed4e0b8ee972951dc7c0d55120",
+      "Lines": 25
+    },
+    {
+      "Path": "Aurora.Tests/Aurora.Tests.csproj",
+      "HashMode": "Utf8LF",
+      "Bytes": 878,
+      "Sha256": "a1772961a0aff1c3bde502840bf40acad56e0ce01a1dfca859f38e95663c9fd6",
+      "Lines": 2
+    },
+    {
+      "Path": "Aurora.Tests/BootstrapFixture.cpp",
+      "HashMode": "Utf8LF",
+      "Bytes": 1020,
+      "Sha256": "b380022b973390ad62e2219f89390421230290ac5f2be7988f273745878f472b",
+      "Lines": 15
+    },
+    {
+      "Path": "Aurora.Tests/CargoFrameChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2162,
+      "Sha256": "f1a694330c12e4a7655b4008b93b495ba97be7ba949eba134ad9f6f455e30e6c",
+      "Lines": 14
+    },
+    {
+      "Path": "Aurora.Tests/EditorRevisionChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 6414,
+      "Sha256": "072fc1c305c4da5dc107552cc005f5f3bc34f4074262a41ef6a06ef09f0a2ebb",
+      "Lines": 34
+    },
+    {
+      "Path": "Aurora.Tests/LodImportChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 3535,
+      "Sha256": "9771f9d1f0baebd09aa9835b12332a3e88bd765c87533194a5d9302045707f6c",
+      "Lines": 18
+    },
+    {
+      "Path": "Aurora.Tests/MaterialPropertyChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 5460,
+      "Sha256": "bec636a6c1d90c7be00e33354c7b2d539f956b71b06872f9d5af8e2df13a0c97",
+      "Lines": 18
+    },
+    {
+      "Path": "Aurora.Tests/MaterialTerminatorChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 5906,
+      "Sha256": "0d5236dd358cc89ff522a9768921f5b44c52142f6a58b5b9f3d52200d23c5d83",
+      "Lines": 25
+    },
+    {
+      "Path": "Aurora.Tests/MechanismAxisChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 3026,
+      "Sha256": "e39659d98061aac0c09486ae920775727c64936e3984c4d77cd836bb795d264a",
+      "Lines": 16
+    },
+    {
+      "Path": "Aurora.Tests/ModelToolsChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 6354,
+      "Sha256": "91de00a3132d37c888883102001e3b864c9bb1ec98261bf0d0792c4ef6020e31",
+      "Lines": 25
+    },
+    {
+      "Path": "Aurora.Tests/NativeTransportExportChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2932,
+      "Sha256": "c7d73d5374541bdbd08eea62c70501ddfba344ab6f3144886c4b78096e9bc4eb",
+      "Lines": 18
+    },
+    {
+      "Path": "Aurora.Tests/ObjExportChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2128,
+      "Sha256": "76d24bc9ac58eea89daa1760810212f066eab46c4d0b60949fdbd6ec072725cc",
+      "Lines": 22
+    },
+    {
+      "Path": "Aurora.Tests/ObjImportChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 4288,
+      "Sha256": "3a891c5c737fc7c47af0254980744c7e9c3882c203da59cdbc0a5ac773d43d09",
+      "Lines": 34
+    },
+    {
+      "Path": "Aurora.Tests/PartialMaterialChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 4513,
+      "Sha256": "c54e706d76644dbec6daf205738eea750437bc361decfd59fafdf99ae2246ad7",
+      "Lines": 19
+    },
+    {
+      "Path": "Aurora.Tests/PbrRuntimeDefaultsTests.cpp",
+      "HashMode": "Utf8LF",
+      "Bytes": 1274,
+      "Sha256": "e5fdd305ac1b88977df0150ebc9855ca6e276e9ccc56e8c84a3cbc8750021cb5",
+      "Lines": 15
+    },
+    {
+      "Path": "Aurora.Tests/Program.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 26718,
+      "Sha256": "d8e270ff886b3b83bb61f81fa7e615121fb46f868cf2d52d82fef727e42b3227",
+      "Lines": 269
+    },
+    {
+      "Path": "Aurora.Tests/SharedTransportMaterialChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 5528,
+      "Sha256": "60a02385c257dac7cf9910b1064c96ad3821e8ad364190eb1a125ab541966019",
+      "Lines": 21
+    },
+    {
+      "Path": "Aurora.Tests/TransportAuthoringChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 5071,
+      "Sha256": "ff0b6ed71cf0f6354cc8b7915d21d0055df2027b2174f95797bee0b79094be8c",
+      "Lines": 27
+    },
+    {
+      "Path": "Aurora.Tests/TransportCompletenessChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 6901,
+      "Sha256": "728ce9335d1e32a6db101a1b31d9e7993a456d04117583c16ad1c3627c57ade9",
+      "Lines": 47
+    },
+    {
+      "Path": "Aurora.Tests/TransportPackageChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 3620,
+      "Sha256": "8aac9435007e427321f0b5ae2f4d86682ee95fcef214d5b4a23a993cfffb9fa8",
+      "Lines": 19
+    },
+    {
+      "Path": "Aurora.Tests/TransportParameterChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 8372,
+      "Sha256": "491409c3a89d5559ae1c8dd1bb0de0db1b1e086696d6184fbc7ec64e83fd08d9",
+      "Lines": 25
+    },
+    {
+      "Path": "Aurora.Tests/TransportWorkspaceChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2396,
+      "Sha256": "59818f6e36a3edc7b7cfbd895e681cd1f12f80c434558ad29365cf2789db4bab",
+      "Lines": 11
+    },
+    {
+      "Path": "Aurora.Tests/ValidatePbr.cpp",
+      "HashMode": "Utf8LF",
+      "Bytes": 652,
+      "Sha256": "f0401f95668aec29c0cbef530c9fa9fed016c274e3f39195abc1d0a025581f23",
+      "Lines": 9
+    },
+    {
+      "Path": "Aurora.Tests/VehicleAssetChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 7243,
+      "Sha256": "755b72ed19d0f850a431b6f9889b343657abb8e2247bb07278b809c035d188be",
+      "Lines": 32
+    },
+    {
+      "Path": "Aurora.Tests/VehicleCatalogChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 7184,
+      "Sha256": "044448cfe9f8ba12cb69670c3b301b9154709de62fd1eaf67defb15bbe1ed278",
+      "Lines": 28
+    },
+    {
+      "Path": "Aurora.Tests/VehicleChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 5977,
+      "Sha256": "f4da110a1e9bc0443b88d5886111189f51c5ec9e42b7a295ae8fbfa059ee5dcf",
+      "Lines": 51
+    },
+    {
+      "Path": "Aurora.Tests/VehicleProfileChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2829,
+      "Sha256": "8d6addc7c740ec631c0856c0c4fdb30be4a10b93e857412818545c827cf83b5e",
+      "Lines": 16
+    },
+    {
+      "Path": "Aurora.Tests/VehicleWorkflowChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 3037,
+      "Sha256": "416673c3b1e7d78128ae6ffb95d8129c62f67de9fe98b02c315650e349af427e",
+      "Lines": 12
+    },
+    {
+      "Path": "Aurora.Tests/WorkspaceExportChecks.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 4916,
+      "Sha256": "00c20cd0c112b9c2d495723bc0a9492b9415b7ed9a8c96e6edd2aa15519d7541",
+      "Lines": 22
+    },
+    {
+      "Path": "Aurora.UpdateTests/Aurora.UpdateTests.csproj",
+      "HashMode": "Utf8LF",
+      "Bytes": 400,
+      "Sha256": "b7904d996b906d5158af4ad132a8cab6c9284bcdb55d2c5edf93b388d32cb890",
+      "Lines": 2
+    },
+    {
+      "Path": "Aurora.UpdateTests/Program.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 4154,
+      "Sha256": "104139edaf3281d6ea470fa5ef0b6f7c3d48c47b26b7f125c5d893dfecbbd429",
+      "Lines": 73
+    },
+    {
+      "Path": "Backend/mask_backend.py",
+      "HashMode": "Utf8LF",
+      "Bytes": 1400,
+      "Sha256": "cd67d456c44d58ded9d768fd9fc290e6eacb19fd0b1dc3f1cde7d34afd1d4abb",
+      "Lines": 33
+    },
+    {
+      "Path": "Backend/prepare_amo15.py",
+      "HashMode": "Utf8LF",
+      "Bytes": 8875,
+      "Sha256": "ae6a38ced31a2a1a792579d52906b8e3e937c50810a501837439820cc147613b",
+      "Lines": 175
+    },
+    {
+      "Path": "Backend/prepare_vehicle_glass.py",
+      "HashMode": "Utf8LF",
+      "Bytes": 15171,
+      "Sha256": "882d542cc88e9969f0b9938d4de13a0f7c6216b100f1bb777f730559a253cb8b",
+      "Lines": 291
+    },
+    {
+      "Path": "Directory.Build.props",
+      "HashMode": "Utf8LF",
+      "Bytes": 491,
+      "Sha256": "d7116f624a9da2ed80913035a198bbc3edf23d559631fa53ff15e59394ac5228"
+    },
+    {
+      "Path": "Modules/FovChanger/FovChanger.cpp",
+      "HashMode": "Utf8LF",
+      "Bytes": 2326,
+      "Sha256": "f663e36e33faa0297587ab53028a88bfedaa432d5201324e8847f415514d5b58",
+      "Lines": 27
+    },
+    {
+      "Path": "Modules/FovChanger/README.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 868,
+      "Sha256": "44295ffff8085e321c7bba859bec29dab1c89ff8de570ee4680a7037735dd8a3",
+      "Lines": 7
+    },
+    {
+      "Path": "Modules/FovChanger/Resolver.h",
+      "HashMode": "Utf8LF",
+      "Bytes": 481,
+      "Sha256": "c73710737cb193bddf10a493a850cd47fff6140f653a970fc6c950ea46e91f5b",
+      "Lines": 13
+    },
+    {
+      "Path": "Modules/FovChanger/ResolverTests.cpp",
+      "HashMode": "Utf8LF",
+      "Bytes": 469,
+      "Sha256": "998e41e298f7eba2fb9650c0821a3b7b2b3351766ae2b1e0080ce88904bf5325",
+      "Lines": 4
+    },
+    {
+      "Path": "Native/Common.cpp",
+      "HashMode": "Utf8LF",
+      "Bytes": 5324,
+      "Sha256": "a08b43d2e6d81d705dcd57af7308c7c0272b0e46e94e0822bab2f98c020b63f7",
+      "Lines": 154
+    },
+    {
+      "Path": "Native/Common.h",
+      "HashMode": "Utf8LF",
+      "Bytes": 986,
+      "Sha256": "1a4a04eddbec585eff0468cb7372f8f3b8434b1411733996b165b545982eee29",
+      "Lines": 24
+    },
+    {
+      "Path": "Native/PbrRuntimeDefaults.h",
+      "HashMode": "Utf8LF",
+      "Bytes": 579,
+      "Sha256": "18ec48ffcab8aaa740e52366e0b89fcd50e9c060db87f18b3a36ce3ef5a049d0",
+      "Lines": 14
+    },
+    {
+      "Path": "Native/PbrUiProtocol.h",
+      "HashMode": "Utf8LF",
+      "Bytes": 1275,
+      "Sha256": "e1bb1230e133e621ce0aa4480505fdde863bc580915b20a94ff298b7cc03d165",
+      "Lines": 23
+    },
+    {
+      "Path": "Native/Sha256.cpp",
+      "HashMode": "Utf8LF",
+      "Bytes": 1893,
+      "Sha256": "acaf75b37dc4fe4306fd29bfba8d80a904d93fad0bf09a688210ba8655b2f5d0",
+      "Lines": 46
+    },
+    {
+      "Path": "Native/Sha256.h",
+      "HashMode": "Utf8LF",
+      "Bytes": 99,
+      "Sha256": "4bc7b50dab3d4097e438d784c8858e2ec563f3fb3c66c46db3875703fdf26435",
+      "Lines": 3
+    },
+    {
+      "Path": "PROJECT_MAP.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 4141,
+      "Sha256": "9d98decccc6754327b170443d5cd9f358c2fdf7b9b934d1c259a60d4325ed76b",
+      "Lines": 49
+    },
+    {
+      "Path": "Packaging/Branding/LogoAE.png",
+      "HashMode": "Raw",
+      "Bytes": 45588,
+      "Sha256": "9e0086d84c30dfc942ba6ada375b81fcbaf880ce49d1e6e6f69fa52e5cdb6173"
+    },
+    {
+      "Path": "Packaging/CapabilityAudit/CapabilityAudit.csproj",
+      "HashMode": "Utf8LF",
+      "Bytes": 273,
+      "Sha256": "b3dd3fcc766d1a7099ba5b95b15c5c07d4d866f6c4947dd32266d75cabd436b6",
+      "Lines": 1
+    },
+    {
+      "Path": "Packaging/CapabilityAudit/Program.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2828,
+      "Sha256": "2fec53d6112c98162310394f614cce8243591fe49591b7369c20e2b306dc90ba",
+      "Lines": 20
+    },
+    {
+      "Path": "Packaging/ConsoleFixture.cpp",
+      "HashMode": "Utf8LF",
+      "Bytes": 2016,
+      "Sha256": "437e1063cdb86736c106ec98d342ffef22c57931654c462be15c3689c14a3c00",
+      "Lines": 59
+    },
+    {
+      "Path": "Packaging/MaterialAudit/MaterialAudit.csproj",
+      "HashMode": "Utf8LF",
+      "Bytes": 426,
+      "Sha256": "48f84ce271afb46502a51b64f962946b53ba1dcffbc0f349feeb3d3369ef4753",
+      "Lines": 4
+    },
+    {
+      "Path": "Packaging/MaterialAudit/Program.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 2632,
+      "Sha256": "dbfd2628a6d6b6cfc432d3fe3ad9d69a01015d7783e83dcd9f72b5cfb3396ed9",
+      "Lines": 8
+    },
+    {
+      "Path": "Packaging/NmfAudit/NmfAudit.csproj",
+      "HashMode": "Utf8LF",
+      "Bytes": 305,
+      "Sha256": "e35dfc43e9095da7d26f4a9f6fb6913fed6157d51815be27115359dc3c32ea98",
+      "Lines": 4
+    },
+    {
+      "Path": "Packaging/NmfAudit/Program.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 1604,
+      "Sha256": "ce842a2e45a322a7145ef60d3f18abe308ba0c5d9f09e1bbf05476d3017e6e4d",
+      "Lines": 11
+    },
+    {
+      "Path": "Packaging/audit-game-capabilities.py",
+      "HashMode": "Utf8LF",
+      "Bytes": 3593,
+      "Sha256": "f8520abe434f389ce1050e0c991ec36565b675c6ae801d6b3edc35b7fd405a17",
+      "Lines": 42
+    },
+    {
+      "Path": "Packaging/audit-script-semantics.py",
+      "HashMode": "Utf8LF",
+      "Bytes": 1439,
+      "Sha256": "580cc33b7ad44dcbb70161719c291c14f158423b19a5f6fa8afbdab1b0d3760d",
+      "Lines": 19
+    },
+    {
+      "Path": "Packaging/audit-transport-details.py",
+      "HashMode": "Utf8LF",
+      "Bytes": 4302,
+      "Sha256": "9eee69610d3374373e86a2800bc1035990ee3cd22d178acac06a296dcbd93f05",
+      "Lines": 52
+    },
+    {
+      "Path": "Packaging/embed-logo.ps1",
+      "HashMode": "Utf8LF",
+      "Bytes": 2862,
+      "Sha256": "7cbec3186d37c46ce34b5fb064429985e9476fc1e7a709669308a50e416e577a",
+      "Lines": 36
+    },
+    {
+      "Path": "Packaging/legacy-files.tsv",
+      "HashMode": "Utf8LF",
+      "Bytes": 116884,
+      "Sha256": "fca12ea4a1e384c693a62f818c7eabc39045d534420575d01e749ffbae1a7a18"
+    },
+    {
+      "Path": "Packaging/prepare-logo.py",
+      "HashMode": "Utf8LF",
+      "Bytes": 344,
+      "Sha256": "21beaddbdd3c525470aa40e738df058848a3d97bb30bd46c020b0f8d303cc0f0",
+      "Lines": 10
+    },
+    {
+      "Path": "Packaging/test-brand.py",
+      "HashMode": "Utf8LF",
+      "Bytes": 2331,
+      "Sha256": "7d1495b6d8415aae3001eccb0a42592e3d1a1769db62c45dc6ddd53c45c9d154",
+      "Lines": 49
+    },
+    {
+      "Path": "Packaging/test-editor-startup.py",
+      "HashMode": "Utf8LF",
+      "Bytes": 850,
+      "Sha256": "53a387cb19afe0b4533a2a0f8fc9a13e32df45a2aa04c511dcb438d489763e4a",
+      "Lines": 12
+    },
+    {
+      "Path": "Packaging/test-native.py",
+      "HashMode": "Utf8LF",
+      "Bytes": 4244,
+      "Sha256": "4ef59111c3fde903498354f84f94ccb1b1235bf19126e34ed28dcf3b0bad90aa",
+      "Lines": 60
+    },
+    {
+      "Path": "Packaging/test-obj-glass.py",
+      "HashMode": "Utf8LF",
+      "Bytes": 1880,
+      "Sha256": "3700e6c73ff18c136710b794502a4bf9a5cef6983f5dd062d18768022fedfb8c",
+      "Lines": 33
+    },
+    {
+      "Path": "Packaging/test-package.py",
+      "HashMode": "Utf8LF",
+      "Bytes": 1742,
+      "Sha256": "60b0faafe067a70bff70f429f0895bf3f8c77f167ede23c0317a83ced33375bd",
+      "Lines": 33
+    },
+    {
+      "Path": "Packaging/test-viewport-webgl.mjs",
+      "HashMode": "Utf8LF",
+      "Bytes": 4357,
+      "Sha256": "ba284c71c00e95375e640c398af5fc59918ef20203232f52b7ea5fe809332db7",
+      "Lines": 30
+    },
+    {
+      "Path": "Packaging/test-viewport.mjs",
+      "HashMode": "Utf8LF",
+      "Bytes": 19219,
+      "Sha256": "37d4a884a579173ad774e4352b9511f337ac6627b58c809031ebd4eb28535d01",
+      "Lines": 149
+    },
+    {
+      "Path": "Packaging/transport-feature-checklist.py",
+      "HashMode": "Utf8LF",
+      "Bytes": 28614,
+      "Sha256": "0e9d7bf1b515b7c66f88e65fe52d5935deee18cbd9ba040ad2e8f9490ba2b1af",
+      "Lines": 120
+    },
+    {
+      "Path": "Prepare-Fov.ps1",
+      "HashMode": "Utf8LF",
+      "Bytes": 1193,
+      "Sha256": "4c5c9efb49ec6c87630dbbb18ffb12a0e50da69dcc96a6d984064c9ef4ced41c",
+      "Lines": 12
+    },
+    {
+      "Path": "Prepare-Graphics.ps1",
+      "HashMode": "Utf8LF",
+      "Bytes": 2279,
+      "Sha256": "b5eaacdf810e351e4a50192bf4cb507a2b7f64f1fc03867ce4f6cd115c13075c",
+      "Lines": 20
+    },
+    {
+      "Path": "README.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 1748,
+      "Sha256": "6f6b8ce84944543448e01f69318c69686edc5948550dd598dedd0cf89a0c6c69",
+      "Lines": 13
+    },
+    {
+      "Path": "Shared/WindowChrome.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 3156,
+      "Sha256": "fb468c1816b061cf35526de02b3cc3cbf55a4f744deae8d7adc84c470635a123",
+      "Lines": 44
+    },
+    {
+      "Path": "Shared/WindowSizing.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 526,
+      "Sha256": "068420989b1e708bef05175eb8c00e1d6588a063bf2678735ba532b8d186b26b",
+      "Lines": 13
+    },
+    {
+      "Path": "build-native.cmd",
+      "HashMode": "Utf8LF",
+      "Bytes": 2217,
+      "Sha256": "1f8fe09ba6f8f4782c1867025999133eb8fd9becef5706f9f0e51bfdb0b4acc9",
+      "Lines": 30
+    },
+    {
+      "Path": "build-setup.ps1",
+      "HashMode": "Utf8LF",
+      "Bytes": 1886,
+      "Sha256": "4c3faefa0e2045d1e08ff3830fcf4869a07367e43dbc816a4f274b4f603cddb5",
+      "Lines": 25
+    },
+    {
+      "Path": "build.ps1",
+      "HashMode": "Utf8LF",
+      "Bytes": 7133,
+      "Sha256": "32980173c229d167d3322af59d5ad8eaae02c421bf78e88b5266d42e2f00a68a",
+      "Lines": 75
+    },
+    {
+      "Path": "docs/CODEX_HANDOFF.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 25982,
+      "Sha256": "382661c8f56e0ccbd3c65af9c57ddddf452d0632c9c08cde01f32988960e115b",
+      "Lines": 151
+    },
+    {
+      "Path": "docs/DEVELOPMENT.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 5871,
+      "Sha256": "af4f3c952c7d0207588e351c42361824e81a373621f849378d447667b31e481a",
+      "Lines": 68
+    },
+    {
+      "Path": "docs/EDITOR_02_REVISION.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 5087,
+      "Sha256": "89530f36ee7b85f2fc9ffa6931c05da204d7af26c8c82318a5a1eef2fecb110b",
+      "Lines": 32
+    },
+    {
+      "Path": "docs/EDITOR_CAPABILITY_AUDIT_2026-10-21.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 38986,
+      "Sha256": "d93eabb0d924ccbdd65a6ec1a01f20ba6a551ef86977239ba771eed3f8484e91",
+      "Lines": 223
+    },
+    {
+      "Path": "docs/EDITOR_CARGO_GUIDED_MODEL.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 3694,
+      "Sha256": "01f747f69c0d86dc0fd3ff939caec2c056d03ffbbaf180f7d903127fd9f00539",
+      "Lines": 25
+    },
+    {
+      "Path": "docs/EDITOR_HISTORY_MODEL_PREVIEWS.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 3477,
+      "Sha256": "453882f7e3d27d16df150beebf22c4c134bbf4dbc5f9db6f155a301fb5571df8",
+      "Lines": 19
+    },
+    {
+      "Path": "docs/EDITOR_REVISION_04.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 14776,
+      "Sha256": "f40c3f47e7be604867e5215cd36549f8e2ad5b9156bca5c53d8ce9f884e373d3",
+      "Lines": 71
+    },
+    {
+      "Path": "docs/EDITOR_REVISION_05.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 7037,
+      "Sha256": "7993125de702f649e0e3b005b674a3e5cde2383fa48ee3980652773fe40a3284",
+      "Lines": 32
+    },
+    {
+      "Path": "docs/EDITOR_REVISION_06.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 3439,
+      "Sha256": "a970197acd5a42a557d7d6b4a97945127a7f0e187755879dba5733fa50360cfb",
+      "Lines": 12
+    },
+    {
+      "Path": "docs/EDITOR_STARTUP_REGRESSION.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 2639,
+      "Sha256": "01ff112ff2394d0d130b215a9d522b8a7af02ddd9a150fb7257769ad7dc4ab85",
+      "Lines": 10
+    },
+    {
+      "Path": "docs/EDITOR_TASK_SETTINGS.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 9877,
+      "Sha256": "eea8daf1e2259e757ecfc4535a4ca8c38550e583fbf5f49cbdbff2f4e6c28272",
+      "Lines": 49
+    },
+    {
+      "Path": "docs/EDITOR_TRANSPORT_ADDITIONAL_22.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 14934,
+      "Sha256": "020fc759a5a7b749549227b78a4dcf5927a3339bc0016a1f1918019463f06e25",
+      "Lines": 43
+    },
+    {
+      "Path": "docs/EDITOR_TRANSPORT_AUTHORING_REQUIREMENTS.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 16196,
+      "Sha256": "6186132469a6917664b0db27fa5e1c871bae9f678a76059e7fa92d45b7968be2",
+      "Lines": 57
+    },
+    {
+      "Path": "docs/EDITOR_TRANSPORT_CHECKLIST_2026-10-21.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 23500,
+      "Sha256": "a9455411f7cf12738637899a63a727e206573ad6d7e0a7a476812622f52acd34",
+      "Lines": 169
+    },
+    {
+      "Path": "docs/EDITOR_TRANSPORT_DEEP_AUDIT_2026-10-21.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 19925,
+      "Sha256": "878c82dbdd46a1f47026a792a9b315788e902bd109b4cbe1eb0fafaabf2e8738",
+      "Lines": 138
+    },
+    {
+      "Path": "docs/EDITOR_VEHICLES.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 3527,
+      "Sha256": "2a7e4ea8302b7ff65ccbef7c611d312c68c6706d8bcc2c31cf7f915ed4ab1fc3",
+      "Lines": 20
+    },
+    {
+      "Path": "docs/FUTURE_MODULE_SOURCES.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 2907,
+      "Sha256": "1a0e435607449af9b661371bc74e8f9f858b92cd9370159bc8d79c18158103d9",
+      "Lines": 23
+    },
+    {
+      "Path": "docs/LAUNCHER_REQUIRED_TOOLS.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 9030,
+      "Sha256": "34378b9e0417e81a935f62be78ffcb0b17eb133395094fc157d02d43eaa2df70",
+      "Lines": 28
+    },
+    {
+      "Path": "docs/MODULES.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 10822,
+      "Sha256": "ebaed6dc3c5f12220137238bb4fd72f709819c795d024e75f2b53b1d508fcf8a",
+      "Lines": 71
+    },
+    {
+      "Path": "docs/RELEASE_DESCRIPTION.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 2042,
+      "Sha256": "59bed6e40119626bc73d46b1efccae98878b296fb71f1836211d943f3a702110",
+      "Lines": 21
+    },
+    {
+      "Path": "docs/STATUS.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 61834,
+      "Sha256": "23eb10b061aa01abfd2f2d72c5ea4a3b81ba6010605f478ab004800d92598409",
+      "Lines": 281
+    },
+    {
+      "Path": "docs/TRANSPORT_IMPLEMENTATION_01.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 5542,
+      "Sha256": "5a0bb1e08a196adfa760c299e83b79465b8f0d8f1ac5f13a7460a5687c953d4e",
+      "Lines": 24
+    },
+    {
+      "Path": "docs/TRANSPORT_IMPLEMENTATION_02.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 17524,
+      "Sha256": "2cf4fa5e2fc74d76ea5a366b02cb30c6df53a8ac5dfc5939239d19b0c826d6b8",
+      "Lines": 54
+    },
+    {
+      "Path": "docs/TRANSPORT_IMPLEMENTATION_03.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 27951,
+      "Sha256": "1eca46044db187d31d9355231961dc5de82fe22a57e86ab9bd925dc1c8c2223c",
+      "Lines": 97
+    },
+    {
+      "Path": "docs/TRANSPORT_SESSION_REPORT_2026-10-22.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 7807,
+      "Sha256": "d218b6a7deec76651de76869fb40053e3f9771ba488840bf98490ffd1073a173",
+      "Lines": 51
+    },
+    {
+      "Path": "docs/UI_AUDIT.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 5273,
+      "Sha256": "1fdbfe2f9262a23043d770cda067a3f3963ce4f033ebf3ed4149b574f20cb493",
+      "Lines": 44
+    },
+    {
+      "Path": "docs/UI_PSD_PLAN.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 6891,
+      "Sha256": "4d2d634a5a9942184208956dac6566bd1eab8992517746c304b20f4a6cd4ac29",
+      "Lines": 58
+    },
+    {
+      "Path": "docs/WORKSHOP_UPDATES.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 5783,
+      "Sha256": "b2578a15bf6790188c87032daa7fec0caf458c6f30cb0736eae55ee6b8eb6329",
+      "Lines": 42
+    },
+    {
+      "Path": "docs/archive/HANDOFF-0.1.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 7433,
+      "Sha256": "f1121c080904ea5624223154da0c07be5cbd70ef136fa7fa632953c65b4dcc52",
+      "Lines": 28
+    },
+    {
+      "Path": "docs/archive/LAUNCHER_AUDIT.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 12731,
+      "Sha256": "2dc480dbfdd2bc809c2c150bfbe89130b491b71e990c7656fbc227a1fe171af7",
+      "Lines": 69
+    },
+    {
+      "Path": "docs/archive/VALIDATION-0.1.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 10672,
+      "Sha256": "73459b6545b71de09e8ccbdca1b004ab6f25575599053d08c81255e89e230460",
+      "Lines": 44
+    },
+    {
+      "Path": "docs/audit-data/compatibility-checks.json",
+      "HashMode": "Utf8LF",
+      "Bytes": 287,
+      "Sha256": "b1155c14a92075e65449a1d6fa882b44b2840ca3063bf9a9fde9cf5be3730f77",
+      "Lines": 12
+    },
+    {
+      "Path": "docs/audit-data/game-capabilities.json",
+      "HashMode": "Utf8LF",
+      "Bytes": 246782,
+      "Sha256": "7f45d1f551298ce9b1629269076e14c7e6b5c4c0d6256fa827557e2384fca4e4",
+      "Lines": 8887
+    },
+    {
+      "Path": "docs/audit-data/game-directives.csv",
+      "HashMode": "Utf8LF",
+      "Bytes": 80025,
+      "Sha256": "a112a6835185ba7756b7053cc897667a118efce23b3f502ad3ccd4e76e2d5206"
+    },
+    {
+      "Path": "docs/audit-data/nmf-compatibility.json",
+      "HashMode": "Utf8LF",
+      "Bytes": 6961,
+      "Sha256": "1b4aa94aebb1810df0866358b5a3a4a641615ee41d1ba407e9f4a044adbf70ad",
+      "Lines": 304
+    },
+    {
+      "Path": "docs/audit-data/script-semantics.json",
+      "HashMode": "Utf8LF",
+      "Bytes": 1475,
+      "Sha256": "1eaec046463222f8115fbcddd765cbe1cedc8f89a1484ef5443737839824a34f",
+      "Lines": 68
+    },
+    {
+      "Path": "docs/audit-data/transport-details.json",
+      "HashMode": "Utf8LF",
+      "Bytes": 62887,
+      "Sha256": "52130bee19f59d33a42595840e89fb4f8e7342399a0dbf06ebbcb2ee6e61a56c",
+      "Lines": 2495
+    },
+    {
+      "Path": "docs/audit-data/transport-directives.csv",
+      "HashMode": "Utf8LF",
+      "Bytes": 13185,
+      "Sha256": "db565587ee7bbd35ff85528cbca671bf2c3391766a912f174f5ffe8f34e6ae96"
+    },
+    {
+      "Path": "docs/audit-data/transport-feature-checklist.json",
+      "HashMode": "Utf8LF",
+      "Bytes": 51063,
+      "Sha256": "437451037029ed2237358488c71e9b456f7f8ace49252829bb918b917be6816c",
+      "Lines": 1611
+    },
+    {
+      "Path": "docs/audit-data/transport-material-import-2026-10-22.json",
+      "HashMode": "Utf8LF",
+      "Bytes": 5128,
+      "Sha256": "1af9e4c3b72786971c9fe2a39e0ea4f47791d95c742d3ae341828109b6d93a76",
+      "Lines": 186
+    },
+    {
+      "Path": "docs/audit-data/transport-nmf-revision04-2026-10-22.json",
+      "HashMode": "Utf8LF",
+      "Bytes": 11233,
+      "Sha256": "3706df759ab4b7be7417c056628228c8ddddfee873736d375f5f1b07c021950e",
+      "Lines": 427
+    },
+    {
+      "Path": "docs/examples/aurora-module.json",
+      "HashMode": "Utf8LF",
+      "Bytes": 200,
+      "Sha256": "d80f17f9c295d217f2632c8c2fe49ceb6867ad645d5e2042816dd8c95ab15057",
+      "Lines": 12
+    },
+    {
+      "Path": "legacy/Aurora.Installer/Aurora.Installer.csproj",
+      "HashMode": "Utf8LF",
+      "Bytes": 540,
+      "Sha256": "61ee8c226a585d1336031c3dc9ddcaa0d35afc00be1282e954553bcfa4e798bd",
+      "Lines": 1
+    },
+    {
+      "Path": "legacy/Aurora.Installer/Program.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 5581,
+      "Sha256": "ef37bdcf12cd2775306abf8775583cbe2f12345c764336647fd2a5f2272a4d80",
+      "Lines": 75
+    },
+    {
+      "Path": "legacy/Aurora.InstallerTests/Aurora.InstallerTests.csproj",
+      "HashMode": "Utf8LF",
+      "Bytes": 394,
+      "Sha256": "bc7d952ee22bb98c3b2d106f49a36fa29d51fbb7b8b2e65ac07e7cccd6f1ec3a",
+      "Lines": 1
+    },
+    {
+      "Path": "legacy/Aurora.InstallerTests/Program.cs",
+      "HashMode": "Utf8LF",
+      "Bytes": 1700,
+      "Sha256": "6f9fd6fabe7967ec63fe45342386f1fd1baf81ce0af1098c5830e4b58c552b41",
+      "Lines": 18
+    },
+    {
+      "Path": "legacy/EditorEntry.cpp",
+      "HashMode": "Utf8LF",
+      "Bytes": 669,
+      "Sha256": "77b6fd7df4e6bb5b0f9104c0d3c4ab485c91ded0a896c18df551f3ed5bbe2998",
+      "Lines": 4
+    },
+    {
+      "Path": "legacy/README.md",
+      "HashMode": "Utf8LF",
+      "Bytes": 540,
+      "Sha256": "806916e6b11e3e7cd824d08b1ad52eb07452c58eb6c52a2eb7d23a878eca5424",
+      "Lines": 5
+    },
+    {
+      "Path": "legacy/Setup.rc",
+      "HashMode": "Utf8LF",
+      "Bytes": 106,
+      "Sha256": "745165dec0b5f65298d3d0fdc239c33819c5c063c0df9364abae017b208635e7"
+    },
+    {
+      "Path": "legacy/game.jpg",
+      "HashMode": "Raw",
+      "Bytes": 629477,
+      "Sha256": "3ee22508a3814371c772681b8c353d4195394ca6a75d860dec35a6f641ee5d11"
+    }
+  ]
+}

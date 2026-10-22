@@ -1,0 +1,5988 @@
+{
+  "Objects": 1073,
+  "Variants": 3877,
+  "Columns": [
+    "Objects",
+    "RigidMain",
+    "MaterialImportPass",
+    "NoMTL"
+  ],
+  "Counts": {
+    "VEHICLETYPE_SHIP": [
+      28,
+      28,
+      25,
+      0
+    ],
+    "VEHICLETYPE_RAIL_LOCOMOTIVE": [
+      117,
+      116,
+      113,
+      0
+    ],
+    "VEHICLETYPE_RAIL_VAGON": [
+      109,
+      107,
+      104,
+      0
+    ],
+    "VEHICLETYPE_ROAD": [
+      773,
+      771,
+      762,
+      0
+    ],
+    "VEHICLETYPE_AIRPLANE": [
+      27,
+      27,
+      27,
+      0
+    ],
+    "VEHICLETYPE_HELICOPTER": [
+      8,
+      8,
+      8,
+      0
+    ],
+    "VEHICLETYPE_CABIN": [
+      11,
+      11,
+      11,
+      0
+    ]
+  },
+  "Failures": [
+    {
+      "Id": "russian_vagon_cement",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\blanlspecular.dds"
+    },
+    {
+      "Id": "daneferry",
+      "Type": "VEHICLETYPE_SHIP",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\ships\\daneferry\\alpha.dds"
+    },
+    {
+      "Id": "DLC3_kanalmotorschiff_bavaria_xii",
+      "Type": "VEHICLETYPE_SHIP",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\dlc3\\vehicles\\kanalmotorschiff_bavaria_xii\\spec_hatches.dds"
+    },
+    {
+      "Id": "DLC3_kanalmotorschiff_aggregate",
+      "Type": "VEHICLETYPE_SHIP",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\dlc3\\vehicles\\kanalmotorschiff_bavaria_xii\\spec_hatches.dds"
+    },
+    {
+      "Id": "DLC3_oil_fi626",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\dlc3\\vehicles\\open_fi626\\oil_norm.dds"
+    },
+    {
+      "Id": "DLC3_oil_fi626_water",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\dlc3\\vehicles\\open_fi626\\oil_norm.dds"
+    },
+    {
+      "Id": "DLC3_oil_fi666_trailer",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\dlc3\\vehicles\\open_fi626\\oil_norm.dds"
+    },
+    {
+      "Id": "garbage_big_kmz_5320",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\vehicles\\garbage_big_lz100\\specgarbage.dds"
+    },
+    {
+      "Id": "oil_mck",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\vehicles\\oil_mck\\refrig.dds"
+    },
+    {
+      "Id": "garbage_big_mckR",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\vehicles\\garbage_big_lz100\\specgarbage.dds"
+    },
+    {
+      "Id": "DLC3_russian_metro_ABv",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\trains\\russian_metro_AB\\diffuse.dds"
+    },
+    {
+      "Id": "DLC3_russian_service_dampfdrehkran",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\trains\\russian_service_weimar\\lano.dds"
+    },
+    {
+      "Id": "DLC3_west_diesel_RSD1",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\dlc3\\vehicles\\west_diesel_RSD1\\TE_specular.dds"
+    },
+    {
+      "Id": "garbage_big_skd_706mts",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\vehicles\\garbage_big_lz100\\specgarbage.dds"
+    },
+    {
+      "Id": "DLC3_west_service_steamcrane",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\trains\\russian_service_weimar\\lano.dds"
+    },
+    {
+      "Id": "DLC3_garbage_big_t111",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\vehicles\\garbage_big_lz100\\specgarbage.dds"
+    },
+    {
+      "Id": "garbage_big_t815_ztz",
+      "Type": "VEHICLETYPE_ROAD",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\vehicles\\garbage_big_lz100\\specgarbage.dds"
+    },
+    {
+      "Id": "DLC3_russian_service_weimar_vagon2",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Reason": "MTL texture not found: D:\\SteamLibrary\\steamapps\\common\\SovietRepublic\\media_soviet\\trains\\russian_service_weimar_vagon\\diffuse.dds"
+    }
+  ],
+  "Partial": [
+    {
+      "Id": "service_tower_crane_1",
+      "Variant": "material.mtl",
+      "Missing": [
+        "CraneT1",
+        "CraneTG1"
+      ]
+    },
+    {
+      "Id": "service_tower_crane_2",
+      "Variant": "material.mtl",
+      "Missing": [
+        "CraneT1",
+        "CraneTG1"
+      ]
+    },
+    {
+      "Id": "firetruck_avi_furgon",
+      "Variant": "material.mtl",
+      "Missing": [
+        "Mtl1.002",
+        "_Mtl1.011"
+      ]
+    },
+    {
+      "Id": "open_avi",
+      "Variant": "material.mtl",
+      "Missing": [
+        "_Mtl1",
+        "_Mtl1.009"
+      ]
+    },
+    {
+      "Id": "open_avi",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "_Mtl1",
+        "_Mtl1.009"
+      ]
+    },
+    {
+      "Id": "open_avi",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "_Mtl1",
+        "_Mtl1.009"
+      ]
+    },
+    {
+      "Id": "open_avi",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "_Mtl1",
+        "_Mtl1.009"
+      ]
+    },
+    {
+      "Id": "service_tower_crane_3",
+      "Variant": "material.mtl",
+      "Missing": [
+        "Crane3",
+        "Crane2G1"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_b1100",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_b1100",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_b1100",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_b1100",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_b1100",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_b1100",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "personal_b1200",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "personal_b1200",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "personal_b1200",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "personal_b1200",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "personal_b1200",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "personal_b1200",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "personal_b1200a",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "personal_b1200a",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "personal_b1200a",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "personal_b1200a",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "personal_b1200a",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "personal_b1200a",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "chrom",
+        "ko\u0142o"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_chv_demo",
+      "Variant": "material.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_chv_demo",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_chv_demo",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_chv_demo",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_chv_demo",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_chv_demo",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_police_chv_democrat",
+      "Variant": "material.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c11",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c11",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c11",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c11",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c11",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c11",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c11",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c11",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c11",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c11",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c11",
+      "Variant": "material_10.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c11",
+      "Variant": "material_11.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_police_c11",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_police_c11",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_c11",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_c11",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_c11",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_c11",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_c11",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_c11",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_c11",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_c11",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_c11",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_c11",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c4",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "chrom_k",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c4",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "chrom_k",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c4",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "chrom_k",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c4",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "chrom_k",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c4",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "chrom_k",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c4",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "chrom_k",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c4",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "chrom_k",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c4",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "chrom_k",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_c4",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "chrom_k",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_police_c4",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "chrom_k",
+        "guma",
+        "stal_k",
+        "chrom_B",
+        "blacha_b"
+      ]
+    },
+    {
+      "Id": "russian_set_d1",
+      "Variant": "material.mtl",
+      "Missing": [
+        "D_pricep",
+        "D_gol"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df8",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df8",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df8",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df8",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df8",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df8",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df8",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df8",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df8",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df8",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df8",
+      "Variant": "material_10.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df8",
+      "Variant": "material_11.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df_mk",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "blacha_b",
+        "plastikguma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df_mk",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "blacha_b",
+        "plastikguma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df_mk",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "blacha_b",
+        "plastikguma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df_mk",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "blacha_b",
+        "plastikguma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df_mk",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "blacha_b",
+        "plastikguma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df_mk",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "blacha_b",
+        "plastikguma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df_mk",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "blacha_b",
+        "plastikguma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df_mk",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "blacha_b",
+        "plastikguma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df_mk",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "blacha_b",
+        "plastikguma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_df_mk",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "blacha_b",
+        "plastikguma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emw321",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emw321",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emw321",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emw321",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emw321",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emw321",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emw321",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_police_emw321",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "blacha_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emw340",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emw340",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emw340",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emw340",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emw340",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emw340",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emw340",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_police_emw340",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_police_emw340",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_emw340",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_emw340",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_snow_fi626",
+      "Variant": "material.mtl",
+      "Missing": [
+        "Material.002",
+        "opencovered.001"
+      ]
+    },
+    {
+      "Id": "DLC3_snow_fi626",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "Material.002",
+        "opencovered.001"
+      ]
+    },
+    {
+      "Id": "DLC3_snow_fi626",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "Material.002",
+        "opencovered.001"
+      ]
+    },
+    {
+      "Id": "DLC3_snow_fi626",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "Material.002",
+        "opencovered.001"
+      ]
+    },
+    {
+      "Id": "DLC3_snow_fi626",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "Material.002",
+        "opencovered.001"
+      ]
+    },
+    {
+      "Id": "DLC3_snow_fi626",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "Material.002",
+        "opencovered.001"
+      ]
+    },
+    {
+      "Id": "DLC3_snow_fi626",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "Material.002",
+        "opencovered.001"
+      ]
+    },
+    {
+      "Id": "DLC3_snow_fi626",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "Material.002",
+        "opencovered.001"
+      ]
+    },
+    {
+      "Id": "DLC3_snow_fi626",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "Material.002",
+        "opencovered.001"
+      ]
+    },
+    {
+      "Id": "DLC3_snow_fi626",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "Material.002",
+        "opencovered.001"
+      ]
+    },
+    {
+      "Id": "DLC3_snow_fi626",
+      "Variant": "material_10.mtl",
+      "Missing": [
+        "Material.002",
+        "opencovered.001"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_z750",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "stal_k",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_z750",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "stal_k",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_z750",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "stal_k",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_z750",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "stal_k",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_z750",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "stal_k",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_z750",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "stal_k",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_z750",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "stal_k",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_z750",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "podwozie",
+        "stal_k",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_z750",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "podwozie",
+        "stal_k",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_police_z750",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "stal_k",
+        "chrom",
+        "guma",
+        "milicija"
+      ]
+    },
+    {
+      "Id": "DLC3_police_z750",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "stal_k",
+        "chrom",
+        "guma",
+        "milicija"
+      ]
+    },
+    {
+      "Id": "DLC3_police_z750",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "stal_k",
+        "chrom",
+        "guma",
+        "milicija"
+      ]
+    },
+    {
+      "Id": "DLC3_police_z750",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "stal_k",
+        "chrom",
+        "guma",
+        "milicija"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_for_a",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_for_a",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_for_a",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_for_a",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_for_a",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_for_a",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_for_a",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_for_a",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_police_for_a",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "chrom_B"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_for_ang",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_for_ang",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_for_ang",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_for_ang",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_for_ang",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_for_ang",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_for_ang",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_for_t",
+      "Variant": "material.mtl",
+      "Missing": [
+        "wn\u0119trze",
+        "podwozie",
+        "chrom",
+        "drewno",
+        "sk\u00F3ra",
+        "brezent",
+        "guma",
+        "chrom_k"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_warszawa",
+      "Variant": "material.mtl",
+      "Missing": [
+        "guma",
+        "chrom",
+        "stal",
+        "chrom.003"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_warszawa",
+      "Variant": "material.mtl",
+      "Missing": [
+        "guma.004",
+        "chrom.002",
+        "stal.005"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_warszawa",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "guma.004",
+        "chrom.002",
+        "stal.005"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_warszawa",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "guma.004",
+        "chrom.002",
+        "stal.005"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_warszawa",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "guma.004",
+        "chrom.002",
+        "stal.005"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_warszawa",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "guma.004",
+        "chrom.002",
+        "stal.005"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_warszawa",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "guma.004",
+        "chrom.002",
+        "stal.005"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_warszawa",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "guma.004",
+        "chrom.002",
+        "stal.005"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_warszawa",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "guma.004",
+        "chrom.002",
+        "stal.005"
+      ]
+    },
+    {
+      "Id": "DLC3_police_warszawa",
+      "Variant": "material.mtl",
+      "Missing": [
+        "guma",
+        "stal",
+        "chrom",
+        "chrom.003"
+      ]
+    },
+    {
+      "Id": "DLC3_police_warszawa",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "guma",
+        "stal",
+        "chrom",
+        "chrom.003"
+      ]
+    },
+    {
+      "Id": "DLC3_police_warszawa",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "guma",
+        "stal",
+        "chrom",
+        "chrom.003"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka11",
+      "Variant": "material.mtl",
+      "Missing": [
+        "stal.001",
+        "sprz\u0119t.001",
+        "Guma.001",
+        "chrom.001"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka11",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "stal.001",
+        "sprz\u0119t.001",
+        "Guma.001",
+        "chrom.001"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka11",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "stal.001",
+        "sprz\u0119t.001",
+        "Guma.001",
+        "chrom.001"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka11",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "stal.001",
+        "sprz\u0119t.001",
+        "Guma.001",
+        "chrom.001"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka11",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "stal.001",
+        "sprz\u0119t.001",
+        "Guma.001",
+        "chrom.001"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka11",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "stal.001",
+        "sprz\u0119t.001",
+        "Guma.001",
+        "chrom.001"
+      ]
+    },
+    {
+      "Id": "DLC3_police_emka11",
+      "Variant": "material.mtl",
+      "Missing": [
+        "stal.007",
+        "sprz\u0119t.001",
+        "Guma.001",
+        "chrom.004",
+        "alu"
+      ]
+    },
+    {
+      "Id": "DLC3_police_emka11",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "stal.007",
+        "sprz\u0119t.001",
+        "Guma.001",
+        "chrom.004",
+        "alu"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_gz_67",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "Guma",
+        "brezent",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_gz_67",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "Guma",
+        "brezent",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_gz_67",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "Guma",
+        "brezent",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_police_gz_67",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "Guma",
+        "brezent",
+        "blacha_k",
+        "brezent.001"
+      ]
+    },
+    {
+      "Id": "DLC3_police_gz_67",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "Guma",
+        "brezent",
+        "blacha_k",
+        "brezent.001"
+      ]
+    },
+    {
+      "Id": "DLC3_police_gz_67",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "Guma",
+        "brezent",
+        "blacha_k",
+        "brezent.001"
+      ]
+    },
+    {
+      "Id": "DLC3_forklift_gz905",
+      "Variant": "material.mtl",
+      "Missing": [
+        "guma",
+        "podwozie",
+        "chrom"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_gz_a",
+      "Variant": "material.mtl",
+      "Missing": [
+        "guma",
+        "podwozie",
+        "chrom.002",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_gz_a",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "guma",
+        "podwozie",
+        "chrom.002",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_gz_a",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "guma",
+        "podwozie",
+        "chrom.002",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_gz_a",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "guma",
+        "podwozie",
+        "chrom.002",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_gz_a",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "guma",
+        "podwozie",
+        "chrom.002",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_gz_a",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "guma",
+        "podwozie",
+        "chrom.002",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_gz_a",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "guma",
+        "podwozie",
+        "chrom.002",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_gz_a",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "guma",
+        "podwozie",
+        "chrom.002",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_police_gz_a",
+      "Variant": "material.mtl",
+      "Missing": [
+        "guma",
+        "podwozie",
+        "chrom.002",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_police_gz_a",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "guma",
+        "podwozie",
+        "chrom.002",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "sprz\u0119t",
+        "stal",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom",
+        "sprz\u0119t",
+        "stal",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "chrom",
+        "sprz\u0119t",
+        "stal",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "chrom",
+        "sprz\u0119t",
+        "stal",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "chrom",
+        "sprz\u0119t",
+        "stal",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "chrom",
+        "sprz\u0119t",
+        "stal",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "chrom",
+        "sprz\u0119t",
+        "stal",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "chrom",
+        "sprz\u0119t",
+        "stal",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "chrom",
+        "sprz\u0119t",
+        "stal",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "chrom",
+        "sprz\u0119t",
+        "stal",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_emka",
+      "Variant": "material_10.mtl",
+      "Missing": [
+        "chrom",
+        "sprz\u0119t",
+        "stal",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_police_emka",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom.003",
+        "sprz\u0119t",
+        "stal.006",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_police_emka",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom.003",
+        "sprz\u0119t",
+        "stal.006",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_emka",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "sprz\u0119t",
+        "stal",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_pobeda",
+      "Variant": "material.mtl",
+      "Missing": [
+        "guma.003",
+        "chrom.001",
+        "stal.003",
+        "stal.004"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_pobeda",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "guma.003",
+        "chrom.001",
+        "stal.003",
+        "stal.004"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_pobeda",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "guma.003",
+        "chrom.001",
+        "stal.003",
+        "stal.004"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_pobeda",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "guma.003",
+        "chrom.001",
+        "stal.003",
+        "stal.004"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_pobeda",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "guma.003",
+        "chrom.001",
+        "stal.003",
+        "stal.004"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_pobeda",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "guma.003",
+        "chrom.001",
+        "stal.003",
+        "stal.004"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_pobeda",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "guma.003",
+        "chrom.001",
+        "stal.003",
+        "stal.004"
+      ]
+    },
+    {
+      "Id": "DLC3_police_pobeda",
+      "Variant": "material.mtl",
+      "Missing": [
+        "guma.006",
+        "stal.009",
+        "chrom.006",
+        "stal.010"
+      ]
+    },
+    {
+      "Id": "DLC3_police_pobeda",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "guma.006",
+        "stal.009",
+        "chrom.006",
+        "stal.010"
+      ]
+    },
+    {
+      "Id": "DLC3_police_pobeda",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "guma.006",
+        "stal.009",
+        "chrom.006",
+        "stal.010"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_pobeda",
+      "Variant": "material.mtl",
+      "Missing": [
+        "guma",
+        "stal",
+        "chrom",
+        "stal.001"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_pobeda",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "guma",
+        "stal",
+        "chrom",
+        "stal.001"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_pobeda",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "guma",
+        "stal",
+        "chrom",
+        "stal.001"
+      ]
+    },
+    {
+      "Id": "DLC3_h_fire",
+      "Variant": "material.mtl",
+      "Missing": [
+        "dm_matt"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if8",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if8",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if8",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if8",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if8",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if8",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if8",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if8",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if8",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if8",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if8",
+      "Variant": "material_10.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if8",
+      "Variant": "material_11.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if8",
+      "Variant": "material_12.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if8",
+      "Variant": "material_13.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if8",
+      "Variant": "material_14.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if8",
+      "Variant": "material_15.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_if8",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "drewno",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_police_if8",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "duro",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if9",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if9",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if9",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if9",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if9",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if9",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if9",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if9",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if9",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if9",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if9",
+      "Variant": "material_10.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if9",
+      "Variant": "material_11.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if9",
+      "Variant": "material_12.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if9",
+      "Variant": "material_13.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if9",
+      "Variant": "material_14.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_if9",
+      "Variant": "material_15.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "DLC3_police_if9",
+      "Variant": "material.mtl",
+      "Missing": [
+        "brezent",
+        "chrom",
+        "plastikguma"
+      ]
+    },
+    {
+      "Id": "covered_imf2200d",
+      "Variant": "material.mtl",
+      "Missing": [
+        "MaterialDodavka"
+      ]
+    },
+    {
+      "Id": "covered_imf2200d",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "MaterialDodavka"
+      ]
+    },
+    {
+      "Id": "covered_imf2200d",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "MaterialDodavka"
+      ]
+    },
+    {
+      "Id": "covered_imf2200d",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "MaterialDodavka"
+      ]
+    },
+    {
+      "Id": "covered_imf2200d",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "MaterialDodavka"
+      ]
+    },
+    {
+      "Id": "covered_imf2200d",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "MaterialDodavka"
+      ]
+    },
+    {
+      "Id": "DLC3_shyria",
+      "Variant": "material.mtl",
+      "Missing": [
+        "lambert1"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_kim",
+      "Variant": "material.mtl",
+      "Missing": [
+        "Chrom",
+        "stal.002",
+        "Guma.002"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_kim",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "Chrom",
+        "stal.002",
+        "Guma.002"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_kim",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "Chrom",
+        "stal.002",
+        "Guma.002"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_kim",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "Chrom",
+        "stal.002",
+        "Guma.002"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_kim",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "Chrom",
+        "stal.002",
+        "Guma.002"
+      ]
+    },
+    {
+      "Id": "russian_tram_lm68",
+      "Variant": "material.mtl",
+      "Missing": [
+        "tire1Shape",
+        "tire2Shape",
+        "tire3Shape",
+        "tire4Shape",
+        "polySurfaceShape34",
+        "d1Shape"
+      ]
+    },
+    {
+      "Id": "bus_lz_695b",
+      "Variant": "material.mtl",
+      "Missing": [
+        "_laz695be1",
+        "_laz695n1"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m170d",
+      "Variant": "material.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m170d",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m170d",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m170d",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m170d",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m170d",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_m170d",
+      "Variant": "material.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_police_m170d",
+      "Variant": "material.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_police_m170d",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_police_m170d",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m400",
+      "Variant": "material.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m400",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m400",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m400",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m400",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m400",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m400",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m400",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m400",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m400",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m400",
+      "Variant": "material_10.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m400",
+      "Variant": "material_11.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m400",
+      "Variant": "material_12.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m400",
+      "Variant": "material_13.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_police_m400",
+      "Variant": "material.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_m400",
+      "Variant": "material.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_refrig_m400",
+      "Variant": "material.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_refrig_m400",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_refrig_m400",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_refrig_m400",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_refrig_m400",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_refrig_m400",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_refrig_m400",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_refrig_m400",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "stal",
+        "chrom",
+        "Guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m407",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m407",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m407",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m407",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m407",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m407",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m407",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m407",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m407",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m407",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m407",
+      "Variant": "material_10.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m407",
+      "Variant": "material_11.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m407",
+      "Variant": "material_12.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m407",
+      "Variant": "material_13.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_m407",
+      "Variant": "material_14.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_police_m407",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie.003",
+        "chrom.005",
+        "stal.008",
+        "alu.001"
+      ]
+    },
+    {
+      "Id": "DLC3_police_m407",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie.003",
+        "chrom.005",
+        "stal.008",
+        "alu.001"
+      ]
+    },
+    {
+      "Id": "DLC3_police_m407",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie.003",
+        "chrom.005",
+        "stal.008",
+        "alu.001"
+      ]
+    },
+    {
+      "Id": "DLC3_police_m407",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie.003",
+        "chrom.005",
+        "stal.008",
+        "alu.001"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_mtd",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_mtd",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_mtd",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_mtd",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_mtd",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal"
+      ]
+    },
+    {
+      "Id": "DLC3_forklift_m21",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom"
+      ]
+    },
+    {
+      "Id": "DLC3_forklift_m21",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom"
+      ]
+    },
+    {
+      "Id": "DLC3_forklift_m21",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom"
+      ]
+    },
+    {
+      "Id": "DLC3_forklift_m21",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_nami",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "guma",
+        "stal",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_nami",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "guma",
+        "stal",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_nami",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "guma",
+        "stal",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_nami",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "guma",
+        "stal",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_nami",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "guma",
+        "stal",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_police_nami",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "guma",
+        "stal",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_police_nami",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "guma",
+        "stal",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_opl_olympic",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_opl_olympic",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_opl_olympic",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_opl_olympic",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_opl_olympic",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_opl_olympic",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_opl_olympic",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_p70",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma",
+        "blacha"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_p70",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma",
+        "blacha"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_p70",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma",
+        "blacha"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_p70",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma",
+        "blacha"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_p70",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma",
+        "blacha"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_p70",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma",
+        "blacha"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_p70",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma",
+        "blacha"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_p70",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma",
+        "blacha"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_p70",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "chrom",
+        "plastikguma",
+        "blacha"
+      ]
+    },
+    {
+      "Id": "oil_rmn_19215",
+      "Variant": "material.mtl",
+      "Missing": [
+        "MaterialAuto.001"
+      ]
+    },
+    {
+      "Id": "oil_rmn_19215",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "MaterialAuto.001"
+      ]
+    },
+    {
+      "Id": "oil_rmn_19215",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "MaterialAuto.001"
+      ]
+    },
+    {
+      "Id": "oil_rmn_19215",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "MaterialAuto.001"
+      ]
+    },
+    {
+      "Id": "oil_rmn_19215",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "MaterialAuto.001"
+      ]
+    },
+    {
+      "Id": "oil_rmn_19215",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "MaterialAuto.001"
+      ]
+    },
+    {
+      "Id": "covered_rnt_agk",
+      "Variant": "material.mtl",
+      "Missing": [
+        "_Material__1"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_rnt_nn",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_rnt_nn",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_rnt_nn",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_rnt_nn",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_rnt_nn",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_rnt_nn",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_rnt_nn",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_rnt_nn",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_police_rnt_nn",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "chrom_2",
+        "guma",
+        "blacha_k"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_russo_balt_m24_35",
+      "Variant": "material.mtl",
+      "Missing": [
+        "Material.001",
+        "Wood"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_russo_balt_m24_35",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "Material.001",
+        "Wood"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_russo_balt_m24_35",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "Material.001",
+        "Wood"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_russo_balt_m24_35",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "Material.001",
+        "Wood"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_russo_balt_m24_35",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "Material.001",
+        "Wood"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_russo_balt_m24_35",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "Material.001",
+        "Wood"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_sewage_russo_balt_m24_35",
+      "Variant": "material.mtl",
+      "Missing": [
+        "Material.001",
+        "Wood"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_water_russo_balt_m24_35",
+      "Variant": "material.mtl",
+      "Missing": [
+        "Material.001",
+        "Wood"
+      ]
+    },
+    {
+      "Id": "DLC3_tower_crane_SBK_1",
+      "Variant": "material.mtl",
+      "Missing": [
+        "Material.004",
+        "wolff.003"
+      ]
+    },
+    {
+      "Id": "russian_set_dp",
+      "Variant": "material.mtl",
+      "Missing": [
+        "D_gol",
+        "FBXASC0483___Default"
+      ]
+    },
+    {
+      "Id": "russian_set_dp_v",
+      "Variant": "material.mtl",
+      "Missing": [
+        "D_gol",
+        "FBXASC0483___Default"
+      ]
+    },
+    {
+      "Id": "russian_set_dr1a_v",
+      "Variant": "material.mtl",
+      "Missing": [
+        "DR1A_pricep_ncl1_1",
+        "DR1A_gol"
+      ]
+    },
+    {
+      "Id": "russian_set_er1_v",
+      "Variant": "material.mtl",
+      "Missing": [
+        "er1",
+        "er_91",
+        "MaterialFBXASC032FBXASC0350"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_s1201",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma",
+        "chrom_B"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_s1201",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma",
+        "chrom_B"
+      ]
+    },
+    {
+      "Id": "DLC3_police_s1201",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma",
+        "chrom_B"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201_kombi",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201_kombi",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201_kombi",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201_kombi",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201_kombi",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201_kombi",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201_kombi",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201_kombi",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201_kombi",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_s1201_kombi",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "plastik",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_skoda706ro_mtz",
+      "Variant": "material.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_skoda706ro_mtz",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_skoda706ro_mtz",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_skoda706ro_mtz",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_skoda706ro_mtz",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_skoda706ro_mtz",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_skoda706ro_mtz",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_skoda706ro_mtz",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_skoda706ro_mtz",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_firetruck_skd706r",
+      "Variant": "material.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_garbage_big_skd706rfl",
+      "Variant": "material.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_garbage_big_skd706rfl",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_garbage_big_skd706rfl",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_garbage_big_skd706rfl",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_garbage_big_skd706rfl",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_garbage_big_skd706rfl",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_garbage_big_skd706rfl",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_garbage_big_skd706rfl",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_garbage_big_skd706rfl",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_skd706r",
+      "Variant": "material.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_skd706r",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_skd706r",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_skd706r",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_skd706r",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_skd706r",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_skd706r",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_skd706r",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_skd706r",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "Material.002"
+      ]
+    },
+    {
+      "Id": "DLC3_gravel_skd706r",
+      "Variant": "material.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_gravel_skd706r",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_gravel_skd706r",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_gravel_skd706r",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_gravel_skd706r",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_gravel_skd706r",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_gravel_skd706r",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_gravel_skd706r",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_gravel_skd706r",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_service_mixer_skd706r",
+      "Variant": "material.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_service_mixer_skd706r",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_service_mixer_skd706r",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_service_mixer_skd706r",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_service_mixer_skd706r",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_service_mixer_skd706r",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_service_mixer_skd706r",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_service_mixer_skd706r",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_service_mixer_skd706r",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "Material.001"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_felicia",
+      "Variant": "material.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "materia\u0142",
+        "guma",
+        "plastik",
+        "wyk\u0142adzina",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_felicia",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "materia\u0142",
+        "guma",
+        "plastik",
+        "wyk\u0142adzina",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_felicia",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "materia\u0142",
+        "guma",
+        "plastik",
+        "wyk\u0142adzina",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_felicia",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "materia\u0142",
+        "guma",
+        "plastik",
+        "wyk\u0142adzina",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_felicia",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "materia\u0142",
+        "guma",
+        "plastik",
+        "wyk\u0142adzina",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_felicia",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "materia\u0142",
+        "guma",
+        "plastik",
+        "wyk\u0142adzina",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_felicia",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "materia\u0142",
+        "guma",
+        "plastik",
+        "wyk\u0142adzina",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_felicia",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "materia\u0142",
+        "guma",
+        "plastik",
+        "wyk\u0142adzina",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_felicia",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "materia\u0142",
+        "guma",
+        "plastik",
+        "wyk\u0142adzina",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_felicia",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom",
+        "materia\u0142",
+        "guma",
+        "plastik",
+        "wyk\u0142adzina",
+        "brezent"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia",
+      "Variant": "material_10.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia",
+      "Variant": "material_11.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_kombi",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_kombi",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_kombi",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_kombi",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_kombi",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_kombi",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_kombi",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_kombi",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_kombi",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_kombi",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_kombi",
+      "Variant": "material_10.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_octavia_kombi",
+      "Variant": "material_11.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "stal",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_tudor",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_tudor",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_tudor",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_tudor",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_tudor",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_tudor",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_tudor",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_tudor",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_tudor",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_tudor",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_police_tudor",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_police_tudor",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_bulldozer_stalinets_s60",
+      "Variant": "material.mtl",
+      "Missing": [
+        "skora"
+      ]
+    },
+    {
+      "Id": "DLC3_bulldozer_stalinets_s60",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "skora"
+      ]
+    },
+    {
+      "Id": "DLC3_bulldozer_stalinets_s60",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "skora"
+      ]
+    },
+    {
+      "Id": "DLC3_bulldozer_stalinets_s60",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "skora"
+      ]
+    },
+    {
+      "Id": "DLC3_bulldozer_stalinets_s60",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "skora"
+      ]
+    },
+    {
+      "Id": "DLC3_tractor_stalinets_s60",
+      "Variant": "material.mtl",
+      "Missing": [
+        "skora"
+      ]
+    },
+    {
+      "Id": "DLC3_tractor_stalinets_s60",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "skora"
+      ]
+    },
+    {
+      "Id": "DLC3_tractor_stalinets_s60",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "skora"
+      ]
+    },
+    {
+      "Id": "DLC3_tractor_stalinets_s60",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "skora"
+      ]
+    },
+    {
+      "Id": "DLC3_tractor_stalinets_s60",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "skora"
+      ]
+    },
+    {
+      "Id": "russian_tram_t3",
+      "Variant": "material.mtl",
+      "Missing": [
+        "t3",
+        "t3_salon"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_t600",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "stal",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_t600",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "stal",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_t600",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "stal",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_t600",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "stal",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_t600",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "stal",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_t600",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "stal",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_t600",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "stal",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_t600",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "podwozie",
+        "stal",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_t600",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "podwozie",
+        "stal",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_t87",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_t87",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_t87",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_t87",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_t87",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_t87",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "personal_trabi500",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "personal_trabi500",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "personal_trabi500",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "personal_trabi500",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "personal_trabi500",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "personal_trabi500",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "personal_trabi500",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "personal_trabi500",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "personal_trabi500",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "personal_trabi500",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "personal_trabi500",
+      "Variant": "material_10.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "z_police_trabi500",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma"
+      ]
+    },
+    {
+      "Id": "personal_trabicombi500",
+      "Variant": "material.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "stal_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "personal_trabicombi500",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "stal_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "personal_trabicombi500",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "stal_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "personal_trabicombi500",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "stal_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "personal_trabicombi500",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "stal_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "personal_trabicombi500",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "stal_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "personal_trabicombi500",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "stal_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "personal_trabicombi500",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "stal_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "personal_trabicombi500",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "stal_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "personal_trabicombi500",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "stal_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "personal_trabicombi500",
+      "Variant": "material_10.mtl",
+      "Missing": [
+        "chrom",
+        "podwozie",
+        "guma",
+        "stal_K",
+        "chrom_K"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_pospa_sewage",
+      "Variant": "Material.mtl",
+      "Missing": [
+        "blacha.001"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_pospa_sewage",
+      "Variant": "Material_1.mtl",
+      "Missing": [
+        "blacha.001"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_pospa_sewage",
+      "Variant": "Material_2.mtl",
+      "Missing": [
+        "blacha.001"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_pospa_sewage",
+      "Variant": "Material_3.mtl",
+      "Missing": [
+        "blacha.001"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_pospa_sewage",
+      "Variant": "Material_4.mtl",
+      "Missing": [
+        "blacha.001"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_pospa_water",
+      "Variant": "Material.mtl",
+      "Missing": [
+        "blacha.001"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_pospa_water",
+      "Variant": "Material_1.mtl",
+      "Missing": [
+        "blacha.001"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_pospa_water",
+      "Variant": "Material_2.mtl",
+      "Missing": [
+        "blacha.001"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_pospa_water",
+      "Variant": "Material_3.mtl",
+      "Missing": [
+        "blacha.001"
+      ]
+    },
+    {
+      "Id": "DLC3_oil_pospa_water",
+      "Variant": "Material_4.mtl",
+      "Missing": [
+        "blacha.001"
+      ]
+    },
+    {
+      "Id": "russian_loco_vl80k",
+      "Variant": "material.mtl",
+      "Missing": [
+        "vl80k",
+        "MaterialFBXASC032FBXASC0350",
+        "MaterialFBXASC032FBXASC03513",
+        "MaterialFBXASC032FBXASC03527",
+        "MaterialFBXASC032FBXASC03528"
+      ]
+    },
+    {
+      "Id": "personal_vz2105",
+      "Variant": "material.mtl",
+      "Missing": [
+        "vaz_ncl1_2",
+        "Material__0"
+      ]
+    },
+    {
+      "Id": "personal_vz2106",
+      "Variant": "material.mtl",
+      "Missing": [
+        "vaz_ncl1_2",
+        "Material__0"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material_10.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material_11.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material_12.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material_13.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material_14.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material_15.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311",
+      "Variant": "material_16.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material_10.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material_11.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material_12.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material_13.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material_14.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material_15.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_camping",
+      "Variant": "material_16.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_coupe",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_coupe",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_coupe",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_coupe",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_coupe",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_coupe",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_coupe",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_coupe",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material_8.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material_9.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material_10.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material_11.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material_12.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material_13.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material_14.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material_15.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_personal_w311_kombi",
+      "Variant": "material_16.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma"
+      ]
+    },
+    {
+      "Id": "DLC3_ambulance_w311",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "karetka"
+      ]
+    },
+    {
+      "Id": "DLC3_police_w311",
+      "Variant": "material.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_K",
+        "vopo"
+      ]
+    },
+    {
+      "Id": "DLC3_police_w311",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "podwozie",
+        "chrom",
+        "guma",
+        "stal_K",
+        "vopo"
+      ]
+    },
+    {
+      "Id": "DLC3_yag_excavator",
+      "Variant": "material.mtl",
+      "Missing": [
+        "blacha.001"
+      ]
+    },
+    {
+      "Id": "DLC3_zis150_gravel",
+      "Variant": "material.mtl",
+      "Missing": [
+        "main5"
+      ]
+    },
+    {
+      "Id": "DLC3_zis150_gravel",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "main5"
+      ]
+    },
+    {
+      "Id": "DLC3_zis150_gravel",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "main5"
+      ]
+    },
+    {
+      "Id": "DLC3_zis150_gravel",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "main5"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_zis8",
+      "Variant": "material.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_zis8",
+      "Variant": "material_1.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_zis8",
+      "Variant": "material_2.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_zis8",
+      "Variant": "material_3.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_zis8",
+      "Variant": "material_4.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_zis8",
+      "Variant": "material_5.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_zis8",
+      "Variant": "material_6.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom"
+      ]
+    },
+    {
+      "Id": "DLC3_bus_zis8",
+      "Variant": "material_7.mtl",
+      "Missing": [
+        "stal",
+        "podwozie",
+        "chrom"
+      ]
+    },
+    {
+      "Id": "DLC3_kamikawa",
+      "Variant": "material.mtl",
+      "Missing": [
+        "lambert1",
+        "lambert5"
+      ]
+    }
+  ],
+  "Unsupported": [
+    {
+      "Id": "russian_vagon_falls_gravel",
+      "Reason": "Invalid NMF header"
+    },
+    {
+      "Id": "russian_vagon_raj_cement",
+      "Reason": "Invalid NMF header"
+    },
+    {
+      "Id": "covered_t138",
+      "Reason": "Unsupported NMF trailing streams"
+    },
+    {
+      "Id": "covered_t148",
+      "Reason": "Unsupported NMF trailing streams"
+    },
+    {
+      "Id": "russian_loco_t3m2my",
+      "Reason": "Unsupported NMF trailing streams"
+    }
+  ]
+}

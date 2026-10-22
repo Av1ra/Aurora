@@ -1,5 +1,7 @@
 # Codex handoff: Aurora Launcher + Aurora Editor
 
+**Portable consolidated handoff, 2026-10-22: [start here](../handoff/2026-10-22/README.md).** Exact installed package, PSD hidden layers, chat decisions, architecture, build instructions and current gaps. Chronological notes below remain historical evidence; earlier next/current statements do not override later owner decisions.
+
 Checkpoint recorded: 2026-10-19. Canonical repository: `Av1ra/Aurora`, branch `main`. Product version: **0.2**. Identify all test builds by full commit SHA and Actions run ID, not a new public version number.
 
 ## Read this first

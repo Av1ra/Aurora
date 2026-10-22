@@ -1,0 +1,4 @@
+PASS exactly one archive contains Launcher and Editor with shared runtime
+PASS matching adjacent ZIP verified and extracted
+PASS tampered adjacent ZIP rejected
+PASS missing adjacent ZIP rejected; AURORA_ADJACENT_PACKAGE_PASS

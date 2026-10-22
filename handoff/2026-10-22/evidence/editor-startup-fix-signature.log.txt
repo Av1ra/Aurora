@@ -1,0 +1,4 @@
+PASS signed Aurora 0.2: exactly one Launcher + Editor archive
+PASS both application entry points, shared runtime and signed embedded Editor
+PASS optional module signatures and no duplicate ZIP/private keys
+AURORA_RELEASE_PACKAGES_PASS

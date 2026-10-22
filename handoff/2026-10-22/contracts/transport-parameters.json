@@ -1,0 +1,3900 @@
+{
+  "Schema": 1,
+  "Note": "Compiled Core API snapshot, not proof of in-game acceptance",
+  "Parameters": [
+    {
+      "Key": "JOINT",
+      "Name": "\u0421\u043E\u0447\u043B\u0435\u043D\u0451\u043D\u043D\u0430\u044F \u0447\u0430\u0441\u0442\u044C",
+      "Group": "\u0421\u0431\u043E\u0440\u043A\u0430",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041C\u043E\u0434\u0435\u043B\u044C",
+          "Default": "",
+          "Extension": ".nmf",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u0421\u043C\u0435\u0449\u0435\u043D\u0438\u0435",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u0421\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u043F\u0440\u0438 \u043F\u043E\u0432\u043E\u0440\u043E\u0442\u0435",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "assembly"
+    },
+    {
+      "Key": "LODJOINT1",
+      "Name": "LOD 1 \u043F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0451\u043D\u043D\u043E\u0439 \u0447\u0430\u0441\u0442\u0438",
+      "Group": "\u0421\u0431\u043E\u0440\u043A\u0430",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041C\u043E\u0434\u0435\u043B\u044C",
+          "Default": "",
+          "Extension": ".nmf",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "jointLods"
+    },
+    {
+      "Key": "LODJOINT2",
+      "Name": "LOD 2 \u043F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0451\u043D\u043D\u043E\u0439 \u0447\u0430\u0441\u0442\u0438",
+      "Group": "\u0421\u0431\u043E\u0440\u043A\u0430",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041C\u043E\u0434\u0435\u043B\u044C",
+          "Default": "",
+          "Extension": ".nmf",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "jointLods"
+    },
+    {
+      "Key": "ALPHA",
+      "Name": "\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u0430\u044F \u043C\u043E\u0434\u0435\u043B\u044C ALPHA",
+      "Group": "\u0421\u0431\u043E\u0440\u043A\u0430",
+      "Types": [],
+      "Arguments": [
+        {
+          "Label": "\u041C\u043E\u0434\u0435\u043B\u044C",
+          "Default": "",
+          "Extension": ".nmf",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "assembly"
+    },
+    {
+      "Key": "CRANE_STATIC",
+      "Name": "\u041D\u0435\u043F\u043E\u0434\u0432\u0438\u0436\u043D\u0430\u044F \u0447\u0430\u0441\u0442\u044C \u043C\u0435\u0445\u0430\u043D\u0438\u0437\u043C\u0430",
+      "Group": "\u041C\u0435\u0445\u0430\u043D\u0438\u0437\u043C\u044B",
+      "Types": [],
+      "Arguments": [
+        {
+          "Label": "\u041C\u043E\u0434\u0435\u043B\u044C",
+          "Default": "",
+          "Extension": ".nmf",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "mechanisms"
+    },
+    {
+      "Key": "CRANE_DYNAMIC",
+      "Name": "\u041F\u043E\u0434\u0432\u0438\u0436\u043D\u0430\u044F \u0447\u0430\u0441\u0442\u044C \u043C\u0435\u0445\u0430\u043D\u0438\u0437\u043C\u0430",
+      "Group": "\u041C\u0435\u0445\u0430\u043D\u0438\u0437\u043C\u044B",
+      "Types": [],
+      "Arguments": [
+        {
+          "Label": "\u041C\u043E\u0434\u0435\u043B\u044C",
+          "Default": "",
+          "Extension": ".nmf",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "mechanisms"
+    },
+    {
+      "Key": "CRANE_DYNAMIC2",
+      "Name": "\u0412\u0442\u043E\u0440\u0430\u044F \u043F\u043E\u0434\u0432\u0438\u0436\u043D\u0430\u044F \u0447\u0430\u0441\u0442\u044C",
+      "Group": "\u041C\u0435\u0445\u0430\u043D\u0438\u0437\u043C\u044B",
+      "Types": [
+        "VEHICLETYPE_RAIL_LOCOMOTIVE",
+        "VEHICLETYPE_RAIL_VAGON"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041C\u043E\u0434\u0435\u043B\u044C",
+          "Default": "",
+          "Extension": ".nmf",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "mechanisms"
+    },
+    {
+      "Key": "DUMPER_DECK_PIVOT",
+      "Name": "\u041A\u0443\u0437\u043E\u0432 \u0441\u0430\u043C\u043E\u0441\u0432\u0430\u043B\u0430",
+      "Group": "\u041C\u0435\u0445\u0430\u043D\u0438\u0437\u043C\u044B",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041E\u0431\u044A\u0435\u043A\u0442",
+          "Default": "body",
+          "Extension": null,
+          "Mesh": true,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "mechanisms"
+    },
+    {
+      "Key": "DUMPER_JOINTDECK_PIVOT",
+      "Name": "\u041A\u0443\u0437\u043E\u0432 \u0441\u0430\u043C\u043E\u0441\u0432\u0430\u043B\u044C\u043D\u043E\u0433\u043E \u043F\u0440\u0438\u0446\u0435\u043F\u0430",
+      "Group": "\u041C\u0435\u0445\u0430\u043D\u0438\u0437\u043C\u044B",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041E\u0431\u044A\u0435\u043A\u0442",
+          "Default": "body",
+          "Extension": null,
+          "Mesh": true,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "mechanisms"
+    },
+    {
+      "Key": "MIXER_DRUM",
+      "Name": "\u0411\u0430\u0440\u0430\u0431\u0430\u043D \u0431\u0435\u0442\u043E\u043D\u043E\u043C\u0435\u0448\u0430\u043B\u043A\u0438",
+      "Group": "\u041C\u0435\u0445\u0430\u043D\u0438\u0437\u043C\u044B",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041E\u0431\u044A\u0435\u043A\u0442",
+          "Default": "body",
+          "Extension": null,
+          "Mesh": true,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "A X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "A Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "A Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "B X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "B Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "B Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "mechanisms"
+    },
+    {
+      "Key": "MIXER_JOINTDRUM",
+      "Name": "\u0411\u0430\u0440\u0430\u0431\u0430\u043D \u043D\u0430 \u043F\u0440\u0438\u0446\u0435\u043F\u0435",
+      "Group": "\u041C\u0435\u0445\u0430\u043D\u0438\u0437\u043C\u044B",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041E\u0431\u044A\u0435\u043A\u0442",
+          "Default": "body",
+          "Extension": null,
+          "Mesh": true,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "A X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "A Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "A Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "B X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "B Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "B Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "mechanisms"
+    },
+    {
+      "Key": "PROPELER_STATIC",
+      "Name": "\u041D\u0435\u043F\u043E\u0434\u0432\u0438\u0436\u043D\u044B\u0439 \u0432\u0438\u043D\u0442",
+      "Group": "\u0410\u0432\u0438\u0430\u0446\u0438\u044F",
+      "Types": [
+        "VEHICLETYPE_AIRPLANE"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041C\u043E\u0434\u0435\u043B\u044C",
+          "Default": "",
+          "Extension": ".nmf",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "aviation"
+    },
+    {
+      "Key": "PROPELER_DYNAMIC",
+      "Name": "\u0412\u0438\u043D\u0442 \u043D\u0430 \u0432\u044B\u0441\u043E\u043A\u0438\u0445 \u043E\u0431\u043E\u0440\u043E\u0442\u0430\u0445",
+      "Group": "\u0410\u0432\u0438\u0430\u0446\u0438\u044F",
+      "Types": [
+        "VEHICLETYPE_AIRPLANE"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041C\u043E\u0434\u0435\u043B\u044C",
+          "Default": "",
+          "Extension": ".nmf",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "aviation"
+    },
+    {
+      "Key": "PROPELER_LOW",
+      "Name": "\u0412\u0438\u043D\u0442 \u043D\u0430 \u043D\u0438\u0437\u043A\u0438\u0445 \u043E\u0431\u043E\u0440\u043E\u0442\u0430\u0445",
+      "Group": "\u0410\u0432\u0438\u0430\u0446\u0438\u044F",
+      "Types": [
+        "VEHICLETYPE_AIRPLANE"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041C\u0430\u0441\u0448\u0442\u0430\u0431",
+          "Default": "1",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u041C\u043E\u0434\u0435\u043B\u044C",
+          "Default": "",
+          "Extension": ".nmf",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u041C\u0430\u0442\u0435\u0440\u0438\u0430\u043B",
+          "Default": "",
+          "Extension": ".mtl",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "aviation"
+    },
+    {
+      "Key": "PROPELER_POINT",
+      "Name": "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u0432\u0438\u043D\u0442\u0430",
+      "Group": "\u0410\u0432\u0438\u0430\u0446\u0438\u044F",
+      "Types": [
+        "VEHICLETYPE_AIRPLANE"
+      ],
+      "Arguments": [
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": true,
+      "Section": "aviation"
+    },
+    {
+      "Key": "PROPELER_HELICOPTER",
+      "Name": "\u0412\u0438\u043D\u0442 \u0432\u0435\u0440\u0442\u043E\u043B\u0451\u0442\u0430",
+      "Group": "\u0410\u0432\u0438\u0430\u0446\u0438\u044F",
+      "Types": [
+        "VEHICLETYPE_HELICOPTER"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041C\u0430\u0441\u0448\u0442\u0430\u0431",
+          "Default": "1",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u041D\u0435\u043F\u043E\u0434\u0432\u0438\u0436\u043D\u044B\u0439 \u0432\u0438\u043D\u0442",
+          "Default": "",
+          "Extension": ".nmf",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u0412\u044B\u0441\u043E\u043A\u0438\u0435 \u043E\u0431\u043E\u0440\u043E\u0442\u044B",
+          "Default": "",
+          "Extension": ".nmf",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u041D\u0438\u0437\u043A\u0438\u0435 \u043E\u0431\u043E\u0440\u043E\u0442\u044B",
+          "Default": "",
+          "Extension": ".nmf",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u041C\u0430\u0442\u0435\u0440\u0438\u0430\u043B",
+          "Default": "",
+          "Extension": ".mtl",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": true,
+      "Section": "aviation"
+    },
+    {
+      "Key": "PROPELER_HELICOPTER_POINT_DIR",
+      "Name": "\u041F\u043E\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u0438 \u043F\u043E\u0432\u043E\u0440\u043E\u0442 \u0432\u0438\u043D\u0442\u0430",
+      "Group": "\u0410\u0432\u0438\u0430\u0446\u0438\u044F",
+      "Types": [
+        "VEHICLETYPE_HELICOPTER"
+      ],
+      "Arguments": [
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 X, \u0440\u0430\u0434",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 Y, \u0440\u0430\u0434",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u041F\u043E\u0432\u043E\u0440\u043E\u0442 Z, \u0440\u0430\u0434",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": true,
+      "Section": "aviation"
+    },
+    {
+      "Key": "MOVEMENT_WHEEL_FRONT",
+      "Name": "\u041F\u0435\u0440\u0435\u0434\u043D\u044F\u044F \u043E\u043F\u043E\u0440\u0430 \u0448\u0430\u0441\u0441\u0438",
+      "Group": "\u0410\u0432\u0438\u0430\u0446\u0438\u044F",
+      "Types": [
+        "VEHICLETYPE_AIRPLANE",
+        "VEHICLETYPE_HELICOPTER"
+      ],
+      "Arguments": [
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "aviation"
+    },
+    {
+      "Key": "MOVEMENT_WHEEL_BACK",
+      "Name": "\u0417\u0430\u0434\u043D\u044F\u044F \u043E\u043F\u043E\u0440\u0430 \u0448\u0430\u0441\u0441\u0438",
+      "Group": "\u0410\u0432\u0438\u0430\u0446\u0438\u044F",
+      "Types": [
+        "VEHICLETYPE_AIRPLANE",
+        "VEHICLETYPE_HELICOPTER"
+      ],
+      "Arguments": [
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "aviation"
+    },
+    {
+      "Key": "DRIVER",
+      "Name": "\u0412\u043E\u0434\u0438\u0442\u0435\u043B\u044C",
+      "Group": "\u0422\u043E\u0447\u043A\u0438",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "points"
+    },
+    {
+      "Key": "DRIVER_JOINT",
+      "Name": "\u0412\u043E\u0434\u0438\u0442\u0435\u043B\u044C \u043F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0451\u043D\u043D\u043E\u0439 \u0447\u0430\u0441\u0442\u0438",
+      "Group": "\u0422\u043E\u0447\u043A\u0438",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "points"
+    },
+    {
+      "Key": "TRACKTOR_TOOL_POINT",
+      "Name": "\u041A\u0440\u0435\u043F\u043B\u0435\u043D\u0438\u0435 \u043D\u0430\u0432\u0435\u0441\u043D\u043E\u0433\u043E \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0430",
+      "Group": "\u0422\u043E\u0447\u043A\u0438",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "points"
+    },
+    {
+      "Key": "WATER_POINT",
+      "Name": "\u041F\u043E\u0436\u0430\u0440\u043D\u0430\u044F \u0441\u0442\u0440\u0443\u044F",
+      "Group": "\u0422\u043E\u0447\u043A\u0438",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": true,
+      "Section": "effects"
+    },
+    {
+      "Key": "SIREN_POINT",
+      "Name": "\u041F\u0440\u043E\u0431\u043B\u0435\u0441\u043A\u043E\u0432\u044B\u0439 \u043C\u0430\u044F\u043A",
+      "Group": "\u0422\u043E\u0447\u043A\u0438",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": true,
+      "Section": "lights"
+    },
+    {
+      "Key": "LIGHT_FORWARD",
+      "Name": "\u041F\u0435\u0440\u0435\u0434\u043D\u0438\u0439 \u043E\u0433\u043E\u043D\u044C",
+      "Group": "\u0422\u043E\u0447\u043A\u0438",
+      "Types": [],
+      "Arguments": [
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": true,
+      "Section": "lights"
+    },
+    {
+      "Key": "LIGHT_BACKWARD",
+      "Name": "\u0417\u0430\u0434\u043D\u0438\u0439 \u043E\u0433\u043E\u043D\u044C",
+      "Group": "\u0422\u043E\u0447\u043A\u0438",
+      "Types": [],
+      "Arguments": [
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": true,
+      "Section": "lights"
+    },
+    {
+      "Key": "LIGHT_BLINKER",
+      "Name": "\u041F\u043E\u0432\u043E\u0440\u043E\u0442\u043D\u0438\u043A",
+      "Group": "\u0422\u043E\u0447\u043A\u0438",
+      "Types": [],
+      "Arguments": [
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": true,
+      "Section": "lights"
+    },
+    {
+      "Key": "LIGHT_BLINKER_TRAILER",
+      "Name": "\u041F\u043E\u0432\u043E\u0440\u043E\u0442\u043D\u0438\u043A \u043F\u0440\u0438\u0446\u0435\u043F\u0430",
+      "Group": "\u0422\u043E\u0447\u043A\u0438",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": true,
+      "Section": "lights"
+    },
+    {
+      "Key": "PARTICLE_JETPOINT",
+      "Name": "\u0420\u0435\u0430\u043A\u0442\u0438\u0432\u043D\u043E\u0435 \u0441\u043E\u043F\u043B\u043E",
+      "Group": "\u0410\u0432\u0438\u0430\u0446\u0438\u044F",
+      "Types": [
+        "VEHICLETYPE_AIRPLANE"
+      ],
+      "Arguments": [
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": true,
+      "Section": "effects"
+    },
+    {
+      "Key": "PARTICLE_MOVEMENT_JOINT",
+      "Name": "\u0414\u044B\u043C \u043F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0451\u043D\u043D\u043E\u0439 \u0447\u0430\u0441\u0442\u0438",
+      "Group": "\u0422\u043E\u0447\u043A\u0438",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u042D\u0444\u0444\u0435\u043A\u0442",
+          "Default": "vehicle_medium",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": true,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": true,
+      "Section": "effects"
+    },
+    {
+      "Key": "HORSE",
+      "Name": "\u041B\u043E\u0448\u0430\u0434\u044C",
+      "Group": "\u041A\u043E\u043D\u043D\u0430\u044F \u0442\u044F\u0433\u0430",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u0423\u043F\u0440\u044F\u0436\u044C",
+          "Default": "DLC3_h_single",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": true,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": true,
+      "Section": "horses"
+    },
+    {
+      "Key": "HORSE_MATERIAL",
+      "Name": "\u041C\u0430\u0442\u0435\u0440\u0438\u0430\u043B \u043B\u043E\u0448\u0430\u0434\u0438",
+      "Group": "\u041A\u043E\u043D\u043D\u0430\u044F \u0442\u044F\u0433\u0430",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041C\u0430\u0442\u0435\u0440\u0438\u0430\u043B",
+          "Default": "",
+          "Extension": ".mtl",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "horses"
+    },
+    {
+      "Key": "SINGLE_HORSE_POWER",
+      "Name": "\u041C\u043E\u0449\u043D\u043E\u0441\u0442\u044C \u043E\u0434\u043D\u043E\u0439 \u043B\u043E\u0448\u0430\u0434\u0438",
+      "Group": "\u041A\u043E\u043D\u043D\u0430\u044F \u0442\u044F\u0433\u0430",
+      "Types": [
+        "VEHICLETYPE_ROAD"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041C\u043E\u0449\u043D\u043E\u0441\u0442\u044C",
+          "Default": "2",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "horses"
+    },
+    {
+      "Key": "CARGO_PLATFORM",
+      "Name": "\u0413\u0440\u0443\u0437\u043E\u0432\u0430\u044F \u043F\u043B\u0430\u0442\u0444\u043E\u0440\u043C\u0430 \u0432\u0435\u0440\u0442\u043E\u043B\u0451\u0442\u0430",
+      "Group": "\u0410\u0432\u0438\u0430\u0446\u0438\u044F",
+      "Types": [
+        "VEHICLETYPE_HELICOPTER"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041C\u043E\u0434\u0435\u043B\u044C",
+          "Default": "",
+          "Extension": ".nmf",
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": true,
+          "UiScale": 1
+        },
+        {
+          "Label": "",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": true,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "aviation"
+    },
+    {
+      "Key": "TUNNELING_TEETH",
+      "Name": "\u0420\u0435\u0436\u0443\u0449\u0430\u044F \u0433\u043E\u043B\u043E\u0432\u043A\u0430",
+      "Group": "\u041F\u043E\u0435\u0437\u0434\u0430",
+      "Types": [
+        "VEHICLETYPE_RAIL_LOCOMOTIVE",
+        "VEHICLETYPE_RAIL_VAGON"
+      ],
+      "Arguments": [],
+      "Repeated": false,
+      "Section": "rail"
+    },
+    {
+      "Key": "TRAIN_FORWARD_AXIS_DISTANCE",
+      "Name": "\u041F\u0435\u0440\u0435\u0434\u043D\u044F\u044F \u043E\u0441\u044C",
+      "Group": "\u041F\u043E\u0435\u0437\u0434\u0430",
+      "Types": [
+        "VEHICLETYPE_RAIL_LOCOMOTIVE",
+        "VEHICLETYPE_RAIL_VAGON"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u0420\u0430\u0441\u0441\u0442\u043E\u044F\u043D\u0438\u0435, \u043C",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "rail"
+    },
+    {
+      "Key": "TRAIN_BACKWARD_AXIS_DISTANCE",
+      "Name": "\u0417\u0430\u0434\u043D\u044F\u044F \u043E\u0441\u044C",
+      "Group": "\u041F\u043E\u0435\u0437\u0434\u0430",
+      "Types": [
+        "VEHICLETYPE_RAIL_LOCOMOTIVE",
+        "VEHICLETYPE_RAIL_VAGON"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u0420\u0430\u0441\u0441\u0442\u043E\u044F\u043D\u0438\u0435, \u043C",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "rail"
+    },
+    {
+      "Key": "TRAIN_BBOX_FORWARD_CORRECTION",
+      "Name": "\u041F\u0435\u0440\u0435\u0434\u043D\u044F\u044F \u0433\u0440\u0430\u043D\u0438\u0446\u0430 \u0441\u0442\u044B\u043A\u043E\u0432\u043A\u0438",
+      "Group": "\u041F\u043E\u0435\u0437\u0434\u0430",
+      "Types": [
+        "VEHICLETYPE_RAIL_LOCOMOTIVE",
+        "VEHICLETYPE_RAIL_VAGON"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430, \u043C",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "rail"
+    },
+    {
+      "Key": "TRAIN_BBOX_BACKWARD_CORRECTION",
+      "Name": "\u0417\u0430\u0434\u043D\u044F\u044F \u0433\u0440\u0430\u043D\u0438\u0446\u0430 \u0441\u0442\u044B\u043A\u043E\u0432\u043A\u0438",
+      "Group": "\u041F\u043E\u0435\u0437\u0434\u0430",
+      "Types": [
+        "VEHICLETYPE_RAIL_LOCOMOTIVE",
+        "VEHICLETYPE_RAIL_VAGON"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041F\u043E\u043F\u0440\u0430\u0432\u043A\u0430, \u043C",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "rail"
+    },
+    {
+      "Key": "PREVIEW_OFFSET",
+      "Name": "\u0421\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u043F\u0440\u0435\u0432\u044C\u044E \u043A\u0430\u0431\u0438\u043D\u044B",
+      "Group": "\u041A\u0430\u0431\u0438\u043D\u044B",
+      "Types": [
+        "VEHICLETYPE_CABIN"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u0421\u043C\u0435\u0449\u0435\u043D\u0438\u0435",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "cabins"
+    },
+    {
+      "Key": "PREVIEW_ZOOM",
+      "Name": "\u041C\u0430\u0441\u0448\u0442\u0430\u0431 \u043F\u0440\u0435\u0432\u044C\u044E \u043A\u0430\u0431\u0438\u043D\u044B",
+      "Group": "\u041A\u0430\u0431\u0438\u043D\u044B",
+      "Types": [
+        "VEHICLETYPE_CABIN"
+      ],
+      "Arguments": [
+        {
+          "Label": "\u041C\u0430\u0441\u0448\u0442\u0430\u0431",
+          "Default": "1",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": false,
+      "Section": "cabins"
+    },
+    {
+      "Key": "WAVEPOINTFRONT",
+      "Name": "\u041D\u043E\u0441\u043E\u0432\u0430\u044F \u0432\u043E\u043B\u043D\u0430",
+      "Group": "\u0421\u0443\u0434\u0430",
+      "Types": [
+        "VEHICLETYPE_SHIP"
+      ],
+      "Arguments": [
+        {
+          "Label": "",
+          "Default": "position",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": true,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "",
+          "Default": "coordstep",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": true,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u0428\u0430\u0433 \u0432\u043E\u043B\u043D\u044B",
+          "Default": "0.001",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1000
+        },
+        {
+          "Label": "",
+          "Default": "bumpfactor",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": true,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u0412\u044B\u0441\u043E\u0442\u0430 \u0432\u043E\u043B\u043D\u044B",
+          "Default": "1",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "",
+          "Default": "srcsize",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": true,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u041D\u0430\u0447\u0430\u043B\u044C\u043D\u044B\u0439 \u0440\u0430\u0437\u043C\u0435\u0440",
+          "Default": "1",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "",
+          "Default": "dstsize",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": true,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u041A\u043E\u043D\u0435\u0447\u043D\u044B\u0439 \u0440\u0430\u0437\u043C\u0435\u0440",
+          "Default": "10",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "",
+          "Default": "maxtime",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": true,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u0412\u0440\u0435\u043C\u044F \u0436\u0438\u0437\u043D\u0438, \u0441",
+          "Default": "10",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": true,
+      "Section": "waves"
+    },
+    {
+      "Key": "WAVEPOINTBACK",
+      "Name": "\u041A\u043E\u0440\u043C\u043E\u0432\u0430\u044F \u0432\u043E\u043B\u043D\u0430",
+      "Group": "\u0421\u0443\u0434\u0430",
+      "Types": [
+        "VEHICLETYPE_SHIP"
+      ],
+      "Arguments": [
+        {
+          "Label": "",
+          "Default": "position",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": true,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "X",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Y",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "Z",
+          "Default": "0",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "",
+          "Default": "coordstep",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": true,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u0428\u0430\u0433 \u0432\u043E\u043B\u043D\u044B",
+          "Default": "0.001",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1000
+        },
+        {
+          "Label": "",
+          "Default": "bumpfactor",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": true,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u0412\u044B\u0441\u043E\u0442\u0430 \u0432\u043E\u043B\u043D\u044B",
+          "Default": "1",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "",
+          "Default": "srcsize",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": true,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u041D\u0430\u0447\u0430\u043B\u044C\u043D\u044B\u0439 \u0440\u0430\u0437\u043C\u0435\u0440",
+          "Default": "1",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "",
+          "Default": "dstsize",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": true,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u041A\u043E\u043D\u0435\u0447\u043D\u044B\u0439 \u0440\u0430\u0437\u043C\u0435\u0440",
+          "Default": "10",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "",
+          "Default": "maxtime",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": true,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        },
+        {
+          "Label": "\u0412\u0440\u0435\u043C\u044F \u0436\u0438\u0437\u043D\u0438, \u0441",
+          "Default": "10",
+          "Extension": null,
+          "Mesh": false,
+          "Fixed": false,
+          "Text": false,
+          "Hidden": false,
+          "UiScale": 1
+        }
+      ],
+      "Repeated": true,
+      "Section": "waves"
+    }
+  ],
+  "AnimationActions": [
+    {
+      "Key": "Preview",
+      "Label": "\u0422\u043E\u043B\u044C\u043A\u043E \u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440",
+      "Attached": false,
+      "ApplicableTypes": [
+        "VEHICLETYPE_AIRPLANE",
+        "VEHICLETYPE_CABIN",
+        "VEHICLETYPE_HELICOPTER",
+        "VEHICLETYPE_RAIL_LOCOMOTIVE",
+        "VEHICLETYPE_RAIL_VAGON",
+        "VEHICLETYPE_ROAD",
+        "VEHICLETYPE_SHIP"
+      ]
+    },
+    {
+      "Key": "WORKING_ANIM",
+      "Label": "\u0420\u0430\u0431\u043E\u0442\u0430 \u043C\u0435\u0445\u0430\u043D\u0438\u0437\u043C\u0430",
+      "Attached": false,
+      "ApplicableTypes": [
+        "VEHICLETYPE_ROAD"
+      ]
+    },
+    {
+      "Key": "LANDING_GEAR_ANIM",
+      "Label": "\u0412\u044B\u043F\u0443\u0441\u043A \u0438 \u0443\u0431\u043E\u0440\u043A\u0430 \u0448\u0430\u0441\u0441\u0438",
+      "Attached": true,
+      "ApplicableTypes": [
+        "VEHICLETYPE_AIRPLANE"
+      ]
+    },
+    {
+      "Key": "MOVEMENT_ANIM",
+      "Label": "\u0414\u0432\u0438\u0436\u0435\u043D\u0438\u0435 \u043B\u043E\u043A\u043E\u043C\u043E\u0442\u0438\u0432\u0430",
+      "Attached": true,
+      "ApplicableTypes": [
+        "VEHICLETYPE_RAIL_LOCOMOTIVE",
+        "VEHICLETYPE_RAIL_VAGON"
+      ]
+    },
+    {
+      "Key": "GARBAGE_LOADING_ANIM",
+      "Label": "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u043C\u0443\u0441\u043E\u0440\u043E\u0432\u043E\u0437\u0430",
+      "Attached": true,
+      "ApplicableTypes": [
+        "VEHICLETYPE_ROAD"
+      ]
+    },
+    {
+      "Key": "GARBAGE_UNLOADING_ANIM",
+      "Label": "\u0412\u044B\u0433\u0440\u0443\u0437\u043A\u0430 \u043C\u0443\u0441\u043E\u0440\u043E\u0432\u043E\u0437\u0430",
+      "Attached": true,
+      "ApplicableTypes": [
+        "VEHICLETYPE_ROAD"
+      ]
+    },
+    {
+      "Key": "GARBAGE_UNLOADING_ANIM2",
+      "Label": "\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u0430\u044F \u0440\u0430\u0437\u0433\u0440\u0443\u0437\u043A\u0430 \u043C\u0443\u0441\u043E\u0440\u043E\u0432\u043E\u0437\u0430",
+      "Attached": true,
+      "ApplicableTypes": [
+        "VEHICLETYPE_ROAD"
+      ]
+    }
+  ],
+  "ProfilesRu": [
+    {
+      "Id": "VEHICLETYPE_AIRPLANE|",
+      "Type": "VEHICLETYPE_AIRPLANE",
+      "Transport": "",
+      "Flags": [],
+      "Name": "\u0421\u0430\u043C\u043E\u043B\u0451\u0442",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_AIRPLANE|RESOURCE_TRANSPORT_GENERAL",
+      "Type": "VEHICLETYPE_AIRPLANE",
+      "Transport": "RESOURCE_TRANSPORT_GENERAL",
+      "Flags": [],
+      "Name": "\u0421\u0430\u043C\u043E\u043B\u0451\u0442 / \u0421\u043C\u0435\u0448\u0430\u043D\u043D\u044B\u0435 \u0433\u0440\u0443\u0437\u044B",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_AIRPLANE|RESOURCE_TRANSPORT_PASSANGER",
+      "Type": "VEHICLETYPE_AIRPLANE",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [],
+      "Name": "\u0421\u0430\u043C\u043E\u043B\u0451\u0442",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN|RESOURCE_TRANSPORT_GENERAL|CABIN_HEAVY",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "RESOURCE_TRANSPORT_GENERAL",
+      "Flags": [
+        "CABIN_HEAVY"
+      ],
+      "Name": "\u0422\u044F\u0436\u0451\u043B\u0430\u044F \u043A\u0430\u0431\u0438\u043D\u0430 / \u0421\u043C\u0435\u0448\u0430\u043D\u043D\u044B\u0435 \u0433\u0440\u0443\u0437\u044B",
+      "Defaults": {
+        "CABIN_HEAVY": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN|RESOURCE_TRANSPORT_GENERAL|CABIN_LIGHT",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "RESOURCE_TRANSPORT_GENERAL",
+      "Flags": [
+        "CABIN_LIGHT"
+      ],
+      "Name": "\u041B\u0451\u0433\u043A\u0430\u044F \u043A\u0430\u0431\u0438\u043D\u0430 / \u0421\u043C\u0435\u0448\u0430\u043D\u043D\u044B\u0435 \u0433\u0440\u0443\u0437\u044B",
+      "Defaults": {
+        "CABIN_LIGHT": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN|RESOURCE_TRANSPORT_GRAVEL|CABIN_HEAVY",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "RESOURCE_TRANSPORT_GRAVEL",
+      "Flags": [
+        "CABIN_HEAVY"
+      ],
+      "Name": "\u0422\u044F\u0436\u0451\u043B\u0430\u044F \u043A\u0430\u0431\u0438\u043D\u0430 / \u0421\u044B\u043F\u0443\u0447\u0438\u0435 \u0433\u0440\u0443\u0437\u044B",
+      "Defaults": {
+        "CABIN_HEAVY": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN|RESOURCE_TRANSPORT_GRAVEL|CABIN_LIGHT",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "RESOURCE_TRANSPORT_GRAVEL",
+      "Flags": [
+        "CABIN_LIGHT"
+      ],
+      "Name": "\u041B\u0451\u0433\u043A\u0430\u044F \u043A\u0430\u0431\u0438\u043D\u0430 / \u0421\u044B\u043F\u0443\u0447\u0438\u0435 \u0433\u0440\u0443\u0437\u044B",
+      "Defaults": {
+        "CABIN_LIGHT": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN|RESOURCE_TRANSPORT_PASSANGER|CABIN_HEAVY",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "CABIN_HEAVY"
+      ],
+      "Name": "\u0422\u044F\u0436\u0451\u043B\u0430\u044F \u043A\u0430\u0431\u0438\u043D\u0430",
+      "Defaults": {
+        "CABIN_HEAVY": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN|RESOURCE_TRANSPORT_PASSANGER|CABIN_LIGHT",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "CABIN_LIGHT"
+      ],
+      "Name": "\u041B\u0451\u0433\u043A\u0430\u044F \u043A\u0430\u0431\u0438\u043D\u0430",
+      "Defaults": {
+        "CABIN_LIGHT": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN|RESOURCE_TRANSPORT_WASTE|CABIN_HEAVY",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "RESOURCE_TRANSPORT_WASTE",
+      "Flags": [
+        "CABIN_HEAVY"
+      ],
+      "Name": "\u0422\u044F\u0436\u0451\u043B\u0430\u044F \u043A\u0430\u0431\u0438\u043D\u0430 / \u041E\u0442\u0445\u043E\u0434\u044B",
+      "Defaults": {
+        "CABIN_HEAVY": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN|RESOURCE_TRANSPORT_WASTE|CABIN_LIGHT",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "RESOURCE_TRANSPORT_WASTE",
+      "Flags": [
+        "CABIN_LIGHT"
+      ],
+      "Name": "\u041B\u0451\u0433\u043A\u0430\u044F \u043A\u0430\u0431\u0438\u043D\u0430 / \u041E\u0442\u0445\u043E\u0434\u044B",
+      "Defaults": {
+        "CABIN_LIGHT": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN||CABIN_HEAVY",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "",
+      "Flags": [
+        "CABIN_HEAVY"
+      ],
+      "Name": "\u0422\u044F\u0436\u0451\u043B\u0430\u044F \u043A\u0430\u0431\u0438\u043D\u0430",
+      "Defaults": {
+        "CABIN_HEAVY": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN||CABIN_LIGHT",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "",
+      "Flags": [
+        "CABIN_LIGHT"
+      ],
+      "Name": "\u041B\u0451\u0433\u043A\u0430\u044F \u043A\u0430\u0431\u0438\u043D\u0430",
+      "Defaults": {
+        "CABIN_LIGHT": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_HELICOPTER|",
+      "Type": "VEHICLETYPE_HELICOPTER",
+      "Transport": "",
+      "Flags": [],
+      "Name": "\u0412\u0435\u0440\u0442\u043E\u043B\u0451\u0442",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_HELICOPTER|RESOURCE_TRANSPORT_GENERAL",
+      "Type": "VEHICLETYPE_HELICOPTER",
+      "Transport": "RESOURCE_TRANSPORT_GENERAL",
+      "Flags": [],
+      "Name": "\u0412\u0435\u0440\u0442\u043E\u043B\u0451\u0442 / \u0421\u043C\u0435\u0448\u0430\u043D\u043D\u044B\u0435 \u0433\u0440\u0443\u0437\u044B",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_HELICOPTER|RESOURCE_TRANSPORT_PASSANGER",
+      "Type": "VEHICLETYPE_HELICOPTER",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [],
+      "Name": "\u0412\u0435\u0440\u0442\u043E\u043B\u0451\u0442",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE|RESOURCE_TRANSPORT_PASSANGER",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [],
+      "Name": "\u041B\u043E\u043A\u043E\u043C\u043E\u0442\u0438\u0432",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_LOCOMOTIVE_STEAM|TRAINGROUP_MOTORVAGON",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_LOCOMOTIVE_STEAM",
+        "TRAINGROUP_MOTORVAGON"
+      ],
+      "Name": "\u041F\u0430\u0440\u043E\u0432\u043E\u0437",
+      "Defaults": {
+        "TRAINGROUP_LOCOMOTIVE_STEAM": "",
+        "TRAINGROUP_MOTORVAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_METRO",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_METRO"
+      ],
+      "Name": "\u041C\u0435\u0442\u0440\u043E",
+      "Defaults": {
+        "TRAINGROUP_METRO": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_MOTORVAGON",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_MOTORVAGON"
+      ],
+      "Name": "\u041C\u043E\u0442\u043E\u0440\u0432\u0430\u0433\u043E\u043D",
+      "Defaults": {
+        "TRAINGROUP_MOTORVAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_TRAINSET",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_TRAINSET"
+      ],
+      "Name": "\u041F\u043E\u0435\u0437\u0434",
+      "Defaults": {
+        "TRAINGROUP_TRAINSET": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_TRAM",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_TRAM"
+      ],
+      "Name": "\u0422\u0440\u0430\u043C\u0432\u0430\u0439",
+      "Defaults": {
+        "TRAINGROUP_TRAM": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE||SKILL_CONSTRUCTION_RAIL_CRANE2|TRAINGROUP_LOCOMOTIVE_STEAM|TRAINGROUP_TRACKBUILDER",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_RAIL_CRANE2",
+        "TRAINGROUP_LOCOMOTIVE_STEAM",
+        "TRAINGROUP_TRACKBUILDER"
+      ],
+      "Name": "\u0416\u0435\u043B\u0435\u0437\u043D\u043E\u0434\u043E\u0440\u043E\u0436\u043D\u044B\u0439 \u043A\u0440\u0430\u043D",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_RAIL_CRANE2": "28 66 0.7",
+        "TRAINGROUP_LOCOMOTIVE_STEAM": "",
+        "TRAINGROUP_TRACKBUILDER": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE||SKILL_CONSTRUCTION_RAIL_CRANE2|TRAINGROUP_TRACKBUILDER_STEAM",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_RAIL_CRANE2",
+        "TRAINGROUP_TRACKBUILDER_STEAM"
+      ],
+      "Name": "\u0416\u0435\u043B\u0435\u0437\u043D\u043E\u0434\u043E\u0440\u043E\u0436\u043D\u044B\u0439 \u043A\u0440\u0430\u043D",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_RAIL_CRANE2": "210 210 0.6",
+        "TRAINGROUP_TRACKBUILDER_STEAM": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE||SKILL_CONSTRUCTION_RAIL_CRANE|TRAINGROUP_TRACKBUILDER",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_RAIL_CRANE",
+        "TRAINGROUP_TRACKBUILDER"
+      ],
+      "Name": "\u0416\u0435\u043B\u0435\u0437\u043D\u043E\u0434\u043E\u0440\u043E\u0436\u043D\u044B\u0439 \u043A\u0440\u0430\u043D",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_RAIL_CRANE": "85 70",
+        "TRAINGROUP_TRACKBUILDER": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE||SKILL_CONSTRUCTION_RAIL_TRACK_LAYER|TRAINGROUP_TRACKBUILDER",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_RAIL_TRACK_LAYER",
+        "TRAINGROUP_TRACKBUILDER"
+      ],
+      "Name": "\u041F\u0443\u0442\u0435\u0443\u043A\u043B\u0430\u0434\u0447\u0438\u043A",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_RAIL_TRACK_LAYER": "175 30 5",
+        "TRAINGROUP_TRACKBUILDER": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE||SKILL_CONSTRUCTION_RAIL_TUNNEL_BORING|TRAINGROUP_TRACKBUILDER",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_RAIL_TUNNEL_BORING",
+        "TRAINGROUP_TRACKBUILDER"
+      ],
+      "Name": "\u0422\u043E\u043D\u043D\u0435\u043B\u0435\u043F\u0440\u043E\u0445\u043E\u0434\u0447\u0435\u0441\u043A\u0430\u044F \u043C\u0430\u0448\u0438\u043D\u0430",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_RAIL_TUNNEL_BORING": "260",
+        "TRAINGROUP_TRACKBUILDER": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE||TRAINGROUP_LOCOMOTIVE",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "",
+      "Flags": [
+        "TRAINGROUP_LOCOMOTIVE"
+      ],
+      "Name": "\u041B\u043E\u043A\u043E\u043C\u043E\u0442\u0438\u0432",
+      "Defaults": {
+        "TRAINGROUP_LOCOMOTIVE": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE||TRAINGROUP_LOCOMOTIVE_STEAM",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "",
+      "Flags": [
+        "TRAINGROUP_LOCOMOTIVE_STEAM"
+      ],
+      "Name": "\u041F\u0430\u0440\u043E\u0432\u043E\u0437",
+      "Defaults": {
+        "TRAINGROUP_LOCOMOTIVE_STEAM": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "",
+      "Flags": [],
+      "Name": "\u0412\u0430\u0433\u043E\u043D",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_CEMENT|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_CEMENT",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "\u0412\u0430\u0433\u043E\u043D / \u0426\u0435\u043C\u0435\u043D\u0442",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_COOLER|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_COOLER",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "\u0412\u0430\u0433\u043E\u043D / \u0420\u0435\u0444\u0440\u0438\u0436\u0435\u0440\u0430\u0442\u043E\u0440",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_COVERED|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_COVERED",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "\u0412\u0430\u0433\u043E\u043D / \u041A\u0440\u044B\u0442\u044B\u0439 \u043A\u0443\u0437\u043E\u0432",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_GRAVEL|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_GRAVEL",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "\u0412\u0430\u0433\u043E\u043D / \u0421\u044B\u043F\u0443\u0447\u0438\u0435 \u0433\u0440\u0443\u0437\u044B",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_LIVESTOCK|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_LIVESTOCK",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "\u0412\u0430\u0433\u043E\u043D / \u0421\u043A\u043E\u0442",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_OIL|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_OIL",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "\u0412\u0430\u0433\u043E\u043D / \u041D\u0435\u0444\u0442\u0435\u043F\u0440\u043E\u0434\u0443\u043A\u0442\u044B",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_OPEN|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_OPEN",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "\u0412\u0430\u0433\u043E\u043D / \u041E\u0442\u043A\u0440\u044B\u0442\u044B\u0439 \u043A\u0443\u0437\u043E\u0432",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_PASSANGER",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [],
+      "Name": "\u0412\u0430\u0433\u043E\u043D",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_METRO",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_METRO"
+      ],
+      "Name": "\u041C\u0435\u0442\u0440\u043E",
+      "Defaults": {
+        "TRAINGROUP_METRO": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_TRAINSET",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_TRAINSET"
+      ],
+      "Name": "\u041F\u043E\u0435\u0437\u0434",
+      "Defaults": {
+        "TRAINGROUP_TRAINSET": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_TRAM",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_TRAM"
+      ],
+      "Name": "\u0422\u0440\u0430\u043C\u0432\u0430\u0439",
+      "Defaults": {
+        "TRAINGROUP_TRAM": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "\u0412\u0430\u0433\u043E\u043D",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_SEWAGE|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_SEWAGE",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "\u0412\u0430\u0433\u043E\u043D / \u0421\u0442\u043E\u0447\u043D\u044B\u0435 \u0432\u043E\u0434\u044B",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_WASTE|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_WASTE",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "\u0412\u0430\u0433\u043E\u043D / \u041E\u0442\u0445\u043E\u0434\u044B",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_WATER|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_WATER",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "\u0412\u0430\u0433\u043E\u043D / \u0412\u043E\u0434\u0430",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON||TRAINGROUP_LOCOMOTIVE",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "",
+      "Flags": [
+        "TRAINGROUP_LOCOMOTIVE"
+      ],
+      "Name": "\u041B\u043E\u043A\u043E\u043C\u043E\u0442\u0438\u0432",
+      "Defaults": {
+        "TRAINGROUP_LOCOMOTIVE": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON||TRAINGROUP_TRACKBUILDER",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "",
+      "Flags": [
+        "TRAINGROUP_TRACKBUILDER"
+      ],
+      "Name": "\u041F\u0443\u0442\u0435\u0443\u043A\u043B\u0430\u0434\u0447\u0438\u043A",
+      "Defaults": {
+        "TRAINGROUP_TRACKBUILDER": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON||TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "\u0412\u0430\u0433\u043E\u043D",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [],
+      "Name": "\u0413\u0440\u0443\u0437\u043E\u0432\u0438\u043A",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_CEMENT",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_CEMENT",
+      "Flags": [],
+      "Name": "\u0413\u0440\u0443\u0437\u043E\u0432\u0438\u043A / \u0426\u0435\u043C\u0435\u043D\u0442",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_CONCRETE",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_CONCRETE",
+      "Flags": [],
+      "Name": "\u0413\u0440\u0443\u0437\u043E\u0432\u0438\u043A / \u0411\u0435\u0442\u043E\u043D",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_COOLER",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_COOLER",
+      "Flags": [],
+      "Name": "\u0413\u0440\u0443\u0437\u043E\u0432\u0438\u043A / \u0420\u0435\u0444\u0440\u0438\u0436\u0435\u0440\u0430\u0442\u043E\u0440",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_COVERED",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_COVERED",
+      "Flags": [],
+      "Name": "\u0413\u0440\u0443\u0437\u043E\u0432\u0438\u043A / \u041A\u0440\u044B\u0442\u044B\u0439 \u043A\u0443\u0437\u043E\u0432",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_GENERAL|SKILL_FORKLIFT",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_GENERAL",
+      "Flags": [
+        "SKILL_FORKLIFT"
+      ],
+      "Name": "\u041F\u043E\u0433\u0440\u0443\u0437\u0447\u0438\u043A / \u0421\u043C\u0435\u0448\u0430\u043D\u043D\u044B\u0435 \u0433\u0440\u0443\u0437\u044B",
+      "Defaults": {
+        "SKILL_FORKLIFT": "1"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_GRAVEL",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_GRAVEL",
+      "Flags": [],
+      "Name": "\u0413\u0440\u0443\u0437\u043E\u0432\u0438\u043A / \u0421\u044B\u043F\u0443\u0447\u0438\u0435 \u0433\u0440\u0443\u0437\u044B",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_LIVESTOCK",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_LIVESTOCK",
+      "Flags": [],
+      "Name": "\u0413\u0440\u0443\u0437\u043E\u0432\u0438\u043A / \u0421\u043A\u043E\u0442",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_OIL",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_OIL",
+      "Flags": [],
+      "Name": "\u0413\u0440\u0443\u0437\u043E\u0432\u0438\u043A / \u041D\u0435\u0444\u0442\u0435\u043F\u0440\u043E\u0434\u0443\u043A\u0442\u044B",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_OPEN",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_OPEN",
+      "Flags": [],
+      "Name": "\u0413\u0440\u0443\u0437\u043E\u0432\u0438\u043A / \u041E\u0442\u043A\u0440\u044B\u0442\u044B\u0439 \u043A\u0443\u0437\u043E\u0432",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_OPEN|SKILL_WOODCARRING",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_OPEN",
+      "Flags": [
+        "SKILL_WOODCARRING"
+      ],
+      "Name": "\u041B\u0435\u0441\u043E\u0432\u043E\u0437 / \u041E\u0442\u043A\u0440\u044B\u0442\u044B\u0439 \u043A\u0443\u0437\u043E\u0432",
+      "Defaults": {
+        "SKILL_WOODCARRING": "29"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_PASSANGER",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [],
+      "Name": "\u0410\u0432\u0442\u043E\u0431\u0443\u0441",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_PASSANGER|SKILL_AMBULANCE",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "SKILL_AMBULANCE"
+      ],
+      "Name": "\u0421\u043A\u043E\u0440\u0430\u044F \u043F\u043E\u043C\u043E\u0449\u044C",
+      "Defaults": {
+        "SKILL_AMBULANCE": "1"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_PASSANGER|SKILL_PERSONAL",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "SKILL_PERSONAL"
+      ],
+      "Name": "\u041B\u0435\u0433\u043A\u043E\u0432\u043E\u0439 \u0430\u0432\u0442\u043E\u043C\u043E\u0431\u0438\u043B\u044C",
+      "Defaults": {
+        "SKILL_PERSONAL": "1"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_PASSANGER|SKILL_POLICEBUS",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "SKILL_POLICEBUS"
+      ],
+      "Name": "\u041F\u043E\u043B\u0438\u0446\u0435\u0439\u0441\u043A\u0438\u0439 \u0430\u0432\u0442\u043E\u0431\u0443\u0441",
+      "Defaults": {
+        "SKILL_POLICEBUS": "1"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_PASSANGER|SKILL_POLICECAR",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "SKILL_POLICECAR"
+      ],
+      "Name": "\u041F\u043E\u043B\u0438\u0446\u0435\u0439\u0441\u043A\u0430\u044F \u043C\u0430\u0448\u0438\u043D\u0430",
+      "Defaults": {
+        "SKILL_POLICECAR": "1"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_SEWAGE",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_SEWAGE",
+      "Flags": [],
+      "Name": "\u0413\u0440\u0443\u0437\u043E\u0432\u0438\u043A / \u0421\u0442\u043E\u0447\u043D\u044B\u0435 \u0432\u043E\u0434\u044B",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_WASTE",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_WASTE",
+      "Flags": [],
+      "Name": "\u0413\u0440\u0443\u0437\u043E\u0432\u0438\u043A / \u041E\u0442\u0445\u043E\u0434\u044B",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_WASTE|SKILL_WASTE_CONTAINER_BIG",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_WASTE",
+      "Flags": [
+        "SKILL_WASTE_CONTAINER_BIG"
+      ],
+      "Name": "\u041C\u0443\u0441\u043E\u0440\u043E\u0432\u043E\u0437 \u0431\u043E\u043B\u044C\u0448\u0438\u0445 \u043A\u043E\u043D\u0442\u0435\u0439\u043D\u0435\u0440\u043E\u0432 / \u041E\u0442\u0445\u043E\u0434\u044B",
+      "Defaults": {
+        "SKILL_WASTE_CONTAINER_BIG": "1"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_WASTE|SKILL_WASTE_CONTAINER_SMALL",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_WASTE",
+      "Flags": [
+        "SKILL_WASTE_CONTAINER_SMALL"
+      ],
+      "Name": "\u041C\u0443\u0441\u043E\u0440\u043E\u0432\u043E\u0437 / \u041E\u0442\u0445\u043E\u0434\u044B",
+      "Defaults": {
+        "SKILL_WASTE_CONTAINER_SMALL": "1"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_WATER",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_WATER",
+      "Flags": [],
+      "Name": "\u0413\u0440\u0443\u0437\u043E\u0432\u0438\u043A / \u0412\u043E\u0434\u0430",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_CONSTRUCTION_ASPHALT_LAYING",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_ASPHALT_LAYING"
+      ],
+      "Name": "\u0410\u0441\u0444\u0430\u043B\u044C\u0442\u043E\u0443\u043A\u043B\u0430\u0434\u0447\u0438\u043A",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_ASPHALT_LAYING": "45"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_CONSTRUCTION_BULLDOZER",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_BULLDOZER"
+      ],
+      "Name": "\u0411\u0443\u043B\u044C\u0434\u043E\u0437\u0435\u0440",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_BULLDOZER": "58"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_CONSTRUCTION_BULLDOZER|SKILL_CONSTRUCTION_GROUNDWORKS|SKILL_GRAVELMINING",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_BULLDOZER",
+        "SKILL_CONSTRUCTION_GROUNDWORKS",
+        "SKILL_GRAVELMINING"
+      ],
+      "Name": "\u0411\u0443\u043B\u044C\u0434\u043E\u0437\u0435\u0440",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_BULLDOZER": "12",
+        "SKILL_CONSTRUCTION_GROUNDWORKS": "15",
+        "SKILL_GRAVELMINING": "21"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_CONSTRUCTION_BULLDOZER|SKILL_GRAVELMINING",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_BULLDOZER",
+        "SKILL_GRAVELMINING"
+      ],
+      "Name": "\u0411\u0443\u043B\u044C\u0434\u043E\u0437\u0435\u0440",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_BULLDOZER": "9",
+        "SKILL_GRAVELMINING": "9"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_CONSTRUCTION_CRANE",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_CRANE"
+      ],
+      "Name": "\u041A\u0440\u0430\u043D",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_CRANE": "23"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_CONSTRUCTION_GROUNDWORKS|SKILL_GRAVELMINING",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_GROUNDWORKS",
+        "SKILL_GRAVELMINING"
+      ],
+      "Name": "\u042D\u043A\u0441\u043A\u0430\u0432\u0430\u0442\u043E\u0440",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_GROUNDWORKS": "37",
+        "SKILL_GRAVELMINING": "37"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_CONSTRUCTION_ROLLING",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_ROLLING"
+      ],
+      "Name": "\u041A\u0430\u0442\u043E\u043A",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_ROLLING": "18"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_FIRETRUCK",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_FIRETRUCK"
+      ],
+      "Name": "\u041F\u043E\u0436\u0430\u0440\u043D\u0430\u044F \u043C\u0430\u0448\u0438\u043D\u0430",
+      "Defaults": {
+        "SKILL_FIRETRUCK": "9"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_HARVESTING",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_HARVESTING"
+      ],
+      "Name": "\u041A\u043E\u043C\u0431\u0430\u0439\u043D",
+      "Defaults": {
+        "SKILL_HARVESTING": "24"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_POLICECAR",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_POLICECAR"
+      ],
+      "Name": "\u041F\u043E\u043B\u0438\u0446\u0435\u0439\u0441\u043A\u0430\u044F \u043C\u0430\u0448\u0438\u043D\u0430",
+      "Defaults": {
+        "SKILL_POLICECAR": "1"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_SEEDING",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_SEEDING"
+      ],
+      "Name": "\u0422\u0440\u0430\u043A\u0442\u043E\u0440",
+      "Defaults": {
+        "SKILL_SEEDING": "28"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_SNOWPLOW",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_SNOWPLOW"
+      ],
+      "Name": "\u0421\u043D\u0435\u0433\u043E\u0443\u0431\u043E\u0440\u043E\u0447\u043D\u0430\u044F \u043C\u0430\u0448\u0438\u043D\u0430",
+      "Defaults": {
+        "SKILL_SNOWPLOW": "21"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_SHIP|",
+      "Type": "VEHICLETYPE_SHIP",
+      "Transport": "",
+      "Flags": [],
+      "Name": "\u0421\u0443\u0434\u043D\u043E",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_SHIP|RESOURCE_TRANSPORT_COVERED",
+      "Type": "VEHICLETYPE_SHIP",
+      "Transport": "RESOURCE_TRANSPORT_COVERED",
+      "Flags": [],
+      "Name": "\u0421\u0443\u0434\u043D\u043E / \u041A\u0440\u044B\u0442\u044B\u0439 \u043A\u0443\u0437\u043E\u0432",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_SHIP|RESOURCE_TRANSPORT_GENERAL",
+      "Type": "VEHICLETYPE_SHIP",
+      "Transport": "RESOURCE_TRANSPORT_GENERAL",
+      "Flags": [],
+      "Name": "\u0421\u0443\u0434\u043D\u043E / \u0421\u043C\u0435\u0448\u0430\u043D\u043D\u044B\u0435 \u0433\u0440\u0443\u0437\u044B",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_SHIP|RESOURCE_TRANSPORT_GRAVEL",
+      "Type": "VEHICLETYPE_SHIP",
+      "Transport": "RESOURCE_TRANSPORT_GRAVEL",
+      "Flags": [],
+      "Name": "\u0421\u0443\u0434\u043D\u043E / \u0421\u044B\u043F\u0443\u0447\u0438\u0435 \u0433\u0440\u0443\u0437\u044B",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_SHIP|RESOURCE_TRANSPORT_OIL",
+      "Type": "VEHICLETYPE_SHIP",
+      "Transport": "RESOURCE_TRANSPORT_OIL",
+      "Flags": [],
+      "Name": "\u0421\u0443\u0434\u043D\u043E / \u041D\u0435\u0444\u0442\u0435\u043F\u0440\u043E\u0434\u0443\u043A\u0442\u044B",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_SHIP|RESOURCE_TRANSPORT_OPEN",
+      "Type": "VEHICLETYPE_SHIP",
+      "Transport": "RESOURCE_TRANSPORT_OPEN",
+      "Flags": [],
+      "Name": "\u0421\u0443\u0434\u043D\u043E / \u041E\u0442\u043A\u0440\u044B\u0442\u044B\u0439 \u043A\u0443\u0437\u043E\u0432",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_SHIP|RESOURCE_TRANSPORT_PASSANGER",
+      "Type": "VEHICLETYPE_SHIP",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [],
+      "Name": "\u0421\u0443\u0434\u043D\u043E",
+      "Defaults": {}
+    }
+  ],
+  "ProfilesEn": [
+    {
+      "Id": "VEHICLETYPE_AIRPLANE|",
+      "Type": "VEHICLETYPE_AIRPLANE",
+      "Transport": "",
+      "Flags": [],
+      "Name": "Airplane",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_AIRPLANE|RESOURCE_TRANSPORT_GENERAL",
+      "Type": "VEHICLETYPE_AIRPLANE",
+      "Transport": "RESOURCE_TRANSPORT_GENERAL",
+      "Flags": [],
+      "Name": "Airplane / General cargo",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_AIRPLANE|RESOURCE_TRANSPORT_PASSANGER",
+      "Type": "VEHICLETYPE_AIRPLANE",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [],
+      "Name": "Airplane",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN|RESOURCE_TRANSPORT_GENERAL|CABIN_HEAVY",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "RESOURCE_TRANSPORT_GENERAL",
+      "Flags": [
+        "CABIN_HEAVY"
+      ],
+      "Name": "Heavy cabin / General cargo",
+      "Defaults": {
+        "CABIN_HEAVY": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN|RESOURCE_TRANSPORT_GENERAL|CABIN_LIGHT",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "RESOURCE_TRANSPORT_GENERAL",
+      "Flags": [
+        "CABIN_LIGHT"
+      ],
+      "Name": "Light cabin / General cargo",
+      "Defaults": {
+        "CABIN_LIGHT": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN|RESOURCE_TRANSPORT_GRAVEL|CABIN_HEAVY",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "RESOURCE_TRANSPORT_GRAVEL",
+      "Flags": [
+        "CABIN_HEAVY"
+      ],
+      "Name": "Heavy cabin / Aggregates",
+      "Defaults": {
+        "CABIN_HEAVY": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN|RESOURCE_TRANSPORT_GRAVEL|CABIN_LIGHT",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "RESOURCE_TRANSPORT_GRAVEL",
+      "Flags": [
+        "CABIN_LIGHT"
+      ],
+      "Name": "Light cabin / Aggregates",
+      "Defaults": {
+        "CABIN_LIGHT": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN|RESOURCE_TRANSPORT_PASSANGER|CABIN_HEAVY",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "CABIN_HEAVY"
+      ],
+      "Name": "Heavy cabin",
+      "Defaults": {
+        "CABIN_HEAVY": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN|RESOURCE_TRANSPORT_PASSANGER|CABIN_LIGHT",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "CABIN_LIGHT"
+      ],
+      "Name": "Light cabin",
+      "Defaults": {
+        "CABIN_LIGHT": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN|RESOURCE_TRANSPORT_WASTE|CABIN_HEAVY",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "RESOURCE_TRANSPORT_WASTE",
+      "Flags": [
+        "CABIN_HEAVY"
+      ],
+      "Name": "Heavy cabin / Waste",
+      "Defaults": {
+        "CABIN_HEAVY": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN|RESOURCE_TRANSPORT_WASTE|CABIN_LIGHT",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "RESOURCE_TRANSPORT_WASTE",
+      "Flags": [
+        "CABIN_LIGHT"
+      ],
+      "Name": "Light cabin / Waste",
+      "Defaults": {
+        "CABIN_LIGHT": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN||CABIN_HEAVY",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "",
+      "Flags": [
+        "CABIN_HEAVY"
+      ],
+      "Name": "Heavy cabin",
+      "Defaults": {
+        "CABIN_HEAVY": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_CABIN||CABIN_LIGHT",
+      "Type": "VEHICLETYPE_CABIN",
+      "Transport": "",
+      "Flags": [
+        "CABIN_LIGHT"
+      ],
+      "Name": "Light cabin",
+      "Defaults": {
+        "CABIN_LIGHT": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_HELICOPTER|",
+      "Type": "VEHICLETYPE_HELICOPTER",
+      "Transport": "",
+      "Flags": [],
+      "Name": "Helicopter",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_HELICOPTER|RESOURCE_TRANSPORT_GENERAL",
+      "Type": "VEHICLETYPE_HELICOPTER",
+      "Transport": "RESOURCE_TRANSPORT_GENERAL",
+      "Flags": [],
+      "Name": "Helicopter / General cargo",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_HELICOPTER|RESOURCE_TRANSPORT_PASSANGER",
+      "Type": "VEHICLETYPE_HELICOPTER",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [],
+      "Name": "Helicopter",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE|RESOURCE_TRANSPORT_PASSANGER",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [],
+      "Name": "Locomotive",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_LOCOMOTIVE_STEAM|TRAINGROUP_MOTORVAGON",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_LOCOMOTIVE_STEAM",
+        "TRAINGROUP_MOTORVAGON"
+      ],
+      "Name": "Steam locomotive",
+      "Defaults": {
+        "TRAINGROUP_LOCOMOTIVE_STEAM": "",
+        "TRAINGROUP_MOTORVAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_METRO",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_METRO"
+      ],
+      "Name": "Metro",
+      "Defaults": {
+        "TRAINGROUP_METRO": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_MOTORVAGON",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_MOTORVAGON"
+      ],
+      "Name": "Motor wagon",
+      "Defaults": {
+        "TRAINGROUP_MOTORVAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_TRAINSET",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_TRAINSET"
+      ],
+      "Name": "Train set",
+      "Defaults": {
+        "TRAINGROUP_TRAINSET": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_TRAM",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_TRAM"
+      ],
+      "Name": "Tram",
+      "Defaults": {
+        "TRAINGROUP_TRAM": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE||SKILL_CONSTRUCTION_RAIL_CRANE2|TRAINGROUP_LOCOMOTIVE_STEAM|TRAINGROUP_TRACKBUILDER",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_RAIL_CRANE2",
+        "TRAINGROUP_LOCOMOTIVE_STEAM",
+        "TRAINGROUP_TRACKBUILDER"
+      ],
+      "Name": "Rail crane",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_RAIL_CRANE2": "28 66 0.7",
+        "TRAINGROUP_LOCOMOTIVE_STEAM": "",
+        "TRAINGROUP_TRACKBUILDER": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE||SKILL_CONSTRUCTION_RAIL_CRANE2|TRAINGROUP_TRACKBUILDER_STEAM",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_RAIL_CRANE2",
+        "TRAINGROUP_TRACKBUILDER_STEAM"
+      ],
+      "Name": "Rail crane",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_RAIL_CRANE2": "210 210 0.6",
+        "TRAINGROUP_TRACKBUILDER_STEAM": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE||SKILL_CONSTRUCTION_RAIL_CRANE|TRAINGROUP_TRACKBUILDER",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_RAIL_CRANE",
+        "TRAINGROUP_TRACKBUILDER"
+      ],
+      "Name": "Rail crane",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_RAIL_CRANE": "85 70",
+        "TRAINGROUP_TRACKBUILDER": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE||SKILL_CONSTRUCTION_RAIL_TRACK_LAYER|TRAINGROUP_TRACKBUILDER",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_RAIL_TRACK_LAYER",
+        "TRAINGROUP_TRACKBUILDER"
+      ],
+      "Name": "Track layer",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_RAIL_TRACK_LAYER": "175 30 5",
+        "TRAINGROUP_TRACKBUILDER": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE||SKILL_CONSTRUCTION_RAIL_TUNNEL_BORING|TRAINGROUP_TRACKBUILDER",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_RAIL_TUNNEL_BORING",
+        "TRAINGROUP_TRACKBUILDER"
+      ],
+      "Name": "Tunnel boring machine",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_RAIL_TUNNEL_BORING": "260",
+        "TRAINGROUP_TRACKBUILDER": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE||TRAINGROUP_LOCOMOTIVE",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "",
+      "Flags": [
+        "TRAINGROUP_LOCOMOTIVE"
+      ],
+      "Name": "Locomotive",
+      "Defaults": {
+        "TRAINGROUP_LOCOMOTIVE": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_LOCOMOTIVE||TRAINGROUP_LOCOMOTIVE_STEAM",
+      "Type": "VEHICLETYPE_RAIL_LOCOMOTIVE",
+      "Transport": "",
+      "Flags": [
+        "TRAINGROUP_LOCOMOTIVE_STEAM"
+      ],
+      "Name": "Steam locomotive",
+      "Defaults": {
+        "TRAINGROUP_LOCOMOTIVE_STEAM": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "",
+      "Flags": [],
+      "Name": "Wagon",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_CEMENT|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_CEMENT",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "Wagon / Cement",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_COOLER|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_COOLER",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "Wagon / Refrigerated cargo",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_COVERED|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_COVERED",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "Wagon / Covered cargo",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_GRAVEL|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_GRAVEL",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "Wagon / Aggregates",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_LIVESTOCK|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_LIVESTOCK",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "Wagon / Livestock",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_OIL|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_OIL",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "Wagon / Oil products",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_OPEN|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_OPEN",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "Wagon / Open cargo",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_PASSANGER",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [],
+      "Name": "Wagon",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_METRO",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_METRO"
+      ],
+      "Name": "Metro",
+      "Defaults": {
+        "TRAINGROUP_METRO": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_TRAINSET",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_TRAINSET"
+      ],
+      "Name": "Train set",
+      "Defaults": {
+        "TRAINGROUP_TRAINSET": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_TRAM",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_TRAM"
+      ],
+      "Name": "Tram",
+      "Defaults": {
+        "TRAINGROUP_TRAM": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_PASSANGER|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "Wagon",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_SEWAGE|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_SEWAGE",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "Wagon / Sewage",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_WASTE|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_WASTE",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "Wagon / Waste",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON|RESOURCE_TRANSPORT_WATER|TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "RESOURCE_TRANSPORT_WATER",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "Wagon / Water",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON||TRAINGROUP_LOCOMOTIVE",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "",
+      "Flags": [
+        "TRAINGROUP_LOCOMOTIVE"
+      ],
+      "Name": "Locomotive",
+      "Defaults": {
+        "TRAINGROUP_LOCOMOTIVE": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON||TRAINGROUP_TRACKBUILDER",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "",
+      "Flags": [
+        "TRAINGROUP_TRACKBUILDER"
+      ],
+      "Name": "Track builder",
+      "Defaults": {
+        "TRAINGROUP_TRACKBUILDER": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_RAIL_VAGON||TRAINGROUP_VAGON",
+      "Type": "VEHICLETYPE_RAIL_VAGON",
+      "Transport": "",
+      "Flags": [
+        "TRAINGROUP_VAGON"
+      ],
+      "Name": "Wagon",
+      "Defaults": {
+        "TRAINGROUP_VAGON": ""
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [],
+      "Name": "Truck",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_CEMENT",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_CEMENT",
+      "Flags": [],
+      "Name": "Truck / Cement",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_CONCRETE",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_CONCRETE",
+      "Flags": [],
+      "Name": "Truck / Concrete",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_COOLER",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_COOLER",
+      "Flags": [],
+      "Name": "Truck / Refrigerated cargo",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_COVERED",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_COVERED",
+      "Flags": [],
+      "Name": "Truck / Covered cargo",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_GENERAL|SKILL_FORKLIFT",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_GENERAL",
+      "Flags": [
+        "SKILL_FORKLIFT"
+      ],
+      "Name": "Forklift / General cargo",
+      "Defaults": {
+        "SKILL_FORKLIFT": "1"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_GRAVEL",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_GRAVEL",
+      "Flags": [],
+      "Name": "Truck / Aggregates",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_LIVESTOCK",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_LIVESTOCK",
+      "Flags": [],
+      "Name": "Truck / Livestock",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_OIL",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_OIL",
+      "Flags": [],
+      "Name": "Truck / Oil products",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_OPEN",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_OPEN",
+      "Flags": [],
+      "Name": "Truck / Open cargo",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_OPEN|SKILL_WOODCARRING",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_OPEN",
+      "Flags": [
+        "SKILL_WOODCARRING"
+      ],
+      "Name": "Logging truck / Open cargo",
+      "Defaults": {
+        "SKILL_WOODCARRING": "29"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_PASSANGER",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [],
+      "Name": "Bus",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_PASSANGER|SKILL_AMBULANCE",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "SKILL_AMBULANCE"
+      ],
+      "Name": "Ambulance",
+      "Defaults": {
+        "SKILL_AMBULANCE": "1"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_PASSANGER|SKILL_PERSONAL",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "SKILL_PERSONAL"
+      ],
+      "Name": "Personal car",
+      "Defaults": {
+        "SKILL_PERSONAL": "1"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_PASSANGER|SKILL_POLICEBUS",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "SKILL_POLICEBUS"
+      ],
+      "Name": "Police bus",
+      "Defaults": {
+        "SKILL_POLICEBUS": "1"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_PASSANGER|SKILL_POLICECAR",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [
+        "SKILL_POLICECAR"
+      ],
+      "Name": "Police car",
+      "Defaults": {
+        "SKILL_POLICECAR": "1"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_SEWAGE",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_SEWAGE",
+      "Flags": [],
+      "Name": "Truck / Sewage",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_WASTE",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_WASTE",
+      "Flags": [],
+      "Name": "Truck / Waste",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_WASTE|SKILL_WASTE_CONTAINER_BIG",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_WASTE",
+      "Flags": [
+        "SKILL_WASTE_CONTAINER_BIG"
+      ],
+      "Name": "Large container truck / Waste",
+      "Defaults": {
+        "SKILL_WASTE_CONTAINER_BIG": "1"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_WASTE|SKILL_WASTE_CONTAINER_SMALL",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_WASTE",
+      "Flags": [
+        "SKILL_WASTE_CONTAINER_SMALL"
+      ],
+      "Name": "Garbage truck / Waste",
+      "Defaults": {
+        "SKILL_WASTE_CONTAINER_SMALL": "1"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD|RESOURCE_TRANSPORT_WATER",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "RESOURCE_TRANSPORT_WATER",
+      "Flags": [],
+      "Name": "Truck / Water",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_CONSTRUCTION_ASPHALT_LAYING",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_ASPHALT_LAYING"
+      ],
+      "Name": "Asphalt paver",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_ASPHALT_LAYING": "45"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_CONSTRUCTION_BULLDOZER",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_BULLDOZER"
+      ],
+      "Name": "Bulldozer",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_BULLDOZER": "58"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_CONSTRUCTION_BULLDOZER|SKILL_CONSTRUCTION_GROUNDWORKS|SKILL_GRAVELMINING",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_BULLDOZER",
+        "SKILL_CONSTRUCTION_GROUNDWORKS",
+        "SKILL_GRAVELMINING"
+      ],
+      "Name": "Bulldozer",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_BULLDOZER": "12",
+        "SKILL_CONSTRUCTION_GROUNDWORKS": "15",
+        "SKILL_GRAVELMINING": "21"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_CONSTRUCTION_BULLDOZER|SKILL_GRAVELMINING",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_BULLDOZER",
+        "SKILL_GRAVELMINING"
+      ],
+      "Name": "Bulldozer",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_BULLDOZER": "9",
+        "SKILL_GRAVELMINING": "9"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_CONSTRUCTION_CRANE",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_CRANE"
+      ],
+      "Name": "Crane",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_CRANE": "23"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_CONSTRUCTION_GROUNDWORKS|SKILL_GRAVELMINING",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_GROUNDWORKS",
+        "SKILL_GRAVELMINING"
+      ],
+      "Name": "Excavator",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_GROUNDWORKS": "37",
+        "SKILL_GRAVELMINING": "37"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_CONSTRUCTION_ROLLING",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_CONSTRUCTION_ROLLING"
+      ],
+      "Name": "Road roller",
+      "Defaults": {
+        "SKILL_CONSTRUCTION_ROLLING": "18"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_FIRETRUCK",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_FIRETRUCK"
+      ],
+      "Name": "Fire engine",
+      "Defaults": {
+        "SKILL_FIRETRUCK": "9"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_HARVESTING",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_HARVESTING"
+      ],
+      "Name": "Harvester",
+      "Defaults": {
+        "SKILL_HARVESTING": "24"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_POLICECAR",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_POLICECAR"
+      ],
+      "Name": "Police car",
+      "Defaults": {
+        "SKILL_POLICECAR": "1"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_SEEDING",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_SEEDING"
+      ],
+      "Name": "Tractor",
+      "Defaults": {
+        "SKILL_SEEDING": "28"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_ROAD||SKILL_SNOWPLOW",
+      "Type": "VEHICLETYPE_ROAD",
+      "Transport": "",
+      "Flags": [
+        "SKILL_SNOWPLOW"
+      ],
+      "Name": "Snowplow",
+      "Defaults": {
+        "SKILL_SNOWPLOW": "21"
+      }
+    },
+    {
+      "Id": "VEHICLETYPE_SHIP|",
+      "Type": "VEHICLETYPE_SHIP",
+      "Transport": "",
+      "Flags": [],
+      "Name": "Ship",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_SHIP|RESOURCE_TRANSPORT_COVERED",
+      "Type": "VEHICLETYPE_SHIP",
+      "Transport": "RESOURCE_TRANSPORT_COVERED",
+      "Flags": [],
+      "Name": "Ship / Covered cargo",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_SHIP|RESOURCE_TRANSPORT_GENERAL",
+      "Type": "VEHICLETYPE_SHIP",
+      "Transport": "RESOURCE_TRANSPORT_GENERAL",
+      "Flags": [],
+      "Name": "Ship / General cargo",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_SHIP|RESOURCE_TRANSPORT_GRAVEL",
+      "Type": "VEHICLETYPE_SHIP",
+      "Transport": "RESOURCE_TRANSPORT_GRAVEL",
+      "Flags": [],
+      "Name": "Ship / Aggregates",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_SHIP|RESOURCE_TRANSPORT_OIL",
+      "Type": "VEHICLETYPE_SHIP",
+      "Transport": "RESOURCE_TRANSPORT_OIL",
+      "Flags": [],
+      "Name": "Ship / Oil products",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_SHIP|RESOURCE_TRANSPORT_OPEN",
+      "Type": "VEHICLETYPE_SHIP",
+      "Transport": "RESOURCE_TRANSPORT_OPEN",
+      "Flags": [],
+      "Name": "Ship / Open cargo",
+      "Defaults": {}
+    },
+    {
+      "Id": "VEHICLETYPE_SHIP|RESOURCE_TRANSPORT_PASSANGER",
+      "Type": "VEHICLETYPE_SHIP",
+      "Transport": "RESOURCE_TRANSPORT_PASSANGER",
+      "Flags": [],
+      "Name": "Ship",
+      "Defaults": {}
+    }
+  ]
+}

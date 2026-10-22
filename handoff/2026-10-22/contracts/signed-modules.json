@@ -1,0 +1,457 @@
+[
+  {
+    "Manifest": "app/Editor/acode.lnchr",
+    "Id": "aurora.editor",
+    "Version": "0.2",
+    "Schema": 1,
+    "Config": "editor.ini",
+    "Files": [
+      {
+        "Sha256": "046cf09d3ae52faaa75c95ab976ff08cc5917d56f088c023eaf985e1b9c51d78",
+        "Path": "Aurora.Editor.Module.dll"
+      },
+      {
+        "Sha256": "fb12add5cbe882e54d24663d4d60a8e5c8cb2787007980f18ccdfa356691405a",
+        "Path": "Assets/gizmo.js"
+      },
+      {
+        "Sha256": "ec6fdd2ff0d9d547ee6ca38f1317f627ecf5f1b5b36b7235577dc33030068ce3",
+        "Path": "Assets/previews.js"
+      },
+      {
+        "Sha256": "26c2976e19924ae8e441fbdcc1850429d4af156c39115ee3a3f3bafaece96c2e",
+        "Path": "Assets/viewport.html"
+      },
+      {
+        "Sha256": "d8789b0dba2f031aa6ee9aeddeec214466a134313a81ab7728fef0a72a64a323",
+        "Path": "Backend/Aurora.ModelBackend.exe"
+      },
+      {
+        "Sha256": "7bdbbb3ae20f309b3d1ea85183ff0841368629fc80553e822b03ed4e69657f59",
+        "Path": "Backend/_internal/_asyncio.pyd"
+      },
+      {
+        "Sha256": "84abc366173975e7c8a81914fec9518b3c2857eeb3f31dad1aae7e116104dbfd",
+        "Path": "Backend/_internal/_bz2.pyd"
+      },
+      {
+        "Sha256": "508c6b702c88de1b703f67083f5a4088dabf2c642283db7c17e93ce9715d107b",
+        "Path": "Backend/_internal/_ctypes.pyd"
+      },
+      {
+        "Sha256": "257d2bd9634cb6535a0d56f5395267e809522f4e1e5137da086308a9a7ecd9da",
+        "Path": "Backend/_internal/_decimal.pyd"
+      },
+      {
+        "Sha256": "7e996b6eb954f9d450611c9cf5acd3ed7f37a819d25b452e3788bf26aa82528c",
+        "Path": "Backend/_internal/_elementtree.pyd"
+      },
+      {
+        "Sha256": "4312f69878b8caf4e850a5710fd2ab75e861362639fbc310732b6cde87c9f0b3",
+        "Path": "Backend/_internal/_hashlib.pyd"
+      },
+      {
+        "Sha256": "368440add08f4df1d54d177b0a7ed84118fcb8fced82e38a2b2778bda5d5960a",
+        "Path": "Backend/_internal/_lzma.pyd"
+      },
+      {
+        "Sha256": "a125f84e4c708238ecfa149664d205059dd67e45c76c9b7c862b6481c26b7343",
+        "Path": "Backend/_internal/_multiprocessing.pyd"
+      },
+      {
+        "Sha256": "e40eb68e05937351a6981605c647bc1f4ee63926209057e28240dc9578ecd4b6",
+        "Path": "Backend/_internal/_overlapped.pyd"
+      },
+      {
+        "Sha256": "ea4b6489bd30b910826382e7528cdf8e28d92d9f9a5528a57f89740f82e0748c",
+        "Path": "Backend/_internal/_queue.pyd"
+      },
+      {
+        "Sha256": "c6262df8ce2823faccd2c1a679bb4f10376dec574ecd088a65c99850c65c275b",
+        "Path": "Backend/_internal/_socket.pyd"
+      },
+      {
+        "Sha256": "063ecc5610da11f2e8f4f1cbbd342510210141f5f686c659831085aa63ca55dd",
+        "Path": "Backend/_internal/_ssl.pyd"
+      },
+      {
+        "Sha256": "c69b954311a6a041f9a7eca2d9b41d84e79aa15806844d3fad97560a218ac916",
+        "Path": "Backend/_internal/_wmi.pyd"
+      },
+      {
+        "Sha256": "015bd08815c7b934a8952c3a7578e9ce59f21136e8a880d42bbd414bec2c6058",
+        "Path": "Backend/_internal/api-ms-win-core-console-l1-1-0.dll"
+      },
+      {
+        "Sha256": "5534812cdbdae94ba45cb216e5eb9af686b853948df54365103555abbbaf9d9a",
+        "Path": "Backend/_internal/api-ms-win-core-datetime-l1-1-0.dll"
+      },
+      {
+        "Sha256": "837d2b1b2cd03e03fc6ccb050698b6b5763af17c201304872342a5eae9e0a2d2",
+        "Path": "Backend/_internal/api-ms-win-core-debug-l1-1-0.dll"
+      },
+      {
+        "Sha256": "de43b165f568c276c00e95acd454e3092f352a18e95874595f4f4658c06d2ec7",
+        "Path": "Backend/_internal/api-ms-win-core-errorhandling-l1-1-0.dll"
+      },
+      {
+        "Sha256": "3cebc45bf479ad74cfabf2c6bfd4994d7ad639ed1221025981d19cedf9ce0416",
+        "Path": "Backend/_internal/api-ms-win-core-fibers-l1-1-0.dll"
+      },
+      {
+        "Sha256": "5ef70308bcca628ce6b0e2856b15b1c7ae340c3f9bbbc4c1071d8c191a34a5c3",
+        "Path": "Backend/_internal/api-ms-win-core-fibers-l1-1-1.dll"
+      },
+      {
+        "Sha256": "250ac829f2617bcac1c6e5b8c4f630462e20765863ba573526a3e11bbfb94a9a",
+        "Path": "Backend/_internal/api-ms-win-core-file-l1-1-0.dll"
+      },
+      {
+        "Sha256": "ae14079a114733f60ce87b92cba42acd8083c2cd67594e53bc37dc0b97a4b465",
+        "Path": "Backend/_internal/api-ms-win-core-file-l1-2-0.dll"
+      },
+      {
+        "Sha256": "914bf26a298713119477ea0a8e7bd43171b91344ebe24fb47ad77c49686e3d87",
+        "Path": "Backend/_internal/api-ms-win-core-file-l2-1-0.dll"
+      },
+      {
+        "Sha256": "ab5489955e371b15f77906c08ec3c7affe2c7a46a08c514ca628768b4478974b",
+        "Path": "Backend/_internal/api-ms-win-core-handle-l1-1-0.dll"
+      },
+      {
+        "Sha256": "c70f9644d8377fa39c5b71f2e9734c1400d7598904fdeb772e8502099982dcb7",
+        "Path": "Backend/_internal/api-ms-win-core-heap-l1-1-0.dll"
+      },
+      {
+        "Sha256": "f8129710188e407bb0e6f46d30aeba277d67b947ece5fe09e883fde2323f3ae6",
+        "Path": "Backend/_internal/api-ms-win-core-interlocked-l1-1-0.dll"
+      },
+      {
+        "Sha256": "5200b16cb2ddc61cfc07373a9a84aa85a3ab50806ca96c879c883275832944c1",
+        "Path": "Backend/_internal/api-ms-win-core-kernel32-legacy-l1-1-1.dll"
+      },
+      {
+        "Sha256": "48786fb88b001dcd1f63acea903d3ca9cc0b3060d5a325e3f2f3cbc3bfd53166",
+        "Path": "Backend/_internal/api-ms-win-core-libraryloader-l1-1-0.dll"
+      },
+      {
+        "Sha256": "9ec3898f7eba91faa28b51616c211a2689e3a13aeef8de6e13cb674e49d689eb",
+        "Path": "Backend/_internal/api-ms-win-core-localization-l1-2-0.dll"
+      },
+      {
+        "Sha256": "3a6cbc524c99e1cd80d5368f5601402a37ad602528b1ab628093573ef638eb3b",
+        "Path": "Backend/_internal/api-ms-win-core-memory-l1-1-0.dll"
+      },
+      {
+        "Sha256": "97145ef89c44949fcf0f04ac834a8bc7d687ef49ee73ae9fc32f3c11136b7201",
+        "Path": "Backend/_internal/api-ms-win-core-namedpipe-l1-1-0.dll"
+      },
+      {
+        "Sha256": "8bc7c10b1851aea644e9c9f381cdb935e091fee6b0be3d3aedc6fffaac96adb7",
+        "Path": "Backend/_internal/api-ms-win-core-processenvironment-l1-1-0.dll"
+      },
+      {
+        "Sha256": "d8030b777617c71f0f94564607699dbf7561487d779db9756aed378c5675213f",
+        "Path": "Backend/_internal/api-ms-win-core-processthreads-l1-1-0.dll"
+      },
+      {
+        "Sha256": "f5e676713340f73a03a3d41a6ec9883b431da7d16c7f07bd0a920fb80e6c0753",
+        "Path": "Backend/_internal/api-ms-win-core-processthreads-l1-1-1.dll"
+      },
+      {
+        "Sha256": "f023d47e44d3eea6b0743580f57e8c6ba81e79d5ebfa7da26250076c647b980e",
+        "Path": "Backend/_internal/api-ms-win-core-profile-l1-1-0.dll"
+      },
+      {
+        "Sha256": "9746d8930704153578a628c010638a5f818ffe5a927e25591b108e256dc6afca",
+        "Path": "Backend/_internal/api-ms-win-core-rtlsupport-l1-1-0.dll"
+      },
+      {
+        "Sha256": "7c53ae24c982d16ffd1bf7f918d115b11b7f30e57bc7feaa18cb9781e4abb926",
+        "Path": "Backend/_internal/api-ms-win-core-string-l1-1-0.dll"
+      },
+      {
+        "Sha256": "56d9d62ca5dba79a6581b8d574a7d8b2a64a5ecb71e47dcf06ed0285708b1859",
+        "Path": "Backend/_internal/api-ms-win-core-synch-l1-1-0.dll"
+      },
+      {
+        "Sha256": "f6482bbec5612c39ecb4822787a333f2b7570f7a5f922a4059be41ba957bb372",
+        "Path": "Backend/_internal/api-ms-win-core-synch-l1-2-0.dll"
+      },
+      {
+        "Sha256": "272d02765fdd3582618236c2d309abba069642f9bc1062ede069d0c144e17007",
+        "Path": "Backend/_internal/api-ms-win-core-sysinfo-l1-1-0.dll"
+      },
+      {
+        "Sha256": "8a0900788859d0eb51c2f48f50cc6ed376a120b518100fa20e11d7702ccde260",
+        "Path": "Backend/_internal/api-ms-win-core-sysinfo-l1-2-0.dll"
+      },
+      {
+        "Sha256": "ff35de6c03812b332e140f17dade25c5dd4775156da9eeb1eaae3fddd27236ec",
+        "Path": "Backend/_internal/api-ms-win-core-timezone-l1-1-0.dll"
+      },
+      {
+        "Sha256": "191ef3e98641a57296f19d572d8eb62489470ff1ef6030d136af170c2f835173",
+        "Path": "Backend/_internal/api-ms-win-core-util-l1-1-0.dll"
+      },
+      {
+        "Sha256": "54ee5ec719a051496ff60aa00dbeaa94b9a7d2cdac27fe9b7317f1a666b6a2aa",
+        "Path": "Backend/_internal/api-ms-win-crt-conio-l1-1-0.dll"
+      },
+      {
+        "Sha256": "8b94662429171019fcd63c70bbf2095a075170599704a5e7dcdbe3da13f3a429",
+        "Path": "Backend/_internal/api-ms-win-crt-convert-l1-1-0.dll"
+      },
+      {
+        "Sha256": "39e5929593709e8af3bc9e0a75ec1155778d6f4a247f4cdfc58928ad6db88434",
+        "Path": "Backend/_internal/api-ms-win-crt-environment-l1-1-0.dll"
+      },
+      {
+        "Sha256": "5a8ecebac32edf4e1f3c5c6c1c8ea1a1add6cda4f9c9cb26f752fb295bea6865",
+        "Path": "Backend/_internal/api-ms-win-crt-filesystem-l1-1-0.dll"
+      },
+      {
+        "Sha256": "c71080cbcb43bf1f8f3e391deb12a582eb0abefc80946f340675a2c616e4feb4",
+        "Path": "Backend/_internal/api-ms-win-crt-heap-l1-1-0.dll"
+      },
+      {
+        "Sha256": "6c68648e524187e03c4ad9aaa4a99113c6ee9f29fb39cc0ed93f951975138e63",
+        "Path": "Backend/_internal/api-ms-win-crt-locale-l1-1-0.dll"
+      },
+      {
+        "Sha256": "d4fbcccbe29371cbce431e43b2eb4f7ba9a6f04a3d740a071f02457a505e9dc8",
+        "Path": "Backend/_internal/api-ms-win-crt-math-l1-1-0.dll"
+      },
+      {
+        "Sha256": "29bf3d90617d3781d19b332d6ceb9f20ba5ce082ec74bf6c34d5d4aee56e48a1",
+        "Path": "Backend/_internal/api-ms-win-crt-private-l1-1-0.dll"
+      },
+      {
+        "Sha256": "47c1935942e3ac0812e4dcf18c0e265e565f0194a3349111c299712f5565f7ac",
+        "Path": "Backend/_internal/api-ms-win-crt-process-l1-1-0.dll"
+      },
+      {
+        "Sha256": "72adc1b3677e0814d9c4ebf0964000e84bb2acf67336c8963061665e44f78029",
+        "Path": "Backend/_internal/api-ms-win-crt-runtime-l1-1-0.dll"
+      },
+      {
+        "Sha256": "900afc3989673c9bb1a687ed38c192f46db9e6ba6d11a668898a539e7fc23798",
+        "Path": "Backend/_internal/api-ms-win-crt-stdio-l1-1-0.dll"
+      },
+      {
+        "Sha256": "fcf12466cc12fd3b73611fc0763a5a1f9d44e90349513c34a0c83b0f36421793",
+        "Path": "Backend/_internal/api-ms-win-crt-string-l1-1-0.dll"
+      },
+      {
+        "Sha256": "886e57c4a6adb299b38f02945369f590a67da4e79a798359fc60aaa067212d7c",
+        "Path": "Backend/_internal/api-ms-win-crt-time-l1-1-0.dll"
+      },
+      {
+        "Sha256": "5f8f26b216ade615b67a41f6fbbb910972fc6153315a65bb8f09912be50215b1",
+        "Path": "Backend/_internal/api-ms-win-crt-utility-l1-1-0.dll"
+      },
+      {
+        "Sha256": "99446d1e8a64fbe5dbc55f0cef51fe05b1e80e49b98647fa05d204336f6d20d7",
+        "Path": "Backend/_internal/base_library.zip"
+      },
+      {
+        "Sha256": "1e30b3a2d41b21cf8d83fea401bb5655aefb4fd9f728bc1911d6f2e03bdf6128",
+        "Path": "Backend/_internal/libcrypto-3-x64.dll"
+      },
+      {
+        "Sha256": "19240c4a821a785e6e5b5f1d6a65e25a2f60d078b843677ff2aa3622ba5de917",
+        "Path": "Backend/_internal/libffi-8.dll"
+      },
+      {
+        "Sha256": "35e0f583e97c11f1b1a696b25cff32f88ef35098611cabd0dc6a8967fbb74e09",
+        "Path": "Backend/_internal/libssl-3-x64.dll"
+      },
+      {
+        "Sha256": "7e44326f68efe37e70524d017afa195c7e04ee6161ff2494be0b23f27e5bd512",
+        "Path": "Backend/_internal/pyexpat.pyd"
+      },
+      {
+        "Sha256": "2987445b1405431f9f396d492a039176930ee0298c573dd672bbac67c681f11c",
+        "Path": "Backend/_internal/python312.dll"
+      },
+      {
+        "Sha256": "e7330cb8951ed732bc6d55311b91a3d26f1fdc34bbcf019a3cd2f381f11c199e",
+        "Path": "Backend/_internal/select.pyd"
+      },
+      {
+        "Sha256": "3239227d27667ba20d10a880751924e5719de0078f9fce232d149d383f7681f6",
+        "Path": "Backend/_internal/ucrtbase.dll"
+      },
+      {
+        "Sha256": "f7a191482a8c5094c46c3e81516f10cef29f0e961a986ee665fc6e30cfe7f97a",
+        "Path": "Backend/_internal/unicodedata.pyd"
+      },
+      {
+        "Sha256": "1f2d41c4aa5db0bc33ebf7b66d72943a817d7ce6cbe880502a9403823633093f",
+        "Path": "Backend/_internal/VCRUNTIME140_1.dll"
+      },
+      {
+        "Sha256": "d5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066",
+        "Path": "Backend/_internal/VCRUNTIME140.dll"
+      },
+      {
+        "Sha256": "81485cd984c0f09d19c8d95a800398d7e957787398e2111d147ba1f0796d0951",
+        "Path": "Backend/_internal/charset_normalizer/cd.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "0960c9bd32f05bb61d26993c38dcbb03ed2909d7171769b76c04766646864b56",
+        "Path": "Backend/_internal/charset_normalizer/md.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "6a15675fcfdd7150f21bfb95525e1eb29ce1b81abd6c6fd1a00d63f691e153b5",
+        "Path": "Backend/_internal/numpy/fft/_pocketfft_umath.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "0001e3f41aff611e133b00554e1dd34c1b580caf2424b60d3830d874e0da290f",
+        "Path": "Backend/_internal/numpy/linalg/_umath_linalg.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "a28413544bb690096071367be86b8213b6a46446b750a88540a582a1b9e662c3",
+        "Path": "Backend/_internal/numpy/random/_bounded_integers.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "0c3683d23aeec87ddf267b731ae4a6a9996b79ee6eb64a952b8ed841d68f1b34",
+        "Path": "Backend/_internal/numpy/random/_common.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "9e2cdea012475e46eeac8e6c02702ab562f859450949e007b752aa92d546ea5c",
+        "Path": "Backend/_internal/numpy/random/_generator.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "c8827cb0d8cccd1ec4d1fabc2f7d446f8dc38ae1e11a352fd4df74945100ee04",
+        "Path": "Backend/_internal/numpy/random/_mt19937.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "e605510a03fc2cfe63fbc091ff3efa1f64d201d736a5e48e7078be06cfc37e30",
+        "Path": "Backend/_internal/numpy/random/_pcg64.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "4e218572f9c45c8f37242f8c164f47c9e0bd68380dc59e5af597c4e5c25f191c",
+        "Path": "Backend/_internal/numpy/random/_philox.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "0efa8a0e4fb3d77b14e8012b5226ad8312c8e1ea35fafc88f5191f3a0bd98238",
+        "Path": "Backend/_internal/numpy/random/_sfc64.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "be0a2e775f51cae0b905903eee3d197c45b555b3acaa6a4b469d6611473231ae",
+        "Path": "Backend/_internal/numpy/random/bit_generator.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "73aaf0d7b74af84fd110061d6fac01306b67e6d10df3321b3d95a6110bb280fa",
+        "Path": "Backend/_internal/numpy/random/mtrand.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "f0c8d5373296bf53b4fbe42fa28344604bdaeefd0ea92f41af4d26eee7677d39",
+        "Path": "Backend/_internal/numpy/_core/_multiarray_tests.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "c45f9b09d52ef049de69a026709ce4c7fa41868a34b3c3a04ce9dd25e2025aec",
+        "Path": "Backend/_internal/numpy/_core/_multiarray_umath.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "a2beda198cb0067dc300e1ecad590e9b32017b4990e2b9018c7b304683c2a600",
+        "Path": "Backend/_internal/numpy-2.3.5.dist-info/DELVEWHEEL"
+      },
+      {
+        "Sha256": "ec26fade0c8bdac211a6c1dd003a65eb16885b925395423e93fcaa115af4052c",
+        "Path": "Backend/_internal/numpy-2.3.5.dist-info/entry_points.txt"
+      },
+      {
+        "Sha256": "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508",
+        "Path": "Backend/_internal/numpy-2.3.5.dist-info/INSTALLER"
+      },
+      {
+        "Sha256": "596b953e1dcbe829b32ae444387efa15003fc6abdeca8a2179f364a6364c286e",
+        "Path": "Backend/_internal/numpy-2.3.5.dist-info/LICENSE.txt"
+      },
+      {
+        "Sha256": "7f8a1bfc2b82fee89e1ceef1038aa174ee814832b54c39b4b1b93028ce3f27b1",
+        "Path": "Backend/_internal/numpy-2.3.5.dist-info/METADATA"
+      },
+      {
+        "Sha256": "db6f6311a0872b34ed06267060d8b55d2f1bf1c8b4df542e4d5cdee633d025ff",
+        "Path": "Backend/_internal/numpy-2.3.5.dist-info/RECORD"
+      },
+      {
+        "Sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "Path": "Backend/_internal/numpy-2.3.5.dist-info/REQUESTED"
+      },
+      {
+        "Sha256": "e743de01ba6503a3e4234858398a1e69c07d512d51e8482ec9f3a7b1c707d165",
+        "Path": "Backend/_internal/numpy-2.3.5.dist-info/WHEEL"
+      },
+      {
+        "Sha256": "e749b0b2d0001a4aec50444a5be8c661ed4e304b4df4225f25c5349d6ecb4a2f",
+        "Path": "Backend/_internal/numpy.libs/libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll"
+      },
+      {
+        "Sha256": "a4c2229bdc2a2a630acdc095b4d86008e5c3e3bc7773174354f3da4f5beb9cde",
+        "Path": "Backend/_internal/numpy.libs/msvcp140-a4c2229bdc2a2a630acdc095b4d86008.dll"
+      },
+      {
+        "Sha256": "a3063eaf4a21b774e4ab88072586fc450a7b3c6f0e28674f7c8b9c18eea71348",
+        "Path": "Backend/_internal/PIL/_avif.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "4bc4fa11f8554e021bfc04e137007becbe23aabf1de496ef2031e3304bb4f5ad",
+        "Path": "Backend/_internal/PIL/_imaging.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "66db8ac3b6b2fa1286c82d8a8cfaacd5d1d0b88205bfa55846a8fc0b85c072c9",
+        "Path": "Backend/_internal/PIL/_imagingcms.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "dac7c552e1ba62b85b1c54d4f9fc5f3ff2332dd678b882db9a11465da38ed236",
+        "Path": "Backend/_internal/PIL/_imagingmath.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "4563a8a9471eead40fa3a21698d9039906712eb17c9057ac41c73e5c90f1c857",
+        "Path": "Backend/_internal/PIL/_imagingtk.cp312-win_amd64.pyd"
+      },
+      {
+        "Sha256": "122f85234bf28d62adfec5cc59377fc74202124e70ee9d0f808eb35f3b713640",
+        "Path": "Backend/_internal/PIL/_webp.cp312-win_amd64.pyd"
+      }
+    ]
+  },
+  {
+    "Manifest": "app/Modules/aurora.fov/acode.lnchr",
+    "Id": "aurora.fov",
+    "Version": "0.2",
+    "Schema": 2,
+    "Config": "fov.ini",
+    "Files": [
+      {
+        "Sha256": "a407847ef87add5fae215da201f71063bc9b8f5bb8c3ad68903f3af696f55dc8",
+        "Path": "Payload/mods/library/aurora.fov/fov.dll"
+      }
+    ]
+  },
+  {
+    "Manifest": "app/Modules/aurora.graphics/acode.lnchr",
+    "Id": "aurora.graphics",
+    "Version": "0.2",
+    "Schema": 1,
+    "Config": "pbr-runtime.ini",
+    "Files": [
+      {
+        "Sha256": "99ebed176c5233d4ae7512f6e141e16451ebd8f6f29b2da861275cdfda314693",
+        "Path": "Payload/mods/glass_default.dds"
+      },
+      {
+        "Sha256": "38c6c9f9fe381052254c4e451eca7a25fe208b1f68865e01f4e30a14a1b024ba",
+        "Path": "Payload/mods/m.dll"
+      },
+      {
+        "Sha256": "ab056ec1525887bd777fd1452238441949081f0a2f49de2e5e900f7bbf51e798",
+        "Path": "Payload/mods/pbr.dll"
+      }
+    ]
+  }
+]

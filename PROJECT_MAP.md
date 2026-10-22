@@ -1,4 +1,6 @@
-﻿# Project map
+# Project map
+
+Current transfer index: [2026-10-22 handoff](handoff/2026-10-22/README.md), with [source atlas](handoff/2026-10-22/10_SOURCE_ATLAS.md), compiled contracts and source hashes.
 
 | Area | Source / entry point |
 | --- | --- |

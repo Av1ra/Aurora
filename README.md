@@ -1,5 +1,7 @@
 # Aurora 0.2
 
+**Portable project handoff (2026-10-22): [start here](handoff/2026-10-22/README.md).** Architecture, Editor workflows, owner decisions, design/PSD, modules, exact installed package, build/restore instructions and verified gaps. This dated snapshot takes precedence over older status prose for continuation.
+
 **Aurora Launcher** is a Windows mod launcher for Workers & Resources: Soviet Republic. **Aurora Editor** is the bundled model and material editor. They are always packaged together in **one** Aurora application ZIP with a shared WinUI/.NET runtime.
 
 **Preliminary test build.** The matching `Aurora-Setup.exe` is distributed alongside `Aurora-0.2-win-x64.zip`. There is no second Full ZIP or separate Editor ZIP. PBR Workshop content is distributed separately and does not become part of the Aurora installer by registering a Steam ID.
