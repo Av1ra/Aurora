@@ -23,3 +23,7 @@ Delivered: `C:\Users\AVR\Downloads\Aurora-0.2-Editor-PR3`.
 - **Not installed automatically.** Last documented installed production base remains c45db814. Live user interaction and in-game acceptance of this candidate remain pending.
 
 Horse/driver geometry, the duplicate Single() exception, some missing-texture cases and remaining full-model refresh paths are still open. Native NAF acceptance and the older renderer issues are not claimed fixed. Original handoff package and RESAURO remain historical snapshots; do not silently replace their manifests with this candidate.
+
+## Installed after the owner explicitly requested installation
+
+The owner requested installation on 2026-10-23. Native transactional installer updated the existing game-local Aurora folder with backup `%LOCALAPPDATA%/Aurora/backups/538954015`. All 572 installable file hashes match; the retirement table is installer input and is intentionally not installed. Actual signed WinUI Editor construction/toolbar/opaque-menu check passed against the installed host without activation. Installed source is 468d034. Live interaction/game acceptance remains pending. Receipt: ignored `artifacts/pr3-install.json`. No active Aurora/game process was interrupted.
