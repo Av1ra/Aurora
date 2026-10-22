@@ -10,6 +10,20 @@ static class UiLanguage
     public static bool Reload(){try{string value=File.ReadAllText(path).Trim();if(value is not ("en" or "ru"))return false;bool english=value=="en";if(english==English)return false;English=english;return true;}catch{return false;}}
     static readonly Dictionary<string,string> words=new()
     {
+      ["Авторасстановка всех 4 поворотников"]="Place all four indicators automatically",
+      ["График кривых"]="Curve graph",
+      ["Дополнительные параметры"]="Advanced settings",
+      ["Задний левый поворотник"]="Rear left indicator",
+      ["Задний правый поворотник"]="Rear right indicator",
+      ["Категория транспорта (TYPE)"]="Transport category",
+      ["Назначение техники (игровой класс)"]="Vehicle role (game class)",
+      ["Передний левый поворотник"]="Front left indicator",
+      ["Передний правый поворотник"]="Front right indicator",
+      ["Разрешённые виды груза…"]="Allowed cargo types…",
+      ["Сбросить"]="Reset",
+      ["Цвет полигональной сетки"]="Wireframe colour",
+      ["Цвет полигональной сетки…"]="Wireframe colour…",
+      ["Цвет сетки"]="Wireframe colour",
 ["Параметры транспорта"]="Vehicle properties",
 ["Анимации"]="Animations",
 ["Конструкция транспорта"]="Vehicle structure",
