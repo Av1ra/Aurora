@@ -29,10 +29,10 @@ sealed partial class EditorWindow
   if(vehicleConfiguration==null)yield break;
   foreach(var field in VehicleScript.Fields(vehicleConfiguration)){
    bool blink=field.Key==(JointFrameRequested?"LIGHT_BLINKER_TRAILER":"LIGHT_BLINKER"),beacon=field.Key=="SIREN_POINT";
-   if(JointFrameRequested&&beacon)continue;if(!(blink&&(testLeft||testRight)||beacon&&testBeacon))continue;
+   if(JointFrameRequested&&beacon)continue;if(!(blink&&(testLeft||testRight||AllLightPreview)||beacon&&(testBeacon||AllLightPreview)))continue;
    var args=VehicleScript.Tokens(vehicleConfiguration).Where(t=>t.Key==field.Key&&t.Occurrence==field.Occurrence).Select(t=>t.Value).Take(3).ToArray();
    if(args.Length!=3||args.Any(a=>!float.TryParse(a,System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture,out _)))continue;
-   var p=args.Select(a=>float.Parse(a,System.Globalization.CultureInfo.InvariantCulture)).ToArray();if(blink&&!(IndicatorLeft(vehicleConfiguration,field.Key,field.Occurrence)?testLeft:testRight))continue;
+   var p=args.Select(a=>float.Parse(a,System.Globalization.CultureInfo.InvariantCulture)).ToArray();if(blink&&!AllLightPreview&&!(IndicatorLeft(vehicleConfiguration,field.Key,field.Occurrence)?testLeft:testRight))continue;
    var forward=Vector3.TransformNormal(Vector3.UnitZ,PivotFrame());yield return new{position=p,direction=new[]{forward.X,forward.Y,forward.Z},rear=false,kind=beacon?"beacon":"blinker"};
   }
  }

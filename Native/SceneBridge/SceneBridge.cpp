@@ -1,0 +1,60 @@
+#include "vendor/ufbx/ufbx.h"
+#include "vendor/ufbx-write/ufbx_write.h"
+#include <array>
+#include <vector>
+#include <string>
+#include <map>
+#include <fstream>
+#include <filesystem>
+#include <stdexcept>
+#include <cmath>
+#include <cstring>
+#include <iostream>
+namespace fs=std::filesystem;
+struct Material{std::string name,texture;};
+struct Group{uint32_t first,count,material;};
+struct Node{std::string name;int32_t parent=-1;ufbx_matrix world{};std::vector<ufbx_vec3> p,n;std::vector<ufbx_vec2> uv;std::vector<int32_t> indices;std::vector<Group> groups;};
+struct Scene{std::string metadata;std::vector<Material> materials;std::vector<Node> nodes;};
+template<class T>T Read(std::istream& f){T v{};if(!f.read(reinterpret_cast<char*>(&v),sizeof(v)))throw std::runtime_error("Truncated scene data");return v;}
+template<class T>void Write(std::ostream& f,T v){f.write(reinterpret_cast<const char*>(&v),sizeof(v));}
+uint32_t Count(std::istream& f,uint32_t max){uint32_t n=Read<uint32_t>(f);if(n>max)throw std::runtime_error("Scene limit exceeded");return n;}
+std::string String(std::istream& f){auto n=Count(f,16*1024*1024);std::string s(n,'\0');if(!f.read(s.data(),n))throw std::runtime_error("Truncated scene string");return s;}
+void String(std::ostream& f,const std::string& s){Write(f,(uint32_t)s.size());f.write(s.data(),s.size());}
+std::string S(ufbx_string s){return std::string(s.data,s.length);}
+float F(double v){if(!std::isfinite(v)||fabs(v)>1e8)throw std::runtime_error("Invalid scene coordinate");return(float)v;}
+Scene ReadScene(const fs::path& path){std::ifstream f(path,std::ios::binary);char magic[8];if(!f.read(magic,8)||memcmp(magic,"AURSCN01",8))throw std::runtime_error("Unknown scene schema");Scene s;s.metadata=String(f);auto mats=Count(f,512);for(uint32_t i=0;i<mats;i++)s.materials.push_back({String(f),String(f)});auto nodes=Count(f,4096);s.nodes.resize(nodes);
+ for(auto& n:s.nodes){n.name=String(f);n.parent=Read<int32_t>(f);if(n.parent< -1||n.parent>=(int32_t)nodes)throw std::runtime_error("Invalid scene parent");float a[16];for(float& v:a){v=Read<float>(f);F(v);}for(int c=0;c<4;c++)n.world.cols[c]={a[c*4],a[c*4+1],a[c*4+2]};auto vertices=Count(f,65536);n.p.resize(vertices);n.n.resize(vertices);n.uv.resize(vertices);for(auto& v:n.p)v={Read<float>(f),Read<float>(f),Read<float>(f)};for(auto& v:n.n)v={Read<float>(f),Read<float>(f),Read<float>(f)};for(auto& v:n.uv)v={Read<float>(f),Read<float>(f)};auto indices=Count(f,3000000);n.indices.resize(indices);for(auto& i:n.indices){i=Read<int32_t>(f);if(i<0||i>=(int32_t)vertices)throw std::runtime_error("Invalid triangle index");}auto groups=Count(f,512);for(uint32_t i=0;i<groups;i++){Group g{Read<uint32_t>(f),Read<uint32_t>(f),Read<uint32_t>(f)};if(g.first+g.count>indices||g.material>=mats)throw std::runtime_error("Invalid material group");n.groups.push_back(g);}}
+ if(f.peek()!=EOF)throw std::runtime_error("Trailing scene data");return s;
+}
+void WriteScene(const fs::path& path,const Scene& s){std::ofstream f(path,std::ios::binary);f.write("AURSCN01",8);String(f,s.metadata);Write(f,(uint32_t)s.materials.size());for(auto& m:s.materials){String(f,m.name);String(f,m.texture);}Write(f,(uint32_t)s.nodes.size());for(auto& n:s.nodes){String(f,n.name);Write(f,n.parent);for(auto& v:n.world.cols){Write(f,F(v.x));Write(f,F(v.y));Write(f,F(v.z));Write(f,(&v==&n.world.cols[3])?1.f:0.f);}Write(f,(uint32_t)n.p.size());for(auto& v:n.p){Write(f,F(v.x));Write(f,F(v.y));Write(f,F(v.z));}for(auto& v:n.n){Write(f,F(v.x));Write(f,F(v.y));Write(f,F(v.z));}for(auto& v:n.uv){Write(f,F(v.x));Write(f,F(v.y));}Write(f,(uint32_t)n.indices.size());for(auto i:n.indices)Write(f,i);Write(f,(uint32_t)n.groups.size());for(auto& g:n.groups){Write(f,g.first);Write(f,g.count);Write(f,g.material);}}if(!f)throw std::runtime_error("Cannot write scene data");}
+Scene Import(const std::string& path){ufbx_load_opts opts{};opts.target_axes=ufbx_axes_right_handed_y_up;opts.target_unit_meters=1;opts.generate_missing_normals=true;opts.pivot_handling=UFBX_PIVOT_HANDLING_ADJUST_TO_ROTATION_PIVOT;opts.geometry_transform_handling=UFBX_GEOMETRY_TRANSFORM_HANDLING_PRESERVE;opts.temp_allocator.memory_limit=512*1024*1024;opts.result_allocator.memory_limit=512*1024*1024;ufbx_error error{};auto* file=ufbx_load_file(path.c_str(),&opts,&error);if(!file)throw std::runtime_error(S(error.description));
+ struct Free{ufbx_scene* s;~Free(){ufbx_free_scene(s);}}free{file};Scene out;
+ if(file->nodes.count>4097||file->materials.count>512)throw std::runtime_error("Scene exceeds native object/material limits");
+ for(auto* m:file->materials){std::string texture;auto* t=m->pbr.base_color.texture?m->pbr.base_color.texture:m->fbx.diffuse_color.texture;if(t){texture=S(t->filename);auto p=fs::u8path(texture);if(!texture.empty()&&!p.is_absolute()){auto full=(fs::u8path(path).parent_path()/p).lexically_normal().u8string();texture=std::string(full.begin(),full.end());}}out.materials.push_back({S(m->name),texture});}if(out.materials.empty())out.materials.push_back({"Material",""});
+ std::map<const ufbx_node*,int> ids;for(auto* n:file->nodes)if(!n->is_root){ids[n]=(int)out.nodes.size();out.nodes.emplace_back();}
+ for(auto* source:file->nodes){if(source->is_root)continue;auto& node=out.nodes[ids[source]];node.name=S(source->name);node.parent=source->parent&&ids.count(source->parent)?ids[source->parent]:-1;node.world=source->node_to_world;
+  auto meta=ufbx_find_string(&source->props,"AuroraScene",ufbx_empty_string);if(meta.length)out.metadata=S(meta);
+  auto* mesh=source->mesh;if(!mesh)continue;if(mesh->skin_deformers.count)throw std::runtime_error("Skinned FBX requires an original editable rigid project");
+  std::map<std::array<float,8>,uint32_t> vertices;std::vector<uint32_t> tri;auto normalMatrix=ufbx_matrix_for_normals(&source->geometry_to_world);
+  for(size_t faceIndex=0;faceIndex<mesh->faces.count;faceIndex++){auto face=mesh->faces[faceIndex];if(face.num_indices<3)continue;if(face.num_indices>1000000)throw std::runtime_error("Polygon limit exceeded");tri.resize((face.num_indices-2)*3);uint32_t count=ufbx_triangulate_face(tri.data(),tri.size(),mesh,face);uint32_t mat=0;
+   if(mesh->face_material.count&&mesh->face_material[faceIndex]<source->materials.count){auto* material=source->materials[mesh->face_material[faceIndex]];mat=material->typed_id;}if(mat>=out.materials.size())mat=0;
+   if(node.groups.empty()||node.groups.back().material!=mat)node.groups.push_back({(uint32_t)node.indices.size(),0,mat});
+   for(uint32_t i=0;i<count*3;i++){uint32_t index=tri[i];auto p=ufbx_transform_position(&source->geometry_to_world,ufbx_get_vertex_vec3(&mesh->vertex_position,index));auto n=ufbx_vec3_normalize(ufbx_transform_direction(&normalMatrix,ufbx_get_vertex_vec3(&mesh->vertex_normal,index)));auto uv=mesh->vertex_uv.exists?ufbx_get_vertex_vec2(&mesh->vertex_uv,index):ufbx_vec2{};std::array<float,8> key{F(p.x),F(p.y),F(p.z),F(n.x),F(n.y),F(n.z),F(uv.x),F(1-uv.y)};auto found=vertices.find(key);uint32_t v;
+    if(found==vertices.end()){if(vertices.size()>=65536)throw std::runtime_error("FBX mesh exceeds native 65536-vertex limit; split it first");v=(uint32_t)vertices.size();vertices[key]=v;node.p.push_back(p);node.n.push_back(n);node.uv.push_back({uv.x,1-uv.y});}else v=found->second;node.indices.push_back(v);node.groups.back().count++;if(node.indices.size()>3000000)throw std::runtime_error("Triangle limit exceeded");}
+  }
+ }
+ return out;
+}
+void Export(const Scene& input,const std::string& path){ufbxw_scene* scene=ufbxw_create_scene(nullptr);if(!scene)throw std::runtime_error("Cannot allocate FBX scene");struct Free{ufbxw_scene* s;~Free(){ufbxw_free_scene(s);}}free{scene};ufbxw_scene_set_coordinate_axes(scene,{UFBXW_COORDINATE_AXIS_POSITIVE_X,UFBXW_COORDINATE_AXIS_POSITIVE_Y,UFBXW_COORDINATE_AXIS_POSITIVE_Z});ufbxw_scene_set_unit_scale_factor(scene,100);
+ std::vector<ufbxw_material> materials;for(auto& m:input.materials){auto material=ufbxw_create_material(scene,UFBXW_MATERIAL_FBX_PHONG);ufbxw_set_name(scene,material.id,m.name.c_str());if(!m.texture.empty()){auto t=ufbxw_create_texture(scene,UFBXW_TEXTURE_FILE);ufbxw_texture_set_filename(scene,t,m.texture.c_str());ufbxw_texture_set_relative_filename(scene,t,m.texture.c_str());ufbxw_material_set_texture(scene,material,"DiffuseColor",t);}materials.push_back(material);}
+ std::vector<ufbxw_node> nodes;for(auto& n:input.nodes){auto node=ufbxw_create_node(scene);ufbxw_set_name(scene,node.id,n.name.c_str());nodes.push_back(node);}
+ for(size_t ni=0;ni<input.nodes.size();ni++){auto& n=input.nodes[ni];auto node=nodes[ni];ufbx_matrix local=n.world;if(n.parent>=0){if(n.parent==(int)ni)throw std::runtime_error("Cyclic scene parent");ufbxw_node_set_parent(scene,node,nodes[n.parent]);auto inv=ufbx_matrix_invert(&input.nodes[n.parent].world);local=ufbx_matrix_mul(&inv,&n.world);}auto t=ufbx_matrix_to_transform(&local);auto reconstructed=ufbx_transform_to_matrix(&t);for(int c=0;c<4;c++)for(int r=0;r<3;r++)if(fabs(reconstructed.cols[c].v[r]-local.cols[c].v[r])>1e-4)throw std::runtime_error("Sheared node frame cannot be exported as FBX TRS");
+  ufbxw_node_set_translation(scene,node,{t.translation.x,t.translation.y,t.translation.z});ufbxw_node_set_rotation_quat(scene,node,{t.rotation.x,t.rotation.y,t.rotation.z,t.rotation.w},UFBXW_ROTATION_ORDER_XYZ);ufbxw_node_set_scaling(scene,node,{t.scale.x,t.scale.y,t.scale.z});
+  if(ni==0&&!input.metadata.empty())ufbxw_add_string(scene,node.id,"AuroraScene",UFBXW_PROP_TYPE_USER_STRING,input.metadata.c_str());
+  if(n.p.empty())continue;auto inverse=ufbx_matrix_invert(&n.world);auto normal=ufbx_matrix_for_normals(&inverse);std::vector<ufbxw_vec3> positions,normals;std::vector<ufbxw_vec2> uv;for(size_t i=0;i<n.p.size();i++){auto p=ufbx_transform_position(&inverse,n.p[i]);auto v=ufbx_vec3_normalize(ufbx_transform_direction(&normal,n.n[i]));positions.push_back({p.x,p.y,p.z});normals.push_back({v.x,v.y,v.z});uv.push_back({n.uv[i].x,1-n.uv[i].y});}
+  auto mesh=ufbxw_create_mesh(scene);ufbxw_mesh_add_instance(scene,mesh,node);ufbxw_mesh_set_vertices(scene,mesh,ufbxw_copy_vec3_array(scene,positions.data(),positions.size()));ufbxw_mesh_set_triangles(scene,mesh,ufbxw_copy_int_array(scene,n.indices.data(),n.indices.size()));ufbxw_mesh_set_normals(scene,mesh,ufbxw_copy_vec3_array(scene,normals.data(),normals.size()),UFBXW_ATTRIBUTE_MAPPING_VERTEX);ufbxw_mesh_set_uvs(scene,mesh,0,ufbxw_copy_vec2_array(scene,uv.data(),uv.size()),UFBXW_ATTRIBUTE_MAPPING_VERTEX);
+  std::vector<int32_t> faceMaterials(n.indices.size()/3);for(auto& g:n.groups)for(size_t i=g.first/3;i<(g.first+g.count)/3;i++)faceMaterials[i]=g.material;ufbxw_mesh_set_face_material(scene,mesh,ufbxw_copy_int_array(scene,faceMaterials.data(),faceMaterials.size()));for(size_t i=0;i<materials.size();i++)ufbxw_node_set_material(scene,node,i,materials[i]);
+ }
+ ufbxw_prepare_scene(scene,&ufbxw_default_prepare_opts);ufbxw_save_opts opts{};opts.format=UFBXW_SAVE_FORMAT_BINARY;opts.version=7400;ufbxw_error error{};opts.file_size_limit=128*1024*1024;std::ofstream output(fs::u8path(path),std::ios::binary);if(!output)throw std::runtime_error("Cannot open FBX output");ufbxw_write_stream stream{};stream.user=&output;stream.write_fn=[](void* user,uint64_t offset,const void* data,size_t size)->bool{auto& f=*static_cast<std::ofstream*>(user);f.seekp(offset);f.write(static_cast<const char*>(data),size);return bool(f);};if(!ufbxw_save_stream(scene,&stream,&opts,&error))throw std::runtime_error(error.description);
+}
+int wmain(int argc,wchar_t** argv){try{if(argc!=4)throw std::runtime_error("SceneBridge import|export input output");fs::path in=argv[2],out=argv[3];if(fs::file_size(in)>128*1024*1024)throw std::runtime_error("Input exceeds 128 MiB");auto utf8=[](const fs::path& p){auto s=p.u8string();return std::string(s.begin(),s.end());};if(!wcscmp(argv[1],L"import"))WriteScene(out,Import(utf8(in)));else if(!wcscmp(argv[1],L"export"))Export(ReadScene(in),utf8(out));else throw std::runtime_error("Unknown scene operation");return 0;}catch(const std::exception& e){std::cerr<<e.what()<<"\n";return 1;}}

@@ -23,7 +23,7 @@ sealed partial class EditorWindow:Window
 {
  readonly WebView2 view=new();
  readonly ComboBox lodChoice=new(){Header=UiLanguage.Text("Модель / LOD"),PlaceholderText=UiLanguage.Text("Сначала откройте NMF"),HorizontalAlignment=HorizontalAlignment.Stretch};
- readonly ComboBox objects=new(){Header=UiLanguage.Text("Объект"),PlaceholderText=UiLanguage.Text("Выберите объект"),HorizontalAlignment=HorizontalAlignment.Stretch};
+ readonly ListView objects=new(){SelectionMode=ListViewSelectionMode.Extended,HorizontalAlignment=HorizontalAlignment.Stretch};
  readonly ComboBox materialChoice=new(){Header=UiLanguage.Text("Материал"),PlaceholderText=UiLanguage.Text("Выберите материал"),HorizontalAlignment=HorizontalAlignment.Stretch};
  readonly TextBlock materialFile=new(){FontSize=12,Opacity=.75,TextTrimming=TextTrimming.CharacterEllipsis};
  readonly TextBlock status=new(){Visibility=Visibility.Collapsed,Text="Выберите NMF и MTL",TextWrapping=TextWrapping.Wrap,IsTextSelectionEnabled=true};
@@ -38,18 +38,18 @@ sealed partial class EditorWindow:Window
  readonly List<(Button Button,Func<bool> CanExecute)> commandButtons=[];
  readonly StackPanel emptyView=new(){Spacing=8,HorizontalAlignment=HorizontalAlignment.Center,VerticalAlignment=VerticalAlignment.Center,MaxWidth=320};
  bool HasModel=>ready&&selectedLod!=null;
- string? startupModel=Environment.GetCommandLineArgs().Skip(1).FirstOrDefault(x=>x.EndsWith(".nmf",StringComparison.OrdinalIgnoreCase)||x.EndsWith(".obj",StringComparison.OrdinalIgnoreCase)||x.EndsWith(".aur",StringComparison.OrdinalIgnoreCase));
+ string? startupModel=Environment.GetCommandLineArgs().Skip(1).FirstOrDefault(x=>x.EndsWith(".nmf",StringComparison.OrdinalIgnoreCase)||x.EndsWith(".obj",StringComparison.OrdinalIgnoreCase)||x.EndsWith(".fbx",StringComparison.OrdinalIgnoreCase)||x.EndsWith(".aur",StringComparison.OrdinalIgnoreCase));
  public EditorWindow()
  {
   Title="Aurora Editor";SystemBackdrop=new MicaBackdrop();WindowChrome.ResizeLogical(this,1250,850);
-  var grid=new Grid();grid.RowDefinitions.Add(new(){Height=GridLength.Auto});grid.RowDefinitions.Add(new(){Height=new GridLength(1,GridUnitType.Star)});grid.RowDefinitions.Add(new(){Height=GridLength.Auto});
+  var grid=new Grid();ConfigureOpaqueSurfaces(grid);grid.RowDefinitions.Add(new(){Height=GridLength.Auto});grid.RowDefinitions.Add(new(){Height=new GridLength(1,GridUnitType.Star)});grid.RowDefinitions.Add(new(){Height=GridLength.Auto});
   var viewport=new Grid();viewport.Children.Add(view);Grid.SetRow(viewport,1);grid.Children.Add(viewport);
   emptyView.Children.Add(new TextBlock{Text=UiLanguage.Text("Откройте модель"),FontSize=22,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});
   emptyView.Children.Add(new TextBlock{Text=UiLanguage.Text("Откройте NMF или импортируйте OBJ. Перетащить файл сюда тоже можно."),TextWrapping=TextWrapping.Wrap,Opacity=.7});
-  emptyView.IsHitTestVisible=false;viewport.Children.Add(emptyView);BuildGizmoControls(viewport);BuildPreviewWorkspace(viewport);
+  emptyView.IsHitTestVisible=false;viewport.Children.Add(emptyView);BuildGizmoControls(viewport);BuildPreviewWorkspace(viewport);BuildLayers(viewport);
   grid.AllowDrop=true;
   grid.DragOver+=(_,e)=>{if(!busy&&e.DataView.Contains(StandardDataFormats.StorageItems)){e.AcceptedOperation=DataPackageOperation.Copy;e.DragUIOverride.Caption=UiLanguage.Text("Открыть модель");}e.Handled=true;};
-  grid.Drop+=async(_,e)=>{e.Handled=true;if(busy||!e.DataView.Contains(StandardDataFormats.StorageItems))return;try{var files=(await e.DataView.GetStorageItemsAsync()).OfType<Windows.Storage.StorageFile>().Where(x=>x.FileType.Equals(".nmf",StringComparison.OrdinalIgnoreCase)||x.FileType.Equals(".obj",StringComparison.OrdinalIgnoreCase)||x.FileType.Equals(".aur",StringComparison.OrdinalIgnoreCase)).ToArray();if(files.Length!=1){SetStatus("Перетащите один NMF или OBJ.");return;}await RunCommand(async()=>{if(await ConfirmDiscard()){await OpenDocument(files[0].Path);}});}catch(Exception ex){SetStatus(ex.Message);}};
+  grid.Drop+=async(_,e)=>{e.Handled=true;if(busy||!e.DataView.Contains(StandardDataFormats.StorageItems))return;try{var files=(await e.DataView.GetStorageItemsAsync()).OfType<Windows.Storage.StorageFile>().Where(x=>x.FileType.Equals(".nmf",StringComparison.OrdinalIgnoreCase)||x.FileType.Equals(".obj",StringComparison.OrdinalIgnoreCase)||x.FileType.Equals(".fbx",StringComparison.OrdinalIgnoreCase)||x.FileType.Equals(".aur",StringComparison.OrdinalIgnoreCase)).ToArray();if(files.Length!=1){SetStatus("Перетащите один NMF или OBJ.");return;}await RunCommand(async()=>{if(await ConfirmDiscard()){await OpenDocument(files[0].Path);}});}catch(Exception ex){SetStatus(ex.Message);}};
   WindowChrome.Attach(this,grid,"Aurora Editor");
 
   RegisterCommand("Открыть NMF…",async()=>{var path=await Pick(".nmf");if(path!=null&&await ConfirmDiscard())await Load(path);});
@@ -112,10 +112,11 @@ sealed partial class EditorWindow:Window
  }
  async Task Display()
  {
-  processing=true;UpdateControls();if(!ready||selectedLod==null)return;string? selectedObject=objects.SelectedItem as string,selectedMaterial=materialChoice.SelectedItem as string;var model=ViewportModel();objects.IsEnabled=!AlternateFrameRequested;objects.Items.Clear();foreach(var node in model.Nodes)objects.Items.Add(node.Name);materialChoice.Items.Clear();foreach(var name in model.Materials.Concat(settings.Keys).Distinct())materialChoice.Items.Add(name);objects.SelectedItem=!AlternateFrameRequested&&selectedObject!=null&&objects.Items.Contains(selectedObject)?selectedObject:null;if(materialChoice.Items.Count>0)materialChoice.SelectedItem=selectedMaterial!=null&&materialChoice.Items.Contains(selectedMaterial)?selectedMaterial:materialChoice.Items[0];
+  processing=true;UpdateControls();if(!ready||selectedLod==null)return;string[] selectedObjects=objects.SelectedItems.OfType<string>().ToArray();string? selectedObject=objects.SelectedItem as string,selectedMaterial=materialChoice.SelectedItem as string;var model=ViewportModel();objects.IsEnabled=!AlternateFrameRequested;objects.Items.Clear();foreach(var node in model.Nodes)objects.Items.Add(node.Name);materialChoice.Items.Clear();foreach(var name in model.Materials.Concat(settings.Keys).Distinct())materialChoice.Items.Add(name);objects.SelectedItem=!AlternateFrameRequested&&selectedObject!=null&&objects.Items.Contains(selectedObject)?selectedObject:null;if(materialChoice.Items.Count>0)materialChoice.SelectedItem=selectedMaterial!=null&&materialChoice.Items.Contains(selectedMaterial)?selectedMaterial:materialChoice.Items[0];
+  foreach(string name in selectedObjects.Where(n=>objects.Items.Contains(n)&&!objects.SelectedItems.Contains(n)))objects.SelectedItems.Add(name);if(layerBorder!=null)layerBorder.Visibility=Visibility.Visible;
   var scene=BuildViewportScene(model);
   string sceneJson=await Task.Run(()=>JsonSerializer.Serialize(scene));
-  await view.ExecuteScriptAsync("load("+sceneJson+")");await view.ExecuteScriptAsync("wireframe("+(wireframeMenu.IsChecked?"true":"false")+")");await view.ExecuteScriptAsync("select("+objects.SelectedIndex+")");await LoadTextures();
+  string identity=lods.Keys.First();if(viewportDocument!=identity){sentImages.Clear();viewportDocument=identity;}await view.ExecuteScriptAsync("updateScene("+sceneJson+","+JsonSerializer.Serialize(identity)+")");await ApplyWireframe();await view.ExecuteScriptAsync("select("+objects.SelectedIndex+")");await LoadTextures();
   foreach(var pair in settings)await ApplyPreview(pair.Key,pair.Value);
   for(int i=0;i<model.Nodes.Count;i++)if(!AlternateFrameRequested&&glassObjects[selectedLod].Contains(model.Nodes[i].Name))await view.ExecuteScriptAsync("glassObject("+i+",true)");
   await LoadCargoTextures();await LoadPartTextures();await RefreshGizmo();if(partWarnings.Count>0)SetStatus("Просмотр сборки",string.Join("\n",partWarnings));
@@ -134,14 +135,15 @@ sealed partial class EditorWindow:Window
    }
   }
  }
- async Task<RgbaImage> ReadImage(string file)
+ async Task<RgbaImage> DecodeImage(string file)
  {
   if(Path.GetExtension(file).Equals(".dds",StringComparison.OrdinalIgnoreCase))return DdsImage.Decode(File.ReadAllBytes(file));
   var storage=await Windows.Storage.StorageFile.GetFileFromPathAsync(file);using var stream=await storage.OpenReadAsync();var decoder=await BitmapDecoder.CreateAsync(stream);if(decoder.PixelWidth>8192||decoder.PixelHeight>8192)throw new InvalidDataException(UiLanguage.Text("Максимальный размер текстуры — 8192 × 8192."));var data=await decoder.GetPixelDataAsync(BitmapPixelFormat.Rgba8,BitmapAlphaMode.Straight,new BitmapTransform(),ExifOrientationMode.IgnoreExifOrientation,ColorManagementMode.DoNotColorManage);return new((int)decoder.PixelWidth,(int)decoder.PixelHeight,data.DetachPixelData());
  }
  async Task PreviewTexture(string material,RgbaImage image,string channel="texture")
  {
-  using var stream=new InMemoryRandomAccessStream();var encoder=await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId,stream);encoder.SetPixelData(BitmapPixelFormat.Rgba8,BitmapAlphaMode.Straight,(uint)image.Width,(uint)image.Height,96,96,image.Pixels);await encoder.FlushAsync();stream.Seek(0);var bytes=new byte[(int)stream.Size];using var reader=new DataReader(stream);await reader.LoadAsync((uint)bytes.Length);reader.ReadBytes(bytes);await view.ExecuteScriptAsync("texture("+JsonSerializer.Serialize(material)+","+JsonSerializer.Serialize("data:image/png;base64,"+Convert.ToBase64String(bytes))+","+JsonSerializer.Serialize(channel)+")");
+  if(sentImages.TryGetValue((material,channel),out var prior)&&ReferenceEquals(prior,image))return;
+  using var stream=new InMemoryRandomAccessStream();var encoder=await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId,stream);encoder.SetPixelData(BitmapPixelFormat.Rgba8,BitmapAlphaMode.Straight,(uint)image.Width,(uint)image.Height,96,96,image.Pixels);await encoder.FlushAsync();stream.Seek(0);var bytes=new byte[(int)stream.Size];using var reader=new DataReader(stream);await reader.LoadAsync((uint)bytes.Length);reader.ReadBytes(bytes);await view.ExecuteScriptAsync("texture("+JsonSerializer.Serialize(material)+","+JsonSerializer.Serialize("data:image/png;base64,"+Convert.ToBase64String(bytes))+","+JsonSerializer.Serialize(channel)+")");sentImages[(material,channel)]=image;
  }
  async Task ApplyPreview(string name,MaterialSettings s)
  {

@@ -1,0 +1,38 @@
+[
+  {
+    "Repository": "ufbx/ufbx",
+    "Commit": "1d097696e33b367bb3152b175aeb2d95193f9b6e",
+    "File": "ufbx/ufbx.h",
+    "Sha256": "f787be529af577efc04f3e3e735844a08556718dbb613d1211c2b313d72895dc"
+  },
+  {
+    "Repository": "ufbx/ufbx",
+    "Commit": "1d097696e33b367bb3152b175aeb2d95193f9b6e",
+    "File": "ufbx/ufbx.c",
+    "Sha256": "4a956c26a708e40d82ecb0aeaee54da709d5ba7c144c9642174970059bda7e1d"
+  },
+  {
+    "Repository": "ufbx/ufbx",
+    "Commit": "1d097696e33b367bb3152b175aeb2d95193f9b6e",
+    "File": "ufbx/LICENSE",
+    "Sha256": "0dd48ebadf52273c736256325c8f078c03c8bb4facee22a4122de0ad3f615391"
+  },
+  {
+    "Repository": "ufbx/ufbx-write",
+    "Commit": "2b65caaaa7fada7db9a2d25cd924997838169056",
+    "File": "ufbx-write/ufbx_write.h",
+    "Sha256": "eb2ff4c66c48eb7ad61bd85310e661d0d0af1c94cf443d669d587ef576d3be88"
+  },
+  {
+    "Repository": "ufbx/ufbx-write",
+    "Commit": "2b65caaaa7fada7db9a2d25cd924997838169056",
+    "File": "ufbx-write/ufbx_write.c",
+    "Sha256": "ca0e183a0bf153fa5137088a35ba58f9e6d2e3473cb0b3374335f29373bcf88b"
+  },
+  {
+    "Repository": "ufbx/ufbx-write",
+    "Commit": "2b65caaaa7fada7db9a2d25cd924997838169056",
+    "File": "ufbx-write/LICENSE",
+    "Sha256": "038987054b69b328d24b36172533542836764f2e49ae870ff6ca59c9d86f75bd"
+  }
+]

@@ -47,6 +47,7 @@ function gizmoRingAngle(mouse,axis){
 }
 const orbitDown=canvas.onpointerdown,orbitMove=canvas.onpointermove,orbitUp=canvas.onpointerup,orbitCancel=canvas.onpointercancel;
 canvas.onpointerdown=e=>{
+ if((e.button??0)!==0){orbitDown(e);return;}
  if(!scene||!gizmoState.visible||!gizmoState.editing){orbitDown(e);return;}
  const mouse=gizmoPointer(e);let best=null,min=9;
  for(const segment of gizmoSegments){let d=gv.sub(segment.b,segment.a),length=gv.dot(d,d),t=length?Math.max(0,Math.min(1,gv.dot(gv.sub(mouse,segment.a),d)/length)):0,p=gv.add(segment.a,gv.mul(d,t)),error=Math.hypot(...gv.sub(mouse,p));if(error<min){min=error;best=segment;}}
@@ -94,3 +95,23 @@ function playAnimation(clip,startFrame=0){stopAnimation();const state={clip,time
 
 function rotateDiagnostic(v,axis,degrees){const length=Math.hypot(...axis);if(length<1e-8)return v;const u=gv.mul(axis,1/length),a=degrees*Math.PI/180,c=Math.cos(a),s=Math.sin(a),dot=gv.dot(u,v),cross=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];return v.map((x,i)=>x*c+cross[i]*s+u[i]*dot*(1-c));}
 function poseWheels(wheels,steering,spin,selectedWheel=null){for(const n of nodes.filter(n=>!n.Part&&!n.Cargo&&wheels.some(w=>w.Mesh===n.Name))){if(!n.poseBase)n.poseBase={p:n.Positions.slice(),n:n.Normals.slice()};n.Positions=n.poseBase.p.slice();n.Normals=n.poseBase.n.slice();for(const wheel of wheels.filter(w=>w.Mesh===n.Name&&(selectedWheel===null||w.Mesh+'/'+(w.Component||0)===selectedWheel))){const transform=v=>rotateDiagnostic(rotateDiagnostic(v,wheel.Axle,spin),wheel.SteeringAxis,wheel.Steering?steering:0);for(const vertex of wheel.Vertices||Array.from({length:n.poseBase.p.length/3},(_,i)=>i)){const i=vertex*3;const p=gv.add(transform(gv.sub(n.poseBase.p.slice(i,i+3),wheel.Pivot)),wheel.Pivot),normal=transform(n.poseBase.n.slice(i,i+3));for(let k=0;k<3;k++){n.Positions[i+k]=p[k];n.Normals[i+k]=normal[k];}}}uploadNode(n);}draw();}
+
+// Reconcile edits in place: retain camera, textures and unchanged VAOs.
+let sceneDocument=null;
+function updateScene(next,document){
+ if(!scene||sceneDocument!==document){load(next);sceneDocument=document;return;}
+ const equal=(a,b)=>a.length===b.length&&a.every((v,i)=>v===b[i]);
+ const remaining=new Set(nodes),result=[];
+ for(let i=0;i<next.Nodes.length;i++){
+  const data=next.Nodes[i];let node=nodes.find(n=>remaining.has(n)&&n.Name===data.Name&&!!n.Cargo===!!data.Cargo&&!!n.Part===!!data.Part);
+  if(node&&equal(node.Indices,data.Indices)&&equal(node.Uv,data.Uv)){
+   remaining.delete(node);const moved=!equal(node.Positions,data.Positions)||!equal(node.Normals,data.Normals);
+   Object.assign(node,data,{index:i,glass:false});if(moved){delete node.poseBase;node.poseChanged=false;uploadNode(node);}result.push(node);continue;
+  }
+  const vao=gl.createVertexArray();gl.bindVertexArray(vao);
+  const buffers=[buffer(data.Positions,3,'position'),buffer(data.Normals,3,'normal'),buffer(data.Uv,2,'uv')],ib=gl.createBuffer();buffers.push(ib);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(data.Indices),gl.STATIC_DRAW);result.push({...data,index:i,vao,buffers});
+ }
+ for(const node of remaining){gl.deleteVertexArray(node.vao);for(const b of node.buffers)gl.deleteBuffer(b);}
+ next.center=scene.center;next.extent=scene.extent;scene=next;nodes=result;if(selected>=nodes.length)selected=-1;draw();
+}

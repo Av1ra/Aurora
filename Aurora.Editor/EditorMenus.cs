@@ -26,6 +26,7 @@ sealed partial class EditorWindow
  Style? opaqueMenuStyle,opaqueFlyoutStyle;
  void ConfigureOpaqueSurfaces(Grid root)
  {
+  if(opaqueMenuStyle!=null)return;
   var resources=Application.Current.Resources;
   opaqueMenuStyle=new Style(typeof(MenuFlyoutPresenter));if(resources.TryGetValue("DefaultMenuFlyoutPresenterStyle",out var menuBase)&&menuBase is Style menuStyle)opaqueMenuStyle.BasedOn=menuStyle;opaqueMenuStyle.Setters.Add(new Setter(Control.BackgroundProperty,opaquePopup));
   opaqueFlyoutStyle=new Style(typeof(FlyoutPresenter));if(resources.TryGetValue("DefaultFlyoutPresenterStyle",out var flyoutBase)&&flyoutBase is Style flyoutStyle)opaqueFlyoutStyle.BasedOn=flyoutStyle;opaqueFlyoutStyle.Setters.Add(new Setter(Control.BackgroundProperty,opaquePopup));
@@ -57,18 +58,17 @@ sealed partial class EditorWindow
   ConfigureOpaqueSurfaces(grid);
   // Reuse the existing stateful selectors and command handlers.
   var toolbar=new StackPanel{Name="EditorToolbar",Orientation=Orientation.Horizontal,Spacing=6,Margin=new Thickness(12,6,12,6)};
-  RegisterImportCommands();RegisterVehicleCommands();RegisterMaterialCommands();RegisterProjectCommands();RegisterObjectCommands();RegisterHistoryCommands();RegisterModelSettingsCommands();
+  RegisterImportCommands();RegisterSceneCommands();RegisterVehicleCommands();RegisterMaterialCommands();RegisterProjectCommands();RegisterObjectCommands();RegisterHistoryCommands();RegisterModelSettingsCommands();
   var file=new MenuFlyout();file.Items.Add(MenuCommand("Открыть NMF…"));
-  file.Items.Add(MenuCommand("Импортировать OBJ…"));file.Items.Add(MenuCommand("Открыть проект…"));
+  file.Items.Add(MenuCommand("Импортировать OBJ…"));file.Items.Add(MenuCommand("Импортировать FBX…"));file.Items.Add(MenuCommand("Открыть проект…"));
   file.Items.Add(new MenuFlyoutSeparator());
   editorCommands["Сохранить NMF…"]=(SaveNmfMaterials,()=>HasModel&&variants.Count>0);
-  file.Items.Add(MenuCommand("Сохранить NMF…"));file.Items.Add(MenuCommand("Сохранить проект…"));
+  file.Items.Add(MenuCommand("Экспортировать OBJ…"));file.Items.Add(MenuCommand("Экспортировать FBX…"));file.Items.Add(MenuCommand("Сохранить NMF…"));file.Items.Add(MenuCommand("Сохранить проект…"));
   file.Items.Add(new MenuFlyoutSeparator());var undoItem=MenuCommand("Отменить");undoItem.KeyboardAcceleratorTextOverride="Ctrl+Z";file.Items.Add(undoItem);var redoItem=MenuCommand("Повторить");redoItem.KeyboardAcceleratorTextOverride="Ctrl+Y";file.Items.Add(redoItem);
   wireframeMenu.Click+=async(_,_)=>{if(ready)try{await ApplyWireframe();}catch(Exception ex){SetStatus(ex.Message);}};
   var fileButton=ToolbarMenu("Меню",file);fileButton.Content=new FontIcon{Glyph="\uE700",FontSize=14};Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(fileButton,UiLanguage.Text("Меню"));toolbar.Children.Add(fileButton);
-  var selection=new StackPanel{Spacing=12,MinWidth=260,MaxWidth=340};selection.Children.Add(lodChoice);selection.Children.Add(objects);detachedMenuContents.Add(selection);
-  foreach(string key in new[]{"Переименовать объект…","Разделить несвязанные меши"}){var command=editorCommands[key];var button=new Button{Content=UiLanguage.Text(key),HorizontalAlignment=HorizontalAlignment.Stretch};commandButtons.Add((button,command.CanExecute));button.Click+=async(_,_)=>{CloseEditorFlyouts();await RunCommand(command.Action);};selection.Children.Add(button);}
-  var workspaceButton=new Button{Content=UiLanguage.Text("Объекты комплекта"),HorizontalAlignment=HorizontalAlignment.Stretch};workspaceButton.Click+=async(_,_)=>{CloseEditorFlyouts();await RunCommand(ConfigureWorkspace);};selection.Children.Add(workspaceButton);toolbar.Children.Add(ToolbarMenu("Выбрать объект",new Flyout{Content=selection}));
+  editorCommands["LOD…"]=(ConfigureLodsWindow,()=>HasModel);editorCommands["Меши…"]=(ConfigureMeshLayers,()=>HasModel);
+  var objectMenu=new MenuFlyout();objectMenu.Items.Add(MenuCommand("LOD…"));objectMenu.Items.Add(MenuCommand("Меши…"));toolbar.Children.Add(ToolbarMenu("Объект",objectMenu));
   var modifiers=new MenuFlyout();var glass=MenuGroup("Стекло");glass.Items.Add(MenuCommand("Сделать объект стеклом","Назначить объект"));glass.Items.Add(MenuCommand("Стекло через альфа-маску…","Альфа-канал…"));glass.Items.Add(new MenuFlyoutSeparator());glass.Items.Add(MenuCommand("Сбросить стекло"));modifiers.Items.Add(glass);
   modifiers.Items.Add(MenuCommand("Фары и фонари"));
   modifiers.Items.Add(MenuCommand("Починить ориентацию…"));toolbar.Children.Add(ToolbarMenu("Модификаторы",modifiers));
@@ -82,13 +82,8 @@ sealed partial class EditorWindow
   editorCommands["Эффекты"]=(async()=>await ConfigureTransport("effects"),()=>HasModel);
   editorCommands["Секции поезда"]=(async()=>await ConfigureConsist(true),()=>HasModel&&VehicleScript.Fields(VehicleTemplate()).Any(f=>f.Key=="TYPE"&&f.Value is "VEHICLETYPE_RAIL_LOCOMOTIVE" or "VEHICLETYPE_RAIL_VAGON"));editorCommands["Звуковые слои"]=(ConfigureSoundLayers,()=>HasModel);
   var modelSettings=new MenuFlyout();foreach(string key in new[]{"Настройки модели","Сборка и механизмы","Эффекты","Секции поезда","Звуковые слои","Настройки превью…"})modelSettings.Items.Add(MenuCommand(key,key switch{"Настройки превью…"=>"Превью","Настройки модели"=>"Параметры транспорта","Сборка и механизмы"=>"Механизмы","Звуковые слои"=>"Звуки",_=>key}));
-  var equipment=MenuGroup("Оборудование");foreach(var section in new[]{("assembly","Прицеп и дополнительные модели"),("points","Водитель и крепления"),("horses","Конная тяга"),("aviation","Винты и шасси"),("rail","Сцепка и оси поезда"),("waves","Волны судна"),("cabins","Кабина канатной дороги")}){string scope=section.Item1;editorCommands[section.Item2]=(()=>ConfigureTransport(scope),()=>HasModel&&TransportParameters.All.Any(p=>TransportParameters.Section(p)==scope&&p.Applies(VehicleScript.Fields(VehicleTemplate()).First(f=>f.Key=="TYPE").Value)));equipment.Items.Add(MenuCommand(section.Item2));}modelSettings.Items.Add(equipment);modelSettings.Items.Add(new MenuFlyoutSeparator());modelSettings.Items.Add(cabinAssemblyMenu);cabinAssemblyMenu.Click+=async(_,_)=>await RunCommand(Display);toolbar.Children.Add(ToolbarMenu("Скрипты",modelSettings));
-  var settingsMenu=new MenuFlyout();settingsMenu.Items.Add(wireframeMenu);
-  var colour=new MenuFlyoutItem{Text=UiLanguage.Text("Цвет полигональной сетки…")};
-  colour.Click+=async(_,_)=>{try{var picker=new ColorPicker{Color=wireframeColour,IsAlphaEnabled=false};var dialog=VehicleDialog("Цвет полигональной сетки",picker);
-    if(await ShowDialog(dialog)!=ContentDialogResult.Primary)return;wireframeColour=picker.Color;await ApplyWireframe();
-   }catch(Exception ex){SetStatus("Цвет сетки",ex.Message);}};
-  settingsMenu.Items.Add(colour);toolbar.Children.Add(ToolbarMenu("Настройки",settingsMenu));
+  var equipment=MenuGroup("Оборудование");foreach(var section in new[]{("assembly","Прицеп и дополнительные модели"),("points","Водитель и крепления"),("horses","Конная тяга"),("aviation","Винты и шасси"),("rail","Сцепка и оси поезда"),("waves","Волны судна"),("cabins","Кабина канатной дороги")}){string scope=section.Item1;editorCommands[section.Item2]=(()=>ConfigureTransport(scope),()=>HasModel&&TransportParameters.All.Any(p=>TransportParameters.Section(p)==scope&&p.Applies(VehicleScript.Fields(VehicleTemplate()).First(f=>f.Key=="TYPE").Value)));equipment.Items.Add(MenuCommand(section.Item2));}modelSettings.Items.Add(equipment);modelSettings.Items.Add(MenuCommand("Объекты комплекта"));modelSettings.Items.Add(new MenuFlyoutSeparator());modelSettings.Items.Add(cabinAssemblyMenu);cabinAssemblyMenu.Click+=async(_,_)=>await RunCommand(Display);toolbar.Children.Add(ToolbarMenu("Скрипты",modelSettings));
+  editorCommands["Настройки…"]=(ConfigureEditorPreferences,()=>true);file.Items.Add(new MenuFlyoutSeparator());file.Items.Add(MenuCommand("Настройки…"));
 
   grid.Children.Add(new ScrollViewer{Content=toolbar,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,VerticalScrollBarVisibility=ScrollBarVisibility.Disabled,HorizontalScrollMode=ScrollMode.Auto});
 

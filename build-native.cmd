@@ -26,5 +26,7 @@ if errorlevel 1 exit /b 29
 cl /nologo /std:c++20 /utf-8 /EHsc /O2 /MT /DUNICODE /D_UNICODE /I"..\..\Native" "..\..\Aurora.Tests\PbrRuntimeDefaultsTests.cpp" /Fe:PbrRuntimeDefaultsTests.exe
 if errorlevel 1 exit /b 30
 PbrRuntimeDefaultsTests.exe
+if errorlevel 1 exit /b 31
+call "..\..\Native\SceneBridge\build.cmd"
 exit /b %errorlevel%
 

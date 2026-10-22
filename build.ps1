@@ -43,6 +43,13 @@ try {
  $backendArgs=@('--noconfirm','--onedir','--console','--name','Aurora.ModelBackend','--distpath',"$buildRoot/backend",'--workpath',"$buildRoot/backend-work",'--specpath',"$root/artifacts","$root/Backend/mask_backend.py")
  if($PythonDependencyDirectory){Run $Python (@('-c','import sys;sys.path.insert(0,sys.argv[1]);from PyInstaller.__main__ import run;run(sys.argv[2:])',$PythonDependencyDirectory)+$backendArgs)}else{Run $Python (@('-m','PyInstaller')+$backendArgs)}
  Copy-Item -LiteralPath "$buildRoot/module/Aurora.Editor.Module.dll" -Destination "$buildRoot/addon/Editor"
+ New-Item -ItemType Directory "$buildRoot/addon/Editor/Exchange" -Force | Out-Null
+ Get-ChildItem -LiteralPath "$root/Exchange" -File | Where-Object {$_.Extension -in @('.py','.md')} | Copy-Item -Destination "$buildRoot/addon/Editor/Exchange"
+ Copy-Item -LiteralPath "$root/artifacts/native/Aurora.SceneBridge.exe" -Destination "$buildRoot/addon/Editor"
+ New-Item -ItemType Directory "$buildRoot/addon/Editor/ThirdParty" -Force | Out-Null
+ Copy-Item "$root/Native/SceneBridge/vendor/sources.json" "$buildRoot/addon/Editor/ThirdParty/sources.json"
+ Copy-Item "$root/Native/SceneBridge/vendor/ufbx/LICENSE" "$buildRoot/addon/Editor/ThirdParty/ufbx-LICENSE.txt"
+ Copy-Item "$root/Native/SceneBridge/vendor/ufbx-write/LICENSE" "$buildRoot/addon/Editor/ThirdParty/ufbx-write-LICENSE.txt"
  Copy-Item -LiteralPath "$root/Aurora.Editor/Assets/viewport.html" -Destination "$buildRoot/addon/Editor/Assets"
  Copy-Item -LiteralPath "$root/Aurora.Editor/Assets/gizmo.js" -Destination "$buildRoot/addon/Editor/Assets"
  Copy-Item -LiteralPath "$root/Aurora.Editor/Assets/previews.js" -Destination "$buildRoot/addon/Editor/Assets"

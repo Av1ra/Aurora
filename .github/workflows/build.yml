@@ -29,6 +29,13 @@ jobs:
       - name: Build development packages, never a release
         shell: pwsh
         run: ./build.ps1 -Development
+      - name: FBX and OBJ interchange checks
+        shell: pwsh
+        run: |
+          $env:AURORA_SCENE_BRIDGE = "$pwd/artifacts/native/Aurora.SceneBridge.exe"
+          dotnet run --project Aurora.Tests -c Release
+          if ($LASTEXITCODE -ne 0) { throw 'Scene interchange checks failed' }
+          python -m py_compile Exchange/scene_io.py Exchange/blender_aurora.py Exchange/max_aurora.py
       - name: Native installer and signed package checks
         shell: pwsh
         run: |

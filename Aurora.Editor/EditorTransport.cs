@@ -54,6 +54,7 @@ sealed partial class EditorWindow
  void SetTransportPoint(Vector3 value){if(transportPoint==null||vehicleConfiguration==null)return;var args=VehicleScript.Tokens(vehicleConfiguration).Where(t=>t.Key==transportPoint.Key&&t.Occurrence==transportPoint.Occurrence).Select(t=>t.Value).ToArray();if(args.Length<transportPoint.Start+3)return;var p=new[]{value.X,value.Y,value.Z};for(int i=0;i<3;i++)args[transportPoint.Start+i]=p[i].ToString("G9",CultureInfo.InvariantCulture);vehicleConfiguration=VehicleScript.SetArguments(vehicleConfiguration,transportPoint.Key,transportPoint.Occurrence,args);vehicleConfigurationEdited=true;}
  async Task ConfigureTransport(string scope="mechanisms")
  {
+  lightEditing=false;showAllLights=false;lightPalette.Visibility=Visibility.Collapsed;
   CloseAnimationTimeline();
   await LoadVehicleChoices();
   string draft=VehicleTemplate();string type=VehicleScript.Fields(draft).First(f=>f.Key=="TYPE").Value;

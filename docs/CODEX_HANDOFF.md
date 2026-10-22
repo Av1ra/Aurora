@@ -1,5 +1,7 @@
 # Codex handoff: Aurora Launcher + Aurora Editor
 
+**2026-10-23 workflow revision:** [eight-point Editor changes](EDITOR_WORKFLOW_REVISION_2026-10-23.md). Current source adds compact controls, layers, incremental viewport updates and FBX/OBJ scene exchange. Package/install evidence is separate; do not confuse this with the previous installed PR #3 checkpoint.
+
 **2026-10-23 integration checkpoint:** [Editor PR #3 candidate](EDITOR_PR3_INTEGRATION_2026-10-23.md). Source 468d034, production-signed package installed at the owner's explicit request; 572 installed hashes and hidden WinUI construction verified. Includes cargo-panel construction fix and new English labels. PR #2 and Graphics PR #11 are not included. Earlier unmerged-PR statements below describe the prior handoff.
 
 **LATEST CONTINUATION (2026-10-22 evening): [Editor/PBR changes and Codex transfer](../handoff/2026-10-22/13_CODEX_CONTINUATION_2026-10-22.md).** Read this before acting on historical work backlog. PR #3 compiled and passed CI but is not merged or in the original production-signed installed package. User requires executable packages, not source archives.

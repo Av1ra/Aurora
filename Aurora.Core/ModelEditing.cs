@@ -39,14 +39,9 @@ public static class ModelEditing
   for(int i=0;i<selected.IndexCount;i+=3){Join(selected.Indices[i],selected.Indices[i+1]);Join(selected.Indices[i],selected.Indices[i+2]);}
   float Centre(IEnumerable<int> triangles,int axis){var values=triangles.SelectMany(t=>Enumerable.Range(t*3,3)).Select(i=>selected.Positions[selected.Indices[i]*3+axis]).ToArray();return (values.Min()+values.Max())/2;}
   var pieces=Enumerable.Range(0,selected.IndexCount/3).GroupBy(t=>Root(selected.Indices[t*3])).OrderBy(g=>Centre(g,0)).ThenBy(g=>Centre(g,2)).ThenBy(g=>Centre(g,1)).Select(g=>g.ToArray()).ToArray();if(pieces.Length<2)throw new InvalidDataException("Объект уже связан.");
-  var obj=new StringBuilder();int vertex=0;string F(float v)=>v.ToString("R",CultureInfo.InvariantCulture);
-  foreach(var node in model.Nodes){int[][] parts=node==selected?pieces:[Enumerable.Range(0,node.IndexCount/3).ToArray()];for(int part=0;part<parts.Length;part++){
-   string name=node==selected?node.Name[..Math.Min(52,node.Name.Length)]+"_"+(part+1):node.Name;if(node==selected&&model.Nodes.Any(n=>n!=selected&&n.Name==name))throw new InvalidDataException("Object name already exists");obj.AppendLine("o "+name);int last=-1;
-   foreach(int tri in parts[part]){int material=node.Groups.Single(g=>tri*3>=g.First&&tri*3<g.First+g.Count).Material;if(material!=last){obj.AppendLine("usemtl "+model.Materials[material]);last=material;}
-    for(int j=0;j<3;j++){int v=node.Indices[tri*3+j];obj.AppendLine("v "+F(node.Positions[v*3])+" "+F(node.Positions[v*3+1])+" "+F(node.Positions[v*3+2]));obj.AppendLine("vn "+F(node.Normals[v*3])+" "+F(node.Normals[v*3+1])+" "+F(node.Normals[v*3+2]));obj.AppendLine("vt "+F(node.Uv[v*2])+" "+F(1-node.Uv[v*2+1]));}
-    obj.AppendLine("f "+string.Join(" ",Enumerable.Range(vertex+1,3).Select(v=>$"{v}/{v}/{v}")));vertex+=3;
-   }
-  }}
-  var result=ObjImporter.Parse(obj.ToString()).Model;foreach(string unused in model.Materials.Except(result.Materials))result=AddMaterial(result,unused);return result;
+  var meshes=new List<RigidMesh>();
+  foreach(var node in model.Nodes){var original=RigidScene.Mesh(model,node);if(node!=selected){meshes.Add(original);continue;}
+   for(int part=0;part<pieces.Length;part++){string name=node.Name[..Math.Min(52,node.Name.Length)]+"_"+(part+1);if(model.Nodes.Any(n=>n!=selected&&n.Name==name))throw new InvalidDataException("Object name already exists");meshes.Add(RigidScene.Triangles(original,pieces[part],name));}}
+  return RigidScene.Build(model.Materials,meshes);
  }
 }
