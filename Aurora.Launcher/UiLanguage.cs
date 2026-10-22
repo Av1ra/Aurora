@@ -10,6 +10,17 @@ static class UiLanguage
     public static bool Reload(){try{string value=File.ReadAllText(path).Trim();if(value is not ("en" or "ru"))return false;bool english=value=="en";if(english==English)return false;English=english;return true;}catch{return false;}}
     static readonly Dictionary<string,string> words=new()
     {
+      ["Касание рамки"]="Crossing selection" ,
+      ["Полностью внутри"]="Window selection" ,
+      ["Элемент"]="Element" ,
+      ["Отзеркалить"]="Mirror" ,
+      ["Включите уровень «Элемент» и выберите часть меша"]="Choose Element mode and select a mesh part" ,
+      ["Транспорт проекта…"]="Project vehicles\u2026" ,
+      ["Здесь отдельные машины проекта, например локомотив и вагоны. Детали одной модели редактируются через меню «Объект»."]="Separate vehicles in this project, such as a locomotive and its wagons. Edit parts of one model through Object." ,
+      ["ЛКМ — выделение; Alt+ЛКМ — вращение; колесико — перемещение"]="LMB: selection; Alt+LMB: orbit; MMB: pan" ,
+      ["Вращать колёса: 20 км/ч"]="Spin wheels: 20 km/h" ,
+      ["Поворот колёс…"]="Wheel steering\u2026" ,
+
       ["Настройки…"]="Settings\u2026" ,
       ["Меши…"]="Meshes\u2026" ,
       ["Редактировать"]="Edit" ,

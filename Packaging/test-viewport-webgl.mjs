@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 const {chromium}=createRequire(import.meta.url)('playwright');
 const folder=path.resolve('Aurora.Editor/Assets');
 let html=fs.readFileSync(path.join(folder,'viewport.html'),'utf8');
-for(const [marker,file] of [['GIZMO','gizmo.js'],['PREVIEWS','previews.js']])html=html.replace(`/*AURORA_${marker}*/`,fs.readFileSync(path.join(folder,file),'utf8'));
+for(const [marker,file] of [['GIZMO','gizmo.js'],['PREVIEWS','previews.js'],['SELECTION','selection.js']])html=html.replace(`/*AURORA_${marker}*/`,fs.readFileSync(path.join(folder,file),'utf8'));
 const browser=await chromium.launch({channel:'msedge',headless:true,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 try{
  const page=await browser.newPage({viewport:{width:800,height:600}});await page.route('**/*',route=>route.abort());const errors=[];page.on('pageerror',e=>errors.push(e.message));

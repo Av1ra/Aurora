@@ -53,6 +53,7 @@ try {
  Copy-Item -LiteralPath "$root/Aurora.Editor/Assets/viewport.html" -Destination "$buildRoot/addon/Editor/Assets"
  Copy-Item -LiteralPath "$root/Aurora.Editor/Assets/gizmo.js" -Destination "$buildRoot/addon/Editor/Assets"
  Copy-Item -LiteralPath "$root/Aurora.Editor/Assets/previews.js" -Destination "$buildRoot/addon/Editor/Assets"
+ Copy-Item -LiteralPath "$root/Aurora.Editor/Assets/selection.js" -Destination "$buildRoot/addon/Editor/Assets"
  Copy-Item -Path "$buildRoot/backend/Aurora.ModelBackend/*" -Destination "$buildRoot/addon/Editor/Backend" -Recurse
  Run $Python @("$root/Packaging/prepare-logo.py","$root/Packaging/Branding/LogoAE.png","$buildRoot/logo.png")
  $brandExecutables=@(Get-ChildItem -LiteralPath $stage -Recurse -Filter '*.exe' -File | Where-Object {$_.Name -like 'Aurora*'} | Select-Object -ExpandProperty FullName)

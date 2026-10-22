@@ -31,7 +31,7 @@ sealed partial class EditorWindow
  }
  async Task RestoreSnapshot(EditorSnapshot state)
  {
-  string? priorClip=animationEditing?ActiveClip?.Name:null,priorMesh=animationEditing?ActiveTrack?.Mesh:null;double priorFrame=animationFrame.Value;
+  EndMeshEditing();string? priorClip=animationEditing?ActiveClip?.Name:null,priorMesh=animationEditing?ActiveTrack?.Mesh:null;double priorFrame=animationFrame.Value;
   lods.Clear();glassObjects.Clear();lodChoice.Items.Clear();foreach(var p in state.Models){lods[p.Key]=p.Value;glassObjects[p.Key]=new(state.Glass[p.Key]);AddLodChoice(p.Key);}
   variants.Clear();variantChoice.Items.Clear();variants.AddRange(state.Variants);foreach(var v in variants)variantChoice.Items.Add((variantChoice.Items.Count+1).ToString());settings.Clear();activeVariant=-1;if(state.Variant>=0)ActivateVariant(state.Variant);else mtl=state.Mtl;
   interchange=state.Interchange;selectedLod=state.Selected;if(selectedLod!=null)SelectLod(selectedLod);mask=state.Mask;maskMaterial=state.MaskMaterial;vehicleConfiguration=state.Vehicle;vehicleConfigurationEdited=vehicleConfiguration!=null;documentTransform=state.Transform;mainPivot=state.Pivot;mainRotation=state.Rotation;state.Lamps.CopyTo(lampSlots,0);state.LampRotations.CopyTo(lampRotations,0);extraLights.Clear();extraLights.AddRange(state.ExtraLights);activeLamp=state.ActiveLamp;gizmoVisible=state.Visible;gizmoEditing=state.Editing;gizmoMode=state.Mode;

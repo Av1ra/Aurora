@@ -1,4 +1,4 @@
-﻿using Aurora.Core;
+using Aurora.Core;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -28,7 +28,7 @@ sealed partial class AuroraApp:Application
  }
  void CheckEditorStartup(string report)
  {
-  try{var editor=EditorHost.Create();FrameworkElement? Find(DependencyObject node){if(node is FrameworkElement e&&e.Name=="EditorToolbar")return e;IEnumerable<DependencyObject> children=node switch{Panel p=>p.Children.Cast<DependencyObject>(),Border b when b.Child!=null=>[b.Child],ContentControl c when c.Content is DependencyObject d=>[d],_=>[]};foreach(var child in children){var found=Find(child);if(found!=null)return found;}return null;}
+  try{var editor=EditorHost.Create();var layoutCheck=editor.GetType().GetMethod("VerifyViewportLayout")??throw new InvalidDataException("Editor viewport layout check missing");layoutCheck.Invoke(editor,null);FrameworkElement? Find(DependencyObject node){if(node is FrameworkElement e&&e.Name=="EditorToolbar")return e;IEnumerable<DependencyObject> children=node switch{Panel p=>p.Children.Cast<DependencyObject>(),Border b when b.Child!=null=>[b.Child],ContentControl c when c.Content is DependencyObject d=>[d],_=>[]};foreach(var child in children){var found=Find(child);if(found!=null)return found;}return null;}
    var toolbarPanel=editor.Content is DependencyObject root?Find(root) as Panel:null;bool toolbar=toolbarPanel!=null&&toolbarPanel.Children.OfType<Button>().Count(b=>b.Flyout!=null)>=5;var menu=toolbarPanel?.Children.OfType<Button>().Select(b=>b.Flyout).OfType<MenuFlyout>().FirstOrDefault();if(menu==null)throw new InvalidDataException("Editor file menu is missing");var presenter=new MenuFlyoutPresenter{Style=menu.MenuFlyoutPresenterStyle};presenter.ApplyTemplate();presenter.SystemBackdrop=null;if(presenter.Background is not SolidColorBrush brush||brush.Color.A!=255)throw new InvalidDataException("Editor menu surface is not opaque");if(!toolbar)throw new InvalidDataException("Editor toolbar is missing from the window content");File.WriteAllText(report,JsonSerializer.Serialize(new{Success=true,Window=editor.GetType().FullName,Toolbar=toolbar}));editor.Close();
   }catch(Exception ex){File.WriteAllText(report,JsonSerializer.Serialize(new{Success=false,Error=ex.ToString()}));}
  }

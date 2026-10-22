@@ -7,9 +7,9 @@ namespace Aurora.Editor;
 sealed partial class EditorWindow
 {
  StackPanel? effectBar;
- bool testLeft,testRight,testBeacon;
+ bool testLeft,testRight,testBeacon;Microsoft.UI.Xaml.Controls.Primitives.ToggleButton? wheelRun;
  readonly List<Microsoft.UI.Xaml.Controls.Primitives.ToggleButton> effectToggles=[];
- void ResetEffectTests(){testLeft=testRight=testBeacon=false;foreach(var button in effectToggles)button.IsChecked=false;}
+ void ResetEffectTests(){testLeft=testRight=testBeacon=false;foreach(var button in effectToggles)button.IsChecked=false;if(wheelRun!=null)wheelRun.IsChecked=false;if(ready)_=view.ExecuteScriptAsync("stopWheels(true)");}
  bool IndicatorLeft(string script,string key,int occurrence){var args=VehicleScript.Tokens(script).Where(t=>t.Key==key&&t.Occurrence==occurrence).Take(3).Select(t=>float.Parse(t.Value,System.Globalization.CultureInfo.InvariantCulture)).ToArray();if(args.Length!=3)throw new InvalidDataException("Invalid indicator coordinates");var p=new Vector3(args[0],args[1],args[2]);return VehicleLights.IsLeft(p,mainPivot,PivotFrame());}
  StackPanel EffectButtons()
  {
@@ -17,12 +17,14 @@ sealed partial class EditorWindow
   effectBar=bar;nightButton.Margin=new Thickness(0);bar.Children.Add(nightButton);
   void Add(string glyph,string label,Action<bool> set){var b=new Microsoft.UI.Xaml.Controls.Primitives.ToggleButton{Content=glyph,Width=34,Height=32,Padding=new Thickness(0),IsChecked=false};effectToggles.Add(b);ToolTipService.SetToolTip(b,UiLanguage.Text(label));Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(b,UiLanguage.Text(label));b.Click+=async(_,_)=>{if(!HasModel){b.IsChecked=false;return;}set(b.IsChecked==true);await RefreshLighting();};bar.Children.Add(b);}
   Add("←","Левые поворотники",v=>testLeft=v);Add("→","Правые поворотники",v=>testRight=v);Add("◉","Проблесковые маяки",v=>testBeacon=v);
-  var wheels=new Button{Content="↻",Width=34,Height=32,Padding=new Thickness(0)};ToolTipService.SetToolTip(wheels,UiLanguage.Text("Проверка колёс"));var wheelPanel=new StackPanel{Spacing=6,MinWidth=230};var choice=new ComboBox{Header=UiLanguage.Text("Колесо"),HorizontalAlignment=HorizontalAlignment.Stretch};wheelPanel.Children.Add(choice);WheelDiagnostic[] axes=[];bool updating=false;
-  var turn=new Slider{Header=UiLanguage.Text("Поворот передних колёс"),Minimum=-45,Maximum=45,StepFrequency=.1};var spin=new Slider{Header=UiLanguage.Text("Вращение колёс"),Minimum=0,Maximum=360,StepFrequency=.1};wheelPanel.Children.Add(turn);wheelPanel.Children.Add(spin);
-  async Task Pose(bool resetAll=false){if(!HasModel||updating)return;var selected=choice.SelectedIndex>0?axes.ElementAtOrDefault(choice.SelectedIndex-1):null;turn.IsEnabled=selected?.Steering??axes.Any(a=>a.Steering);await view.ExecuteScriptAsync("poseWheels("+System.Text.Json.JsonSerializer.Serialize(axes)+","+(resetAll?"0":turn.Value.ToString(System.Globalization.CultureInfo.InvariantCulture))+","+(resetAll?"0":spin.Value.ToString(System.Globalization.CultureInfo.InvariantCulture))+","+System.Text.Json.JsonSerializer.Serialize(resetAll||selected==null?null:selected.Mesh+"/"+selected.Component)+")");}
-  turn.ValueChanged+=async(_,_)=>await Pose();spin.ValueChanged+=async(_,_)=>await Pose();choice.SelectionChanged+=async(_,_)=>await Pose();var reset=new Button{Content=UiLanguage.Text("Сбросить")};reset.Click+=async(_,_)=>{updating=true;turn.Value=spin.Value=0;updating=false;await Pose(true);};wheelPanel.Children.Add(reset);var wheelFlyout=new Flyout{Content=wheelPanel};wheelFlyout.Opening+=async(_,_)=>{wheelFlyout.FlyoutPresenterStyle=opaqueFlyoutStyle;if(!HasModel)return;updating=true;try{axes=WheelDiagnostics.Read(ViewportModel());choice.ItemsSource=new[]{UiLanguage.Text("Все колёса")}.Concat(axes.Select(a=>a.Mesh+" "+(a.Component+1))).ToArray();choice.SelectedIndex=0;turn.Value=spin.Value=0;turn.IsEnabled=axes.Any(a=>a.Steering);if(axes.Length==0){editorNotice.Message=UiLanguage.Text("Не найдены колёса со штатными именами");editorNotice.Severity=InfoBarSeverity.Warning;editorNotice.IsOpen=true;}}catch(Exception ex){axes=[];editorNotice.Message=ex.Message;editorNotice.Severity=InfoBarSeverity.Error;editorNotice.IsOpen=true;}finally{updating=false;}await Pose(true);};wheels.Flyout=wheelFlyout;bar.Children.Add(wheels);
+  wheelRun=new Microsoft.UI.Xaml.Controls.Primitives.ToggleButton{Content="↻",Width=34,Height=32,Padding=new Thickness(0)};ToolTipService.SetToolTip(wheelRun,UiLanguage.Text("Вращать колёса: 20 км/ч"));Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(wheelRun,UiLanguage.Text("Вращать колёса: 20 км/ч"));wheelRun.Click+=async(_,_)=>{if(!HasModel){wheelRun.IsChecked=false;return;}if(wheelRun.IsChecked==true){var wheels=WheelDiagnostics.Read(CurrentModel());if(wheels.Length==0){wheelRun.IsChecked=false;SetStatus("Не найдены колёса со штатными именами");return;}await view.ExecuteScriptAsync("playWheels("+System.Text.Json.JsonSerializer.Serialize(wheels)+",20)");}else await view.ExecuteScriptAsync("stopWheels(false)");};bar.Children.Add(wheelRun);
+  editorCommands["Поворот колёс…"]=(ConfigureWheelSteering,()=>HasModel);
 
   return bar;
+ }
+ async Task ConfigureWheelSteering()
+ {
+  if(wheelRun!=null)wheelRun.IsChecked=false;await view.ExecuteScriptAsync("stopWheels(true)");var axes=WheelDiagnostics.Read(CurrentModel());var panel=new StackPanel{Spacing=8,Width=300};var choice=new ComboBox{ItemsSource=new[]{UiLanguage.Text("Все колёса")}.Concat(axes.Select(a=>a.Mesh+" "+(a.Component+1))).ToArray(),SelectedIndex=0,HorizontalAlignment=HorizontalAlignment.Stretch};var turn=new Slider{Header=UiLanguage.Text("Поворот передних колёс"),Minimum=-45,Maximum=45,StepFrequency=.1};panel.Children.Add(choice);panel.Children.Add(turn);async Task Pose(){var selected=choice.SelectedIndex>0?axes[choice.SelectedIndex-1]:null;turn.IsEnabled=selected?.Steering??axes.Any(a=>a.Steering);await view.ExecuteScriptAsync("poseWheels("+System.Text.Json.JsonSerializer.Serialize(axes)+","+turn.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)+",0,"+System.Text.Json.JsonSerializer.Serialize(selected==null?null:selected.Mesh+"/"+selected.Component)+")");}turn.ValueChanged+=async(_,_)=>await Pose();choice.SelectionChanged+=async(_,_)=>await Pose();try{await ShowDialog(VehicleDialog("Поворот колёс…",panel));}finally{await view.ExecuteScriptAsync("poseWheels("+System.Text.Json.JsonSerializer.Serialize(axes)+",0,0)");}
  }
  IEnumerable<object> DiagnosticLights()
  {
@@ -33,7 +35,7 @@ sealed partial class EditorWindow
    var args=VehicleScript.Tokens(vehicleConfiguration).Where(t=>t.Key==field.Key&&t.Occurrence==field.Occurrence).Select(t=>t.Value).Take(3).ToArray();
    if(args.Length!=3||args.Any(a=>!float.TryParse(a,System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture,out _)))continue;
    var p=args.Select(a=>float.Parse(a,System.Globalization.CultureInfo.InvariantCulture)).ToArray();if(blink&&!AllLightPreview&&!(IndicatorLeft(vehicleConfiguration,field.Key,field.Occurrence)?testLeft:testRight))continue;
-   var forward=Vector3.TransformNormal(Vector3.UnitZ,PivotFrame());yield return new{position=p,direction=new[]{forward.X,forward.Y,forward.Z},rear=false,kind=beacon?"beacon":"blinker"};
+   var forward=Vector3.TransformNormal(Vector3.UnitZ,PivotFrame());yield return new{position=p,direction=new[]{forward.X,forward.Y,forward.Z},rear=false,kind=beacon?"beacon":"blinker",animate=beacon?testBeacon:testLeft||testRight,phase=beacon?field.Occurrence*MathF.PI:0};
   }
  }
 }
