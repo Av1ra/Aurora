@@ -7,8 +7,9 @@ using System.Diagnostics;
 namespace Aurora.Editor;
 static class ModelExport
 {
- public static async Task Export(Dictionary<string,NativeModel> lods,Dictionary<string,HashSet<string>> glass,Dictionary<string,MaterialSettings> settings,string mtl,string? mask,string? maskMaterial,string destination,Func<string,Task<RgbaImage>> image,string? vehicleConfiguration=null,bool useSourceScript=true,bool materialsOnly=false,bool allowWorkspaceReferences=false)
+ public static async Task Export(Dictionary<string,NativeModel> lods,Dictionary<string,HashSet<string>> glass,Dictionary<string,MaterialSettings> settings,string mtl,string? mask,string? maskMaterial,string destination,Func<string,Task<RgbaImage>> image,string? vehicleConfiguration=null,bool useSourceScript=true,bool materialsOnly=false,bool allowWorkspaceReferences=false,AnimationClip[]? animations=null)
  {
+  if(!materialsOnly&&(animations??[]).Any(c=>c.Action=="Preview"))throw new InvalidDataException("Выберите игровое действие для каждой анимации или сохраните проект для продолжения работы");
   if(materialsOnly&&(mask!=null||glass.Values.Any(g=>g.Count>0)))throw new InvalidDataException("A skin cannot change geometry or glass objects");
   if(!materialsOnly&&!allowWorkspaceReferences&&vehicleConfiguration!=null&&TransportPackage.References(vehicleConfiguration).Any(r=>r.StartsWith("aurora:",StringComparison.Ordinal)))throw new InvalidDataException("Export referenced project objects as a transport package");
   var modelNames=ModelFileNames.Allocate(lods.Keys);
@@ -51,7 +52,7 @@ static class ModelExport
    else if(!materialsOnly)
    {
     bool withGlass=glass.Values.Any(x=>x.Count>0);
-    foreach(var pair in lods)File.WriteAllBytes(Path.Combine(staging,modelNames[pair.Key]),withGlass?pair.Value.AssignGlass(glass[pair.Key]):pair.Value.Data);
+    foreach(var pair in lods){File.WriteAllBytes(Path.Combine(staging,modelNames[pair.Key]),withGlass?pair.Value.AssignGlass(glass[pair.Key]):pair.Value.Data);if(VehicleAssets.AnimationData(pair.Key) is byte[] naf)File.WriteAllBytes(Path.Combine(staging,Path.ChangeExtension(modelNames[pair.Key],".naf")),naf);}
     if(withGlass)
     {
      outputMtl=AddMaterial(outputMtl,lods.First().Value.Materials[lods.First().Value.Nodes.First(n=>glass[lods.First().Key].Contains(n.Name)).Groups[0].Material],"Aurora_Glass");
@@ -66,9 +67,10 @@ static class ModelExport
    {
     string configuration=VehicleSoundFiles.Export(vehicleConfiguration??File.ReadAllText(script),sourceFolder,staging);
     _=VehicleParts.Read(configuration);
-    configuration=VehicleAssets.Export(configuration,sourceFolder,staging);
+    string animationSource=configuration;foreach(var clip in animations??[])if(clip.Action!="Preview")configuration=VehicleScript.Set(configuration,clip.Action,0,null);configuration=VehicleAssets.Export(configuration,sourceFolder,staging);
     configuration=VehicleSharedMaterials.Export(configuration,staging,NativeMaterialText.Names(outputMtl));
     configuration=VehicleScript.RewriteTokens(configuration,t=>Regex.IsMatch(t.Key,@"^LOD\d*$")&&t.Index==0?ModelFileNames.Resolve(modelNames,t.Value,sourceFolder):null);
+    configuration=AnimationBindings.Write(configuration,new NativeModel(File.ReadAllBytes(Path.Combine(staging,modelNames[lods.Keys.First()]))),animations??[],staging,animationSource);foreach(string file in modelNames.Values){string path=Path.Combine(staging,file);var original=new NativeModel(File.ReadAllBytes(path));var rest=AnimationBindings.StaticModel(original,animations??[]);if(!ReferenceEquals(rest,original))File.WriteAllBytes(path,rest.Data);}
     File.WriteAllText(Path.Combine(staging,"script.ini"),configuration,new UTF8Encoding(false));
    }
    foreach(var optional in new[]{"bbox.bin","preview.dds","preview_side.dds"})if(File.Exists(Path.Combine(sourceFolder,optional)))File.Copy(Path.Combine(sourceFolder,optional),Path.Combine(staging,optional));

@@ -14,7 +14,7 @@ public static class NmfExport
   if(names.Values.Any(n=>string.IsNullOrWhiteSpace(n)||!n.EndsWith(".nmf",StringComparison.OrdinalIgnoreCase)))throw new InvalidDataException("Invalid NMF name");
   bool withGlass=models.Keys.Any(k=>glass.TryGetValue(k,out var nodes)&&nodes.Count>0);
   if(withGlass&&models.Keys.Any(k=>!glass.TryGetValue(k,out var nodes)||nodes.Count==0))throw new InvalidDataException("Отметьте стеклянные объекты во всех LOD.");
-  var payload=models.Select(pair=>(Name:names[pair.Key],Data:withGlass?pair.Value.AssignGlass(glass[pair.Key]):pair.Value.Data)).ToArray();
+  var payload=models.SelectMany(pair=>{var files=new List<(string Name,byte[] Data)>{(names[pair.Key],withGlass?pair.Value.AssignGlass(glass[pair.Key]):pair.Value.Data)};if(VehicleAssets.AnimationData(pair.Key) is byte[] naf)files.Add((Path.ChangeExtension(names[pair.Key],".naf"),naf));return files;}).ToArray();
   string target=Path.Combine(Path.GetFullPath(destination),"Aurora-NMF-"+DateTime.Now.ToString("yyyyMMdd-HHmmss")+"-"+Guid.NewGuid().ToString("N")[..8]);
   string staging=target+".building";Directory.CreateDirectory(staging);
   try{foreach(var file in payload)File.WriteAllBytes(Path.Combine(staging,file.Name),file.Data);Directory.Move(staging,target);return target;}

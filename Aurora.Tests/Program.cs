@@ -19,6 +19,7 @@ MechanismAxisChecks.Run(Check,Reject,args.FirstOrDefault());
 await SharedTransportMaterialChecks.Run(Check,Reject,args.FirstOrDefault());
 CargoFrameChecks.Run(Check,Reject);
 MaterialPropertyChecks.Run(Check,Reject);
+AnimationTimelineChecks.Run(Check,Reject);await AnimationExportChecks.Run(Check,Reject);
 MaterialTerminatorChecks.Run(Check,Reject,args.FirstOrDefault());
 await PartialMaterialChecks.Run(Check,Reject);
 TransportPackageChecks.Run(Check,Reject);

@@ -49,7 +49,7 @@ sealed partial class EditorWindow
   var fileButton=ToolbarMenu("Меню",file);fileButton.Content=new FontIcon{Glyph="\uE700",FontSize=14};Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(fileButton,UiLanguage.Text("Меню"));toolbar.Children.Add(fileButton);
   var selection=new StackPanel{Spacing=12,MinWidth=260,MaxWidth=340};selection.Children.Add(lodChoice);selection.Children.Add(objects);detachedMenuContents.Add(selection);
   foreach(string key in new[]{"Переименовать объект…","Разделить несвязанные меши"}){var command=editorCommands[key];var button=new Button{Content=UiLanguage.Text(key),HorizontalAlignment=HorizontalAlignment.Stretch};commandButtons.Add((button,command.CanExecute));button.Click+=async(_,_)=>{CloseEditorFlyouts();await RunCommand(command.Action);};selection.Children.Add(button);}
-  toolbar.Children.Add(ToolbarMenu("Выбрать объект",new Flyout{Content=selection}));
+  var workspaceButton=new Button{Content=UiLanguage.Text("Объекты комплекта"),HorizontalAlignment=HorizontalAlignment.Stretch};workspaceButton.Click+=async(_,_)=>{CloseEditorFlyouts();await RunCommand(ConfigureWorkspace);};selection.Children.Add(workspaceButton);toolbar.Children.Add(ToolbarMenu("Выбрать объект",new Flyout{Content=selection}));
   var modifiers=new MenuFlyout();var glass=MenuGroup("Стекло");glass.Items.Add(MenuCommand("Сделать объект стеклом","Назначить объект"));glass.Items.Add(MenuCommand("Стекло через альфа-маску…","Альфа-канал…"));glass.Items.Add(new MenuFlyoutSeparator());glass.Items.Add(MenuCommand("Сбросить стекло"));modifiers.Items.Add(glass);
   modifiers.Items.Add(MenuCommand("Фары и фонари"));
   modifiers.Items.Add(MenuCommand("Починить ориентацию…"));toolbar.Children.Add(ToolbarMenu("Модификаторы",modifiers));
@@ -58,12 +58,12 @@ sealed partial class EditorWindow
    var command=editorCommands[key];var button=new Button{Content=UiLanguage.Text(key=="Настроить PBR"?"Настройки материала":key),HorizontalAlignment=HorizontalAlignment.Stretch};commandButtons.Add((button,command.CanExecute));button.Click+=async(_,_)=>{CloseEditorFlyouts();await RunCommand(command.Action);};materialPanel.Children.Add(button);
   }
   toolbar.Children.Add(ToolbarMenu("Материалы",new Flyout{Content=materialPanel}));
-  editorCommands["Объекты комплекта"]=(ConfigureWorkspace,()=>HasModel);editorCommands["Сборка и механизмы"]=(ConfigureTransport,()=>HasModel);editorCommands["Связи и состав"]=(ConfigureConsist,()=>HasModel);editorCommands["Звуковые слои"]=(ConfigureSoundLayers,()=>HasModel);var modelSettings=new MenuFlyout();foreach(string key in new[]{"Настройки модели","Объекты комплекта","Сборка и механизмы","Связи и состав","Звуковые слои","Настройки превью…"})modelSettings.Items.Add(MenuCommand(key,key=="Настройки превью…"?"Превью":key));modelSettings.Items.Add(new MenuFlyoutSeparator());modelSettings.Items.Add(cabinAssemblyMenu);cabinAssemblyMenu.Click+=async(_,_)=>await RunCommand(Display);toolbar.Children.Add(ToolbarMenu("Скрипты",modelSettings));
+  editorCommands["Объекты комплекта"]=(ConfigureWorkspace,()=>HasModel);editorCommands["Сборка и механизмы"]=(()=>ConfigureTransport(),()=>HasModel);editorCommands["Анимации"]=(OpenAnimationTimeline,()=>HasModel);editorCommands["Конструкция транспорта"]=(async()=>await ConfigureTransport("construction"),()=>HasModel);editorCommands["Связи и состав"]=(()=>ConfigureConsist(),()=>HasModel);editorCommands["Секции поезда"]=(async()=>await ConfigureConsist(true),()=>HasModel&&VehicleScript.Fields(VehicleTemplate()).Any(f=>f.Key=="TYPE"&&f.Value is "VEHICLETYPE_RAIL_LOCOMOTIVE" or "VEHICLETYPE_RAIL_VAGON"));editorCommands["Звуковые слои"]=(ConfigureSoundLayers,()=>HasModel);var modelSettings=new MenuFlyout();foreach(string key in new[]{"Настройки модели","Сборка и механизмы","Анимации","Конструкция транспорта","Связи и состав","Секции поезда","Звуковые слои","Настройки превью…"})modelSettings.Items.Add(MenuCommand(key,key switch{"Настройки превью…"=>"Превью","Настройки модели"=>"Параметры транспорта","Сборка и механизмы"=>"Механизмы","Связи и состав"=>"Варианты покупки","Звуковые слои"=>"Звуки",_=>key}));modelSettings.Items.Add(new MenuFlyoutSeparator());modelSettings.Items.Add(cabinAssemblyMenu);cabinAssemblyMenu.Click+=async(_,_)=>await RunCommand(Display);toolbar.Children.Add(ToolbarMenu("Скрипты",modelSettings));
   grid.Children.Add(new ScrollViewer{Content=toolbar,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,VerticalScrollBarVisibility=ScrollBarVisibility.Disabled,HorizontalScrollMode=ScrollMode.Auto});
 
   var footer=new Grid{Margin=new Thickness(14,8,14,8),ColumnSpacing=16,RowSpacing=4};footer.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});footer.ColumnDefinitions.Add(new(){Width=GridLength.Auto});footer.RowDefinitions.Add(new(){Height=GridLength.Auto});footer.RowDefinitions.Add(new(){Height=GridLength.Auto});
   footer.Children.Add(geometryInfo);Grid.SetColumn(dirtyText,1);footer.Children.Add(dirtyText);Grid.SetRow(status,1);Grid.SetColumnSpan(status,2);footer.Children.Add(status);Grid.SetRow(footer,2);grid.Children.Add(footer);
-  busyIndicator.Height=2;busyIndicator.VerticalAlignment=VerticalAlignment.Bottom;grid.Children.Add(busyIndicator);
+  Grid.SetRow(editorNotice,1);grid.Children.Add(editorNotice);busyIndicator.Height=2;busyIndicator.VerticalAlignment=VerticalAlignment.Bottom;grid.Children.Add(busyIndicator);
   foreach(var shortcut in new[]{(Windows.System.VirtualKey.O,"Открыть NMF…"),(Windows.System.VirtualKey.S,"Сохранить проект…")}){
    var accelerator=new KeyboardAccelerator{Key=shortcut.Item1,Modifiers=Windows.System.VirtualKeyModifiers.Control};accelerator.Invoked+=async(_,e)=>{e.Handled=true;var command=editorCommands[shortcut.Item2];if(!busy&&command.CanExecute()){CloseEditorFlyouts();await RunCommand(command.Action);}};grid.KeyboardAccelerators.Add(accelerator);
   }
@@ -79,8 +79,10 @@ sealed partial class EditorWindow
   foreach(var entry in menuGroups)entry.Item.Text=UiLanguage.Text(entry.Label);
   foreach(var content in detachedMenuContents)UiLanguage.Apply(content);
  }
+ static void SetToolsEnabled(DependencyObject node,bool enabled){if(node is Control control){control.IsEnabled=enabled;return;}if(node is Panel panel)foreach(var child in panel.Children)SetToolsEnabled(child,enabled);else if(node is Border border&&border.Child!=null)SetToolsEnabled(border.Child,enabled);}
  void UpdateMenuState()
  {
+  SetToolsEnabled(animationPanel,!busy&&!cameraEditing);SetToolsEnabled(gizmoActions,!busy&&!cameraEditing);SetToolsEnabled(gizmoNumbers,!busy&&!cameraEditing);if(effectBar!=null)SetToolsEnabled(effectBar,HasModel&&!busy&&!cameraEditing);
   cabinAssemblyMenu.IsEnabled=HasModel&&!busy&&!cameraEditing&&VehicleParts.HasCabinAssembly(vehicleConfiguration);
   wireframeMenu.IsEnabled=HasModel&&!busy&&!cameraEditing;
   foreach(var command in menuCommands)command.Item.IsEnabled=!busy&&!cameraEditing&&command.CanExecute();

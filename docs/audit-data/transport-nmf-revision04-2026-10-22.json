@@ -1,0 +1,427 @@
+{
+  "Files": 2864,
+  "Readable": 2759,
+  "Animated": 19,
+  "Failures": [
+    {
+      "File": "airplanes/b737_4/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "airplanes/b737/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "airplanes/il76/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "airplanes/L200/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "airplanes/L410/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "airplanes/L410e/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "airplanes/tu144/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/_garbage_AMO15/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/_garbage_AMO15/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/b247/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/b307/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/bbo214/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/br80/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/br81/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/chai1/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/dc2/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/Eseries/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/FDseries/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_big_fi666/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_big_fi666/tilting.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_big_fi666/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_big_russobalt_t40_65/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_big_russobalt_t40_65/tilting.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_big_russobalt_t40_65/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_big_skd706r/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_big_skd706r/tilting.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_big_skd706r/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_big_skd706rfl/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_big_skd706rfl/tilting.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_big_skd706rfl/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_big_t111/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_big_t111/tilting.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_big_t111/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_fi626/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_fi626/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_gz_aa/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_gz_aa/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_russobalt_t40_65/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_russobalt_t40_65/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_skd706rok/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_skd706rok/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_t24/load.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_t24/unload.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_zis5/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/garbage_zis5/unload.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/ISseries/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/maz_200_garbage_big/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/maz_200_garbage_big/tilting.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/maz_200_garbage_big/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/ol49/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/Olo1/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/pm2/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/pm3/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/russian_steam_mv_parni_vuz_m124/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/russian_steam_p36/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/russian_steam_su/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/service_exvacator_erie/mining.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/service_exvacator_MIIIP/mining.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/service_exvacator_RB10/mining.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/service_exvacator_t111/mining.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/SoSeries/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/tkh491/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/tkt48/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/ty45/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/WR360/wheels.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/yag_10_garbage_big/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/yag_10_garbage_big/tilting.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/yag_10_garbage_big/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "dlc3/vehicles/yag_excavator/mining.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "trains/russian_loco_t3m2my/main.nmf",
+      "Error": "Unsupported NMF trailing streams"
+    },
+    {
+      "File": "trains/russian_vagon_falls_gravel/lod1.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "trains/russian_vagon_falls_gravel/main.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "trains/russian_vagon_raj_cement/lod1.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "trains/russian_vagon_raj_cement/main.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/covered_t138/main.nmf",
+      "Error": "Unsupported NMF trailing streams"
+    },
+    {
+      "File": "vehicles/covered_t148/main.nmf",
+      "Error": "Unsupported NMF trailing streams"
+    },
+    {
+      "File": "vehicles/garbage_big_kmz_5320/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_big_kmz_5320/tilting.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_big_kmz_5320/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_big_mckR/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_big_mckR/tilting.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_big_mckR/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_big_skd_706mts/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_big_skd_706mts/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_big_skd_706mts/unloading2.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_big_t815_ztz/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_big_t815_ztz/tilting.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_big_t815_ztz/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_gz53m/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_gz53m/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_ifa_w50/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_ifa_w50/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_lz100/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_lz100/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_rmn/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_rmn/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_skd_706rtk/animation.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_skd_706rtk/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_skd_706rtk/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_west_mckR/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_west_mckR/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_west_steyr_19S24/loading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/garbage_west_steyr_19S24/unloading.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/service_exvacator_lh360/mining.nmf",
+      "Error": "Invalid NMF header"
+    },
+    {
+      "File": "vehicles/service_exvacator_t815/mining.nmf",
+      "Error": "Invalid NMF header"
+    }
+  ]
+}
