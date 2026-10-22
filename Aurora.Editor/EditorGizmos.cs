@@ -140,12 +140,13 @@ sealed partial class EditorWindow
   if(!await EnsureVehicleScript())return;ReadLampSlots();activeSmoke=-1;activeCargo=-1;var panel=new StackPanel{Spacing=8,Width=280};var dialog=VehicleDialog("Фары и фонари",panel);dialog.PrimaryButtonText="";int selected=-1;
   string[] labels=["Левая фара","Правая фара","Левый фонарь","Правый фонарь"];
   for(int i=0;i<4;i++){int index=i;var button=new Button{Content=UiLanguage.Text(labels[i]),HorizontalAlignment=HorizontalAlignment.Stretch};button.Click+=(_,_)=>{selected=index;dialog.Hide();};panel.Children.Add(button);}
-  (bool Front,bool Left)? indicatorSlot=null;
+  (bool Front,bool Left)? indicatorSlot=null;bool generateIndicators=false;
+  var autoIndicators=new Button{Content=UiLanguage.Text("Авторасстановка всех 4 поворотников"),HorizontalAlignment=HorizontalAlignment.Stretch};autoIndicators.Click+=(_,_)=>{generateIndicators=true;dialog.Hide();};panel.Children.Add(autoIndicators);
   foreach(var spec in new[]{(true,true,"Передний левый поворотник"),(true,false,"Передний правый поворотник"),(false,true,"Задний левый поворотник"),(false,false,"Задний правый поворотник")}){
    var button=new Button{Content=UiLanguage.Text(spec.Item3),HorizontalAlignment=HorizontalAlignment.Stretch};
    button.Click+=(_,_)=>{indicatorSlot=(spec.Item1,spec.Item2);dialog.Hide();};panel.Children.Add(button);
   }
-  var more=new Button{Content=UiLanguage.Text("Другие огни"),HorizontalAlignment=HorizontalAlignment.Stretch};bool advanced=false;more.Click+=(_,_)=>{advanced=true;dialog.Hide();};panel.Children.Add(more);await ShowDialog(dialog);if(indicatorSlot is { } indicator){await SelectIndicator(indicator.Front,indicator.Left);return;}if(advanced){await ConfigureTransport("lights");return;}if(selected<0)return;
+  var more=new Button{Content=UiLanguage.Text("Другие огни"),HorizontalAlignment=HorizontalAlignment.Stretch};bool advanced=false;more.Click+=(_,_)=>{advanced=true;dialog.Hide();};panel.Children.Add(more);await ShowDialog(dialog);if(generateIndicators){var before=CaptureSnapshot();foreach(var corner in new[]{(true,true),(true,false),(false,true),(false,false)})await SelectIndicator(corner.Item1,corner.Item2);toolStart=before;await RefreshLighting();return;}if(indicatorSlot is { } indicator){await SelectIndicator(indicator.Front,indicator.Left);return;}if(advanced){await ConfigureTransport("lights");return;}if(selected<0)return;
   int paired=selected^1;if(lampSlots[paired]!=null){
    var axes=new ComboBox{ItemsSource=new[]{"X","Y","Z"},SelectedIndex=0,HorizontalAlignment=HorizontalAlignment.Stretch};var mirror=VehicleDialog("Настроить симметрию?",axes);mirror.PrimaryButtonText=UiLanguage.Text("Отразить");mirror.CloseButtonText=UiLanguage.Text("Вручную");
    if(await ShowDialog(mirror)==ContentDialogResult.Primary){var frame=PivotFrame();Matrix4x4.Invert(frame,out var inv);var local=Vector3.TransformNormal(lampSlots[paired]!.Position-mainPivot,inv);local=axes.SelectedIndex switch{0=>new(-local.X,local.Y,local.Z),1=>new(local.X,-local.Y,local.Z),_=>new(local.X,local.Y,-local.Z)};lampSlots[selected]=new(selected>=2,mainPivot+Vector3.TransformNormal(local,frame));}
