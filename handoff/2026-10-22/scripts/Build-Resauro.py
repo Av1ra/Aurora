@@ -20,7 +20,7 @@ repo=root.parents[1]
 snapshot=json.loads((root/'snapshot.json').read_text(encoding='utf-8-sig'))
 subprocess.run([sys.executable,str(root/'scripts/Verify-Handoff.py')],check=True)
 def git(*parts,cwd=repo):
-    return subprocess.check_output(['git',*parts],cwd=cwd)
+    return subprocess.check_output(['git','-c','core.autocrlf=false',*parts],cwd=cwd)
 def sha(data):return hashlib.sha256(data).hexdigest()
 def permitted(name,data):
     p=PurePosixPath(name)

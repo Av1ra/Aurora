@@ -354,8 +354,8 @@
     },
     {
       "Path": "scripts/Build-Resauro.py",
-      "Bytes": 7063,
-      "Sha256": "5104887c57e0bbc3c5d4270c4a8a6ffc21a39af7b90a3b475259028f8704fe63"
+      "Bytes": 7090,
+      "Sha256": "748af7bfd208b4810d6d8594ffa6a115965d13f06a6fc23710a77929f7272ba0"
     },
     {
       "Path": "scripts/Restore-Workspace.ps1",
