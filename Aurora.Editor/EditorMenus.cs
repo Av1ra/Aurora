@@ -26,7 +26,7 @@ sealed partial class EditorWindow
  void ConfigureOpaqueSurfaces(Grid root)
  {
   var resources=Application.Current.Resources;
-  opaqueMenuStyle=new Style(typeof(MenuFlyoutPresenter));if(resources.TryGetValue("DefaultMenuFlyoutPresenterStyle",out var menuBase)&&menuBase is Style menuStyle)opaqueMenuStyle.BasedOn=menuStyle;opaqueMenuStyle.Setters.Add(new Setter(Control.BackgroundProperty,opaquePopup));opaqueMenuStyle.Setters.Add(new Setter(MenuFlyoutPresenter.SystemBackdropProperty,null));
+  opaqueMenuStyle=new Style(typeof(MenuFlyoutPresenter));if(resources.TryGetValue("DefaultMenuFlyoutPresenterStyle",out var menuBase)&&menuBase is Style menuStyle)opaqueMenuStyle.BasedOn=menuStyle;opaqueMenuStyle.Setters.Add(new Setter(Control.BackgroundProperty,opaquePopup));
   opaqueFlyoutStyle=new Style(typeof(FlyoutPresenter));if(resources.TryGetValue("DefaultFlyoutPresenterStyle",out var flyoutBase)&&flyoutBase is Style flyoutStyle)opaqueFlyoutStyle.BasedOn=flyoutStyle;opaqueFlyoutStyle.Setters.Add(new Setter(Control.BackgroundProperty,opaquePopup));
   // Submenus are separate popup trees; root-grid theme resources do not reliably reach them.
   resources[typeof(MenuFlyoutPresenter)]=opaqueMenuStyle;resources[typeof(FlyoutPresenter)]=opaqueFlyoutStyle;
@@ -46,6 +46,7 @@ sealed partial class EditorWindow
   if(flyout is MenuFlyout menu)menu.MenuFlyoutPresenterStyle=opaqueMenuStyle;else if(flyout is Flyout panel)panel.FlyoutPresenterStyle=opaqueFlyoutStyle;
   flyout.Placement=FlyoutPlacementMode.BottomEdgeAlignedLeft;
   flyout.ShouldConstrainToRootBounds=true;
+  flyout.Opened+=(_,_)=>{var root=((FrameworkElement)Content).XamlRoot;if(root==null)return;void Opaque(DependencyObject node){if(node is MenuFlyoutPresenter menu){menu.SystemBackdrop=null;menu.Background=opaquePopup;}else if(node is FlyoutPresenter panel)panel.Background=opaquePopup;for(int i=0;i<VisualTreeHelper.GetChildrenCount(node);i++)Opaque(VisualTreeHelper.GetChild(node,i));}foreach(var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(root))if(popup.Child!=null)Opaque(popup.Child);};
   editorFlyouts.Add(flyout);var button=new Button{Content=UiLanguage.Text(label),Flyout=flyout,MinHeight=30,Padding=new Thickness(10,3,10,3)};
   button.Background=opaqueButton;foreach(string key in new[]{"ButtonBackground","ButtonBackgroundPointerOver","ButtonBackgroundPressed","ButtonBackgroundDisabled"})button.Resources[key]=opaqueButton;
   menuButtons.Add((button,label));return button;
@@ -54,7 +55,7 @@ sealed partial class EditorWindow
  {
   ConfigureOpaqueSurfaces(grid);
   // Reuse the existing stateful selectors and command handlers.
-  var toolbar=new StackPanel{Orientation=Orientation.Horizontal,Spacing=6,Margin=new Thickness(12,6,12,6)};
+  var toolbar=new StackPanel{Name="EditorToolbar",Orientation=Orientation.Horizontal,Spacing=6,Margin=new Thickness(12,6,12,6)};
   RegisterImportCommands();RegisterVehicleCommands();RegisterMaterialCommands();RegisterProjectCommands();RegisterObjectCommands();RegisterHistoryCommands();RegisterModelSettingsCommands();
   var file=new MenuFlyout();file.Items.Add(MenuCommand("Открыть NMF…"));
   file.Items.Add(MenuCommand("Импортировать OBJ…"));file.Items.Add(MenuCommand("Открыть проект…"));

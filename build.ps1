@@ -58,6 +58,7 @@ try {
  Run 'dotnet' @('run','--project',"$root/Aurora.Publisher/Aurora.Publisher.csproj",'--','manifest',"$buildRoot/editor-manifest.json","$editorRoot/acode.lnchr")
  # One ZIP for Aurora Launcher and Aurora Editor, sharing the same WinUI/.NET runtime.
  Copy-Item -LiteralPath "$buildRoot/addon/Editor" -Destination $app -Recurse
+ Run $Python @("$root/Packaging/test-editor-startup.py","$app/Aurora.Launcher.exe")
  $zip="$output/Aurora-$Version-win-x64.zip"
  [IO.Compression.ZipFile]::CreateFromDirectory($stage,$zip,[IO.Compression.CompressionLevel]::Optimal,$false)
  Run 'dotnet' @('run','--project',"$root/Aurora.Publisher/Aurora.Publisher.csproj",'--','release',$Version,$zip,"$output/aurora-update.json")

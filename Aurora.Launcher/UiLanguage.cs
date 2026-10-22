@@ -38,6 +38,7 @@ static class UiLanguage
 ["Шаг вращения, °"]="Rotation step, °",
 ["Отменить действие"]="Undo action",
 ["Сбросить pivot"]="Reset pivot",
+["Не удалось открыть Aurora Editor"]="Could not open Aurora Editor",
 ["Оборудование"]="Equipment",
 ["Огни"]="Lights",
 ["Другие огни"]="Other lights",
