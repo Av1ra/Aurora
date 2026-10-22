@@ -4,6 +4,8 @@ Checkpoint recorded: 2026-10-19. Canonical repository: `Av1ra/Aurora`, branch `m
 
 ## Read this first
 
+Latest small UI fix installed: source `11c74eaf700d2a60740af737638ac592b0f1c9ab`, production `build-2912eea89ba84a1798b9cfc4b5d608da`. Editor menu/flyout backgrounds use fully opaque theme brushes, including nested menus and high contrast. Owner closed Aurora; installer passed and all 572 installed hashes matched. WinUI compile, native/package/signature/brand checks passed. No live UI acceptance claimed. Downloads updated with rollback backup; install receipt: ignored artifacts/editor-opaque-menus-install.json. Earlier revision 04 engine limitations remain.
+
 Revision 04 source 106454a36e430f31787404ab32ab67c16752e3c3 is installed, build-81ebaf885f8145b2ba23412af3fd8c5f, all 572 hashes verified. Native/package/signature/brand checks passed. See EDITOR_REVISION_04.md for exact delivered changes and unresolved native dumper/nozzle, attached-part animation and live acceptance gaps. This supersedes older installation statements below; it does not declare all 13 owner requests complete.
 
 Active owner request: [revision 04](EDITOR_REVISION_04.md), 13 editor corrections plus explicitly authorized keyframe animation authoring. Owner answered: native transport actions only, no custom launch conditions. This supersedes the former animation deferral and stopping instruction. Work in progress, not installed; continue implementation and tests without claiming preview-only clips are game-bound animations. Current installed package remains 4af678b. See exact outstanding work and current evidence in revision 04.
