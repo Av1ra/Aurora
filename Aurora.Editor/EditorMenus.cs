@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 
 namespace Aurora.Editor;
 
@@ -36,6 +37,11 @@ sealed partial class EditorWindow
  }
  void BuildMenuLayout(Grid grid)
  {
+  // Keep editor popups opaque over the WebView and notices, including nested menus.
+  foreach(var theme in new[]{("Default",Windows.UI.Color.FromArgb(255,40,40,40)),("Light",Windows.UI.Color.FromArgb(255,249,249,249))}){
+   var resources=new ResourceDictionary();foreach(string key in new[]{"MenuFlyoutPresenterBackground","FlyoutPresenterBackground"})resources[key]=new SolidColorBrush(theme.Item2);grid.Resources.ThemeDictionaries[theme.Item1]=resources;
+  }
+  var contrast=new ResourceDictionary();foreach(string key in new[]{"MenuFlyoutPresenterBackground","FlyoutPresenterBackground"})contrast[key]=new SolidColorBrush(new Windows.UI.ViewManagement.UISettings().GetColorValue(Windows.UI.ViewManagement.UIColorType.Background));grid.Resources.ThemeDictionaries["HighContrast"]=contrast;
   // Reuse the existing stateful selectors and command handlers.
   var toolbar=new StackPanel{Orientation=Orientation.Horizontal,Spacing=6,Margin=new Thickness(12,6,12,6)};
   RegisterImportCommands();RegisterVehicleCommands();RegisterMaterialCommands();RegisterProjectCommands();RegisterObjectCommands();RegisterHistoryCommands();RegisterModelSettingsCommands();
