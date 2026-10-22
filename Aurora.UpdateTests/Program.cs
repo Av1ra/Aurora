@@ -13,12 +13,18 @@ if (args.Length > 1)
     if(archives.Length!=1 || Path.GetFileName(archives[0])!="Aurora-0.2-win-x64.zip")
         throw new Exception("Expected exactly one Launcher + Editor archive");
     var metadata=JsonSerializer.Deserialize<LauncherRelease>(File.ReadAllText(Path.Combine(output,"aurora-update.json")))!;
-    if(metadata.Asset!=Path.GetFileName(archives[0]) || metadata.Version!="0.2")
-        throw new Exception("Unexpected release asset");
+    if(metadata.Asset!=Path.GetFileName(archives[0]) || metadata.Version!="0.2" ||
+       metadata.BuildId==null || metadata.BuildId.Length!=40 || !metadata.BuildId.All(Uri.IsHexDigit))
+        throw new Exception("Unexpected release asset or build ID");
+    using(var archive=ZipFile.OpenRead(archives[0]))
+    using(var stream=(archive.GetEntry("app/build-info.json")??throw new Exception("Build identity missing")).Open())
+    using(var buildInfo=JsonDocument.Parse(stream))
+        if(buildInfo.RootElement.GetProperty("Commit").GetString()!=metadata.BuildId)
+            throw new Exception("Signed build ID does not match packaged build");
     using(var key=ECDsa.Create())
     {
         key.ImportFromPem(keyText);
-        var signed=Encoding.UTF8.GetBytes(metadata.Version+"\n"+metadata.Asset+"\n"+metadata.Sha256);
+        var signed=UpdateService.ReleaseSignaturePayload(metadata);
         if(!key.VerifyData(signed,Convert.FromBase64String(metadata.Signature),HashAlgorithmName.SHA256))
             throw new Exception("Invalid update signature");
     }

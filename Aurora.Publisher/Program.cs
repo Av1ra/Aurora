@@ -2,6 +2,7 @@ using Aurora.Core;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.IO.Compression;
 if(args[0]=="dev-key")
 {
  if(File.Exists(args[1]))throw new IOException("Development key already exists");
@@ -30,7 +31,14 @@ else if(args[0]=="release")
 {
  using var file=File.OpenRead(args[2]);var hash=Convert.ToHexString(SHA256.HashData(file)).ToLowerInvariant();
  string asset=Path.GetFileName(args[2]),version=args[1];
- string signature=Convert.ToBase64String(key.SignData(Encoding.UTF8.GetBytes(version+"\n"+asset+"\n"+hash),HashAlgorithmName.SHA256));
- File.WriteAllText(args[3],JsonSerializer.Serialize(new{Version=version,Asset=asset,Sha256=hash,Signature=signature},new JsonSerializerOptions{WriteIndented=true}));
+ using var archive=ZipFile.OpenRead(args[2]);
+ var buildEntry=archive.GetEntry("app/build-info.json")??throw new InvalidDataException("Missing build-info.json from release");
+ using var buildStream=buildEntry.Open();
+ using var buildInfo=JsonDocument.Parse(buildStream);
+ string buildId=buildInfo.RootElement.GetProperty("Commit").GetString()??"";
+ if(buildId.Length!=40||!buildId.All(Uri.IsHexDigit))throw new InvalidDataException("Invalid release build commit");
+ string payload="Aurora-release-v2\n"+version+"\n"+asset+"\n"+hash+"\n"+buildId;
+ string signature=Convert.ToBase64String(key.SignData(Encoding.UTF8.GetBytes(payload),HashAlgorithmName.SHA256));
+ File.WriteAllText(args[3],JsonSerializer.Serialize(new{Version=version,Asset=asset,Sha256=hash,Signature=signature,BuildId=buildId},new JsonSerializerOptions{WriteIndented=true}));
 }
 else throw new ArgumentException("public <pem> | manifest <json> <acode.lnchr> | release <version> <zip> <metadata>");

@@ -133,10 +133,14 @@ static DWORD Run(const fs::path &executable, std::wstring arguments) {
                       FALSE, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi))
     throw std::runtime_error("Cannot start Windows archive extractor");
   CloseHandle(pi.hThread);
-  DWORD wait = WaitForSingleObject(pi.hProcess, 120000);
+  DWORD wait = WaitForSingleObject(pi.hProcess, 300000);
   DWORD code = 1;
   if (wait == WAIT_OBJECT_0)
     GetExitCodeProcess(pi.hProcess, &code);
+  if (wait == WAIT_TIMEOUT) {
+    TerminateProcess(pi.hProcess, ERROR_TIMEOUT);
+    WaitForSingleObject(pi.hProcess, 10000);
+  }
   CloseHandle(pi.hProcess);
   if (wait != WAIT_OBJECT_0)
     throw std::runtime_error("Archive extraction timed out");
@@ -617,7 +621,15 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM w,
         std::thread([window, app, game] {
           std::wstring error;
           try {
-            Install(Unpack(), app);
+            const auto package = Unpack();
+            try {
+              Install(package, app);
+            } catch (...) {
+              std::error_code ignored;
+              fs::remove_all(package.parent_path(), ignored);
+              throw;
+            }
+            { std::error_code ignored; fs::remove_all(package.parent_path(), ignored); }
             if (!game.empty()) {
               WritePath(Local() / L"game-path.txt", game);
               InstallSteamEntry(app, game);
