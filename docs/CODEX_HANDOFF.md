@@ -1,5 +1,7 @@
 # Codex handoff: Aurora Launcher + Aurora Editor
 
+**LATEST CONTINUATION (2026-10-22 evening): [Editor/PBR changes and Codex transfer](../handoff/2026-10-22/13_CODEX_CONTINUATION_2026-10-22.md).** Read this before acting on historical work backlog. PR #3 compiled and passed CI but is not merged or in the original production-signed installed package. User requires executable packages, not source archives.
+
 **Portable consolidated handoff, 2026-10-22: [start here](../handoff/2026-10-22/README.md).** Exact installed package, PSD hidden layers, chat decisions, architecture, build instructions and current gaps. Chronological notes below remain historical evidence; earlier next/current statements do not override later owner decisions.
 
 Checkpoint recorded: 2026-10-19. Canonical repository: `Av1ra/Aurora`, branch `main`. Product version: **0.2**. Identify all test builds by full commit SHA and Actions run ID, not a new public version number.

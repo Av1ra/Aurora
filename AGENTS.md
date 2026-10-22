@@ -1,5 +1,7 @@
 # Aurora 0.2 — working checkpoint
 
+**Latest Codex transition report (2026-10-22 evening): [Editor/PBR follow-up](handoff/2026-10-22/13_CODEX_CONTINUATION_2026-10-22.md).** It records the owner's newest screenshots, four blinkers, completed draft PRs, CI, binary deliverable and open defects. **This report supersedes older next-task suggestions**, while the verified production base stays c45db814. Owner wants ready EXE/installable bundles only; do not give source ZIPs as deliverables.
+
 **Current transfer entry point: [handoff/2026-10-22/README.md](handoff/2026-10-22/README.md).** Read its current state, owner decisions and design before older chronological notes. Current task is handoff, not automatic resumption of historical UI/backlog work. Exact installed runtime remains c45db814, version 0.2; newer handoff commits are documentation/tooling. Later native-animation authorization supersedes old deferment. Water test removed; point locking excluded; live FOV remains a gap.
 
 Aurora 0.2 is in development. The owner has now explicitly authorized the test prerelease v0.2 with launcher, editor, PBR and independent FOV Changer. Keep it marked preliminary; subsequent releases still require owner approval. Keep the product version at 0.2 (assembly 0.2.0); identify work by commit SHA and CI run.
