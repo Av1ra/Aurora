@@ -4,6 +4,8 @@ Checkpoint recorded: 2026-10-19. Canonical repository: `Av1ra/Aurora`, branch `m
 
 ## Read this first
 
+Revision 04 source 106454a36e430f31787404ab32ab67c16752e3c3 is installed, build-81ebaf885f8145b2ba23412af3fd8c5f, all 572 hashes verified. Native/package/signature/brand checks passed. See EDITOR_REVISION_04.md for exact delivered changes and unresolved native dumper/nozzle, attached-part animation and live acceptance gaps. This supersedes older installation statements below; it does not declare all 13 owner requests complete.
+
 Active owner request: [revision 04](EDITOR_REVISION_04.md), 13 editor corrections plus explicitly authorized keyframe animation authoring. Owner answered: native transport actions only, no custom launch conditions. This supersedes the former animation deferral and stopping instruction. Work in progress, not installed; continue implementation and tests without claiming preview-only clips are game-bound animations. Current installed package remains 4af678b. See exact outstanding work and current evidence in revision 04.
 
 Latest installation: owner explicitly requested installation after the report. Production build-fc5ed9b9f2c54f248260172c7c010439 (4af678b3cd0f8c1830f650434823660884d7a68f) is now installed in game/Aurora; all 572 installed file hashes match. Installer completed successfully with apps closed. No launch/game acceptance was performed. This supersedes older not-installed statuses below.

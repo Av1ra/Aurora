@@ -60,3 +60,12 @@ Core tests прошли после добавления интерполяции
 - Packaging/NmfAudit --inspect позволяет повторить сравнение состава NMF без запуска игры.
 
 Проверены Core/project/export tests, JS cargo/animation regressions, настоящий WebGL в отдельном headless Edge, сборка WinUI. Пользовательское приложение не управлялось. Остаются исследование native кривой самосвала и наведения пожарного сопла, импорт существующих NAF в timeline, авторинг клипов присоединённой части и живой WinUI/game acceptance. Не объявлять эти ограничения реализованными.
+
+
+## Установка проверенного этапа
+
+Исходный коммит `106454a36e430f31787404ab32ab67c16752e3c3`, чистая production сборка `build-81ebaf885f8145b2ba23412af3fd8c5f`, версия 0.2. Установлена при закрытых Aurora/игре; сверены все 572 файла. Приложения после установки агентом не запускались. Native installer, adjacent ZIP/tamper checks, release signatures и brand checks прошли. Core/project/export, JS и реальный headless WebGL прошли перед сборкой. Это не игровое и не интерактивное WinUI acceptance.
+
+Downloads/Aurora-0.2 содержит один ZIP и соседний Setup. SHA256 ZIP: C682D92EB9B5FEFAAB3CB0438F8736AC7779B11F1EECC44C18161E321F760B30. Setup: 4B0B7FA1737432E05A3B2C743378690EB37037D01C29E916E048FF51124A115C. Прежняя выдача сохранена в Workspace-Archive/Aurora-delivery-20261022-4397c8d6c9624ad7bfe6db7973cbd5b3. Receipts: ignored artifacts/editor-revision-04-install.json и transport-final-delivery.json (delivery receipt описывает только Downloads; состояние установки в отдельной install receipt).
+
+Оставшиеся инженерные ограничения выше сохраняются. Установка этапа не означает, что все 13 пунктов закрыты или native DUMPER/nozzle интеграция завершена.
