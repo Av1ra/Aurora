@@ -58,6 +58,8 @@ static class UiLanguage
 ["Правые поворотники"]="Right indicators",
 ["Проблесковые маяки"]="Emergency beacons",
 ["Проверка направления струи"]="Water jet direction test",
+["Колесо"]="Wheel",
+["Все колёса"]="All wheels",
 ["Проверка колёс"]="Wheel test",
 ["Поворот передних колёс"]="Front wheel steering",
 ["Вращение колёс"]="Wheel rotation",

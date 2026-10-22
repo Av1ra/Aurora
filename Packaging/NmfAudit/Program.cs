@@ -1,7 +1,7 @@
 using Aurora.Core;
 using System.Text.Json;
 if(args.Length>1&&args[0]=="--inspect"){
- foreach(string path in args.Skip(1))try{var model=new NativeModel(File.ReadAllBytes(path));Console.WriteLine(JsonSerializer.Serialize(new{File=path,model.Animated,Nodes=model.Nodes.Select(n=>new{n.Name,n.VertexCount,n.IndexCount})}));}catch(Exception ex){Console.WriteLine(JsonSerializer.Serialize(new{File=path,Error=ex.Message}));}return;
+ foreach(string path in args.Skip(1))try{var model=new NativeModel(File.ReadAllBytes(path));Console.WriteLine(JsonSerializer.Serialize(new{File=path,model.Animated,Wheels=WheelDiagnostics.Read(model).Select(w=>new{w.Mesh,w.Component,w.Pivot,Vertices=w.Vertices?.Length}),Nodes=model.Nodes.Select(n=>new{n.Name,n.VertexCount,n.IndexCount})}));}catch(Exception ex){Console.WriteLine(JsonSerializer.Serialize(new{File=path,Error=ex.Message}));}return;
 }
 if(args.Length!=2)throw new ArgumentException("NmfAudit <media_soviet> <report.json>");
 var objects=VehicleCatalog.Load(args[0],true).Objects;

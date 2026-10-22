@@ -20,6 +20,19 @@ sealed partial class EditorWindow
  readonly List<FrameworkElement> detachedMenuContents=[];
  readonly TextBlock geometryInfo=new(){FontSize=11,Opacity=.7,TextWrapping=TextWrapping.Wrap,MinWidth=160};
 
+ readonly SolidColorBrush opaquePopup=new(Windows.UI.Color.FromArgb(255,40,40,40));
+ readonly SolidColorBrush opaqueButton=new(Windows.UI.Color.FromArgb(255,52,52,52));
+ Style? opaqueMenuStyle,opaqueFlyoutStyle;
+ void ConfigureOpaqueSurfaces(Grid root)
+ {
+  var resources=Application.Current.Resources;
+  opaqueMenuStyle=new Style(typeof(MenuFlyoutPresenter));if(resources.TryGetValue("DefaultMenuFlyoutPresenterStyle",out var menuBase)&&menuBase is Style menuStyle)opaqueMenuStyle.BasedOn=menuStyle;opaqueMenuStyle.Setters.Add(new Setter(Control.BackgroundProperty,opaquePopup));opaqueMenuStyle.Setters.Add(new Setter(MenuFlyoutPresenter.SystemBackdropProperty,null));
+  opaqueFlyoutStyle=new Style(typeof(FlyoutPresenter));if(resources.TryGetValue("DefaultFlyoutPresenterStyle",out var flyoutBase)&&flyoutBase is Style flyoutStyle)opaqueFlyoutStyle.BasedOn=flyoutStyle;opaqueFlyoutStyle.Setters.Add(new Setter(Control.BackgroundProperty,opaquePopup));
+  // Submenus are separate popup trees; root-grid theme resources do not reliably reach them.
+  resources[typeof(MenuFlyoutPresenter)]=opaqueMenuStyle;resources[typeof(FlyoutPresenter)]=opaqueFlyoutStyle;
+  void Refresh(){bool dark=root.ActualTheme==ElementTheme.Dark;var contrast=new Windows.UI.ViewManagement.AccessibilitySettings();opaquePopup.Color=contrast.HighContrast?new Windows.UI.ViewManagement.UISettings().GetColorValue(Windows.UI.ViewManagement.UIColorType.Background):dark?Windows.UI.Color.FromArgb(255,40,40,40):Windows.UI.Color.FromArgb(255,249,249,249);opaqueButton.Color=contrast.HighContrast?opaquePopup.Color:dark?Windows.UI.Color.FromArgb(255,52,52,52):Windows.UI.Color.FromArgb(255,235,235,235);}
+  root.Loaded+=(_,_)=>Refresh();root.ActualThemeChanged+=(_,_)=>Refresh();Refresh();
+ }
  void CloseEditorFlyouts(){foreach(var flyout in editorFlyouts)flyout.Hide();}
  MenuFlyoutItem MenuCommand(string key,string? label=null)
  {
@@ -30,18 +43,16 @@ sealed partial class EditorWindow
  MenuFlyoutSubItem MenuGroup(string label){var item=new MenuFlyoutSubItem{Text=UiLanguage.Text(label)};menuGroups.Add((item,label));return item;}
  Button ToolbarMenu(string label,FlyoutBase flyout)
  {
+  if(flyout is MenuFlyout menu)menu.MenuFlyoutPresenterStyle=opaqueMenuStyle;else if(flyout is Flyout panel)panel.FlyoutPresenterStyle=opaqueFlyoutStyle;
   flyout.Placement=FlyoutPlacementMode.BottomEdgeAlignedLeft;
   flyout.ShouldConstrainToRootBounds=true;
   editorFlyouts.Add(flyout);var button=new Button{Content=UiLanguage.Text(label),Flyout=flyout,MinHeight=30,Padding=new Thickness(10,3,10,3)};
+  button.Background=opaqueButton;foreach(string key in new[]{"ButtonBackground","ButtonBackgroundPointerOver","ButtonBackgroundPressed","ButtonBackgroundDisabled"})button.Resources[key]=opaqueButton;
   menuButtons.Add((button,label));return button;
  }
  void BuildMenuLayout(Grid grid)
  {
-  // Keep editor popups opaque over the WebView and notices, including nested menus.
-  foreach(var theme in new[]{("Default",Windows.UI.Color.FromArgb(255,40,40,40)),("Light",Windows.UI.Color.FromArgb(255,249,249,249))}){
-   var resources=new ResourceDictionary();foreach(string key in new[]{"MenuFlyoutPresenterBackground","FlyoutPresenterBackground"})resources[key]=new SolidColorBrush(theme.Item2);grid.Resources.ThemeDictionaries[theme.Item1]=resources;
-  }
-  var contrast=new ResourceDictionary();foreach(string key in new[]{"MenuFlyoutPresenterBackground","FlyoutPresenterBackground"})contrast[key]=new SolidColorBrush(new Windows.UI.ViewManagement.UISettings().GetColorValue(Windows.UI.ViewManagement.UIColorType.Background));grid.Resources.ThemeDictionaries["HighContrast"]=contrast;
+  ConfigureOpaqueSurfaces(grid);
   // Reuse the existing stateful selectors and command handlers.
   var toolbar=new StackPanel{Orientation=Orientation.Horizontal,Spacing=6,Margin=new Thickness(12,6,12,6)};
   RegisterImportCommands();RegisterVehicleCommands();RegisterMaterialCommands();RegisterProjectCommands();RegisterObjectCommands();RegisterHistoryCommands();RegisterModelSettingsCommands();
