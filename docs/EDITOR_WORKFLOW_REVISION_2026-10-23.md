@@ -24,3 +24,18 @@ Automated checks cover transformed/nonuniform-scale geometry, Unicode file/objec
 Blender/3ds Max are not installed here. Python syntax is checked, but interactive DCC compatibility and owner GUI/game acceptance remain pending. Do not describe these as live-tested. Export does not claim to create arbitrary game animation triggers.
 
 Production packaging uses the existing publisher identity and preserves the single combined Launcher + Editor ZIP. No public Release/tag is part of this work. Historical handoff bundles and RESAURO remain untouched.
+
+
+## Installed package
+
+Source `47c85bc02f276738f4544621a95c203e3646103d`, production-signed clean build `build-dfb3b834fd6d4baf87cc26a22d22af9c` (not a public Release). Owner closed Aurora before installation. Transactional install updated `SovietRepublic/Aurora`; all **580 installable file hashes match**. Backup: `%LOCALAPPDATA%/Aurora/backups/542255921`. The retirement table is installer input, not an installed file.
+
+PASS: 408 Core checks including the installed FBX converter, JS viewport/resource/mouse tests, actual isolated WebGL, actual signed WinUI window construction/attached toolbar/opaque menu without activation, native installer/rollback/Steam fixtures, adjacent ZIP tamper rejection, module/update signatures, nine branded executables and backend execution. Additional read-only FBX roundtrips of native Ikarus 66, T138 dumper and T138 mixer preserved object names/counts, triangle counts, frames and bounds. This is not interactive Blender/Max/game acceptance.
+
+Delivery: `C:/Users/AVR/Downloads/Aurora-0.2-Workflow-2026-10-23`.
+
+- Combined ZIP SHA256: `b8be1109acc86608b566f125196eef06016d77a0b4ac6f2ab361fee60f120090`.
+- Setup SHA256: `ecd6f38b5897571e9767fd4c5d6fd7ccf92f1556faad66c33a41194d2b9f71b5`.
+- Evidence (ignored): `artifacts/workflow-build.log`, `workflow-installed-core.log`, `workflow-real-models.log`, `workflow-install.json`; viewport logs `revision-viewport-tests.log` and `revision-webgl-tests.log`.
+
+No active owner application/game was interrupted. No original game assets or graphics payload DLLs changed. PR #2 and Graphics PR #11 remain outside this package.
