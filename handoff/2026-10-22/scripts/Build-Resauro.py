@@ -69,7 +69,7 @@ Aurora-history.bundle — Git-история main. Закрытые publisher ke
 
 Для продолжения с Git-историей в PowerShell:
   $env:GIT_LFS_SKIP_SMUDGE='1'
-  git clone ./Aurora-history.bundle ./Aurora-work
+  git clone --branch main ./Aurora-history.bundle ./Aurora-work
   Remove-Item Env:GIT_LFS_SKIP_SMUDGE
   Copy-Item ./Aurora/* ./Aurora-work/ -Recurse -Force
   Copy-Item ./Aurora/.gitattributes ./Aurora-work/ -Force
