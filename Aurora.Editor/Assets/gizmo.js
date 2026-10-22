@@ -16,7 +16,12 @@ function transformCargo(){
   for(const [index,values]of [[0,positions],[1,normals]]){gl.bindBuffer(gl.ARRAY_BUFFER,n.buffers[index]);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(values),gl.STATIC_DRAW);}
  }
 }
-function gizmo(value){gizmoState={...gizmoState,...value};transformCargo();draw();}
+function gizmo(value){
+ // C# may echo a previous pose while pointer events are still in flight.
+ // Keep the local drag transform authoritative until pointerup.
+ if(gizmoDrag){gizmoState={...gizmoState,axis:value.axis,rotationStep:value.rotationStep};return;}
+ gizmoState={...gizmoState,...value};transformCargo();draw();
+}
 function drawGizmo(){
  if(!gizmoContext)return;const c=gizmoContext,scale=Math.min(2,window.devicePixelRatio||1);gizmoCanvas.width=Math.max(1,Math.round(canvas.clientWidth*scale));gizmoCanvas.height=Math.max(1,Math.round(canvas.clientHeight*scale));c.scale(scale,scale);gizmoSegments=[];
  drawPreviewCameraFrame(c);
@@ -45,7 +50,7 @@ canvas.onpointerdown=e=>{
  if(!scene||!gizmoState.visible||!gizmoState.editing){orbitDown(e);return;}
  const mouse=gizmoPointer(e);let best=null,min=9;
  for(const segment of gizmoSegments){let d=gv.sub(segment.b,segment.a),length=gv.dot(d,d),t=length?Math.max(0,Math.min(1,gv.dot(gv.sub(mouse,segment.a),d)/length)):0,p=gv.add(segment.a,gv.mul(d,t)),error=Math.hypot(...gv.sub(mouse,p));if(error<min){min=error;best=segment;}}
- if(!best){orbitDown(e);return;}stopAnimation();e.preventDefault?.();canvas.setPointerCapture(e.pointerId);gizmoDrag={axis:best.axis,mouse,position:[...gizmoState.position],rotation:[...gizmoState.rotation],scale:[...gizmoState.scale],angle:gizmoState.mode==='rotate'?gizmoRingAngle(mouse,best.axis):null};window.chrome.webview.postMessage({gizmo:{position:gizmoState.position,rotation:gizmoState.rotation,scale:gizmoState.scale,phase:"begin"}});
+ if(!best){orbitDown(e);return;}stopAnimation();e.preventDefault?.();canvas.setPointerCapture(e.pointerId);gizmoDrag={axis:best.axis,mouse,position:[...gizmoState.position],rotation:[...gizmoState.rotation],scale:[...gizmoState.scale],angle:gizmoState.mode==='rotate'?gizmoRingAngle(mouse,best.axis):null,rotationAccum:0,lastAngle:null};gizmoDrag.lastAngle=gizmoDrag.angle;window.chrome.webview.postMessage({gizmo:{position:gizmoState.position,rotation:gizmoState.rotation,scale:gizmoState.scale,phase:"begin"}});
 };
 canvas.onpointermove=e=>{
  if(!gizmoDrag){orbitMove(e);drawGizmo();return;}const d=gizmoDrag,mouse=gizmoPointer(e);
@@ -54,7 +59,7 @@ canvas.onpointermove=e=>{
  }else if(gizmoState.mode==='scale'){
   let amount=(d.mouse[1]-mouse[1])/80;if(d.axis<3){const dir=gizmoRotate([[1,0,0],[0,1,0],[0,0,1]][d.axis],d.rotation),a=gizmoProject(d.position),b=gizmoProject(gv.add(d.position,dir));if(!a||!b)return;const delta=gv.sub(b,a),length=Math.hypot(...delta);if(length<1e-5)return;amount=gv.dot(gv.sub(mouse,d.mouse),delta)/length/80;}
   const factor=Math.exp(Math.max(-12,Math.min(12,amount)));gizmoState.scale=d.scale.map((v,i)=>gizmoState.uniformScale||i===d.axis?Math.min(1e6,Math.max(1e-5,v>0?v*factor:factor-1)):v);
- }else{let angle=gizmoRingAngle(mouse,d.axis);if(angle!=null&&d.angle!=null){let diff=angle-d.angle;while(diff>Math.PI)diff-=2*Math.PI;while(diff< -Math.PI)diff+=2*Math.PI;gizmoState.rotation=[...d.rotation];gizmoState.rotation[d.axis]+=diff*180/Math.PI;const step=gizmoState.rotationStep||.1;gizmoState.rotation[d.axis]=Math.round(gizmoState.rotation[d.axis]/step)*step;}}
+ }else{let angle=gizmoRingAngle(mouse,d.axis);if(angle!=null&&d.angle!=null){let diff=angle-(d.lastAngle??angle);while(diff>Math.PI)diff-=2*Math.PI;while(diff< -Math.PI)diff+=2*Math.PI;d.rotationAccum+=diff;d.lastAngle=angle;gizmoState.rotation=[...d.rotation];gizmoState.rotation[d.axis]+=d.rotationAccum*180/Math.PI;const step=gizmoState.rotationStep||.1;gizmoState.rotation[d.axis]=Math.round(gizmoState.rotation[d.axis]/step)*step;}}
  transformCargo();draw();window.chrome.webview.postMessage({gizmo:{position:gizmoState.position,rotation:gizmoState.rotation,scale:gizmoState.scale,phase:"update"}});
 };
 canvas.onpointerup=e=>{if(gizmoDrag){window.chrome.webview.postMessage({gizmo:{position:gizmoState.position,rotation:gizmoState.rotation,scale:gizmoState.scale,phase:"end"}});gizmoDrag=null;return;}orbitUp(e);drawGizmo();};canvas.onpointercancel=e=>{if(gizmoDrag)window.chrome.webview.postMessage({gizmo:{position:gizmoState.position,rotation:gizmoState.rotation,scale:gizmoState.scale,phase:"end"}});gizmoDrag=null;orbitCancel(e);};
