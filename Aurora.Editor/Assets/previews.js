@@ -42,6 +42,6 @@ window.addEventListener('keydown',e=>{if(!previewEdit||e.ctrlKey||e.altKey||e.me
 window.addEventListener('keyup',e=>{if(previewEdit){previewEdit.keys.delete(cameraKey(e));previewEdit.fast=e.shiftKey;}});
 window.addEventListener('blur',()=>{if(previewEdit)previewEdit.keys.clear();drag=null;});
 
-let effectTime=0,effectAnimation=false,effectScheduled=false;
-function animateEffects(value){effectAnimation=!!value;if(effectAnimation&&!effectScheduled){effectScheduled=true;requestAnimationFrame(function diagnosticEffectTick(t){effectScheduled=false;if(!effectAnimation)return;effectTime=t/1000;draw();animateEffects(true);});}}
+let effectTime=0,effectAnimation=false,effectScheduled=false,effectStarted=null;
+function animateEffects(value){const enable=!!value;if(enable&&!effectAnimation){effectTime=0;effectStarted=null;}effectAnimation=enable;if(effectAnimation&&!effectScheduled){effectScheduled=true;requestAnimationFrame(function diagnosticEffectTick(t){effectScheduled=false;if(!effectAnimation)return;if(effectStarted===null)effectStarted=t;effectTime=(t-effectStarted)/1000;draw();animateEffects(true);});}}
 function effectLights(){const result=[];for(const light of nightLights){if(light.kind==='blinker'&&effectTime%1>.5||light.kind==='beacon'&&effectTime%.4>.15)continue;if(light.kind==='water'){for(let i=0;i<18;i++){const t=(i/18+effectTime*.7)%1;result.push({...light,position:gv.add(light.position,gv.add(gv.mul(light.direction,t*4),[0,-t*t,0]))});}}else result.push(light);}return result;}

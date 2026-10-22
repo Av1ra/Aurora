@@ -104,7 +104,7 @@ sealed partial class EditorWindow
  void ReadLampSlots()
  {
   Array.Clear(lampSlots);Array.Clear(lampRotations);extraLights.Clear();if(vehicleConfiguration==null)return;
-  foreach(bool rear in new[]{false,true}){var values=VehicleLights.Read(vehicleConfiguration).Where(l=>l.Rear==rear).OrderBy(l=>l.Position.X).ToArray();for(int i=0;i<Math.Min(2,values.Length);i++)lampSlots[(rear?2:0)+i]=values[i];extraLights.AddRange(values.Skip(2));}
+  foreach(bool rear in new[]{false,true}){var values=VehicleLights.Read(vehicleConfiguration).Where(l=>l.Rear==rear).OrderByDescending(l=>VehicleLights.IsLeft(l.Position,mainPivot,PivotFrame())).ThenByDescending(l=>l.Position.X).ToArray();for(int i=0;i<Math.Min(2,values.Length);i++)lampSlots[(rear?2:0)+i]=values[i];extraLights.AddRange(values.Skip(2));}
  }
  void StoreLampSlots(){if(vehicleConfiguration==null)return;vehicleConfiguration=VehicleLights.Write(vehicleConfiguration,lampSlots.Where(l=>l!=null).Select(l=>l!).Concat(extraLights));vehicleConfigurationEdited=true;}
  async Task ChooseLamp()

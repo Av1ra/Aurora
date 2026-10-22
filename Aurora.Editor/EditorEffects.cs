@@ -10,7 +10,7 @@ sealed partial class EditorWindow
  bool testLeft,testRight,testBeacon;
  readonly List<Microsoft.UI.Xaml.Controls.Primitives.ToggleButton> effectToggles=[];
  void ResetEffectTests(){testLeft=testRight=testBeacon=false;foreach(var button in effectToggles)button.IsChecked=false;}
- bool IndicatorLeft(string script,string key,int occurrence){var args=VehicleScript.Tokens(script).Where(t=>t.Key==key&&t.Occurrence==occurrence).Take(3).Select(t=>float.Parse(t.Value,System.Globalization.CultureInfo.InvariantCulture)).ToArray();if(args.Length!=3)throw new InvalidDataException("Invalid indicator coordinates");var p=new Vector3(args[0],args[1],args[2]);Matrix4x4.Invert(PivotFrame(),out var inverse);return Vector3.TransformNormal(p-mainPivot,inverse).X<=0;}
+ bool IndicatorLeft(string script,string key,int occurrence){var args=VehicleScript.Tokens(script).Where(t=>t.Key==key&&t.Occurrence==occurrence).Take(3).Select(t=>float.Parse(t.Value,System.Globalization.CultureInfo.InvariantCulture)).ToArray();if(args.Length!=3)throw new InvalidDataException("Invalid indicator coordinates");var p=new Vector3(args[0],args[1],args[2]);return VehicleLights.IsLeft(p,mainPivot,PivotFrame());}
  StackPanel EffectButtons()
  {
   var bar=new StackPanel{Orientation=Orientation.Horizontal,Spacing=5,HorizontalAlignment=HorizontalAlignment.Left,VerticalAlignment=VerticalAlignment.Bottom,Margin=new Thickness(12)};

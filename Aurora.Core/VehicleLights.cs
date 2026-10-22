@@ -6,6 +6,8 @@ namespace Aurora.Core;
 public sealed record VehicleLight(bool Rear,Vector3 Position);
 public static class VehicleLights
 {
+ // Native tire_leftShape geometry is on positive X (e.g. Ikarus 256/260, T138).
+ public static bool IsLeft(Vector3 point,Vector3 pivot,Matrix4x4 frame){if(!Matrix4x4.Invert(frame,out var inverse))throw new InvalidDataException("Invalid vehicle frame");return Vector3.TransformNormal(point-pivot,inverse).X>=0;}
  static readonly Regex lights=new(@"(?m)^[\t ]*\$LIGHT_(FORWARD|BACKWARD)[\t ]+([^\r\n]+)",RegexOptions.CultureInvariant);
  static float Coordinate(string text){if(float.TryParse(text,NumberStyles.Float,CultureInfo.InvariantCulture,out float value)&&float.IsFinite(value))return value;var prefix=Regex.Match(text,@"^[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?");if(!prefix.Success||!float.TryParse(prefix.Value,NumberStyles.Float,CultureInfo.InvariantCulture,out value)||!float.IsFinite(value))throw new InvalidDataException("Некорректные координаты огня.");return value;}
  static Vector3 Position(string text){var parts=text.Split((char[]?)null,StringSplitOptions.RemoveEmptyEntries).Take(3).ToArray();if(parts.Length!=3)throw new InvalidDataException("Некорректные координаты огня.");var p=parts.Select(Coordinate).ToArray();return new(p[0],p[1],p[2]);}
