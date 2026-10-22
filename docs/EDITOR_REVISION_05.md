@@ -25,3 +25,8 @@ WinUI build, Core/project/export suite, JS viewport regression, isolated real We
 
 
 Дополнительная найденная ошибка: стороны поворотников были перепутаны. Сверены штатные tire_leftShape/tire_rightShape: bus_ikr_256 и bus_ikr_260 имеют centre X +1.059/-1.08, covered_t138 +1.051/-1.051. Поэтому левая сторона — положительный X локального frame. Исправлены фильтр точек, позиции новых левых/правых точек и порядок слотов фар. Тест учитывает повёрнутый/сдвинутый pivot. Мигание начинается с фазы «включено» при активации, а не со случайной фазы системного времени.
+
+
+## Доставка
+
+Исходный коммит 0e087f5193960a28a090d074e7c4b4e335915cf0, production build-1984dd181f694283bfa4d91024be6786, 0.2. Установлено при закрытых Aurora/игре, 572 файла совпали. Native/package/signature/brand проверки прошли; Downloads обновлены с резервной копией. Receipts: ignored artifacts/editor-revision-05-install.json и transport-final-delivery.json. Игру и установленную GUI агент не запускал. Не считать это живой приёмкой исправлений.
