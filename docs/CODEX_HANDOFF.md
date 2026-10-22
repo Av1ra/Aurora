@@ -1,5 +1,7 @@
 # Codex handoff: Aurora Launcher + Aurora Editor
 
+**Latest installed menu grouping:** source `544df8f`, production `build-6d111e407f1e4e9992b4cd1134b27966`. Owner closed Aurora; transactional install and all 580 hashes verified. WinUI construction, package and signatures passed. Main menu groups: NMF/project open/save; OBJ/FBX export/import; undo/redo; settings. Delivery: Downloads/Aurora-0.2-Menu-2026-10-23. Evidence: ignored artifacts/menu-group-install.json. Other functionality remains at the workflow revision below; interactive acceptance remains pending.
+
 **2026-10-23 workflow revision:** [eight-point Editor changes](EDITOR_WORKFLOW_REVISION_2026-10-23.md). Source 47c85bc is installed: production build-dfb3b834fd6d4baf87cc26a22d22af9c, 580 hashes verified, installed hidden WinUI startup and FBX converter checks passed. Adds compact controls, layers, incremental viewport updates and FBX/OBJ scene exchange. DCC/live GUI/game acceptance remains pending.
 
 **2026-10-23 integration checkpoint:** [Editor PR #3 candidate](EDITOR_PR3_INTEGRATION_2026-10-23.md). Source 468d034, production-signed package installed at the owner's explicit request; 572 installed hashes and hidden WinUI construction verified. Includes cargo-panel construction fix and new English labels. PR #2 and Graphics PR #11 are not included. Earlier unmerged-PR statements below describe the prior handoff.
