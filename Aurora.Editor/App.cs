@@ -146,7 +146,16 @@ sealed partial class EditorWindow:Window
  async Task ApplyPreview(string name,MaterialSettings s)
  {
   await view.ExecuteScriptAsync("material("+JsonSerializer.Serialize(name)+","+JsonSerializer.Serialize(new{metallic=s.Metallic,roughness=s.Roughness,ao=s.Ao,normalY=s.NormalY,normalStrength=s.NormalStrength,emissionStrength=s.EmissiveStrength,iblStrength=s.Ibl,diffuseColour=s.NativeDiffuse,ambientColour=s.NativeAmbient,specularColour=s.NativeSpecular})+")");
-  foreach(var map in new[]{("texture",s.PbrBase??s.Base),("normalMap",s.PbrNormal??s.Normal),("ormMap",s.Orm),("metalMap",s.MetalMap),("roughMap",s.RoughMap),("aoMap",s.AoMap),("emissiveMap",s.Emissive),("specularMap",s.Specular)})if(map.Item2!=null)await PreviewTexture(name,await ReadImage(map.Item2),map.Item1);
+  // A missing PBR override must never prevent a valid native texture or
+  // other independent maps from loading into the viewport.
+  foreach(var map in new[]{("texture",new[]{s.PbrBase,s.Base}),("normalMap",new[]{s.PbrNormal,s.Normal}),("ormMap",new[]{s.Orm}),("metalMap",new[]{s.MetalMap}),("roughMap",new[]{s.RoughMap}),("aoMap",new[]{s.AoMap}),("emissiveMap",new[]{s.Emissive}),("specularMap",new[]{s.Specular})}){
+   foreach(var file in map.Item2.Where(f=>!string.IsNullOrWhiteSpace(f)).Distinct()){
+    try{await PreviewTexture(name,await ReadImage(file!),map.Item1);break;}
+    catch(Exception ex) when(ex is IOException or UnauthorizedAccessException or InvalidDataException or System.Runtime.InteropServices.COMException){
+     partWarnings.Add(name+" / "+map.Item1+": "+Path.GetFileName(file)+" ("+ex.Message+")");
+    }
+   }
+  }
  }
  async Task ConfigurePbr()
  {
