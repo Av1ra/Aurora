@@ -34,7 +34,7 @@ sealed partial class EditorWindow
   gizmoActions.Children.Add(Action("Отмена",async()=>{if(toolStart is EditorSnapshot state)await RestoreSnapshot(state);CloseAnimationTimeline();gizmoVisible=false;transportPoint=null;await Display();}));
   pivotResetButton=Action("Сбросить pivot",async()=>{var source=savedSnapshot??toolStart;if(source==null)return;if(transportPoint!=null){string key=transportPoint.Key;int occurrence=transportPoint.Occurrence;var old=source.Vehicle==null?null:VehicleScript.Fields(source.Vehicle).FirstOrDefault(f=>f.Key==key&&f.Occurrence==occurrence);if(old!=null)vehicleConfiguration=VehicleScript.Set(vehicleConfiguration!,key,occurrence,old.Value);var rotations=JsonSerializer.Deserialize<Dictionary<string,float[]>>(source.MechanismRotations)??[];if(rotations.TryGetValue(MechanismIdentity,out var rotation))mechanismRotations[MechanismIdentity]=rotation;else mechanismRotations.Remove(MechanismIdentity);}else{await RestorePivotFrame(source);mainPivot=source.Pivot;mainRotation=source.Rotation;}dirty=true;await RefreshGizmo();});gizmoActions.Children.Add(pivotResetButton);
   pivotApplyButton=Action("Исправить pivot",ApplyPivot);gizmoActions.Children.Add(pivotApplyButton);gizmoActions.Children.Add(Action("Готово",async()=>{CloseAnimationTimeline();gizmoVisible=false;gizmoEditing=false;transportPoint=null;await Display();}));
-  for(int i=0;i<3;i++){int axis=i;var box=new NumberBox{Header="XYZ"[i].ToString(),Value=0,Width=108,SmallChange=.1,SpinButtonPlacementMode=NumberBoxSpinButtonPlacementMode.Hidden,NumberFormatter=new Windows.Globalization.NumberFormatting.DecimalFormatter{FractionDigits=1,IntegerDigits=1,IsGrouped=false,NumberRounder=new Windows.Globalization.NumberFormatting.IncrementNumberRounder{Increment=.1,RoundingAlgorithm=Windows.Globalization.NumberFormatting.RoundingAlgorithm.RoundHalfUp}}};box.ValueChanged+=async(_,_)=>{if(gizmoUpdating||busy||!gizmoVisible||!double.IsFinite(box.Value))return;if((activeCargo>=0||animationEditing)&&gizmoMode=="scale"&&box.Value<(animationEditing?.0001:0)){await RefreshGizmo();return;}var v=GizmoValue();v=axis switch{0=>new((float)box.Value,v.Y,v.Z),1=>new(v.X,(float)box.Value,v.Z),_=>new(v.X,v.Y,(float)box.Value)};if(!float.IsFinite(v.X)||!float.IsFinite(v.Y)||!float.IsFinite(v.Z))return;var before=CaptureSnapshot();SetGizmoValue(v);dirty=true;CommitHistory(before);if(transportPoint!=null)await Display();else await RefreshGizmo();};gizmoCoordinates[i]=box;gizmoNumbers.Children.Add(box);}
+  for(int i=0;i<3;i++){int axis=i;var box=new NumberBox{Header="XYZ"[i].ToString(),Value=0,Width=108,SmallChange=.1,SpinButtonPlacementMode=NumberBoxSpinButtonPlacementMode.Hidden,NumberFormatter=new Windows.Globalization.NumberFormatting.DecimalFormatter{FractionDigits=1,IntegerDigits=1,IsGrouped=false,NumberRounder=new Windows.Globalization.NumberFormatting.IncrementNumberRounder{Increment=.1,RoundingAlgorithm=Windows.Globalization.NumberFormatting.RoundingAlgorithm.RoundHalfUp}}};box.ValueChanged+=async(_,_)=>{if(gizmoUpdating||busy||!gizmoVisible||!double.IsFinite(box.Value))return;if((activeCargo>=0||animationEditing)&&gizmoMode=="scale"&&box.Value<(animationEditing?.0001:0)){await RefreshGizmo();return;}var v=GizmoValue();v=axis switch{0=>new((float)box.Value,v.Y,v.Z),1=>new(v.X,(float)box.Value,v.Z),_=>new(v.X,v.Y,(float)box.Value)};if(!float.IsFinite(v.X)||!float.IsFinite(v.Y)||!float.IsFinite(v.Z))return;var before=CaptureSnapshot();SetGizmoValue(v);dirty=true;CommitHistory(before);await RefreshGizmo();};gizmoCoordinates[i]=box;gizmoNumbers.Children.Add(box);}
   BuildMechanismControls();BuildAnimationControls(viewport);viewport.Children.Add(cargoPalette);viewport.Children.Add(gizmoActions);viewport.Children.Add(gizmoNumbers);
  }
  Vector3 GizmoPosition()=>animationEditing?AnimationPivot+(animationAxisEditing?Vector3.Zero:AnimationVector(animationPose.Position)):transportPoint!=null?TransportPointPosition():activeSmoke>=0?SmokePosition():activeCargo>=0?CargoPosition():activeLamp<0?mainPivot:lampSlots[activeLamp]?.Position??mainPivot;
@@ -106,6 +106,33 @@ sealed partial class EditorWindow
   Array.Clear(lampSlots);Array.Clear(lampRotations);extraLights.Clear();if(vehicleConfiguration==null)return;
   foreach(bool rear in new[]{false,true}){var values=VehicleLights.Read(vehicleConfiguration).Where(l=>l.Rear==rear).OrderByDescending(l=>VehicleLights.IsLeft(l.Position,mainPivot,PivotFrame())).ThenByDescending(l=>l.Position.X).ToArray();for(int i=0;i<Math.Min(2,values.Length);i++)lampSlots[(rear?2:0)+i]=values[i];extraLights.AddRange(values.Skip(2));}
  }
+ // A script can contain more than four indicator emitters. Preserve all
+ // existing occurrences and create only the missing corner requested by user.
+ async Task SelectIndicator(bool front,bool left)
+ {
+  if(!await EnsureVehicleScript())return;
+  var tokens=VehicleScript.Tokens(vehicleConfiguration!).ToArray();
+  var candidates=VehicleScript.Fields(vehicleConfiguration!).Where(f=>f.Key=="LIGHT_BLINKER").ToArray();
+  int occurrence=-1;
+  foreach(var field in candidates){
+   var coords=tokens.Where(t=>t.Key==field.Key&&t.Occurrence==field.Occurrence).Take(3).Select(t=>t.Value).ToArray();
+   if(coords.Length!=3||coords.Any(x=>!float.TryParse(x,System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture,out _)))continue;
+   var v=new Vector3(float.Parse(coords[0],System.Globalization.CultureInfo.InvariantCulture),float.Parse(coords[1],System.Globalization.CultureInfo.InvariantCulture),float.Parse(coords[2],System.Globalization.CultureInfo.InvariantCulture));
+   if(VehicleLights.IsLeft(v,mainPivot,PivotFrame())!=left)continue;
+   if(!Matrix4x4.Invert(PivotFrame(),out var inverse))continue;
+   if((Vector3.TransformNormal(v-mainPivot,inverse).Z>=0)==front){occurrence=field.Occurrence;break;}
+  }
+  toolStart=CaptureSnapshot();
+  if(occurrence<0){
+   occurrence=candidates.Length;
+   var bounds=ModelOrientation.Bounds(lods.First().Value);
+   var v=new Vector3(left?bounds.Max.X:bounds.Min.X,bounds.Min.Y+(bounds.Max.Y-bounds.Min.Y)*.55f,front?bounds.Max.Z:bounds.Min.Z);
+   vehicleConfiguration=VehicleScript.SetArguments(vehicleConfiguration!,"LIGHT_BLINKER",occurrence,new[]{v.X,v.Y,v.Z}.Select(n=>n.ToString("G9",System.Globalization.CultureInfo.InvariantCulture)).ToArray());
+   vehicleConfigurationEdited=true;dirty=true;
+  }
+  transportPoint=new("LIGHT_BLINKER",occurrence,0);activeLamp=activeCargo=activeSmoke=-1;
+  gizmoMode="move";gizmoVisible=gizmoEditing=true;await RefreshGizmo();
+ }
  void StoreLampSlots(){if(vehicleConfiguration==null)return;vehicleConfiguration=VehicleLights.Write(vehicleConfiguration,lampSlots.Where(l=>l!=null).Select(l=>l!).Concat(extraLights));vehicleConfigurationEdited=true;}
  async Task ChooseLamp()
  {
@@ -113,8 +140,13 @@ sealed partial class EditorWindow
   if(!await EnsureVehicleScript())return;ReadLampSlots();activeSmoke=-1;activeCargo=-1;var panel=new StackPanel{Spacing=8,Width=280};var dialog=VehicleDialog("Фары и фонари",panel);dialog.PrimaryButtonText="";int selected=-1;
   string[] labels=["Левая фара","Правая фара","Левый фонарь","Правый фонарь"];
   for(int i=0;i<4;i++){int index=i;var button=new Button{Content=UiLanguage.Text(labels[i]),HorizontalAlignment=HorizontalAlignment.Stretch};button.Click+=(_,_)=>{selected=index;dialog.Hide();};panel.Children.Add(button);}
-  string? indicatorScope=null;foreach(var side in new[]{("blinkLeft","Левые поворотники"),("blinkRight","Правые поворотники")}){var button=new Button{Content=UiLanguage.Text(side.Item2),HorizontalAlignment=HorizontalAlignment.Stretch};button.Click+=(_,_)=>{indicatorScope=side.Item1;dialog.Hide();};panel.Children.Add(button);}
-  var more=new Button{Content=UiLanguage.Text("Другие огни"),HorizontalAlignment=HorizontalAlignment.Stretch};bool advanced=false;more.Click+=(_,_)=>{advanced=true;dialog.Hide();};panel.Children.Add(more);await ShowDialog(dialog);if(indicatorScope!=null){await ConfigureTransport(indicatorScope);return;}if(advanced){await ConfigureTransport("lights");return;}if(selected<0)return;
+  (bool Front,bool Left)? indicatorSlot=null;bool generateIndicators=false;
+  var autoIndicators=new Button{Content=UiLanguage.Text("Авторасстановка всех 4 поворотников"),HorizontalAlignment=HorizontalAlignment.Stretch};autoIndicators.Click+=(_,_)=>{generateIndicators=true;dialog.Hide();};panel.Children.Add(autoIndicators);
+  foreach(var spec in new[]{(true,true,"Передний левый поворотник"),(true,false,"Передний правый поворотник"),(false,true,"Задний левый поворотник"),(false,false,"Задний правый поворотник")}){
+   var button=new Button{Content=UiLanguage.Text(spec.Item3),HorizontalAlignment=HorizontalAlignment.Stretch};
+   button.Click+=(_,_)=>{indicatorSlot=(spec.Item1,spec.Item2);dialog.Hide();};panel.Children.Add(button);
+  }
+  var more=new Button{Content=UiLanguage.Text("Другие огни"),HorizontalAlignment=HorizontalAlignment.Stretch};bool advanced=false;more.Click+=(_,_)=>{advanced=true;dialog.Hide();};panel.Children.Add(more);await ShowDialog(dialog);if(generateIndicators){var before=CaptureSnapshot();foreach(var corner in new[]{(true,true),(true,false),(false,true),(false,false)})await SelectIndicator(corner.Item1,corner.Item2);toolStart=before;await RefreshLighting();return;}if(indicatorSlot is { } indicator){await SelectIndicator(indicator.Front,indicator.Left);return;}if(advanced){await ConfigureTransport("lights");return;}if(selected<0)return;
   int paired=selected^1;if(lampSlots[paired]!=null){
    var axes=new ComboBox{ItemsSource=new[]{"X","Y","Z"},SelectedIndex=0,HorizontalAlignment=HorizontalAlignment.Stretch};var mirror=VehicleDialog("Настроить симметрию?",axes);mirror.PrimaryButtonText=UiLanguage.Text("Отразить");mirror.CloseButtonText=UiLanguage.Text("Вручную");
    if(await ShowDialog(mirror)==ContentDialogResult.Primary){var frame=PivotFrame();Matrix4x4.Invert(frame,out var inv);var local=Vector3.TransformNormal(lampSlots[paired]!.Position-mainPivot,inv);local=axes.SelectedIndex switch{0=>new(-local.X,local.Y,local.Z),1=>new(local.X,-local.Y,local.Z),_=>new(local.X,local.Y,-local.Z)};lampSlots[selected]=new(selected>=2,mainPivot+Vector3.TransformNormal(local,frame));}
