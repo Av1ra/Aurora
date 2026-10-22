@@ -59,11 +59,11 @@ sealed partial class EditorWindow
   // Reuse the existing stateful selectors and command handlers.
   var toolbar=new StackPanel{Name="EditorToolbar",Orientation=Orientation.Horizontal,Spacing=6,Margin=new Thickness(12,6,12,6)};
   RegisterImportCommands();RegisterSceneCommands();RegisterVehicleCommands();RegisterMaterialCommands();RegisterProjectCommands();RegisterObjectCommands();RegisterHistoryCommands();RegisterModelSettingsCommands();
-  var file=new MenuFlyout();file.Items.Add(MenuCommand("Открыть NMF…"));
-  file.Items.Add(MenuCommand("Импортировать OBJ…"));file.Items.Add(MenuCommand("Импортировать FBX…"));file.Items.Add(MenuCommand("Открыть проект…"));
-  file.Items.Add(new MenuFlyoutSeparator());
+  var file=new MenuFlyout();
   editorCommands["Сохранить NMF…"]=(SaveNmfMaterials,()=>HasModel&&variants.Count>0);
-  file.Items.Add(MenuCommand("Экспортировать OBJ…"));file.Items.Add(MenuCommand("Экспортировать FBX…"));file.Items.Add(MenuCommand("Сохранить NMF…"));file.Items.Add(MenuCommand("Сохранить проект…"));
+  foreach(string key in new[]{"Открыть NMF…","Открыть проект…","Сохранить NMF…","Сохранить проект…"})file.Items.Add(MenuCommand(key));
+  file.Items.Add(new MenuFlyoutSeparator());
+  foreach(string key in new[]{"Экспортировать OBJ…","Экспортировать FBX…","Импортировать OBJ…","Импортировать FBX…"})file.Items.Add(MenuCommand(key));
   file.Items.Add(new MenuFlyoutSeparator());var undoItem=MenuCommand("Отменить");undoItem.KeyboardAcceleratorTextOverride="Ctrl+Z";file.Items.Add(undoItem);var redoItem=MenuCommand("Повторить");redoItem.KeyboardAcceleratorTextOverride="Ctrl+Y";file.Items.Add(redoItem);
   wireframeMenu.Click+=async(_,_)=>{if(ready)try{await ApplyWireframe();}catch(Exception ex){SetStatus(ex.Message);}};
   var fileButton=ToolbarMenu("Меню",file);fileButton.Content=new FontIcon{Glyph="\uE700",FontSize=14};Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(fileButton,UiLanguage.Text("Меню"));toolbar.Children.Add(fileButton);
