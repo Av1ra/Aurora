@@ -1,0 +1,50 @@
+{
+  "Aurora.Editor": {
+    "files": 41,
+    "lines": 2370
+  },
+  "Aurora.Core": {
+    "files": 44,
+    "lines": 1932
+  },
+  "Aurora.Launcher": {
+    "files": 8,
+    "lines": 1234
+  },
+  "Shared": {
+    "files": 2,
+    "lines": 57
+  },
+  "Aurora.Setup.Native": {
+    "files": 2,
+    "lines": 922
+  },
+  "Aurora.Bootstrap": {
+    "files": 1,
+    "lines": 87
+  },
+  "Native": {
+    "files": 9,
+    "lines": 8127
+  },
+  "Backend": {
+    "files": 3,
+    "lines": 499
+  },
+  "Packaging": {
+    "files": 17,
+    "lines": 785
+  },
+  "Aurora.Tests": {
+    "files": 31,
+    "lines": 970
+  },
+  "Aurora.UpdateTests": {
+    "files": 1,
+    "lines": 73
+  },
+  "Aurora.ExportTests": {
+    "files": 1,
+    "lines": 26
+  }
+}
