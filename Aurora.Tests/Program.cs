@@ -3,6 +3,8 @@ using System.Security.Cryptography;
 using System.Text.Json;
 static void Check(bool value,string label){if(!value)throw new Exception("FAIL "+label);Console.WriteLine("PASS "+label);}
 static void Reject(Action action,string label){try{action();}catch{Console.WriteLine("PASS rejected "+label);return;}throw new Exception("FAIL accepted "+label);}
+if(args.FirstOrDefault()=="--catalog-benchmark"){if(args.Length!=3)throw new ArgumentException("Supply media_soviet and a writable cache directory");CatalogBenchmark.Run(args[1],args[2]);return;}
+CatalogCacheChecks.Run(Check);
 EditorRemainderChecks.Run(Check,Reject);
 MeshElementChecks.Run(Check,Reject);
 await SceneInterchangeChecks.Run(Check,Reject);

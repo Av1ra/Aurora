@@ -9,16 +9,10 @@ namespace Aurora.Editor;
 sealed partial class EditorWindow
 {
  VehicleCatalog? vehicleCatalog;
- bool? catalogEnglish;
  Dictionary<string,string[]>? vehicleChoices;
  string? MediaFolder()
  {
   foreach(string? start in new[]{selectedLod==null?null:Path.GetDirectoryName(selectedLod),AppContext.BaseDirectory,Environment.CurrentDirectory})for(string? folder=start;folder!=null;folder=Path.GetDirectoryName(folder)){string media=Path.Combine(folder,"media_soviet");if(Directory.Exists(Path.Combine(media,"vehicles")))return media;}return null;
- }
- async Task LoadVehicleChoices()
- {
-  if(vehicleCatalog!=null&&catalogEnglish==UiLanguage.English)return;
-  string media=MediaFolder()??throw new DirectoryNotFoundException(UiLanguage.Text("Не найдена папка игры"));bool english=UiLanguage.English;vehicleCatalog=await Task.Run(()=>VehicleCatalog.Load(media,english));catalogEnglish=english;vehicleChoices=vehicleCatalog.Values;
  }
  void RegisterModelSettingsCommands()
  {
@@ -31,7 +25,7 @@ sealed partial class EditorWindow
  static readonly Dictionary<string,string> resourceLabels=new(){["oil"]="Нефть",["fuel"]="Топливо",["bitumen"]="Битум",["meat"]="Мясо",["gravel"]="Гравий",["rawgravel"]="Камень",["coal"]="Уголь",["rawcoal"]="Уголь-сырец",["iron"]="Железо",["rawiron"]="Железная руда",["bauxite"]="Бокситы",["rawbauxite"]="Бокситы-сырцы",["uranium"]="Урановая руда",["aluminium"]="Алюминий",["yellowcake"]="Оксид урана",["uf6"]="Фторид урана",["nuclearfuel"]="Ядерное топливо",["nuclearwaste"]="Ядерные отходы",["cement"]="Цемент",["concrete"]="Бетон",["water"]="Вода",["sewage"]="Сточные воды",["waste"]="Смешанные отходы",["waste_gravel"]="Строительный мусор",["waste_steel"]="Металлолом",["waste_aluminium"]="Алюминиевый лом",["waste_plastic"]="Пластиковые отходы",["food"]="Пища",["alcohol"]="Алкоголь",["crops"]="Зерно",["fabric"]="Ткань",["clothes"]="Одежда",["chemicals"]="Химикаты",["plastics"]="Пластик",["eletronics"]="Электроника",["electronics"]="Электроника",["mechanicalcomponents"]="Механические детали",["electrocomponents"]="Электродетали",["vehicles"]="Техника",["cargovehicles"]="Техника",["wood"]="Древесина",["boards"]="Доски",["prefabpanels"]="Панели",["steel"]="Сталь",["bricks"]="Кирпичи",["livestock"]="Скот"};
  static void SettingRow(Panel panel,string label,FrameworkElement control)
  {
-  var row=new Grid{ColumnSpacing=12,RowSpacing=4};var text=new TextBlock{Text=UiLanguage.Text(label),VerticalAlignment=VerticalAlignment.Center,TextWrapping=TextWrapping.Wrap};control.HorizontalAlignment=HorizontalAlignment.Stretch;control.MinWidth=0;row.Children.Add(text);row.Children.Add(control);bool? stacked=null;
+  var row=new Grid{ColumnSpacing=12,RowSpacing=4};var text=new TextBlock{Text=UiLanguage.Text(label),VerticalAlignment=VerticalAlignment.Center,TextWrapping=TextWrapping.Wrap};control.HorizontalAlignment=HorizontalAlignment.Stretch;control.MinWidth=0;if(control is NumberBox coordinate&&Regex.IsMatch(label,@"(?:^|\s)[XYZ]$"))AuoUI.Coordinate(coordinate);row.Children.Add(text);row.Children.Add(control);bool? stacked=null;
   void Layout(double width){bool narrow=width<460;if(stacked==narrow)return;stacked=narrow;row.ColumnDefinitions.Clear();row.RowDefinitions.Clear();row.ColumnDefinitions.Add(new(){Width=narrow?new GridLength(1,GridUnitType.Star):new GridLength(180)});if(narrow){row.RowDefinitions.Add(new(){Height=GridLength.Auto});row.RowDefinitions.Add(new(){Height=GridLength.Auto});}else row.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});Grid.SetColumn(control,narrow?0:1);Grid.SetRow(control,narrow?1:0);}
   Layout(500);row.SizeChanged+=(_,e)=>Layout(e.NewSize.Width);panel.Children.Add(row);
  }

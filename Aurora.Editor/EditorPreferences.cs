@@ -7,7 +7,7 @@ sealed partial class EditorWindow
 {
  async Task ConfigureEditorPreferences()
  {
-  var panel=new StackPanel{Spacing=12,Width=360};var diagnostics=new Button{Content=UiLanguage.Text("Сохранить диагностику…"),HorizontalAlignment=HorizontalAlignment.Stretch};diagnostics.Click+=async(_,_)=>{try{await ExportViewportDiagnostics();}catch(Exception ex){SetStatus(ex.Message);}};panel.Children.Add(diagnostics);
+  var panel=new StackPanel{Spacing=12,Width=360};var diagnostics=new Button{Content=UiLanguage.Text("Сохранить диагностику…"),HorizontalAlignment=HorizontalAlignment.Stretch};diagnostics.Click+=async(_,_)=>{try{await ExportViewportDiagnostics();}catch(Exception ex){SetStatus(ex.Message);}};panel.Children.Add(diagnostics);var refreshCatalog=new Button{Content=UiLanguage.Text("Обновить справочники"),HorizontalAlignment=HorizontalAlignment.Stretch};refreshCatalog.Click+=async(_,_)=>{refreshCatalog.IsEnabled=false;try{await LoadVehicleChoices(true);ToolTipService.SetToolTip(refreshCatalog,UiLanguage.Text("Справочники обновлены"));}catch(Exception ex){SetStatus(ex.Message);}finally{refreshCatalog.IsEnabled=true;}};panel.Children.Add(refreshCatalog);
   var enabled=new CheckBox{Content=UiLanguage.Text("Полигональная сетка"),IsChecked=wireframeMenu.IsChecked};panel.Children.Add(enabled);
   var sample=new Border{Height=28,Background=new SolidColorBrush(wireframeColour)};panel.Children.Add(sample);
   var hex=new TextBox{Header=UiLanguage.Text("Цвет сетки"),Text=$"#{wireframeColour.R:X2}{wireframeColour.G:X2}{wireframeColour.B:X2}",MaxLength=7};

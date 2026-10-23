@@ -41,7 +41,7 @@ sealed partial class EditorWindow
  }
  async Task ExportScene(string format)
  {
-  var picker=new Windows.Storage.Pickers.FileSavePicker{SuggestedFileName="model"};picker.FileTypeChoices.Add(format,new[]{"."+format.ToLowerInvariant()});WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));var file=await picker.PickSaveFileAsync();if(file==null)return;
+  var picker=new Windows.Storage.Pickers.FileSavePicker{SuggestedFileName="model"};picker.FileTypeChoices.Add(format,new[]{"."+format.ToLowerInvariant()});WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));openingStarted=0;var file=await picker.PickSaveFileAsync();if(file==null)return;
   var scene=InterchangeForExport();if(format=="FBX")await SceneInterchange.ExportFbx(SceneBridge,file.Path,scene);else SceneInterchange.ExportObj(file.Path,scene);SetStatus("Модель экспортирована",file.Name);
  }
 }

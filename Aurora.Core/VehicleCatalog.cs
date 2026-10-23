@@ -8,7 +8,7 @@ public sealed record VehicleClass(string Id,string Type,string? Transport,string
 public sealed record VehicleSound(string Name,string ClassId,string[] Files);
 public sealed record CargoResource(string File,string Name);
 public sealed record VehicleObject(string Id,string Name,string Type,string Script);
-public sealed class VehicleCatalog
+public sealed partial class VehicleCatalog
 {
  public static string? ObjectIdentity(string? script){if(script==null)return null;string? media=VehicleAssets.Media(Path.GetDirectoryName(script)!);if(media==null)return null;var p=Path.GetRelativePath(media,script).Replace('\\','/').Split('/');string[] roots=["vehicles","trains","ships","airplanes","helicopters","cabins"];if(p.Length==3&&roots.Contains(p[0],StringComparer.OrdinalIgnoreCase))return p[1];if(p.Length==4&&(p[0].StartsWith("dlc",StringComparison.OrdinalIgnoreCase)||p[0].StartsWith("elc",StringComparison.OrdinalIgnoreCase))&&roots.Contains(p[1],StringComparer.OrdinalIgnoreCase))return p[0].ToUpperInvariant()+"_"+p[2];return null;}
  public Dictionary<int,string> Texts {get;private set;}=[];

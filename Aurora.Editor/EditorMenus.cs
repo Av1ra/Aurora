@@ -32,7 +32,7 @@ sealed partial class EditorWindow
   opaqueFlyoutStyle=new Style(typeof(FlyoutPresenter));if(resources.TryGetValue("DefaultFlyoutPresenterStyle",out var flyoutBase)&&flyoutBase is Style flyoutStyle)opaqueFlyoutStyle.BasedOn=flyoutStyle;opaqueFlyoutStyle.Setters.Add(new Setter(Control.BackgroundProperty,opaquePopup));
   // Submenus are separate popup trees; root-grid theme resources do not reliably reach them.
   resources[typeof(MenuFlyoutPresenter)]=opaqueMenuStyle;resources[typeof(FlyoutPresenter)]=opaqueFlyoutStyle;
-  void Refresh(){bool dark=root.ActualTheme==ElementTheme.Dark;var contrast=new Windows.UI.ViewManagement.AccessibilitySettings();opaquePopup.Color=contrast.HighContrast?new Windows.UI.ViewManagement.UISettings().GetColorValue(Windows.UI.ViewManagement.UIColorType.Background):dark?Windows.UI.Color.FromArgb(255,40,40,40):Windows.UI.Color.FromArgb(255,249,249,249);opaqueButton.Color=contrast.HighContrast?opaquePopup.Color:dark?Windows.UI.Color.FromArgb(255,52,52,52):Windows.UI.Color.FromArgb(255,235,235,235);}
+  void Refresh(){bool dark=root.ActualTheme==ElementTheme.Dark;var contrast=new Windows.UI.ViewManagement.AccessibilitySettings();opaquePopup.Color=contrast.HighContrast?new Windows.UI.ViewManagement.UISettings().GetColorValue(Windows.UI.ViewManagement.UIColorType.Background):AuoUI.Surface(dark);opaqueButton.Color=contrast.HighContrast?opaquePopup.Color:AuoUI.ControlSurface(dark);}
   root.Loaded+=(_,_)=>Refresh();root.ActualThemeChanged+=(_,_)=>Refresh();Refresh();
  }
  void CloseEditorFlyouts(){foreach(var flyout in editorFlyouts)flyout.Hide();}
@@ -55,9 +55,9 @@ sealed partial class EditorWindow
  }
  void BuildMenuLayout(Grid grid)
  {
-  ConfigureCompactEditor();ConfigureOpaqueSurfaces(grid);
+  AuoUI.Apply(grid);ConfigureCompactEditor();ConfigureOpaqueSurfaces(grid);
   // Reuse the existing stateful selectors and command handlers.
-  var toolbar=new StackPanel{Name="EditorToolbar",Orientation=Orientation.Horizontal,Spacing=6,Margin=new Thickness(12,6,12,6)};
+  var toolbar=new StackPanel{Name="EditorToolbar",Orientation=Orientation.Horizontal,Spacing=6,Margin=new Thickness(8,4,8,4)};
   RegisterImportCommands();RegisterSceneCommands();RegisterVehicleCommands();RegisterMaterialCommands();RegisterProjectCommands();RegisterObjectCommands();RegisterHistoryCommands();RegisterModelSettingsCommands();
   var file=new MenuFlyout();
   editorCommands["Сохранить NMF…"]=(SaveNmfMaterials,()=>HasModel&&variants.Count>0);
@@ -89,8 +89,8 @@ sealed partial class EditorWindow
   grid.Children.Add(new ScrollViewer{Content=toolbar,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,VerticalScrollBarVisibility=ScrollBarVisibility.Disabled,HorizontalScrollMode=ScrollMode.Auto});
   var regionShortcut=new KeyboardAccelerator{Key=Windows.System.VirtualKey.O,Modifiers=Windows.System.VirtualKeyModifiers.Shift};regionShortcut.Invoked+=async(_,e)=>{if(!selectionRegion.IsEnabled||EditingText()||view.FocusState!=FocusState.Unfocused)return;e.Handled=true;await ToggleSelectionMode();};grid.KeyboardAccelerators.Add(regionShortcut);
 
-  var footer=new Grid{Margin=new Thickness(14,8,14,8),ColumnSpacing=16,RowSpacing=4};footer.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});footer.ColumnDefinitions.Add(new(){Width=GridLength.Auto});footer.RowDefinitions.Add(new(){Height=GridLength.Auto});footer.RowDefinitions.Add(new(){Height=GridLength.Auto});
-  footer.Children.Add(geometryInfo);Grid.SetColumn(dirtyText,1);footer.Children.Add(dirtyText);Grid.SetRow(status,1);Grid.SetColumnSpan(status,2);footer.Children.Add(status);Grid.SetRow(footer,2);grid.Children.Add(footer);
+  var footer=new Grid{Margin=new Thickness(8,4,8,4),ColumnSpacing=16,RowSpacing=4};footer.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});footer.ColumnDefinitions.Add(new(){Width=GridLength.Auto});footer.RowDefinitions.Add(new(){Height=GridLength.Auto});footer.RowDefinitions.Add(new(){Height=GridLength.Auto});
+  footer.Children.Add(geometryInfo);Grid.SetColumn(catalogPreparationText,1);Grid.SetRow(catalogPreparationText,1);footer.Children.Add(catalogPreparationText);Grid.SetColumn(dirtyText,1);footer.Children.Add(dirtyText);Grid.SetRow(status,1);Grid.SetColumnSpan(status,2);footer.Children.Add(status);Grid.SetRow(footer,2);grid.Children.Add(footer);
   Grid.SetRow(editorNotice,1);grid.Children.Add(editorNotice);busyIndicator.Height=2;busyIndicator.VerticalAlignment=VerticalAlignment.Bottom;grid.Children.Add(busyIndicator);
   foreach(var shortcut in new[]{(Windows.System.VirtualKey.O,"Открыть NMF…"),(Windows.System.VirtualKey.S,"Сохранить проект…")}){
    var accelerator=new KeyboardAccelerator{Key=shortcut.Item1,Modifiers=Windows.System.VirtualKeyModifiers.Control};accelerator.Invoked+=async(_,e)=>{e.Handled=true;var command=editorCommands[shortcut.Item2];if(!busy&&command.CanExecute()){CloseEditorFlyouts();await RunCommand(command.Action);}};grid.KeyboardAccelerators.Add(accelerator);
@@ -121,7 +121,7 @@ sealed partial class EditorWindow
   foreach(var command in menuCommands)command.Item.IsEnabled=!busy&&!cameraEditing&&command.CanExecute();
   if(selectedLod==null||!lods.TryGetValue(selectedLod,out var model)){geometryInfo.Text="";return;}
   var statistics=ModelStatistics.Of(model);
-  geometryInfo.Text=UiLanguage.Text("Объекты")+": "+statistics.Objects+"\n"+UiLanguage.Text("Треугольники")+": "+statistics.Triangles+"\n"+UiLanguage.Text("Вершины")+": "+statistics.Vertices;if(!ReferenceEquals(dimensionsModel,model)){var bounds=ModelOrientation.Bounds(model);dimensionsSize=bounds.Max-bounds.Min;dimensionsModel=model;}var size=dimensionsSize;geometryInfo.Text+="\n"+UiLanguage.Text("Габариты модели, м")+$": {size.X:F1} × {size.Y:F1} × {size.Z:F1}";
+  geometryInfo.Text=UiLanguage.Text("Объекты")+": "+statistics.Objects+"    "+UiLanguage.Text("Треугольники")+": "+statistics.Triangles+"    "+UiLanguage.Text("Вершины")+": "+statistics.Vertices;if(!ReferenceEquals(dimensionsModel,model)){var bounds=ModelOrientation.Bounds(model);dimensionsSize=bounds.Max-bounds.Min;dimensionsModel=model;}var size=dimensionsSize;geometryInfo.Text+="    "+UiLanguage.Text("Габариты модели, м")+$": {size.X:F2} × {size.Y:F2} × {size.Z:F2}";
  }
  async Task ExportNmf()
  {

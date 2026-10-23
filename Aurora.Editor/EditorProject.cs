@@ -20,7 +20,7 @@ sealed partial class EditorWindow
  static MaterialSettings MapSettings(MaterialSettings s,Func<string?,string?> map)=>MaterialDocuments.Remap(s,map);
  async Task SaveProject()
  {
-  StoreVariant();var picker=new Windows.Storage.Pickers.FileSavePicker{SuggestedFileName="Aurora-model"};picker.FileTypeChoices.Add("Aurora project",new[]{".aur"});WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));var file=await picker.PickSaveFileAsync();if(file==null)return;
+  StoreVariant();var picker=new Windows.Storage.Pickers.FileSavePicker{SuggestedFileName="Aurora-model"};picker.FileTypeChoices.Add("Aurora project",new[]{".aur"});WinRT.Interop.InitializeWithWindow.Initialize(picker,WinRT.Interop.WindowNative.GetWindowHandle(this));openingStarted=0;var file=await picker.PickSaveFileAsync();if(file==null)return;
   processing=true;UpdateControls();workspaceDocuments[workspaceActive]=CaptureProjectEntries();var archive=new TransportWorkspace(workspaceActive,new(workspaceDocuments)).Pack();await Task.Run(()=>AuroraProjectArchive.Write(file.Path,archive));workspaceDirty=false;dirty=false;MarkHistorySaved();SetStatus("Проект сохранён",file.Name);
  }
  Dictionary<string,byte[]> CaptureProjectEntries()

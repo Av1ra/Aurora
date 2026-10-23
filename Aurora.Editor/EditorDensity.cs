@@ -9,17 +9,17 @@ sealed partial class EditorWindow
   // This host process displays the Editor. Use resources from the pinned SDK,
   // retaining native control templates, keyboard input and accessibility.
   var resources=Application.Current.Resources;
-  resources["TextControlThemeMinHeight"]=28d;
+  resources["TextControlThemeMinHeight"]=AuoUI.FieldHeight;
   resources["TextControlThemePadding"]=new Thickness(6,2,6,2);
   resources["ButtonPadding"]=new Thickness(7,2,7,2);
-  resources["ListViewItemMinHeight"]=26d;
+  resources["ListViewItemMinHeight"]=AuoUI.ButtonHeight;
   foreach(var type in new[]{typeof(Button),typeof(ToggleButton),typeof(TextBox),typeof(ComboBox),typeof(NumberBox),typeof(ListViewItem),typeof(CheckBox),typeof(RadioButton),typeof(ToggleSwitch)})
   {
    var style=new Style(type);
    if(resources.TryGetValue(type,out var previous)&&previous is Style inherited)style.BasedOn=inherited;
-   style.Setters.Add(new Setter(Control.MinHeightProperty,type==typeof(Button)||type==typeof(ToggleButton)||type==typeof(ListViewItem)?26d:28d));
+   style.Setters.Add(new Setter(Control.MinHeightProperty,type==typeof(Button)||type==typeof(ToggleButton)||type==typeof(ListViewItem)?AuoUI.ButtonHeight:AuoUI.FieldHeight));
    style.Setters.Add(new Setter(Control.MinWidthProperty,0d));
-   style.Setters.Add(new Setter(Control.FontSizeProperty,12d));
+   style.Setters.Add(new Setter(Control.FontSizeProperty,AuoUI.FontSize));
    style.Setters.Add(new Setter(Control.PaddingProperty,new Thickness(6,2,6,2)));
    resources[type]=style;
   }

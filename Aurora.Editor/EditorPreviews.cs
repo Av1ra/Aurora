@@ -23,7 +23,7 @@ sealed partial class EditorWindow
  void BuildPreviewWorkspace(Grid viewport)
  {
   viewport.SizeChanged+=(_,_)=>cameraPanel.MaxHeight=Math.Max(1,viewport.ActualHeight-24);
-  var tests=EffectButtons();Grid.SetColumnSpan(tests,3);viewport.Children.Add(tests);ToolTipService.SetToolTip(nightButton,UiLanguage.Text("Ночь"));Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(nightButton,UiLanguage.Text("Ночь"));nightButton.Click+=async(_,_)=>{if(!HasModel)return;nightView=!nightView;((FontIcon)nightButton.Content).Glyph=nightView?"\uE708":"\uE706";string label=UiLanguage.Text(nightView?"День":"Ночь");ToolTipService.SetToolTip(nightButton,label);Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(nightButton,label);await RefreshLighting();};
+  var tests=EffectButtons();Grid.SetColumn(tests,1);viewport.Children.Add(tests);ToolTipService.SetToolTip(nightButton,UiLanguage.Text("Ночь"));Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(nightButton,UiLanguage.Text("Ночь"));nightButton.Click+=async(_,_)=>{if(!HasModel)return;nightView=!nightView;((FontIcon)nightButton.Content).Glyph=nightView?"\uE708":"\uE706";string label=UiLanguage.Text(nightView?"День":"Ночь");ToolTipService.SetToolTip(nightButton,label);Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(nightButton,label);await RefreshLighting();};
   previewWorkspace.RowDefinitions.Add(new(){Height=new GridLength(1,GridUnitType.Star)});previewWorkspace.RowDefinitions.Add(new(){Height=GridLength.Auto});
   var images=new Grid{Margin=new Thickness(24),ColumnSpacing=20};images.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});images.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});images.Children.Add(mainPreview);Grid.SetColumn(sidePreview,1);images.Children.Add(sidePreview);previewWorkspace.Children.Add(images);
   var actions=new StackPanel{Orientation=Orientation.Horizontal,HorizontalAlignment=HorizontalAlignment.Center,Spacing=8,Margin=new Thickness(12)};Grid.SetRow(actions,1);previewWorkspace.Children.Add(actions);
@@ -41,7 +41,7 @@ sealed partial class EditorWindow
  }
  static void FormatEditorNumbers(DependencyObject element)
  {
-  if(element is NumberBox number){number.SpinButtonPlacementMode=NumberBoxSpinButtonPlacementMode.Hidden;number.NumberFormatter=new Windows.Globalization.NumberFormatting.DecimalFormatter{FractionDigits=1,IntegerDigits=1,IsGrouped=false,NumberRounder=new Windows.Globalization.NumberFormatting.IncrementNumberRounder{Increment=.1,RoundingAlgorithm=Windows.Globalization.NumberFormatting.RoundingAlgorithm.RoundHalfUp}};return;}
+  if(element is NumberBox number){AuoUI.FormatNumber(number);return;}
   if(element is Panel panel)foreach(var child in panel.Children)FormatEditorNumbers(child);else if(element is ContentControl content&&content.Content is DependencyObject child)FormatEditorNumbers(child);else if(element is Border border&&border.Child!=null)FormatEditorNumbers(border.Child);
  }
  string? lampTextureMedia;
