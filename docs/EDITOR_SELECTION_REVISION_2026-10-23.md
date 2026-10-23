@@ -62,3 +62,11 @@ PASS: 414 Core-проверок, JS и реальный изолированны
 Чистая production-сборка `build-83be9c5a93a043b99b61917dfbd15c40` прошла WinUI construction/layout, JS/keyboard, package/tamper и signature checks. Комплект: Downloads/Aurora-0.2-SelectionButton-2026-10-23. Установка ожидает закрытия Editor владельцем; открытый PID 40152 не прерывался. Логи: `artifacts/selection-icon-build.log`, `selection-icon-viewport.log`.
 
 После подтверждения владельца компактная кнопка установлена: source `f6c7b8b`, build `build-83be9c5a93a043b99b61917dfbd15c40`. Все 581 файл совпадают, installed WinUI startup/layout PASS. Резервная копия `%LOCALAPPDATA%/Aurora/backups/583555953`. Квитанция: ignored `artifacts/selection-icon-install.json`. Интерактивная проверка владельцем остаётся отдельной.
+
+## Устойчивый внешний контур выделения
+
+Источник `2942b98`, production `build-faba25c654fa4d95af9478999f156762`. Ранее выделение рисовало рёбра каждого треугольника на общем слое gizmo; движение мыши очищало этот слой. Теперь GPU-маска строит только внешний контур, без внутренних рёбер и перекрашивания поверхности. Маска кешируется до изменения камеры, геометрии или выбора. Простой выбор и повторное подтверждение интерфейса не загружают вершины заново.
+
+JS и настоящий изолированный WebGL PASS: внутри выбранной поверхности изменённых пикселей нет, контур сохраняется при наведении, снятие выделения возвращает исходное изображение, буферы соседних объектов сохраняются. Production WinUI construction/layout, package/tamper и подписи PASS.
+
+После подтверждения владельца установлен в `SovietRepublic/Aurora`: 581 файл совпадает по хешам, установленный WinUI startup/layout PASS без активации окна. Backup `%LOCALAPPDATA%/Aurora/backups/584233421`; комплект в `C:/Users/AVR/Downloads/Aurora-0.2-Outline-2026-10-23`. Квитанция `artifacts/outline-install.json`, логи `outline-viewport.log`, `outline-webgl.log`, `outline-build.log` (ignored). Интерактивная проверка владельцем остаётся отдельной.
