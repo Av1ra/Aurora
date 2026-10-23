@@ -119,6 +119,7 @@ static class UiLanguage
 ["Колесо"]="Wheel",
 ["Все колёса"]="All wheels",
 ["Проверка колёс"]="Wheel test",
+["Категория транспорта"]="Transport category",["Назначение техники"]="Vehicle purpose",
 ["Поворот передних колёс"]="Front wheel steering",["Сбросить поворот"]="Reset steering",["Завершить правку pivot"]="Finish pivot editing",
 ["Вращение колёс"]="Wheel rotation",
 ["LOD присоединённой части"]="Attached part LOD",

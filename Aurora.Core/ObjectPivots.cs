@@ -7,6 +7,7 @@ public static class ObjectPivots
   if(model.Animated||!model.Nodes.All(n=>RigidScene.Frame(model,n)==Matrix4x4.Identity))return model;
   return SetFrames(model,Enumerable.Range(0,model.Nodes.Count).ToDictionary(i=>i,i=>Matrix4x4.CreateTranslation(Centre(model.Nodes[i]))));
  }
+ public static Vector3 Local(NativeModel model,MeshNode node){var frame=RigidScene.Frame(model,node);return frame==Matrix4x4.Identity?Centre(node):frame.Translation;}
  public static Vector3 Centre(MeshNode node,IEnumerable<int>? vertices=null)
  {
   var points=(vertices??Enumerable.Range(0,node.VertexCount)).Select(v=>new Vector3(node.Positions[v*3],node.Positions[v*3+1],node.Positions[v*3+2])).ToArray();

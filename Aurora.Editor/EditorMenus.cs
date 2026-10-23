@@ -120,7 +120,7 @@ sealed partial class EditorWindow
   foreach(var command in menuCommands)command.Item.IsEnabled=!busy&&!cameraEditing&&command.CanExecute();
   if(selectedLod==null||!lods.TryGetValue(selectedLod,out var model)){geometryInfo.Text="";return;}
   var statistics=ModelStatistics.Of(model);
-  geometryInfo.Text=UiLanguage.Text("Объекты")+": "+statistics.Objects+"\n"+UiLanguage.Text("Треугольники")+": "+statistics.Triangles+"\n"+UiLanguage.Text("Вершины")+": "+statistics.Vertices;
+  geometryInfo.Text=UiLanguage.Text("Объекты")+": "+statistics.Objects+"\n"+UiLanguage.Text("Треугольники")+": "+statistics.Triangles+"\n"+UiLanguage.Text("Вершины")+": "+statistics.Vertices;var bounds=ModelOrientation.Bounds(CurrentModel());var size=bounds.Max-bounds.Min;geometryInfo.Text+="\n"+UiLanguage.Text("Габариты модели, м")+$": {size.X:F1} × {size.Y:F1} × {size.Z:F1}";
  }
  async Task ExportNmf()
  {
