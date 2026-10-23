@@ -10,7 +10,7 @@ namespace Aurora.Editor;
 sealed record TransportPoint(string Key,int Occurrence,int Start,int Rotation=-1);
 sealed partial class EditorWindow
 {
- TransportPoint? transportPoint;
+
  bool CabinFrameRequested=>VehicleParts.HasCabinAssembly(vehicleConfiguration)&&(cabinAssemblyMenu.IsChecked||showCargo||gizmoVisible&&(activeCargo>=0||transportPoint?.Key.StartsWith("CRANE_",StringComparison.Ordinal)==true));
  bool AlternateFrameRequested=>JointFrameRequested||CabinFrameRequested;
  bool JointLights=>vehicleConfiguration!=null&&VehicleScript.Fields(vehicleConfiguration).Any(f=>f.Key=="JOINT");

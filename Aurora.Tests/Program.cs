@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text.Json;
 static void Check(bool value,string label){if(!value)throw new Exception("FAIL "+label);Console.WriteLine("PASS "+label);}
 static void Reject(Action action,string label){try{action();}catch{Console.WriteLine("PASS rejected "+label);return;}throw new Exception("FAIL accepted "+label);}
+EditorRemainderChecks.Run(Check,Reject);
 MeshElementChecks.Run(Check,Reject);
 await SceneInterchangeChecks.Run(Check,Reject);
 ObjImportChecks.Run(Check,Reject);

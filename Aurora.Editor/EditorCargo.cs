@@ -8,7 +8,7 @@ sealed partial class EditorWindow
 {
  NativeModel? cargoModel;string? cargoModelPath,cargoMtl;
  bool showCargo;float cargoFill=1;
- int activeCargo=-1,cargoEndpoint=1;string cargoFrame="RESOURCE_VISUALIZATION";string? cargoBone;
+ int cargoEndpoint=1;string cargoFrame="RESOURCE_VISUALIZATION";string? cargoBone;
  bool VehicleBoxFrame=>cargoFrame.StartsWith("CARGOVEHICLE_",StringComparison.Ordinal);
  bool cargoUniform=true;
  CargoLayout? ActiveCargoLayout()=>activeCargo<0||vehicleConfiguration==null?null:VehicleBoxFrame?null:VehicleScript.Cargo(vehicleConfiguration,activeCargo,cargoFrame);
@@ -35,7 +35,7 @@ sealed partial class EditorWindow
   cargoPalette.Visibility=gizmoVisible&&activeCargo>=0?Visibility.Visible:Visibility.Collapsed;if(cargoPalette.Visibility!=Visibility.Visible)return;var choices=CargoChoices();int count=VehicleScript.Fields(vehicleConfiguration!).Count(f=>f.Key==cargoFrame);string key=cargoFrame+"|"+activeCargo+"|"+count+"|"+cargoModelPath+"|"+UiLanguage.English+"|"+string.Join(";",choices.Select(c=>c.File));if(cargoPaletteKey==key)return;cargoPaletteKey=key;cargoPalette.Children.Clear();
   var area=new ComboBox{ItemsSource=Enumerable.Range(0,count).Select(i=>UiLanguage.Text("Область")+" "+(i+1)).ToArray(),SelectedIndex=activeCargo,HorizontalAlignment=HorizontalAlignment.Stretch};area.SelectionChanged+=async(_,_)=>{if(!busy&&area.SelectedIndex>=0&&area.SelectedIndex!=activeCargo)await RunCommand(()=>OpenCargoSlot(area.SelectedIndex));};cargoPalette.Children.Add(area);
   var actions=new StackPanel{Orientation=Orientation.Horizontal,Spacing=5};var add=new Button{Content="+"};add.Click+=async(_,_)=>await RunCommand(()=>OpenCargoSlot(count));var remove=new Button{Content=UiLanguage.Text("Удалить")};remove.Click+=async(_,_)=>await RunCommand(async()=>{vehicleConfiguration=VehicleBoxFrame?VehicleCargoBox.Write(vehicleConfiguration!,cargoFrame,activeCargo,null):VehicleScript.SetCargo(vehicleConfiguration!,null,activeCargo,cargoFrame);vehicleConfigurationEdited=true;activeCargo=count>1?Math.Min(activeCargo,count-2):-1;if(activeCargo<0){showCargo=false;gizmoVisible=false;}dirty=true;await Display();});actions.Children.Add(add);actions.Children.Add(remove);cargoPalette.Children.Add(actions);
-  var buttons=new StackPanel{Spacing=4};foreach(var choice in choices){var button=new Button{Content=choice.Name,HorizontalAlignment=HorizontalAlignment.Stretch,IsEnabled=choice.File!=cargoModelPath&&choice.File!=Path.GetFileName(cargoModelPath)};button.Click+=async(_,_)=>await RunCommand(async()=>{await LoadCargoResource(choice);dirty=true;await RefreshCargoOnly();});buttons.Children.Add(button);}cargoPalette.Children.Add(new ScrollViewer{Content=buttons,MaxHeight=250,VerticalScrollBarVisibility=ScrollBarVisibility.Auto});
+  var buttons=new StackPanel{Spacing=4};foreach(var choice in choices){var button=new Button{Content=choice.Name,HorizontalAlignment=HorizontalAlignment.Stretch,IsEnabled=choice.File!=cargoModelPath&&choice.File!=Path.GetFileName(cargoModelPath)};button.Click+=async(_,_)=>await RunCommand(async()=>{await LoadCargoResource(choice);dirty=true;await RefreshCargoOnly();});buttons.Children.Add(button);}cargoPalette.Children.Add(new ScrollViewer{Content=buttons,VerticalScrollBarVisibility=ScrollBarVisibility.Disabled});
  }
  async Task RefreshCargoOnly()
  {

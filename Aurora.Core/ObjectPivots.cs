@@ -7,7 +7,8 @@ public static class ObjectPivots
   if(model.Animated||!model.Nodes.All(n=>RigidScene.Frame(model,n)==Matrix4x4.Identity))return model;
   return SetFrames(model,Enumerable.Range(0,model.Nodes.Count).ToDictionary(i=>i,i=>Matrix4x4.CreateTranslation(Centre(model.Nodes[i]))));
  }
- public static AnimationTrack Track(NativeModel model,string mesh){var node=model.Nodes.FirstOrDefault(n=>n.Name==mesh)??throw new InvalidDataException("Animation object not found");var pivot=Local(model,node);return new(mesh,[pivot.X,pivot.Y,pivot.Z],[new(0,AnimationPose.Identity)]);}
+ public static AnimationTrack Track(NativeModel model,string mesh){var node=model.Nodes.FirstOrDefault(n=>n.Name==mesh)??throw new InvalidDataException("Animation object not found");var pivot=Local(model,node);return new(mesh,[pivot.X,pivot.Y,pivot.Z],[new(0,AnimationPose.Identity)],AxisRotation:Axes(RigidScene.Frame(model,node)),PivotSource:"Object");}
+ public static float[] Axes(Matrix4x4 frame){if(!Matrix4x4.Decompose(frame,out _,out var q,out _))throw new InvalidDataException("Invalid object axis frame");var r=Matrix4x4.CreateFromQuaternion(q);float y=MathF.Asin(Math.Clamp(-r.M13,-1,1));return [MathF.Atan2(r.M23,r.M33)*180/MathF.PI,y*180/MathF.PI,MathF.Atan2(r.M12,r.M11)*180/MathF.PI];}
  public static Vector3 Local(NativeModel model,MeshNode node){var frame=RigidScene.Frame(model,node);return frame==Matrix4x4.Identity?Centre(node):frame.Translation;}
  public static Vector3 Centre(MeshNode node,IEnumerable<int>? vertices=null)
  {

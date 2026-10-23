@@ -16,20 +16,20 @@ sealed partial class EditorWindow
  readonly Grid previewWorkspace=new(){Visibility=Visibility.Collapsed,Background=new SolidColorBrush(Windows.UI.Color.FromArgb(255,32,32,32))};
  readonly Image mainPreview=new(){Stretch=Stretch.Uniform},sidePreview=new(){Stretch=Stretch.Uniform};
  readonly Border cameraPanel=new(){Visibility=Visibility.Collapsed,HorizontalAlignment=HorizontalAlignment.Right,VerticalAlignment=VerticalAlignment.Top,Margin=new Thickness(12),Padding=new Thickness(12),Background=new SolidColorBrush(Windows.UI.Color.FromArgb(255,40,40,40))};
- readonly Button nightButton=new(){Content=new FontIcon{Glyph="\uE706",FontFamily=new FontFamily("Segoe Fluent Icons"),FontSize=16},Padding=new Thickness(0),Width=34,Height=32,HorizontalAlignment=HorizontalAlignment.Left,VerticalAlignment=VerticalAlignment.Bottom,Margin=new Thickness(12)};
+ readonly Button nightButton=new(){Content=new FontIcon{Glyph="\uE706",FontFamily=new FontFamily("Segoe Fluent Icons"),FontSize=16},Padding=new Thickness(0),Width=28,Height=26,HorizontalAlignment=HorizontalAlignment.Left,VerticalAlignment=VerticalAlignment.Bottom,Margin=new Thickness(12)};
  readonly TextBlock cameraFov=new();
  bool renderingPreview;
- bool nightView;byte[]? mainPng,sidePng;bool cameraEditing;
+ bool nightView;byte[]? mainPng,sidePng;
  void BuildPreviewWorkspace(Grid viewport)
  {
   viewport.SizeChanged+=(_,_)=>cameraPanel.MaxHeight=Math.Max(1,viewport.ActualHeight-24);
-  viewport.Children.Add(EffectButtons());ToolTipService.SetToolTip(nightButton,UiLanguage.Text("Ночь"));Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(nightButton,UiLanguage.Text("Ночь"));nightButton.Click+=async(_,_)=>{if(!HasModel)return;nightView=!nightView;((FontIcon)nightButton.Content).Glyph=nightView?"\uE708":"\uE706";string label=UiLanguage.Text(nightView?"День":"Ночь");ToolTipService.SetToolTip(nightButton,label);Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(nightButton,label);await RefreshLighting();};
+  var tests=EffectButtons();Grid.SetColumnSpan(tests,3);viewport.Children.Add(tests);ToolTipService.SetToolTip(nightButton,UiLanguage.Text("Ночь"));Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(nightButton,UiLanguage.Text("Ночь"));nightButton.Click+=async(_,_)=>{if(!HasModel)return;nightView=!nightView;((FontIcon)nightButton.Content).Glyph=nightView?"\uE708":"\uE706";string label=UiLanguage.Text(nightView?"День":"Ночь");ToolTipService.SetToolTip(nightButton,label);Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(nightButton,label);await RefreshLighting();};
   previewWorkspace.RowDefinitions.Add(new(){Height=new GridLength(1,GridUnitType.Star)});previewWorkspace.RowDefinitions.Add(new(){Height=GridLength.Auto});
   var images=new Grid{Margin=new Thickness(24),ColumnSpacing=20};images.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});images.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});images.Children.Add(mainPreview);Grid.SetColumn(sidePreview,1);images.Children.Add(sidePreview);previewWorkspace.Children.Add(images);
   var actions=new StackPanel{Orientation=Orientation.Horizontal,HorizontalAlignment=HorizontalAlignment.Center,Spacing=8,Margin=new Thickness(12)};Grid.SetRow(actions,1);previewWorkspace.Children.Add(actions);
   var shot=new Button{Content="Shot"};actions.Children.Add(shot);shot.Click+=async(_,_)=>await RunCommand(SavePreviewCameras);
   var cameras=new Button{Content=UiLanguage.Text("Настроить камеры")};var menu=new MenuFlyout();for(int i=0;i<2;i++){int index=i;var item=new MenuFlyoutItem{Text=UiLanguage.Text(i==0?"Основная камера":"Боковая камера")};item.Click+=async(_,_)=>await EditPreviewCamera(index);menu.Items.Add(item);}cameras.Flyout=menu;actions.Children.Add(cameras);
-  var close=new Button{Content=UiLanguage.Text("Закрыть превью")};close.Click+=(_,_)=>previewWorkspace.Visibility=Visibility.Collapsed;actions.Children.Add(close);viewport.Children.Add(previewWorkspace);viewport.Children.Add(cameraPanel);
+  var close=new Button{Content=UiLanguage.Text("Закрыть превью")};close.Click+=(_,_)=>previewWorkspace.Visibility=Visibility.Collapsed;actions.Children.Add(close);Grid.SetColumnSpan(previewWorkspace,3);Grid.SetRowSpan(previewWorkspace,2);viewport.Children.Add(previewWorkspace);Grid.SetColumn(cameraPanel,2);viewport.Children.Add(cameraPanel);
  }
  async Task SavePreviewCameras()
  {

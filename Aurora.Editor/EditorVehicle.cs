@@ -14,7 +14,7 @@ sealed partial class EditorWindow
  {
   if(!workspaceTransition)ResetWorkspace();originObjectId=VehicleCatalog.ObjectIdentity(script);
   cabinAssemblyMenu.IsChecked=false;transportPoint=null;cargoFrame="RESOURCE_VISUALIZATION";cargoBone=null;
-  EndMeshEditing();interchange=null;lightEditing=false;showAllLights=false;lightPaletteKey=null;toolStart=null;mechanismRotations=[];animationClips=[];CloseAnimationTimeline();NewHistoryDocument();
+  EndMeshEditing();objectIdentities.Clear();explicitPivots.Clear();interchange=null;lightEditing=false;showAllLights=false;lightPaletteKey=null;toolStart=null;mechanismRotations=[];animationClips=[];CloseAnimationTimeline();NewHistoryDocument();
   previewWorkspace.Visibility=Visibility.Collapsed;mainPng=sidePng=null;
   activeSmoke=-1;activeCargo=-1;cargoModel=null;cargoMtl=cargoModelPath=null;showCargo=false;cargoFill=1;previewSettings=new();
   vehicleConfiguration=script!=null&&File.Exists(script)?File.ReadAllText(script):null;

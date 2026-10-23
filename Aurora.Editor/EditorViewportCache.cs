@@ -8,8 +8,8 @@ sealed partial class EditorWindow
  async Task<RgbaImage> ReadImage(string file)
  {
   file=Path.GetFullPath(file);var info=new FileInfo(file);
-  if(decodedImages.TryGetValue(file,out var prior)&&prior.Stamp==info.LastWriteTimeUtc&&prior.Size==info.Length)return prior.Image;
-  var image=await DecodeImage(file);
+  if(decodedImages.TryGetValue(file,out var prior)&&prior.Stamp==info.LastWriteTimeUtc&&prior.Size==info.Length){imageCacheHits++;return prior.Image;}
+  imageCacheMisses++;var image=await DecodeImage(file);
   while(decodedImages.Count>0&&decodedImages.Values.Sum(v=>(long)v.Image.Pixels.Length)+image.Pixels.LongLength>96L*1024*1024)decodedImages.Remove(decodedImages.Keys.First());
   if(image.Pixels.LongLength<=96L*1024*1024)decodedImages[file]=(info.LastWriteTimeUtc,info.Length,image);
   return image;

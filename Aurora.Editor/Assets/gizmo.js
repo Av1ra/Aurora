@@ -1,3 +1,4 @@
+let viewportMetrics={geometryUploads:0,geometryBytes:0,sceneUpdates:0};
 // The editor owns the tool state. This overlay never changes model geometry.
 let gizmoState={visible:false,position:[0,0,0],rotation:[0,0,0],mode:'move',editing:false,scale:[1,1,1],cargo:-1,uniformScale:true},gizmoDrag=null,gizmoSegments=[];
 const gizmoCanvas=document.createElement?document.createElement('canvas'):null;
@@ -68,7 +69,7 @@ const normalDraw=draw;draw=function(picking=false){normalDraw(picking);if(!picki
 window.addEventListener?.('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||e.altKey||!['KeyZ','KeyY'].includes(e.code))return;e.preventDefault();window.chrome.webview.postMessage({history:e.code==='KeyY'||e.shiftKey?'redo':'undo'});});
 
 // Geometry-only updates retain the vehicle buffers, camera, materials and textures.
-function uploadNode(n){for(const [index,values]of [[0,n.Positions],[1,n.Normals]]){gl.bindBuffer(gl.ARRAY_BUFFER,n.buffers[index]);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(values),gl.DYNAMIC_DRAW||gl.STATIC_DRAW);}}
+function uploadNode(n){viewportMetrics.geometryUploads++;viewportMetrics.geometryBytes+=(n.Positions.length+n.Normals.length)*4;for(const [index,values]of [[0,n.Positions],[1,n.Normals]]){gl.bindBuffer(gl.ARRAY_BUFFER,n.buffers[index]);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(values),gl.DYNAMIC_DRAW||gl.STATIC_DRAW);}}
 function replaceCargo(s){
  for(const n of nodes.filter(n=>n.Cargo)){gl.deleteVertexArray(n.vao);for(const b of n.buffers)gl.deleteBuffer(b);}
  nodes=nodes.filter(n=>!n.Cargo);for(const key of textureRequests.keys())if(key.includes('__cargo__'))textureRequests.set(key,textureRequests.get(key)+1);
@@ -84,7 +85,7 @@ function poseMechanism(value){
 }
 
 let animationPlayback=null;
-function sampleAnimation(track,frame){const keys=track._sortedKeys||(track._sortedKeys=track.Keys.slice().sort((a,b)=>a.Frame-b.Frame));if(frame<=keys[0].Frame)return keys[0].Pose;if(frame>=keys.at(-1).Frame)return keys.at(-1).Pose;const index=keys.findIndex(k=>k.Frame>=frame),a=keys[index-1],b=keys[index];let t=(frame-a.Frame)/(b.Frame-a.Frame);if(track.Interpolation==='Smooth')t=t*t*(3-2*t);const pose={};for(const key of ['Position','Rotation','Scale'])pose[key]=a.Pose[key].map((v,i)=>v+(b.Pose[key][i]-v)*t);return pose;}
+function sampleAnimation(track,frame){const keys=track._sortedKeys||(track._sortedKeys=track.Keys.slice().sort((a,b)=>a.Frame-b.Frame));if(frame<=keys[0].Frame)return keys[0].Pose;if(frame>=keys.at(-1).Frame)return keys.at(-1).Pose;let lo=1,hi=keys.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(keys[mid].Frame<frame)lo=mid+1;else hi=mid;}const index=lo,a=keys[index-1],b=keys[index];let t=(frame-a.Frame)/(b.Frame-a.Frame);if(track.Interpolation==='Smooth')t=t*t*(3-2*t);const pose={};for(const key of ['Position','Rotation','Scale'])pose[key]=a.Pose[key].map((v,i)=>v+(b.Pose[key][i]-v)*t);return pose;}
 function previewAnimation(clip,frame,overrideTrack=-1,overridePose=null){
  for(const n of nodes){if(!n.poseBase)n.poseBase={p:n.Positions.slice(),n:n.Normals.slice()};const index=clip.Tracks.findIndex(t=>t.Mesh===n.Name||n.Cargo&&t.CargoParent===t.Mesh);if(index<0){if(n.poseChanged){n.Positions=n.poseBase.p.slice();n.Normals=n.poseBase.n.slice();n.poseChanged=false;uploadNode(n);}continue;}const track=clip.Tracks[index],pose=index===overrideTrack&&overridePose?overridePose:sampleAnimation(track,frame),p=[],normals=[];
  for(let i=0;i<n.poseBase.p.length;i+=3){const axis=track.AxisRotation||[0,0,0],v=gizmoRotate(gizmoRotate(animationUnrotate(gv.sub(n.poseBase.p.slice(i,i+3),track.Pivot),axis).map((x,a)=>x*pose.Scale[a]),pose.Rotation),axis),normal=gizmoRotate(gizmoRotate(animationUnrotate(n.poseBase.n.slice(i,i+3),axis).map((x,a)=>x/pose.Scale[a]),pose.Rotation),axis),len=Math.hypot(...normal)||1;p.push(...gv.add(gv.add(v,track.Pivot),pose.Position));normals.push(...normal.map(x=>x/len));}n.Positions=p;n.Normals=normals;n.poseChanged=true;uploadNode(n);
@@ -98,7 +99,7 @@ function poseWheels(wheels,steering,spin,selectedWheel=null){for(const n of node
 
 // Reconcile edits in place: retain camera, textures and unchanged VAOs.
 let sceneDocument=null;
-function updateScene(next,document){
+function updateScene(next,document){viewportMetrics.sceneUpdates++;
  if(!scene||sceneDocument!==document){load(next);sceneDocument=document;return;}
  const equal=(a,b)=>a.length===b.length&&a.every((v,i)=>v===b[i]);
  const remaining=new Set(nodes),result=[];

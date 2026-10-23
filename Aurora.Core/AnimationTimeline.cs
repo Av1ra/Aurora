@@ -9,14 +9,14 @@ public sealed record AnimationPose(float[] Position,float[] Rotation,float[] Sca
  public Matrix4x4 Matrix(Vector3 pivot){Validate();var r=Rotation.Select(v=>v*MathF.PI/180).ToArray();return Matrix4x4.CreateTranslation(-pivot)*Matrix4x4.CreateScale(Scale[0],Scale[1],Scale[2])*Matrix4x4.CreateRotationX(r[0])*Matrix4x4.CreateRotationY(r[1])*Matrix4x4.CreateRotationZ(r[2])*Matrix4x4.CreateTranslation(pivot+new Vector3(Position[0],Position[1],Position[2]));}
 }
 public sealed record AnimationKey(int Frame,AnimationPose Pose);
-public sealed record AnimationTrack(string Mesh,float[] Pivot,AnimationKey[] Keys,string Interpolation="Smooth",string? CargoParent=null,float[]? AxisRotation=null)
+public sealed record AnimationTrack(string Mesh,float[] Pivot,AnimationKey[] Keys,string Interpolation="Smooth",string? CargoParent=null,float[]? AxisRotation=null,string PivotSource="Custom",Guid? ObjectId=null)
 {
- public void Validate(int length){if(AxisRotation!=null&&(AxisRotation.Length!=3||AxisRotation.Any(v=>!float.IsFinite(v)||MathF.Abs(v)>1e6f)))throw new InvalidDataException("Invalid animation axis frame");if(string.IsNullOrWhiteSpace(Mesh)||Encoding.UTF8.GetByteCount(Mesh)>63||Mesh.Any(char.IsControl)||Pivot==null||Pivot.Length!=3||Pivot.Any(v=>!float.IsFinite(v)||MathF.Abs(v)>1e6f)||Keys==null||Keys.Length is <1 or >2048||Keys.Select(k=>k.Frame).Distinct().Count()!=Keys.Length||Keys.Any(k=>k.Frame<0||k.Frame>length)||Interpolation is not ("Smooth" or "Linear"))throw new InvalidDataException("Invalid animation track");foreach(var k in Keys)k.Pose.Validate();}
+ public void Validate(int length){if(ObjectId==Guid.Empty)throw new InvalidDataException("Empty object identity");if(PivotSource is not ("Custom" or "Object" or "Mechanism"))throw new InvalidDataException("Invalid pivot source");if(AxisRotation!=null&&(AxisRotation.Length!=3||AxisRotation.Any(v=>!float.IsFinite(v)||MathF.Abs(v)>1e6f)))throw new InvalidDataException("Invalid animation axis frame");if(string.IsNullOrWhiteSpace(Mesh)||Encoding.UTF8.GetByteCount(Mesh)>63||Mesh.Any(char.IsControl)||Pivot==null||Pivot.Length!=3||Pivot.Any(v=>!float.IsFinite(v)||MathF.Abs(v)>1e6f)||Keys==null||Keys.Length is <1 or >10001||Keys.Select(k=>k.Frame).Distinct().Count()!=Keys.Length||Keys.Any(k=>k.Frame<0||k.Frame>length)||Interpolation is not ("Smooth" or "Linear"))throw new InvalidDataException("Invalid animation track");foreach(var k in Keys)k.Pose.Validate();}
  public Matrix4x4 Matrix(float frame)=>Matrix(Sample(frame));
  public Matrix4x4 Matrix(AnimationPose pose){var axis=AxisRotation??[0,0,0];var basis=Matrix4x4.CreateRotationX(axis[0]*MathF.PI/180)*Matrix4x4.CreateRotationY(axis[1]*MathF.PI/180)*Matrix4x4.CreateRotationZ(axis[2]*MathF.PI/180);Matrix4x4.Invert(basis,out var inverse);var p=new Vector3(Pivot[0],Pivot[1],Pivot[2]);return Matrix4x4.CreateTranslation(-p)*inverse*(pose with{Position=[0,0,0]}).Matrix(Vector3.Zero)*basis*Matrix4x4.CreateTranslation(p+new Vector3(pose.Position[0],pose.Position[1],pose.Position[2]));}
  public AnimationPose Sample(float frame)=>Sampler()(frame);
  public Func<float,AnimationPose> Sampler(){var keys=Keys.OrderBy(k=>k.Frame).ToArray();return frame=>{
-  if(!float.IsFinite(frame)||keys.Length==0)throw new InvalidDataException("Invalid animation time");if(frame<=keys[0].Frame)return keys[0].Pose;if(frame>=keys[^1].Frame)return keys[^1].Pose;int i=Array.FindIndex(keys,k=>k.Frame>=frame);var a=keys[i-1];var b=keys[i];float t=(frame-a.Frame)/(b.Frame-a.Frame);if(Interpolation=="Smooth")t=t*t*(3-2*t);
+  if(!float.IsFinite(frame)||keys.Length==0)throw new InvalidDataException("Invalid animation time");if(frame<=keys[0].Frame)return keys[0].Pose;if(frame>=keys[^1].Frame)return keys[^1].Pose;int lo=1,hi=keys.Length-1;while(lo<hi){int mid=(lo+hi)/2;if(keys[mid].Frame<frame)lo=mid+1;else hi=mid;}int i=lo;var a=keys[i-1];var b=keys[i];float t=(frame-a.Frame)/(b.Frame-a.Frame);if(Interpolation=="Smooth")t=t*t*(3-2*t);
   float[] Mix(float[] x,float[] y)=>x.Select((v,n)=>v+(y[n]-v)*t).ToArray();return new(Mix(a.Pose.Position,b.Pose.Position),Mix(a.Pose.Rotation,b.Pose.Rotation),Mix(a.Pose.Scale,b.Pose.Scale));
  };}
 }
@@ -36,10 +36,18 @@ public sealed record AnimationClip(string Name,int Fps,int LastFrame,AnimationTr
 // Validate remapping before geometry is committed.
 public static class AnimationEditing
 {
+ public static AnimationTrack RebindPivot(AnimationTrack track,Vector3 pivot,int length,bool preserveWorld)
+ {
+  track.Validate(length);if(length is <1 or >10000||!float.IsFinite(pivot.X)||!float.IsFinite(pivot.Y)||!float.IsFinite(pivot.Z))throw new InvalidDataException("Invalid rebind target");
+  var target=track with{Pivot=[pivot.X,pivot.Y,pivot.Z],PivotSource="Object"};if(!preserveWorld)return target;
+  var sample=track.Sampler();var keys=new AnimationKey[length+1];var d=pivot-new Vector3(track.Pivot[0],track.Pivot[1],track.Pivot[2]);
+  for(int frame=0;frame<=length;frame++){var pose=sample(frame);var correction=Vector3.TransformNormal(d,track.Matrix(pose))-d;keys[frame]=new(frame,pose with{Position=[pose.Position[0]+correction.X,pose.Position[1]+correction.Y,pose.Position[2]+correction.Z]});}
+  return target with{Keys=keys,Interpolation="Linear"};
+ }
  public static AnimationClip[] SplitMesh(AnimationClip[] clips,string previous,string[] pieces)
  {
   if(pieces.Length<2||pieces.Distinct().Count()!=pieces.Length)throw new InvalidDataException("Invalid animation mesh split");
-  var result=clips.Select(clip=>clip with{Tracks=clip.Tracks.SelectMany(track=>track.Mesh==previous?pieces.Select((mesh,index)=>track with{Mesh=mesh,CargoParent=track.CargoParent==previous?(index==0?mesh:null):track.CargoParent}):[track with{CargoParent=track.CargoParent==previous?pieces[0]:track.CargoParent}]).ToArray()}).ToArray();
+  var result=clips.Select(clip=>clip with{Tracks=clip.Tracks.SelectMany(track=>track.Mesh==previous?pieces.Select((mesh,index)=>track with{Mesh=mesh,ObjectId=null,CargoParent=track.CargoParent==previous?(index==0?mesh:null):track.CargoParent}):[track with{CargoParent=track.CargoParent==previous?pieces[0]:track.CargoParent}]).ToArray()}).ToArray();
   foreach(var clip in result)clip.Validate();return result;
  }
 }

@@ -43,10 +43,10 @@ sealed partial class EditorWindow:Window
  {
   Title="Aurora Editor";SystemBackdrop=new MicaBackdrop();WindowChrome.ResizeLogical(this,1250,850);
   var grid=new Grid();ConfigureOpaqueSurfaces(grid);grid.RowDefinitions.Add(new(){Height=GridLength.Auto});grid.RowDefinitions.Add(new(){Height=new GridLength(1,GridUnitType.Star)});grid.RowDefinitions.Add(new(){Height=GridLength.Auto});
-  var viewport=new Grid();viewport.Children.Add(view);Grid.SetRow(viewport,1);grid.Children.Add(viewport);
+  var viewport=new Grid();viewport.ColumnDefinitions.Add(new(){Width=GridLength.Auto});viewport.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});viewport.ColumnDefinitions.Add(new(){Width=GridLength.Auto});viewport.RowDefinitions.Add(new(){Height=new GridLength(1,GridUnitType.Star)});viewport.RowDefinitions.Add(new(){Height=GridLength.Auto});Grid.SetColumnSpan(view,3);Grid.SetRowSpan(view,2);viewport.Children.Add(view);Grid.SetRow(viewport,1);grid.Children.Add(viewport);
   emptyView.Children.Add(new TextBlock{Text=UiLanguage.Text("Откройте модель"),FontSize=22,FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});
   emptyView.Children.Add(new TextBlock{Text=UiLanguage.Text("Откройте NMF или импортируйте OBJ. Перетащить файл сюда тоже можно."),TextWrapping=TextWrapping.Wrap,Opacity=.7});
-  emptyView.IsHitTestVisible=false;viewport.Children.Add(emptyView);BuildGizmoControls(viewport);BuildPreviewWorkspace(viewport);BuildLayers(viewport);
+  emptyView.IsHitTestVisible=false;Grid.SetColumnSpan(emptyView,3);viewport.Children.Add(emptyView);BuildGizmoControls(viewport);BuildPreviewWorkspace(viewport);BuildLayers(viewport);
   grid.AllowDrop=true;
   grid.DragOver+=(_,e)=>{if(!busy&&e.DataView.Contains(StandardDataFormats.StorageItems)){e.AcceptedOperation=DataPackageOperation.Copy;e.DragUIOverride.Caption=UiLanguage.Text("Открыть модель");}e.Handled=true;};
   grid.Drop+=async(_,e)=>{e.Handled=true;if(busy||!e.DataView.Contains(StandardDataFormats.StorageItems))return;try{var files=(await e.DataView.GetStorageItemsAsync()).OfType<Windows.Storage.StorageFile>().Where(x=>x.FileType.Equals(".nmf",StringComparison.OrdinalIgnoreCase)||x.FileType.Equals(".obj",StringComparison.OrdinalIgnoreCase)||x.FileType.Equals(".fbx",StringComparison.OrdinalIgnoreCase)||x.FileType.Equals(".aur",StringComparison.OrdinalIgnoreCase)).ToArray();if(files.Length!=1){SetStatus("Перетащите один NMF или OBJ.");return;}await RunCommand(async()=>{if(await ConfirmDiscard()){await OpenDocument(files[0].Path);}});}catch(Exception ex){SetStatus(ex.Message);}};
@@ -112,14 +112,14 @@ sealed partial class EditorWindow:Window
  }
  async Task Display()
  {
-  processing=true;UpdateControls();if(!ready||selectedLod==null)return;string[] selectedObjects=objects.SelectedItems.OfType<string>().ToArray();string? selectedObject=objects.SelectedItem as string,selectedMaterial=materialChoice.SelectedItem as string;var model=ViewportModel();objects.IsEnabled=!AlternateFrameRequested;objects.Items.Clear();foreach(var node in model.Nodes)objects.Items.Add(node.Name);materialChoice.Items.Clear();foreach(var name in model.Materials.Concat(settings.Keys).Distinct())materialChoice.Items.Add(name);objects.SelectedItem=!AlternateFrameRequested&&selectedObject!=null&&objects.Items.Contains(selectedObject)?selectedObject:null;if(materialChoice.Items.Count>0)materialChoice.SelectedItem=selectedMaterial!=null&&materialChoice.Items.Contains(selectedMaterial)?selectedMaterial:materialChoice.Items[0];
+  processing=true;UpdateControls();if(!ready||selectedLod==null)return;var displayStarted=System.Diagnostics.Stopwatch.GetTimestamp();displayCalls++;string[] selectedObjects=objects.SelectedItems.OfType<string>().ToArray();string? selectedObject=objects.SelectedItem as string,selectedMaterial=materialChoice.SelectedItem as string;var model=ViewportModel();objects.IsEnabled=!AlternateFrameRequested;objects.Items.Clear();foreach(var node in model.Nodes)objects.Items.Add(node.Name);materialChoice.Items.Clear();foreach(var name in model.Materials.Concat(settings.Keys).Distinct())materialChoice.Items.Add(name);objects.SelectedItem=!AlternateFrameRequested&&selectedObject!=null&&objects.Items.Contains(selectedObject)?selectedObject:null;if(materialChoice.Items.Count>0)materialChoice.SelectedItem=selectedMaterial!=null&&materialChoice.Items.Contains(selectedMaterial)?selectedMaterial:materialChoice.Items[0];
   foreach(string name in selectedObjects.Where(n=>objects.Items.Contains(n)&&!objects.SelectedItems.Contains(n)))objects.SelectedItems.Add(name);if(layerBorder!=null)layerBorder.Visibility=Visibility.Visible;
   var scene=BuildViewportScene(model);
-  string sceneJson=await Task.Run(()=>JsonSerializer.Serialize(scene));
+  string sceneJson=await Task.Run(()=>JsonSerializer.Serialize(scene));displaySerializedBytes+=System.Text.Encoding.UTF8.GetByteCount(sceneJson);
   string identity=lods.Keys.First();if(viewportDocument!=identity){sentImages.Clear();viewportDocument=identity;}await view.ExecuteScriptAsync("updateScene("+sceneJson+","+JsonSerializer.Serialize(identity)+")");await ApplyWireframe();await view.ExecuteScriptAsync("select("+objects.SelectedIndex+")");await LoadTextures();
   foreach(var pair in settings)await ApplyPreview(pair.Key,pair.Value);
   for(int i=0;i<model.Nodes.Count;i++)if(!AlternateFrameRequested&&glassObjects[selectedLod].Contains(model.Nodes[i].Name))await view.ExecuteScriptAsync("glassObject("+i+",true)");
-  await LoadCargoTextures();await LoadPartTextures();await SyncViewportSelection();await RefreshGizmo();if(partWarnings.Count>0)SetStatus("Просмотр сборки",string.Join("\n",partWarnings));
+  await LoadCargoTextures();await LoadPartTextures();await SyncViewportSelection();await RefreshGizmo();if(partWarnings.Count>0)SetStatus("Просмотр сборки",string.Join("\n",partWarnings));displayMilliseconds+=System.Diagnostics.Stopwatch.GetElapsedTime(displayStarted).TotalMilliseconds;
  }
  async Task LoadTextures()
  {
@@ -189,13 +189,12 @@ sealed partial class EditorWindow:Window
   panel.Children.Add(new Expander{Header=UiLanguage.Text("Стандартный материал"),Content=nativeMaps,IsExpanded=true,HorizontalAlignment=HorizontalAlignment.Stretch,HorizontalContentAlignment=HorizontalAlignment.Stretch});
   panel.Children.Add(new Expander{Header="PBR",Content=maps,IsExpanded=true,HorizontalAlignment=HorizontalAlignment.Stretch,HorizontalContentAlignment=HorizontalAlignment.Stretch});
   panel.Children.Add(new Expander{Header=UiLanguage.Text("Дополнительно"),Content=advanced,HorizontalAlignment=HorizontalAlignment.Stretch,HorizontalContentAlignment=HorizontalAlignment.Stretch});
-  var dialogBody=new ScrollViewer{Content=panel,MinWidth=Math.Max(0,Math.Min(432,((FrameworkElement)Content).ActualWidth-96)),MaxHeight=Math.Min(520,Math.Max(180,((FrameworkElement)Content).ActualHeight-200)),HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled};
-  var dialog=new ContentDialog{Title=UiLanguage.Text("Настройки материала")+": "+name,Content=dialogBody,PrimaryButtonText=UiLanguage.Text("Применить"),CloseButtonText=UiLanguage.Text("Отмена"),XamlRoot=((FrameworkElement)Content).XamlRoot};
+  panel.Width=432;var dialog=VehicleDialog("Настройки материала",panel);dialog.Title=UiLanguage.Text("Настройки материала")+": "+name;
   string? reload=null;foreach(var entry in new[]{("Загрузить стандартный MTL…","native"),("Загрузить PBR MTL…","pbr")}){var button=new Button{Content=UiLanguage.Text(entry.Item1),HorizontalAlignment=HorizontalAlignment.Stretch};button.Click+=(_,_)=>{reload=entry.Item2;dialog.Hide();};panel.Children.Insert(0,button);}
   UiLanguage.Apply(panel);
   dialog.PrimaryButtonClick+=(_,e)=>{if(diffuseColor.Concat(ambientColor).Concat(specularColor).Append(nativePower).Any(b=>!double.IsFinite(b.Value))){e.Cancel=true;dialogError.Message=UiLanguage.Text("Проверьте значения материала");dialogError.IsOpen=true;}};var choice=await ShowDialog(dialog);if(reload!=null){if(reload=="native")await LoadNativeMaterial();else await LoadPbrMaterial();await ConfigurePbr();return;}if(choice!=ContentDialogResult.Primary)return;
   var updated=new Dictionary<string,MaterialSettings>{{name,s with{Base=baseMap,Normal=normal,Orm=orm,Metallic=(float)metal.Value,Roughness=(float)rough.Value,Ao=(float)ao.Value,NormalStrength=(float)strength.Value,Native=native.IsOn,MetalMap=metalMap,RoughMap=roughMap,AoMap=aoMap,Emissive=emissive,EmissiveStrength=(float)emission.Value,Ibl=(float)ibl.Value,NormalY=normalY.SelectedIndex==0?-1:1,Specular=specular,PbrBase=pbrBase,PbrNormal=pbrNormal,NativeDiffuse=diffuseColor.Select(b=>(float)b.Value).ToArray(),NativeAmbient=ambientColor.Select(b=>(float)b.Value).ToArray(),NativeSpecular=specularColor.Select(b=>(float)b.Value).ToArray(),NativePower=(float)nativePower.Value}}};await NormalizeMaterialMaps(updated);if(!MaterialDefined(name,mtl))EnsureMaterialDefinition(name);dirty=true;settings[name]=updated[name];StoreVariant();
-  await Display();
+  await LoadTextures();await ApplyPreview(name,settings[name]);
  }
  async Task Export()
  {

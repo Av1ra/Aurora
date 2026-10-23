@@ -13,7 +13,7 @@ sealed partial class EditorWindow
   resources["TextControlThemePadding"]=new Thickness(6,2,6,2);
   resources["ButtonPadding"]=new Thickness(7,2,7,2);
   resources["ListViewItemMinHeight"]=26d;
-  foreach(var type in new[]{typeof(Button),typeof(ToggleButton),typeof(TextBox),typeof(ComboBox),typeof(NumberBox),typeof(ListViewItem)})
+  foreach(var type in new[]{typeof(Button),typeof(ToggleButton),typeof(TextBox),typeof(ComboBox),typeof(NumberBox),typeof(ListViewItem),typeof(CheckBox),typeof(RadioButton),typeof(ToggleSwitch)})
   {
    var style=new Style(type);
    if(resources.TryGetValue(type,out var previous)&&previous is Style inherited)style.BasedOn=inherited;

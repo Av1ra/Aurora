@@ -13,12 +13,12 @@ sealed partial class EditorWindow
  async Task RenameObject()
  {
   if(objects.SelectedItem is not string oldName)return;
-  var box=new TextBox{Header=UiLanguage.Text("Своё имя"),Text=oldName,MinWidth=360};var panel=new StackPanel{Spacing=10};panel.Children.Add(box);
+  var box=new TextBox{Header=UiLanguage.Text("Своё имя"),Text=oldName,MinWidth=0};var panel=new StackPanel{Spacing=10};panel.Children.Add(box);
   var presets=new ComboBox{Header=UiLanguage.Text("Штатное имя"),HorizontalAlignment=HorizontalAlignment.Stretch};
   foreach(var preset in new[]{("body","Основной корпус; механизм настраивается отдельно"),("tire_leftShape","Колесо левой стороны транспорта"),("tire_rightShape","Колесо правой стороны транспорта"),("tire2Shape","Дополнительная колёсная группа"),("tireShape","Колёсная группа с общим именем")}){var content=new StackPanel{Spacing=3};content.Children.Add(new TextBlock{Text=preset.Item1});content.Children.Add(new TextBlock{Text=UiLanguage.Text(preset.Item2),TextWrapping=TextWrapping.Wrap,MaxWidth=340,Opacity=.7});presets.Items.Add(new ComboBoxItem{Content=content,Tag=preset.Item1});}
   presets.SelectionChanged+=(_,_)=>{if(presets.SelectedItem is ComboBoxItem item&&item.Tag is string value)box.Text=value;};panel.Children.Add(presets);
   var dialog=VehicleDialog("Переименовать объект…",panel);if(await ShowDialog(dialog)!=ContentDialogResult.Primary)return;string name=box.Text.Trim();
-  var changed=lods.ToDictionary(p=>p.Key,p=>ModelEditing.Rename(p.Value,oldName,name));string? script=vehicleConfiguration==null?null:VehicleScript.RenamePart(vehicleConfiguration,oldName,name);foreach(var p in changed){lods[p.Key]=p.Value;if(glassObjects[p.Key].Remove(oldName))glassObjects[p.Key].Add(name);}RenameAnimationMesh(oldName,name);if(interchange!=null)interchange=interchange with{Nodes=interchange.Nodes.Select(n=>n.Name==oldName?n with{Name=name}:n).ToArray()};vehicleConfiguration=script;vehicleConfigurationEdited|=script!=null;dirty=true;await Display();objects.SelectedItem=name;
+  var changed=lods.ToDictionary(p=>p.Key,p=>ModelEditing.Rename(p.Value,oldName,name));string? script=vehicleConfiguration==null?null:VehicleScript.RenamePart(vehicleConfiguration,oldName,name);foreach(var p in changed){var ids=ObjectIds(p.Key);if(ids.Remove(oldName,out var id))ids[name]=id;lods[p.Key]=p.Value;if(glassObjects[p.Key].Remove(oldName))glassObjects[p.Key].Add(name);}RenameAnimationMesh(oldName,name);if(interchange!=null)interchange=interchange with{Nodes=interchange.Nodes.Select(n=>n.Name==oldName?n with{Name=name}:n).ToArray()};vehicleConfiguration=script;vehicleConfigurationEdited|=script!=null;dirty=true;await Display();objects.SelectedItem=name;
  }
  async Task SplitObject()
  {

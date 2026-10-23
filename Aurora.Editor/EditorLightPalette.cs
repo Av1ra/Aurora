@@ -8,7 +8,7 @@ namespace Aurora.Editor;
 sealed partial class EditorWindow
 {
  readonly StackPanel lightPalette=new(){Spacing=6,Width=188,HorizontalAlignment=HorizontalAlignment.Right,VerticalAlignment=VerticalAlignment.Top,Margin=new Thickness(12),Visibility=Visibility.Collapsed};
- bool lightEditing,showAllLights;string? lightPaletteKey;
+ bool showAllLights;string? lightPaletteKey;
  bool AllLightPreview=>lightEditing&&gizmoVisible&&showAllLights;
  void RefreshLightPalette()
  {

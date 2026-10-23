@@ -9,6 +9,7 @@ static class MeshElementChecks
   var second=MeshElements.Detach(detached.Model,0,new HashSet<int>{0});check(second.Name=="mesh_1"&&second.RemovedOriginal&&second.Model.Nodes.Count==2,"later unnamed parts use mesh_1 and do not duplicate a fully detached source");
   reject(()=>MeshElements.Detach(model,0,new HashSet<int>()),"empty element detach");
   check(Vector3.Distance(ObjectPivots.Local(model,model.Nodes[0]),frame.Translation)<.0001f,"local object pivot retains an explicit source frame");
+  check(MathF.Abs(ObjectPivots.Track(model,"tireShape").AxisRotation![1]-.5f*180/MathF.PI)<.0001f,"new animation tracks use oriented native object axes as well as their pivot position");
   var rebased=ObjectPivots.SetFrames(detached.Model,new Dictionary<int,Matrix4x4>{{1,Matrix4x4.CreateRotationZ(.3f)*Matrix4x4.CreateTranslation(8,9,10)}});
   check(RigidScene.Frame(rebased,rebased.Nodes[0])==RigidScene.Frame(detached.Model,detached.Model.Nodes[0])&&Vector3.Distance(RigidScene.Frame(rebased,rebased.Nodes[1]).Translation,new(8,9,10))<.0001f,"each object pivot edits independently without changing the other object's frame");
   check(rebased.Nodes.SelectMany(n=>n.Positions).Zip(detached.Model.Nodes.SelectMany(n=>n.Positions)).All(v=>MathF.Abs(v.First-v.Second)<.00001f),"pivot-only editing preserves visible geometry through native NMF serialization");

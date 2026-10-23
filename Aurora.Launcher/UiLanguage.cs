@@ -121,6 +121,8 @@ static class UiLanguage
 ["Проверка колёс"]="Wheel test",
 ["Категория транспорта"]="Transport category",["Назначение техники"]="Vehicle purpose",
 ["Добавьте выбранный объект в анимацию кнопкой +"]="Add the selected object to the animation with +",
+["Прямое название"]="Literal name",["Источник названия"]="Name source",["ID локализации"]="Localization ID",["Нет текста для этого ID"]="No text for this ID",["Настроить звуки…"]="Configure sounds…",["Сохранить движение по кадрам"]="Preserve motion at every frame",["Привязать ось к pivot объекта"]="Bind axis to object pivot",["Единственный родитель груза"]="Sole cargo parent",["Сохранить диагностику…"]="Save diagnostics…",
+["Источник оси"]="Axis source",["Pivot объекта"]="Object pivot",["Ось механизма"]="Mechanism axis",["Пользовательская ось"]="Custom axis",
 ["Поворот передних колёс"]="Front wheel steering",["Сбросить поворот"]="Reset steering",["Завершить правку pivot"]="Finish pivot editing",
 ["Вращение колёс"]="Wheel rotation",
 ["LOD присоединённой части"]="Attached part LOD",
