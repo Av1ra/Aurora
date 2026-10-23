@@ -14,7 +14,7 @@ static class MeshElementChecks
   check(ReferenceEquals(ObjectPivots.InitialiseSharedOrigins(rebased),rebased),"existing individual DCC pivots are retained");
   var raw=ObjImporter.Parse("o front\nv 2 0 4\nv 4 0 4\nv 3 2 4\nf 1 2 3\no rear\nv -4 0 -4\nv -2 0 -4\nv -3 2 -4\nf 4 5 6\n").Model;var individual=ObjectPivots.InitialiseSharedOrigins(raw);
   check(Vector3.Distance(RigidScene.Frame(individual,individual.Nodes[0]).Translation,new(3,1,4))<.0001f&&Vector3.Distance(RigidScene.Frame(individual,individual.Nodes[1]).Translation,new(-3,1,-4))<.0001f,"legacy shared identity origins become independent object centres");
-  check(WheelDiagnostics.Read(ModelEditing.Rename(raw,"front","tireShape")).All(w=>w.Steering),"native tireShape front axle supports steering as well as spinning");
+  check(WheelDiagnostics.Read(ModelEditing.Rename(raw,"front","tireShape")).All(w=>!w.Steering),"generic tireShape is not forced to steer without native steering names");
   var adjacent=ObjImporter.Parse("o surface\nv 0 0 0\nv 1 0 0\nv 0 1 0\nv 1 1 0\nusemtl first\nf 1 2 3\nusemtl second\nf 2 4 3\n").Model;check(MeshElements.Read(adjacent.Nodes[0]).Length==1,"shared geometric edge joins UV/material seams into one connected element");
  }
 }
