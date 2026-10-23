@@ -20,6 +20,7 @@ static class AuoUI
   var resources=Application.Current.Resources;
   resources["ControlCornerRadius"]=new CornerRadius(2);resources["OverlayCornerRadius"]=new CornerRadius(2);
   resources["MenuFlyoutPresenterPadding"]=new Thickness(4);
+  resources["ListViewItemSelectionIndicatorVisualEnabled"]=false;
   resources["ContentDialogPadding"]=new Thickness(8);
   resources["ContentDialogTitleMargin"]=new Thickness(0,0,0,6);
   resources["ContentDialogContentMargin"]=new Thickness(0);

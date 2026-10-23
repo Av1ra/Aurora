@@ -18,7 +18,7 @@ sealed partial class EditorWindow
   string? previous=vehicleConfiguration,oldLod=selectedLod,oldSelection=objects.SelectedItem as string,confirmed=null;var oldContext=toolContext with{};bool oldVisible=gizmoVisible;var oldTimeline=animationPanel.Visibility;var oldNumbers=gizmoNumbers.Visibility;var oldEffects=effectBar?.Visibility;var parent=(Grid)view.Parent;
   meshPick=new(TaskCreationOptions.RunContinuationsAsynchronously);
   try{
-   animationPanel.Visibility=gizmoNumbers.Visibility=Visibility.Collapsed;if(effectBar!=null)effectBar.Visibility=Visibility.Collapsed;processing=false;UpdateControls();
+   animationPanel.Visibility=gizmoNumbers.Visibility=Visibility.Collapsed;if(effectBar!=null)effectBar.Visibility=Visibility.Visible;processing=false;UpdateControls();
    vehicleConfiguration=draft;transportPoint=null;meshPickJoint=joint;gizmoVisible=false;SelectLod(lods.Keys.First());await Display();meshPickValue=null;
    meshPickPanel=new(){Orientation=Orientation.Horizontal,Spacing=8,HorizontalAlignment=HorizontalAlignment.Center,VerticalAlignment=VerticalAlignment.Bottom,Margin=new Thickness(12)};
    var choose=new Button{Content=UiLanguage.Text("Выбрать"),IsEnabled=false};meshChooseButton=choose;var cancel=new Button{Content=UiLanguage.Text("Отмена")};meshPickPanel.Children.Add(choose);meshPickPanel.Children.Add(cancel);

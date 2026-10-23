@@ -9,7 +9,7 @@ sealed partial class EditorWindow
  {
   editorCommands["Переименовать объект…"]=(RenameObject,()=>HasModel&&objects.SelectedItem!=null);
   editorCommands["Разделить несвязанные меши"]=(SplitObject,()=>HasModel&&objects.SelectedItem!=null);
-  editorCommands["Трансформация…"]=(ConfigureObjectTransform,()=>HasModel&&objects.SelectedItem!=null);
+  editorCommands["Трансформация…"]=(BeginMeshEditing,()=>HasModel&&objects.SelectedItem!=null);
   editorCommands["Свойства объекта…"]=(ConfigureObjectProperties,()=>HasModel&&objects.SelectedItem!=null);
   editorCommands["Pivot объекта…"]=(EditSelectedObjectPivot,()=>HasModel&&objects.SelectedItem!=null);
   editorCommands["Удалить объект"]=(DeleteMeshSelection,()=>HasModel&&objects.SelectedItem!=null);

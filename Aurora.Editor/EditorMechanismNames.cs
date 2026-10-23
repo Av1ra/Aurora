@@ -3,6 +3,12 @@ namespace Aurora.Editor;
 sealed partial class EditorWindow
 {
  readonly Microsoft.UI.Xaml.Controls.InfoBar editorNotice=new(){IsOpen=false,IsClosable=true,VerticalAlignment=Microsoft.UI.Xaml.VerticalAlignment.Top,Margin=new Microsoft.UI.Xaml.Thickness(12)};
+ Microsoft.UI.Dispatching.DispatcherQueueTimer? noticeDismissal;
+ void RestartNoticeDismissal()
+ {
+  if(noticeDismissal==null){noticeDismissal=DispatcherQueue.CreateTimer();noticeDismissal.Interval=TimeSpan.FromSeconds(5);noticeDismissal.IsRepeating=false;noticeDismissal.Tick+=(_,_)=>editorNotice.IsOpen=false;Closed+=(_,_)=>noticeDismissal.Stop();editorNotice.RegisterPropertyChangedCallback(Microsoft.UI.Xaml.Controls.InfoBar.IsOpenProperty,(_,_)=>{if(!editorNotice.IsOpen)noticeDismissal.Stop();});}
+  noticeDismissal.Stop();noticeDismissal.Start();
+ }
  static bool IsLightParameter(string key)=>key.StartsWith("LIGHT_",StringComparison.Ordinal)||key is "SIREN_POINT";
  static string MechanismDescription(string key)=>key switch{
   "DUMPER_DECK_PIVOT"=>"Поднимаемый кузов основной машины. Выберите его меш и разместите ось во viewport.",

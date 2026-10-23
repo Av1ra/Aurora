@@ -7,6 +7,27 @@ using Microsoft.UI.Xaml.Media;
 using System.Numerics;
 namespace Aurora.Editor;
 
+// Native sizing limits constrain the drag itself, rather than resizing back afterwards.
+static class AuoWindowLimit
+{
+ [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]struct Point{public int X,Y;}
+ [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]struct Limits{public Point Reserved,MaxSize,MaxPosition,MinTrack,MaxTrack;}
+ delegate nint Procedure(nint hwnd,uint message,nuint wparam,nint lparam,nuint id,nuint data);
+ [System.Runtime.InteropServices.DllImport("comctl32.dll")]static extern bool SetWindowSubclass(nint hwnd,Procedure callback,nuint id,nuint data);
+ [System.Runtime.InteropServices.DllImport("comctl32.dll")]static extern bool RemoveWindowSubclass(nint hwnd,Procedure callback,nuint id);
+ [System.Runtime.InteropServices.DllImport("comctl32.dll")]static extern nint DefSubclassProc(nint hwnd,uint message,nuint wparam,nint lparam);
+ [System.Runtime.InteropServices.DllImport("user32.dll")]static extern nint SendMessage(nint hwnd,uint message,nuint wparam,nint lparam);
+ static readonly Dictionary<nint,Procedure> callbacks=[];
+ public static void Apply(Window window)
+ {
+  nint handle=WinRT.Interop.WindowNative.GetWindowHandle(window);if(callbacks.ContainsKey(handle))return;var maximum=window.AppWindow.Size;
+  if(window.AppWindow.Presenter is Microsoft.UI.Windowing.OverlappedPresenter presenter)presenter.IsMaximizable=false;
+  Procedure callback=(hwnd,message,wparam,lparam,id,data)=>{var result=DefSubclassProc(hwnd,message,wparam,lparam);if(message==0x24){var limits=System.Runtime.InteropServices.Marshal.PtrToStructure<Limits>(lparam);limits.MaxTrack=new(){X=maximum.Width,Y=maximum.Height};limits.MinTrack=new(){X=Math.Min(maximum.Width,240),Y=Math.Min(maximum.Height,140)};System.Runtime.InteropServices.Marshal.StructureToPtr(limits,lparam,false);}return result;};
+  if(!SetWindowSubclass(handle,callback,19,0))throw new InvalidOperationException("Cannot constrain tool window size");callbacks[handle]=callback;window.Closed+=(_,_)=>{RemoveWindowSubclass(handle,callback,19);callbacks.Remove(handle);};
+ }
+ public static void Verify(Window window){var handle=WinRT.Interop.WindowNative.GetWindowHandle(window);var memory=System.Runtime.InteropServices.Marshal.AllocHGlobal(System.Runtime.InteropServices.Marshal.SizeOf<Limits>());try{System.Runtime.InteropServices.Marshal.StructureToPtr(new Limits(),memory,false);SendMessage(handle,0x24,0,memory);var limits=System.Runtime.InteropServices.Marshal.PtrToStructure<Limits>(memory);var size=window.AppWindow.Size;if(limits.MaxTrack.X!=size.Width||limits.MaxTrack.Y!=size.Height||limits.MinTrack.X>size.Width||limits.MinTrack.Y>size.Height)throw new InvalidDataException("Native tool window size constraint failed");}finally{System.Runtime.InteropServices.Marshal.FreeHGlobal(memory);}}
+}
+
 sealed partial class EditorWindow
 {
  readonly Dictionary<FrameworkElement,Window> toolWindows=[];
@@ -26,6 +47,7 @@ sealed partial class EditorWindow
    WindowChrome.ResizeLogical(window,(int)Math.Ceiling(width),(int)Math.Ceiling(height));WindowChrome.Attach(window,root,"Aurora Editor");
    void Resize(){double w=root.ActualWidth>0?root.ActualWidth:width,h=root.ActualHeight>0?root.ActualHeight:height;if(dialog.Content is ScrollViewer viewer){viewer.Width=Math.Max(0,w-24);viewer.MaxHeight=Math.Max(40,h-64);}dialog.MaxWidth=Math.Max(0,w);dialog.MaxHeight=Math.Max(0,h);dialog.Resources["ContentDialogMaxWidth"]=Math.Max(0,w);}
    root.SizeChanged+=(_,_)=>Resize();Resize();var captured=state;window.Closed+=(_,_)=>{captured.Closed=true;dialog.Hide();captured.Pending?.TrySetResult(ContentDialogResult.None);dialogWindows.Remove(dialog);floatingWindows.Remove(window);};
+   bool fitted=false;dialog.Opened+=(_,_)=>{if(fitted)return;fitted=true;root.UpdateLayout();FrameworkElement? Find(DependencyObject node){if(node is FrameworkElement f&&f.Name=="BackgroundElement")return f;for(int i=0;i<VisualTreeHelper.GetChildrenCount(node);i++){var found=Find(VisualTreeHelper.GetChild(node,i));if(found!=null)return found;}return null;}var background=Find(dialog);if(background!=null&&background.ActualHeight>0){double scale=root.XamlRoot.RasterizationScale;int extra=window.AppWindow.Size.Height-(int)Math.Round(root.ActualHeight*scale);window.AppWindow.Resize(new(window.AppWindow.Size.Width,(int)Math.Ceiling(background.ActualHeight*scale)+extra));}AuoWindowLimit.Apply(window);};
   }
   var completion=new TaskCompletionSource<ContentDialogResult>(TaskCreationOptions.RunContinuationsAsynchronously);state.Pending=completion;
   async void Show(){try{if(dialog.XamlRoot==null)dialog.XamlRoot=state.Root.XamlRoot;if(dialog.Parent==null)state.Root.Children.Add(dialog);var result=await dialog.ShowAsync(ContentDialogPlacement.InPlace);if(!state.Closed)state.Window.AppWindow.Hide();completion.TrySetResult(result);}catch(Exception ex){completion.TrySetException(ex);}}
@@ -36,7 +58,7 @@ sealed partial class EditorWindow
  {
   if(toolWindows.TryGetValue(content,out var existing)){PresentAuoWindow(existing);return;}
   var window=new Window{Title=UiLanguage.Text(title)};var host=new Grid{Background=opaquePopup,Padding=new Thickness(6)};var scroll=new ScrollViewer{Content=content,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalContentAlignment=HorizontalAlignment.Stretch};host.Children.Add(scroll);content.HorizontalAlignment=HorizontalAlignment.Stretch;AuoUI.Compact(content);toolWindows[content]=window;floatingWindows.Add(window);
-  WindowChrome.ResizeLogical(window,(int)Math.Ceiling(width),(int)Math.Ceiling(height));WindowChrome.Attach(window,host,UiLanguage.Text(title));window.Closed+=(_,_)=>{scroll.Content=null;toolWindows.Remove(content);floatingWindows.Remove(window);closed?.Invoke();};PresentAuoWindow(window);
+  WindowChrome.ResizeLogical(window,(int)Math.Ceiling(width),(int)Math.Ceiling(height));WindowChrome.Attach(window,host,UiLanguage.Text(title));host.Loaded+=(_,_)=>{content.Measure(new Windows.Foundation.Size(Math.Max(80,host.ActualWidth-12),double.PositiveInfinity));double scale=host.XamlRoot.RasterizationScale;int extra=window.AppWindow.Size.Height-(int)Math.Round(host.ActualHeight*scale);int fitted=(int)Math.Ceiling((content.DesiredSize.Height+12)*scale)+extra;window.AppWindow.Resize(new(window.AppWindow.Size.Width,Math.Min(window.AppWindow.Size.Height,Math.Max((int)(100*scale)+extra,fitted))));AuoWindowLimit.Apply(window);};window.Closed+=(_,_)=>{scroll.Content=null;toolWindows.Remove(content);floatingWindows.Remove(window);closed?.Invoke();};PresentAuoWindow(window);
  }
  async Task ConfigureObjectProperties()
  {
@@ -62,9 +84,8 @@ sealed partial class EditorWindow
  void ShowLightWindow()
  {
   if(floatingLightContent!=null&&toolWindows.TryGetValue(floatingLightContent,out var existing)){existing.Activate();return;}
-  if(rightDock?.Content is not StackPanel flow)return;var original=flow.Children.ToArray();flow.Children.Clear();rightDock.Content=null;
-  var grid=new Grid{ColumnSpacing=8};grid.ColumnDefinitions.Add(new(){Width=new GridLength(165)});grid.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});grid.Children.Add(lightPalette);var tools=new StackPanel{Spacing=4};tools.Children.Add(gizmoNumbers);tools.Children.Add(gizmoActions);Grid.SetColumn(tools,1);grid.Children.Add(tools);floatingLightContent=grid;rightDock.Visibility=Visibility.Collapsed;
-  ShowAuoToolWindow("Световые эффекты",grid,410,440,()=>{grid.Children.Clear();tools.Children.Clear();foreach(var item in original)flow.Children.Add(item);rightDock.Content=flow;floatingLightContent=null;LayoutRightDock();});
+  if(rightDock?.Content is not StackPanel flow)return;int index=flow.Children.IndexOf(lightPalette);if(index<0)return;flow.Children.RemoveAt(index);var content=new Grid();content.Children.Add(lightPalette);floatingLightContent=content;
+  ShowAuoToolWindow("Световые эффекты",content,240,440,()=>{content.Children.Clear();flow.Children.Insert(Math.Min(index,flow.Children.Count),lightPalette);floatingLightContent=null;LayoutRightDock();});
  }
  void VerifyAuoUiContract()
  {
@@ -88,8 +109,11 @@ sealed partial class EditorWindow
    var tall=new StackPanel{Width=340,Spacing=4};for(int i=0;i<40;i++)SettingRow(tall,"Параметр "+i,new TextBox{Text="0,00"});var longDialog=VehicleDialog("Параметры",tall);bool scrolled=false;longDialog.Opened+=(_,_)=>{scrolled=longDialog.Content is ScrollViewer scroll&&scroll.ScrollableHeight>0&&scroll.ViewportHeight>0;longDialog.Hide();};await ShowAuoDialog(longDialog).WaitAsync(TimeSpan.FromSeconds(10));ReleaseDialogWindows();if(!scrolled)throw new InvalidDataException("Long form did not expose automatic scrolling");
    DependencyObject? Find(DependencyObject parent,string name){if(parent is FrameworkElement f&&f.Name==name)return parent;for(int i=0;i<VisualTreeHelper.GetChildrenCount(parent);i++){var found=Find(VisualTreeHelper.GetChild(parent,i),name);if(found!=null)return found;}return null;}
    var validated=VehicleDialog("Проверка",new TextBox{Text="value"});int clicks=0;Action? invoke=null;validated.PrimaryButtonClick+=(_,e)=>{clicks++;if(clicks==1){e.Cancel=true;DispatcherQueue.TryEnqueue(()=>invoke!());}};validated.Opened+=(_,_)=>{var button=(Button)(Find(validated,"PrimaryButton")??throw new InvalidDataException("Primary action missing"));invoke=()=>{var peer=new Microsoft.UI.Xaml.Automation.Peers.ButtonAutomationPeer(button);((Microsoft.UI.Xaml.Automation.Provider.IInvokeProvider)peer.GetPattern(Microsoft.UI.Xaml.Automation.Peers.PatternInterface.Invoke)).Invoke();};invoke();};var primary=await ShowAuoDialog(validated).WaitAsync(TimeSpan.FromSeconds(10));ReleaseDialogWindows();if(primary!=ContentDialogResult.Primary||clicks!=2)throw new InvalidDataException("Primary validation/cancellation contract broken");
-   var tool=new StackPanel();tool.Children.Add(new Button{Content="Parameters"});ShowAuoToolWindow("Parameters",tool);ShowAuoToolWindow("Parameters",tool);if(toolWindows.Count!=1)throw new InvalidDataException("Tool window duplicated");toolWindows[tool].Close();if(toolWindows.Count!=0||floatingWindows.Count!=0)throw new InvalidDataException("Tool window did not release content");
-   return new{Opened=opened,Reopened=true,Sizes=sizes,TallFormScrolling=scrolled,PrimaryValidationCancelledThenAccepted=true,ToolWindowReused=true,WindowActivated=false};
+   var confirm=new ContentDialog{Title="Закрыть редактор?",Content="Несохранённые настройки текущей модели будут потеряны.",PrimaryButtonText="Закрыть без сохранения",CloseButtonText="Отмена"};bool fitted=false;
+   confirm.Opened+=async(_,_)=>{try{await Task.Delay(60);var host=dialogWindows[confirm];host.Root.UpdateLayout();AuoWindowLimit.Verify(host.Window);if(host.Root.ActualHeight>190)throw new InvalidDataException("Confirmation retained an empty lower area: "+host.Root.ActualHeight);fitted=true;}catch(Exception ex){error=ex;}finally{confirm.Hide();}};await ShowAuoDialog(confirm).WaitAsync(TimeSpan.FromSeconds(10));ReleaseDialogWindows();if(error!=null)throw error;if(!fitted)throw new InvalidDataException("Confirmation was not fitted");
+   var tool=new StackPanel();tool.Children.Add(new Button{Content="Parameters"});ShowAuoToolWindow("Parameters",tool);ShowAuoToolWindow("Parameters",tool);await Task.Delay(60);if(toolWindows.Count!=1)throw new InvalidDataException("Tool window duplicated");AuoWindowLimit.Verify(toolWindows[tool]);toolWindows[tool].Close();if(toolWindows.Count!=0||floatingWindows.Count!=0)throw new InvalidDataException("Tool window did not release content");
+   editorNotice.Message="first";editorNotice.IsOpen=true;RestartNoticeDismissal();await Task.Delay(150);editorNotice.Message="second";RestartNoticeDismissal();await Task.Delay(4750);if(!editorNotice.IsOpen)throw new InvalidDataException("New notice did not restart dismissal");await Task.Delay(400);if(editorNotice.IsOpen)throw new InvalidDataException("Notice did not disappear after five seconds");
+   return new{Opened=opened,Reopened=true,Sizes=sizes,TallFormScrolling=scrolled,CompactConfirmation=fitted,NativeSizeLimits=true,NoticeDismissal=true,PrimaryValidationCancelledThenAccepted=true,ToolWindowReused=true,WindowActivated=false};
   }finally{foreach(var window in floatingWindows.ToArray())window.Close();offscreenWindowCheck=false;}
  }
 }

@@ -20,6 +20,7 @@ sealed partial class EditorWindow
  readonly List<FlyoutBase> editorFlyouts=[];
  readonly List<FrameworkElement> detachedMenuContents=[];
  readonly TextBlock geometryInfo=new(){FontSize=11,Opacity=.7,TextWrapping=TextWrapping.Wrap,MinWidth=160};
+ readonly ToggleButton ghostOthers=new(){Content="◐",Width=28,Height=24,Padding=new Thickness(0)};
 
  readonly SolidColorBrush opaquePopup=new(Windows.UI.Color.FromArgb(255,40,40,40));
  readonly SolidColorBrush opaqueButton=new(Windows.UI.Color.FromArgb(255,52,52,52));
@@ -71,7 +72,7 @@ sealed partial class EditorWindow
   editorCommands["LOD прицепа / секции…"]=(async()=>await ConfigureTransport("jointLods"),()=>HasModel&&VehicleScript.Fields(VehicleTemplate()).Any(f=>f.Key=="JOINT"));
   var objectMenu=new MenuFlyout();foreach(string key in new[]{"Меши…","Трансформация…","Pivot объекта…","Свойства объекта…","Переименовать объект…","Удалить объект"})objectMenu.Items.Add(MenuCommand(key));objectMenu.Items.Add(new MenuFlyoutSeparator());objectMenu.Items.Add(MenuCommand("LOD…"));objectMenu.Items.Add(MenuCommand("LOD прицепа / секции…"));toolbar.Children.Add(ToolbarMenu("Объект",objectMenu));
   var modifiers=new MenuFlyout();var glass=MenuGroup("Стекло");glass.Items.Add(MenuCommand("Сделать объект стеклом","Назначить объект"));glass.Items.Add(MenuCommand("Стекло через альфа-маску…","Альфа-канал…"));glass.Items.Add(new MenuFlyoutSeparator());glass.Items.Add(MenuCommand("Сбросить стекло"));modifiers.Items.Add(glass);
-  modifiers.Items.Add(MenuCommand("Фары и фонари"));modifiers.Items.Add(MenuCommand("Поворот колёс…"));
+  modifiers.Items.Add(MenuCommand("Фары и фонари"));
   modifiers.Items.Add(MenuCommand("Починить ориентацию…"));toolbar.Children.Add(ToolbarMenu("Модификаторы",modifiers));
   var materialPanel=new StackPanel{Spacing=4,MinWidth=220,MaxWidth=330};materialPanel.Children.Add(variantChoice);materialPanel.Children.Add(materialChoice);detachedMenuContents.Add(materialPanel);
   foreach(string key in new[]{"Настроить PBR","Материалы частей","Создать материал…","Создать вариант…","Назначить материал объекту"}){
@@ -88,11 +89,12 @@ sealed partial class EditorWindow
   editorCommands["Настройки…"]=(ConfigureEditorPreferences,()=>true);file.Items.Add(new MenuFlyoutSeparator());file.Items.Add(MenuCommand("Настройки…"));
 
   selectionRegion.Click+=async(_,_)=>{RefreshSelectionModeButton();await SyncViewportSelection();};RefreshSelectionModeButton();toolbar.Children.Add(new Microsoft.UI.Xaml.Shapes.Rectangle{Width=1,Height=20,Margin=new Thickness(4,0,4,0),Fill=selectionRegion.Foreground,Opacity=.3});toolbar.Children.Add(selectionRegion);
+  ToolTipService.SetToolTip(ghostOthers,"Остальные объекты: 50% прозрачности");Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(ghostOthers,"Прозрачность остальных объектов");ghostOthers.Click+=async(_,_)=>await SyncViewportSelection();toolbar.Children.Add(ghostOthers);
   grid.Children.Add(new ScrollViewer{Content=toolbar,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,VerticalScrollBarVisibility=ScrollBarVisibility.Disabled,HorizontalScrollMode=ScrollMode.Auto});
   var regionShortcut=new KeyboardAccelerator{Key=Windows.System.VirtualKey.O,Modifiers=Windows.System.VirtualKeyModifiers.Shift};regionShortcut.Invoked+=async(_,e)=>{if(!selectionRegion.IsEnabled||EditingText()||view.FocusState!=FocusState.Unfocused)return;e.Handled=true;await ToggleSelectionMode();};grid.KeyboardAccelerators.Add(regionShortcut);
 
   var footer=new Grid{Margin=new Thickness(8,4,8,4),ColumnSpacing=16,RowSpacing=4};footer.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});footer.ColumnDefinitions.Add(new(){Width=GridLength.Auto});footer.RowDefinitions.Add(new(){Height=GridLength.Auto});footer.RowDefinitions.Add(new(){Height=GridLength.Auto});
-  footer.Children.Add(geometryInfo);Grid.SetColumn(catalogPreparationText,1);Grid.SetRow(catalogPreparationText,1);footer.Children.Add(catalogPreparationText);Grid.SetColumn(dirtyText,1);footer.Children.Add(dirtyText);Grid.SetRow(status,1);Grid.SetColumnSpan(status,2);footer.Children.Add(status);Grid.SetRow(footer,2);grid.Children.Add(footer);
+  footer.Children.Add(geometryInfo);Grid.SetColumn(catalogPreparationText,1);Grid.SetRow(catalogPreparationText,1);footer.Children.Add(catalogPreparationText);Grid.SetColumn(dirtyText,1);footer.Children.Add(dirtyText);Grid.SetRow(status,1);Grid.SetColumnSpan(status,2);footer.Children.Add(status);footer.RowDefinitions.Add(new(){Height=GridLength.Auto});var coordinates=BuildCoordinateFooter();Grid.SetRow(coordinates,2);Grid.SetColumnSpan(coordinates,2);footer.Children.Add(coordinates);Grid.SetRow(footer,2);grid.Children.Add(footer);
   Grid.SetRow(editorNotice,1);grid.Children.Add(editorNotice);busyIndicator.Height=2;busyIndicator.VerticalAlignment=VerticalAlignment.Bottom;grid.Children.Add(busyIndicator);
   foreach(var shortcut in new[]{(Windows.System.VirtualKey.O,"Открыть NMF…"),(Windows.System.VirtualKey.S,"Сохранить проект…")}){
    var accelerator=new KeyboardAccelerator{Key=shortcut.Item1,Modifiers=Windows.System.VirtualKeyModifiers.Control};accelerator.Invoked+=async(_,e)=>{e.Handled=true;var command=editorCommands[shortcut.Item2];if(!busy&&command.CanExecute()){CloseEditorFlyouts();await RunCommand(command.Action);}};grid.KeyboardAccelerators.Add(accelerator);
@@ -117,7 +119,7 @@ sealed partial class EditorWindow
  NativeModel? dimensionsModel;System.Numerics.Vector3 dimensionsSize;
  void UpdateMenuState()
  {
-  selectionRegion.IsEnabled=HasModel&&!busy&&!cameraEditing;SetToolsEnabled(animationPanel,!busy&&!cameraEditing);SetToolsEnabled(gizmoActions,!busy&&!cameraEditing);SetToolsEnabled(gizmoNumbers,!busy&&!cameraEditing);if(effectBar!=null)SetToolsEnabled(effectBar,HasModel&&!busy&&!cameraEditing&&!meshEditing);
+  coordinateSpace.IsEnabled=ghostOthers.IsEnabled=HasModel&&!busy&&!cameraEditing;foreach(var box in footerCoordinates)if(box!=null)box.IsEnabled=HasModel&&gizmoVisible&&!busy&&!cameraEditing;selectionRegion.IsEnabled=HasModel&&!busy&&!cameraEditing;SetToolsEnabled(animationPanel,!busy&&!cameraEditing);SetToolsEnabled(gizmoActions,!busy&&!cameraEditing);SetToolsEnabled(gizmoNumbers,!busy&&!cameraEditing);if(effectBar!=null)SetToolsEnabled(effectBar,HasModel&&!busy&&!cameraEditing);
   foreach(var content in toolWindows.Keys)SetToolsEnabled(content,!busy&&!cameraEditing);
   cabinAssemblyMenu.IsEnabled=HasModel&&!busy&&!cameraEditing&&VehicleParts.HasCabinAssembly(vehicleConfiguration);
   wireframeMenu.IsEnabled=HasModel&&!busy&&!cameraEditing;

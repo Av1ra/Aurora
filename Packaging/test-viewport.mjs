@@ -1,4 +1,4 @@
-﻿import fs from 'node:fs';
+import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
 // Exercise the actual viewport script with a deterministic GPU boundary.
@@ -12,7 +12,7 @@ class Texture {}
 class ImageStub { constructor() { images.push(this); } }
 const gpu = new Proxy({
   bufferData:()=>vertexUploads++,checkFramebufferStatus:()=>1,LINES:2,TRIANGLES:3,drawElements:(mode,count)=>drawCalls.push({mode,count}),
-  drawArrays:()=>spriteCount++,
+  drawArrays:mode=>{if(mode===3)spriteCount++;},
   getShaderParameter: () => true, getProgramParameter: () => true,
   createTexture: () => { created++; return new Texture(); },
   getUniformLocation: (_, name) => name,
@@ -30,7 +30,7 @@ const overlayContext=new Proxy({}, {get:(_,key)=>key==='createRadialGradient'?()
 const overlay={style:{},getContext:()=>overlayContext};
 const document = { getElementById: () => canvas,createElement:()=>overlay,body:{appendChild(){}} };
 const api = new Function('document', 'window', 'ResizeObserver', 'Image', 'WebGLTexture','requestAnimationFrame',
-  script + '\nreturn {metrics:()=>({...viewportMetrics}),setWheelSteering,selectionOptions,regionSelection,clickSelection,meshPreview,playWheels,stopWheels,selectionState:()=>selectionState,wheelPlayback:()=>wheelPlayback,resetView:()=>{yaw=pitch=roll=0;distance=4;focal=2;},updateScene,effectLights,playAnimation,stopAnimation,poseWheels,replaceCargo,poseMechanism,previewAnimation,sampleAnimation,allNodes:()=>nodes,materialState:()=>materials,load,texture,requestPreview,wireframe,lighting,lampTexture,startPreviewCamera,stopPreviewCamera,previewCameraPose,gizmo,gizmoRotate,gizmoProject,camera:()=>({yaw,pitch,distance,focal}),tool:()=>gizmoState,segments:()=>gizmoSegments,selected:()=>selected,cargoNodes:()=>nodes.filter(n=>n.Cargo),bounds:()=>({center:scene.center,extent:scene.extent})};')(document, window, class { observe() {} }, ImageStub, Texture,cb=>{if(cb.name==='cameraFrameTick')cameraFrames.push(cb);else if(cb.name==='animationFrameTick')animationFrames.push(cb);else if(cb.name==='wheelFrameTick')wheelFrames.push(cb);else if(cb.name==='diagnosticEffectTick')effectFrames.push(cb);else cb(0);});
+  script + '\nreturn {currentWheelPose,metrics:()=>({...viewportMetrics}),setWheelSteering,selectionOptions,regionSelection,clickSelection,meshPreview,playWheels,stopWheels,selectionState:()=>selectionState,wheelPlayback:()=>wheelPlayback,resetView:()=>{yaw=pitch=roll=0;distance=4;focal=2;},updateScene,effectLights,playAnimation,stopAnimation,poseWheels,replaceCargo,poseMechanism,previewAnimation,sampleAnimation,allNodes:()=>nodes,materialState:()=>materials,load,texture,requestPreview,wireframe,lighting,lampTexture,startPreviewCamera,stopPreviewCamera,previewCameraPose,gizmo,gizmoRotate,gizmoProject,camera:()=>({yaw,pitch,distance,focal}),tool:()=>gizmoState,segments:()=>gizmoSegments,selected:()=>selected,cargoNodes:()=>nodes.filter(n=>n.Cargo),bounds:()=>({center:scene.center,extent:scene.extent})};')(document, window, class { observe() {} }, ImageStub, Texture,cb=>{if(cb.name==='cameraFrameTick')cameraFrames.push(cb);else if(cb.name==='animationFrameTick')animationFrames.push(cb);else if(cb.name==='wheelFrameTick')wheelFrames.push(cb);else if(cb.name==='diagnosticEffectTick')effectFrames.push(cb);else cb(0);});
 assert.match(overlay.style.cssText,/background\s*:\s*transparent(?:;|$)/,'pivot overlay must override the shared canvas background so loaded NMF stays visible');
 const scene = () => ({ Materials: ['body'], Nodes: [{
   Positions: [0,0,0, 1,0,0, 0,1,0], Normals: [0,0,1, 0,0,1, 0,0,1],
@@ -189,3 +189,8 @@ api.meshPreview(null);api.load({Materials:['paint'],Nodes:[0,1].map(i=>({Name:'t
 const targetClip=mesh=>({Tracks:[{Mesh:mesh,Pivot:[0,0,0],Interpolation:'Linear',Keys:[{Frame:0,Pose:{Position:[1,0,0],Rotation:[0,0,0],Scale:[1,1,1]}}]}]});api.previewAnimation(targetClip('target0'),0);assert.equal(api.allNodes()[0].Positions[0],1);api.stopAnimation();assert.equal(api.allNodes()[0].Positions[0],1,'pause retains current pose');api.previewAnimation(targetClip('target1'),0);assert.equal(api.allNodes()[0].Positions[0],0,'switching clips resets meshes outside the new track set');assert.equal(api.allNodes()[1].Positions[0],5);api.stopAnimation(true);assert.equal(api.allNodes()[1].Positions[0],4,'explicit reset restores the source');console.log('PASS animation target changes clear old poses; pause and reset have distinct semantics');
 
 const beforeSelectionMetrics=api.metrics();api.selectionOptions({enabled:true,items:[{node:0,part:-1}]});const afterSelectionMetrics=api.metrics();assert.equal(afterSelectionMetrics.geometryUploads,beforeSelectionMetrics.geometryUploads);assert.equal(afterSelectionMetrics.sceneUpdates,beforeSelectionMetrics.sceneUpdates);console.log('PASS diagnostic counters confirm selection does not upload geometry or rebuild scene');
+
+api.load({Materials:['body'],Nodes:[0,1].map(i=>({...scene().Nodes[0],Name:'scene'+i,Positions:scene().Nodes[0].Positions.map((v,k)=>v+(k%3===0?i*4:0))}))});
+const sceneClip={Tracks:[0,1].map(i=>({Mesh:'scene'+i,Pivot:[0,0,0],Interpolation:'Linear',Keys:[{Frame:0,Pose:{Position:[0,0,0],Rotation:[0,0,0],Scale:[1,1,1]}}]}))};
+const sceneSources=api.allNodes().map(n=>n.Positions.slice());api.previewAnimation(sceneClip,0,-1,null,{scene0:{Position:[2,0,0],Rotation:[0,0,0],Scale:[1,1,1]},scene1:{Position:[2,0,0],Rotation:[0,0,0],Scale:[1,1,1]}});assert(api.allNodes().every((n,i)=>n.Positions[0]===sceneSources[i][0]+2));api.stopAnimation(true);
+api.gizmo({position:[4,2,5],rotation:[0,0,0],scale:[1,1,1]});api.meshPreview({revision:990,pivotOnly:true,pivot:[3,2,5],items:[{node:0,vertices:[0,1,2],pivot:[3,2,5]}]});const live=api.currentWheelPose([{Mesh:'scene0',Pivot:[3,2,5],Axle:[1,0,0],SteeringAxis:[0,1,0],Steering:true,Radius:.5}],0)[0];assert.deepEqual(live.Pivot,[4,2,5]);assert.deepEqual(api.allNodes()[0].Positions,sceneSources[0]);api.meshPreview(null);console.log('PASS simultaneous scene pose overrides and live edited wheel pivot without moving source geometry');

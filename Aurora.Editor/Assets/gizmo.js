@@ -6,10 +6,16 @@ let gizmoContext=null;
 if(gizmoCanvas){gizmoCanvas.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;background:transparent';document.body.appendChild(gizmoCanvas);gizmoContext=gizmoCanvas.getContext('2d');}
 const gv={add:(a,b)=>a.map((x,i)=>x+b[i]),sub:(a,b)=>a.map((x,i)=>x-b[i]),mul:(a,s)=>a.map(x=>x*s),dot:(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0)};
 function gizmoRotate(v,r){let p=[...v];for(let a=0;a<3;a++){let b=(a+1)%3,c=(a+2)%3,t=r[a]*Math.PI/180,u=p[b],w=p[c];p[b]=u*Math.cos(t)-w*Math.sin(t);p[c]=u*Math.sin(t)+w*Math.cos(t);}return p;}
-function gizmoOrientation(v){return gizmoRotate(gizmoRotate(v,gizmoState.rotation),gizmoState.basis||[0,0,0]);}
+function gizmoOrientation(v){if(gizmoState.mode==='move'&&Array.isArray(gizmoState.movementBasis))return gizmoRotate(v,gizmoState.movementBasis);return gizmoRotate(gizmoRotate(v,gizmoState.rotation),gizmoState.basis||[0,0,0]);}
 function animationUnrotate(v,r){let p=v.slice();for(let a=2;a>=0;a--){let b=(a+1)%3,c=(a+2)%3,t=-r[a]*Math.PI/180,u=p[b],w=p[c];p[b]=u*Math.cos(t)-w*Math.sin(t);p[c]=u*Math.sin(t)+w*Math.cos(t);}return p;}
 function cameraRotate(p,inverse=false){let x=p[0],y=p[1],z=p[2];if(inverse){let x0=Math.cos(roll)*x+Math.sin(roll)*y,y0=-Math.sin(roll)*x+Math.cos(roll)*y;x=x0;y=y0;let y1=Math.cos(pitch)*y+Math.sin(pitch)*z,z1=-Math.sin(pitch)*y+Math.cos(pitch)*z;return[Math.cos(yaw)*x-Math.sin(yaw)*z1,y1,Math.sin(yaw)*x+Math.cos(yaw)*z1];}let x1=Math.cos(yaw)*x+Math.sin(yaw)*z,z1=-Math.sin(yaw)*x+Math.cos(yaw)*z,y1=Math.cos(pitch)*y-Math.sin(pitch)*z1;return[Math.cos(roll)*x1-Math.sin(roll)*y1,Math.sin(roll)*x1+Math.cos(roll)*y1,Math.sin(pitch)*y+Math.cos(pitch)*z1];}
 function gizmoProject(point){let p=cameraRotate(gv.mul(gv.sub(point,scene.center),1/scene.extent));let depth=distance-p[2];if(depth<.05)return null;return[canvas.clientWidth*(.5+p[0]*focal/(canvas.clientWidth/canvas.clientHeight)/depth/2),canvas.clientHeight*(.5-p[1]*focal/depth/2)];}
+let floorGrid=null;
+function drawFloorGrid(){
+ const step=Math.pow(10,Math.floor(Math.log10(Math.max(.1,scene.extent))))/2;
+ if(!floorGrid||floorGrid.step!==step){if(floorGrid){gl.deleteVertexArray(floorGrid.vao);for(const b of floorGrid.buffers)gl.deleteBuffer(b);}const p=[],size=step*30;for(let i=-30;i<=30;i++){if(i===0)continue;const v=i*step;p.push(-size,0,v,size,0,v,v,0,-size,v,0,size);}const count=p.length/3;p.push(-size,0,0,size,0,0,0,0,-size,0,0,size);const vao=gl.createVertexArray();gl.bindVertexArray(vao);floorGrid={step,vao,count,buffers:[buffer(p,3,'position'),buffer(p.map(()=>0),3,'normal'),buffer(new Array(p.length/3*2).fill(0),2,'uv')]};}
+ gl.useProgram(program);gl.bindVertexArray(floorGrid.vao);gl.enable(gl.DEPTH_TEST);gl.depthMask(false);gl.uniform1i(uniform.picking,1);gl.uniform3fv(uniform.pickColour,[.19,.20,.20]);gl.drawArrays(gl.LINES,0,floorGrid.count);gl.uniform3fv(uniform.pickColour,[.38,.24,.24]);gl.drawArrays(gl.LINES,floorGrid.count,2);gl.uniform3fv(uniform.pickColour,[.24,.30,.40]);gl.drawArrays(gl.LINES,floorGrid.count+2,2);gl.uniform1i(uniform.picking,0);gl.depthMask(true);
+}
 function transformCargo(){
  if(gizmoState.cargo<0)return;const {position,rotation,scale}=gizmoState;
  for(const n of nodes)if(n.Cargo&&n.CargoSlot===gizmoState.cargo&&n.LocalPositions){
@@ -26,6 +32,7 @@ function gizmo(value){
 function drawGizmo(){
  if(!gizmoContext)return;const c=gizmoContext,scale=Math.min(2,window.devicePixelRatio||1);gizmoCanvas.width=Math.max(1,Math.round(canvas.clientWidth*scale));gizmoCanvas.height=Math.max(1,Math.round(canvas.clientHeight*scale));c.scale(scale,scale);gizmoSegments=[];
  drawPreviewCameraFrame(c);
+ if(scene&&!transparentPreview&&!previewEdit){const x=36,y=canvas.clientHeight-34;c.lineWidth=1.5;c.font='10px Segoe UI';[[1,0,0],[0,1,0],[0,0,1]].forEach((axis,i)=>{const v=cameraRotate(axis);c.strokeStyle=c.fillStyle=['#ad7777','#80a784','#7a97b9'][i];c.beginPath();c.moveTo(x,y);c.lineTo(x+v[0]*22,y-v[1]*22);c.stroke();c.fillText('XYZ'[i],x+v[0]*29-3,y-v[1]*29+3);});}
  if(!scene||!gizmoState.visible)return;const position=gizmoState.position,origin=gizmoProject(position);if(!origin)return;
  if(gizmoState.axis){const a=gizmoProject(gizmoState.axis[0]),b=gizmoProject(gizmoState.axis[1]);if(a&&b){c.save();c.strokeStyle='#e5c967';c.fillStyle='#e5c967';c.lineWidth=2;c.beginPath();c.moveTo(...a);c.lineTo(...b);c.stroke();for(const [label,p]of [['A',a],['B',b]]){c.beginPath();c.arc(...p,3,0,Math.PI*2);c.fill();c.fillText(label,p[0]+6,p[1]-6);}c.restore();}}
  const size=scene.extent*.26,axes=[[1,0,0],[0,1,0],[0,0,1]],colours=['#e65151','#64c56c','#5292ee'];
@@ -57,7 +64,7 @@ canvas.onpointerdown=e=>{
 canvas.onpointermove=e=>{
  if(!gizmoDrag){orbitMove(e);drawGizmo();return;}const d=gizmoDrag,mouse=gizmoPointer(e);
  if(gizmoState.mode==='move'){
-  let dir=gizmoRotate([[1,0,0],[0,1,0],[0,0,1]][d.axis],d.rotation),a=gizmoProject(d.position),b=gizmoProject(gv.add(d.position,dir));if(!a||!b)return;let delta=gv.sub(b,a),length=gv.dot(delta,delta);if(length>1e-5)gizmoState.position=gv.add(d.position,gv.mul(dir,gv.dot(gv.sub(mouse,d.mouse),delta)/length));
+  let dir=gizmoOrientation([[1,0,0],[0,1,0],[0,0,1]][d.axis]),a=gizmoProject(d.position),b=gizmoProject(gv.add(d.position,dir));if(!a||!b)return;let delta=gv.sub(b,a),length=gv.dot(delta,delta);if(length>1e-5)gizmoState.position=gv.add(d.position,gv.mul(dir,gv.dot(gv.sub(mouse,d.mouse),delta)/length));
  }else if(gizmoState.mode==='scale'){
   let amount=(d.mouse[1]-mouse[1])/80;if(d.axis<3){const dir=gizmoRotate([[1,0,0],[0,1,0],[0,0,1]][d.axis],d.rotation),a=gizmoProject(d.position),b=gizmoProject(gv.add(d.position,dir));if(!a||!b)return;const delta=gv.sub(b,a),length=Math.hypot(...delta);if(length<1e-5)return;amount=gv.dot(gv.sub(mouse,d.mouse),delta)/length/80;}
   const factor=Math.exp(Math.max(-12,Math.min(12,amount)));gizmoState.scale=d.scale.map((v,i)=>gizmoState.uniformScale||i===d.axis?Math.min(1e6,Math.max(1e-5,v>0?v*factor:factor-1)):v);
@@ -86,8 +93,8 @@ function poseMechanism(value){
 
 let animationPlayback=null;
 function sampleAnimation(track,frame){const keys=track._sortedKeys||(track._sortedKeys=track.Keys.slice().sort((a,b)=>a.Frame-b.Frame));if(frame<=keys[0].Frame)return keys[0].Pose;if(frame>=keys.at(-1).Frame)return keys.at(-1).Pose;let lo=1,hi=keys.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(keys[mid].Frame<frame)lo=mid+1;else hi=mid;}const index=lo,a=keys[index-1],b=keys[index];let t=(frame-a.Frame)/(b.Frame-a.Frame);if(track.Interpolation==='Smooth')t=t*t*(3-2*t);const pose={};for(const key of ['Position','Rotation','Scale'])pose[key]=a.Pose[key].map((v,i)=>v+(b.Pose[key][i]-v)*t);return pose;}
-function previewAnimation(clip,frame,overrideTrack=-1,overridePose=null){
- for(const n of nodes){if(!n.poseBase)n.poseBase={p:n.Positions.slice(),n:n.Normals.slice()};const index=clip.Tracks.findIndex(t=>t.Mesh===n.Name||n.Cargo&&t.CargoParent===t.Mesh);if(index<0){if(n.poseChanged){n.Positions=n.poseBase.p.slice();n.Normals=n.poseBase.n.slice();n.poseChanged=false;uploadNode(n);}continue;}const track=clip.Tracks[index],pose=index===overrideTrack&&overridePose?overridePose:sampleAnimation(track,frame),p=[],normals=[];
+function previewAnimation(clip,frame,overrideTrack=-1,overridePose=null,overridePoses=null){
+ for(const n of nodes){if(!n.poseBase)n.poseBase={p:n.Positions.slice(),n:n.Normals.slice()};const index=clip.Tracks.findIndex(t=>t.Mesh===n.Name||n.Cargo&&t.CargoParent===t.Mesh);if(index<0){if(n.poseChanged){n.Positions=n.poseBase.p.slice();n.Normals=n.poseBase.n.slice();n.poseChanged=false;uploadNode(n);}continue;}const track=clip.Tracks[index],pose=overridePoses?.[track.Mesh]||(index===overrideTrack&&overridePose?overridePose:sampleAnimation(track,frame)),p=[],normals=[];
  for(let i=0;i<n.poseBase.p.length;i+=3){const axis=track.AxisRotation||[0,0,0],v=gizmoRotate(gizmoRotate(animationUnrotate(gv.sub(n.poseBase.p.slice(i,i+3),track.Pivot),axis).map((x,a)=>x*pose.Scale[a]),pose.Rotation),axis),normal=gizmoRotate(gizmoRotate(animationUnrotate(n.poseBase.n.slice(i,i+3),axis).map((x,a)=>x/pose.Scale[a]),pose.Rotation),axis),len=Math.hypot(...normal)||1;p.push(...gv.add(gv.add(v,track.Pivot),pose.Position));normals.push(...normal.map(x=>x/len));}n.Positions=p;n.Normals=normals;n.poseChanged=true;uploadNode(n);
  }draw();
 }
@@ -119,7 +126,8 @@ function updateScene(next,document){viewportMetrics.sceneUpdates++;
 
 let wheelPlayback=null,wheelPlaybackGeneration=0;
 let wheelTravelDistance=0,lastWheelSet=null,wheelSteeringAngle=0,wheelSteeringSelection=null;
-function currentWheelPose(wheels,distance){return wheels.map(w=>({...w,Spin:distance/Math.max(.001,w.Radius||.5)*180/Math.PI%360,Steering:w.Steering&&(wheelSteeringSelection===null||w.Mesh+'/'+(w.Component||0)===wheelSteeringSelection)}));}
+function currentWheelPose(wheels,distance){return wheels.map(w=>{let pivot=w.Pivot,axle=w.Axle,axis=w.SteeringAxis;const state=meshPreviewState,item=state?.pivotOnly?state.bases.find(i=>nodes[i.node]?.Name===w.Mesh):null;if(item){pivot=gv.add(item.pivot,gv.sub(gizmoState.position,state.pivot));axle=gizmoRotate(axle,gizmoState.rotation);axis=gizmoRotate(axis,gizmoState.rotation);}return{...w,Pivot:pivot,Axle:axle,SteeringAxis:axis,Spin:distance/Math.max(.001,w.Radius||.5)*180/Math.PI%360,Steering:w.Steering&&(wheelSteeringSelection===null||w.Mesh+'/'+(w.Component||0)===wheelSteeringSelection)};});}
+function updateWheelDiagnostics(wheels){lastWheelSet=wheels;if(wheelPlayback)wheelPlayback.wheels=wheels;else if(wheelTravelDistance||wheelSteeringAngle)poseWheels(currentWheelPose(wheels,wheelTravelDistance),wheelSteeringAngle,0);}
 function setWheelSteering(wheels,angle,selected=null){wheelSteeringAngle=Math.max(-45,Math.min(45,angle));wheelSteeringSelection=selected;lastWheelSet=wheels;poseWheels(currentWheelPose(wheels,wheelPlayback?.distance??wheelTravelDistance),wheelSteeringAngle,0);}
 function playWheels(wheels,kph=20){stopWheels(false);lastWheelSet=wheels;const generation=++wheelPlaybackGeneration;wheelPlayback={wheels,start:null,generation,baseDistance:wheelTravelDistance};requestAnimationFrame(function wheelFrameTick(t){const state=wheelPlayback;if(!state||state.generation!==generation)return;if(state.start===null)state.start=t;const distance=state.baseDistance+(t-state.start)/1000*kph/3.6;state.distance=distance;poseWheels(currentWheelPose(state.wheels,distance),wheelSteeringAngle,0);requestAnimationFrame(wheelFrameTick);});}
 function stopWheels(reset=false){const old=wheelPlayback;wheelPlayback=null;wheelPlaybackGeneration++;if(old)wheelTravelDistance=old.distance??old.baseDistance??0;if(reset){wheelTravelDistance=0;wheelSteeringAngle=0;wheelSteeringSelection=null;}if(reset&&lastWheelSet){poseWheels(lastWheelSet,0,0);lastWheelSet=null;}}
