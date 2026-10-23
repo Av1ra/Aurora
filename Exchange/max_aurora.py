@@ -75,7 +75,6 @@ def save(path):
                     Frame=[v for i, row in enumerate(rows) for v in row+[1 if i == 3 else 0]], Positions=[], Normals=[], Uv=[], Indices=[], Groups=[])
         if rt.canConvertTo(obj, rt.Editable_Mesh):
             mesh = rt.snapshotAsMesh(obj)
-            normal_frame = rt.transpose(rt.inverse(f))
             for fi in range(1, int(mesh.numfaces)+1):
                 face = rt.getFace(mesh, fi)
                 tvface = rt.getTVFace(mesh, fi) if rt.getNumTVerts(mesh) else None
@@ -93,10 +92,10 @@ def save(path):
                     node['Groups'].append(dict(First=len(node['Indices']), Count=0, Material=mi))
                 for corner in range(3):
                     vi = int(face[corner])
-                    vertex = rt.getVert(mesh, vi)*f
-                    # Matrix translation must not affect normals.
+                    vertex = rt.getVert(mesh, vi)
+                    # snapshotAsMesh returns world-space geometry, including normals.
                     n = rt.getNormal(mesh, vi)
-                    normal = rt.normalize(normal_frame.row1*n.x+normal_frame.row2*n.y+normal_frame.row3*n.z)
+                    normal = rt.normalize(n)
                     uv = rt.getTVert(mesh, int(tvface[corner])) if tvface else rt.point3(0, 0, 0)
                     node['Indices'].append(len(node['Positions'])//3)
                     node['Positions'].extend(game(vertex, unit))
