@@ -1,0 +1,289 @@
+{
+  "source": "4fc1803967e7a0bef94e6363be766f1fb3668b9a",
+  "checks": [
+    {
+      "id": "animation_add_zero",
+      "file": "Aurora.Editor/EditorAnimation.cs",
+      "line": 39,
+      "token": "new(mesh,[0,0,0]"
+    },
+    {
+      "id": "animation_selection_independent",
+      "file": "Aurora.Editor/EditorLayers.cs",
+      "line": 24,
+      "token": "async void RefreshMeshGroups"
+    },
+    {
+      "id": "picker_restores_old_selection",
+      "file": "Aurora.Editor/EditorMeshPicker.cs",
+      "line": 18,
+      "token": "oldSelection=objects.SelectedItem"
+    },
+    {
+      "id": "animation_track_min_column",
+      "file": "Aurora.Editor/EditorAnimation.cs",
+      "line": 37,
+      "token": "new GridLength(180)"
+    },
+    {
+      "id": "animation_fixed_left_margin",
+      "file": "Aurora.Editor/EditorAnimation.cs",
+      "line": 63,
+      "token": "new Thickness(208,0,12,12)"
+    },
+    {
+      "id": "animation_scroll_no_vertical",
+      "file": "Aurora.Editor/EditorAnimation.cs",
+      "line": 35,
+      "token": "VerticalScrollBarVisibility=ScrollBarVisibility.Disabled"
+    },
+    {
+      "id": "global_state_routing",
+      "file": "Aurora.Editor/EditorGizmos.cs",
+      "line": 41,
+      "token": "Vector3 GizmoPosition()"
+    },
+    {
+      "id": "axis_button_visibility_overwritten",
+      "file": "Aurora.Editor/EditorGizmos.cs",
+      "line": 66,
+      "token": "if(pivotEditButton!=null)pivotEditButton.Visibility=meshEditing?"
+    },
+    {
+      "id": "native_sdk",
+      "file": "Aurora.Editor/Aurora.Editor.csproj",
+      "line": 3,
+      "token": "Version=\"1.8.260921001\""
+    },
+    {
+      "id": "app_default_resources",
+      "file": "Aurora.Editor/App.xaml",
+      "line": 1,
+      "token": "<controls:XamlControlsResources/>"
+    }
+  ],
+  "files": [
+    {
+      "file": "App.cs",
+      "lines": 207,
+      "fixed_widths": 1,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorAnimation.cs",
+      "lines": 79,
+      "fixed_widths": 3,
+      "fixed_heights": 1
+    },
+    {
+      "file": "EditorCargo.cs",
+      "lines": 63,
+      "fixed_widths": 1,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorEffects.cs",
+      "lines": 49,
+      "fixed_widths": 4,
+      "fixed_heights": 3
+    },
+    {
+      "file": "EditorGizmos.cs",
+      "lines": 146,
+      "fixed_widths": 3,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorHistory.cs",
+      "lines": 48,
+      "fixed_widths": 0,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorImport.cs",
+      "lines": 56,
+      "fixed_widths": 0,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorLayers.cs",
+      "lines": 54,
+      "fixed_widths": 2,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorLightPalette.cs",
+      "lines": 37,
+      "fixed_widths": 1,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorLods.cs",
+      "lines": 13,
+      "fixed_widths": 0,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorMaterials.cs",
+      "lines": 103,
+      "fixed_widths": 0,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorMechanismNames.cs",
+      "lines": 21,
+      "fixed_widths": 0,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorMechanisms.cs",
+      "lines": 42,
+      "fixed_widths": 1,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorMenus.cs",
+      "lines": 134,
+      "fixed_widths": 1,
+      "fixed_heights": 2
+    },
+    {
+      "file": "EditorMeshPicker.cs",
+      "lines": 28,
+      "fixed_widths": 0,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorMeshSelection.cs",
+      "lines": 87,
+      "fixed_widths": 3,
+      "fixed_heights": 3
+    },
+    {
+      "file": "EditorModelSettings.cs",
+      "lines": 86,
+      "fixed_widths": 2,
+      "fixed_heights": 1
+    },
+    {
+      "file": "EditorObjects.cs",
+      "lines": 32,
+      "fixed_widths": 0,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorPartMaterials.cs",
+      "lines": 34,
+      "fixed_widths": 2,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorPreferences.cs",
+      "lines": 23,
+      "fixed_widths": 1,
+      "fixed_heights": 1
+    },
+    {
+      "file": "EditorPreviews.cs",
+      "lines": 91,
+      "fixed_widths": 2,
+      "fixed_heights": 1
+    },
+    {
+      "file": "EditorProject.cs",
+      "lines": 51,
+      "fixed_widths": 0,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorSceneInterchange.cs",
+      "lines": 47,
+      "fixed_widths": 0,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorSkinExport.cs",
+      "lines": 16,
+      "fixed_widths": 1,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorSmoke.cs",
+      "lines": 13,
+      "fixed_widths": 1,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorSounds.cs",
+      "lines": 23,
+      "fixed_widths": 1,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorTransport.cs",
+      "lines": 97,
+      "fixed_widths": 2,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorTransportExport.cs",
+      "lines": 30,
+      "fixed_widths": 1,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorVehicle.cs",
+      "lines": 126,
+      "fixed_widths": 3,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorViewportCache.cs",
+      "lines": 17,
+      "fixed_widths": 0,
+      "fixed_heights": 0
+    },
+    {
+      "file": "EditorWorkspace.cs",
+      "lines": 43,
+      "fixed_widths": 1,
+      "fixed_heights": 0
+    },
+    {
+      "file": "MaterialDocuments.cs",
+      "lines": 65,
+      "fixed_widths": 0,
+      "fixed_heights": 0
+    },
+    {
+      "file": "MaterialExport.cs",
+      "lines": 30,
+      "fixed_widths": 0,
+      "fixed_heights": 0
+    },
+    {
+      "file": "MaterialSettings.cs",
+      "lines": 2,
+      "fixed_widths": 0,
+      "fixed_heights": 0
+    },
+    {
+      "file": "ModelExport.cs",
+      "lines": 88,
+      "fixed_widths": 0,
+      "fixed_heights": 0
+    },
+    {
+      "file": "ProjectDocument.cs",
+      "lines": 34,
+      "fixed_widths": 0,
+      "fixed_heights": 0
+    },
+    {
+      "file": "VariantExport.cs",
+      "lines": 37,
+      "fixed_widths": 0,
+      "fixed_heights": 0
+    }
+  ]
+}
