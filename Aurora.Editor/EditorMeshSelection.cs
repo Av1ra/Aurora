@@ -8,7 +8,7 @@ using System.Text.Json;
 namespace Aurora.Editor;
 sealed partial class EditorWindow
 {
- readonly ComboBox selectionRegion=new(){ItemsSource=new[]{UiLanguage.Text("Касание рамки"),UiLanguage.Text("Полностью внутри")},SelectedIndex=0,MinWidth=155};
+ readonly ToggleButton selectionRegion=new(){Name="EditorSelectionMode",Width=32,Height=30,MinWidth=0,MinHeight=0,Padding=new Thickness(4),IsChecked=false};
  readonly ComboBox meshLevel=new(){ItemsSource=new[]{UiLanguage.Text("Объект"),UiLanguage.Text("Элемент")},SelectedIndex=1,HorizontalAlignment=HorizontalAlignment.Stretch};
  readonly List<(int Node,int Part)> meshSelected=[];
  readonly Dictionary<int,MeshElement[]> meshElements=[];
@@ -20,11 +20,17 @@ sealed partial class EditorWindow
  MeshElement[] Elements(int index){if(!meshElements.TryGetValue(index,out var parts))meshElements[index]=parts=MeshElements.Read(CurrentModel().Nodes[index]);return parts;}
  void ResetMeshBasis(){if(!HasModel)return;meshBase=CurrentModel();meshPose=AnimationPose.Identity;meshRevision++;var vertices=MeshEditItems().SelectMany(item=>item.vertices.Select(v=>{var n=meshBase.Nodes[item.node];return new Vector3(n.Positions[v*3],n.Positions[v*3+1],n.Positions[v*3+2]);})).ToArray();meshPivot=vertices.Length>0?(vertices.Aggregate(Vector3.Min)+vertices.Aggregate(Vector3.Max))*.5f:Vector3.Zero;}
  (int node,int[] vertices)[] MeshEditItems()=>meshSelected.GroupBy(i=>i.Node).Select(g=>(node:g.Key,vertices:g.Any(i=>i.Part<0)?Enumerable.Range(0,(meshBase??CurrentModel()).Nodes[g.Key].VertexCount).ToArray():g.SelectMany(i=>Elements(g.Key)[i.Part].Vertices).Distinct().ToArray())).ToArray();
+ void RefreshSelectionModeButton()
+ {
+  bool inside=selectionRegion.IsChecked==true;var icon=new Canvas{Width=20,Height=20};var outline=new Microsoft.UI.Xaml.Shapes.Rectangle{Width=14,Height=14,Stroke=new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255,205,210,215)),StrokeThickness=1,StrokeDashArray=new Microsoft.UI.Xaml.Media.DoubleCollection{2,2}};Canvas.SetLeft(outline,1);Canvas.SetTop(outline,1);icon.Children.Add(outline);var accent=Application.Current.Resources.TryGetValue("SystemControlHighlightAccentBrush",out var resource)&&resource is Microsoft.UI.Xaml.Media.Brush brush?brush:new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255,100,160,190));var target=new Microsoft.UI.Xaml.Shapes.Rectangle{Width=inside?7:9,Height=inside?7:9,Fill=accent,Stroke=selectionRegion.Foreground,StrokeThickness=1};Canvas.SetLeft(target,inside?5:10);Canvas.SetTop(target,inside?5:10);icon.Children.Add(target);selectionRegion.Content=icon;
+  string label=UiLanguage.Text(inside?"Полностью внутри":"Касание рамки");var tooltip=new StackPanel{Spacing=4,MaxWidth=280};tooltip.Children.Add(new TextBlock{Text=label+"  (Shift+O)",FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});tooltip.Children.Add(new TextBlock{Text=UiLanguage.Text(inside?"Выделяются только объекты и элементы, целиком попавшие в рамку.":"Выделяются объекты и элементы внутри рамки и пересекающие её границу."),TextWrapping=TextWrapping.Wrap});ToolTipService.SetToolTip(selectionRegion,new ToolTip{Content=tooltip});Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(selectionRegion,label);Microsoft.UI.Xaml.Automation.AutomationProperties.SetHelpText(selectionRegion,UiLanguage.Text("Переключить режим рамочного выделения: Shift+O"));
+ }
+ async Task ToggleSelectionMode(){selectionRegion.IsChecked=selectionRegion.IsChecked!=true;RefreshSelectionModeButton();await SyncViewportSelection();}
  async Task SyncViewportSelection()
  {
   if(!ready||!HasModel)return;
   if(!meshEditing){meshSelected.Clear();foreach(var item in objects.SelectedItems){int index=objects.Items.IndexOf(item);if(index>=0)meshSelected.Add((index,-1));}}
-  await view.ExecuteScriptAsync("selectionOptions("+JsonSerializer.Serialize(new{enabled=!cameraEditing,contained=selectionRegion.SelectedIndex==1,elements=meshEditing&&meshLevel.SelectedIndex==1,editNode=meshEditNode,parts=meshEditing&&meshEditNode>=0?Elements(meshEditNode):[],items=meshSelected.Select(i=>new{node=i.Node,part=i.Part}).ToArray()})+")");
+  await view.ExecuteScriptAsync("selectionOptions("+JsonSerializer.Serialize(new{enabled=!cameraEditing,contained=selectionRegion.IsChecked==true,elements=meshEditing&&meshLevel.SelectedIndex==1,editNode=meshEditNode,parts=meshEditing&&meshEditNode>=0?Elements(meshEditNode):[],items=meshSelected.Select(i=>new{node=i.Node,part=i.Part}).ToArray()})+")");
  }
  async Task BeginMeshEditing()
  {
@@ -33,6 +39,7 @@ sealed partial class EditorWindow
  void EndMeshEditing(){meshEditing=false;meshEditNode=-1;meshSelected.Clear();meshElements.Clear();meshBase=null;meshPose=AnimationPose.Identity;meshRevision++;}
  async Task ReceiveViewportSelection(JsonElement message)
  {
+  if(message.TryGetProperty("selectionToggle",out var toggle)&&toggle.ValueKind==JsonValueKind.True){if(HasModel&&!busy&&!cameraEditing)await ToggleSelectionMode();return;}
   if(!message.TryGetProperty("selection",out var values)||!HasModel||busy&&meshPick==null)return;var selected=values.EnumerateArray().Select(v=>(Node:v.GetProperty("node").GetInt32(),Part:v.GetProperty("part").GetInt32())).Where(v=>v.Node>=0&&v.Node<(meshPick!=null?ViewportModel():CurrentModel()).Nodes.Count).ToArray();
   if(meshPick!=null){ReceiveMeshPick(selected.FirstOrDefault((-1,-1)).Item1);return;}
   if(meshEditing){meshSelected.Clear();meshSelected.AddRange(selected.Where(v=>meshLevel.SelectedIndex==0?v.Part==-1:v.Node==meshEditNode&&v.Part>=0&&v.Part<Elements(v.Node).Length));if(meshLevel.SelectedIndex==0&&meshSelected.Count>0){meshEditNode=meshSelected[0].Node;selectionSync=true;objects.SelectedItems.Clear();foreach(var item in meshSelected)objects.SelectedItems.Add(objects.Items[item.Node]);selectionSync=false;}ResetMeshBasis();await SyncViewportSelection();await RefreshGizmo();}

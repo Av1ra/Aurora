@@ -10,6 +10,10 @@ static class UiLanguage
     public static bool Reload(){try{string value=File.ReadAllText(path).Trim();if(value is not ("en" or "ru"))return false;bool english=value=="en";if(english==English)return false;English=english;return true;}catch{return false;}}
     static readonly Dictionary<string,string> words=new()
     {
+      ["Выделяются только объекты и элементы, целиком попавшие в рамку."]="Select only objects and elements entirely inside the rectangle." ,
+      ["Выделяются объекты и элементы внутри рамки и пересекающие её границу."]="Select objects and elements inside or crossing the rectangle." ,
+      ["Переключить режим рамочного выделения: Shift+O"]="Toggle window/crossing selection: Shift+O" ,
+
       ["Касание рамки"]="Crossing selection" ,
       ["Полностью внутри"]="Window selection" ,
       ["Элемент"]="Element" ,

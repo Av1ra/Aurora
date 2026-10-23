@@ -85,7 +85,9 @@ sealed partial class EditorWindow
   var equipment=MenuGroup("Оборудование");foreach(var section in new[]{("assembly","Прицеп и дополнительные модели"),("points","Водитель и крепления"),("horses","Конная тяга"),("aviation","Винты и шасси"),("rail","Сцепка и оси поезда"),("waves","Волны судна"),("cabins","Кабина канатной дороги")}){string scope=section.Item1;editorCommands[section.Item2]=(()=>ConfigureTransport(scope),()=>HasModel&&TransportParameters.All.Any(p=>TransportParameters.Section(p)==scope&&p.Applies(VehicleScript.Fields(VehicleTemplate()).First(f=>f.Key=="TYPE").Value)));equipment.Items.Add(MenuCommand(section.Item2));}modelSettings.Items.Add(equipment);modelSettings.Items.Add(MenuCommand("Объекты комплекта","Транспорт проекта…"));modelSettings.Items.Add(new MenuFlyoutSeparator());modelSettings.Items.Add(cabinAssemblyMenu);cabinAssemblyMenu.Click+=async(_,_)=>await RunCommand(Display);toolbar.Children.Add(ToolbarMenu("Скрипты",modelSettings));
   editorCommands["Настройки…"]=(ConfigureEditorPreferences,()=>true);file.Items.Add(new MenuFlyoutSeparator());file.Items.Add(MenuCommand("Настройки…"));
 
-  var header=new StackPanel();header.Children.Add(new ScrollViewer{Content=toolbar,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,VerticalScrollBarVisibility=ScrollBarVisibility.Disabled,HorizontalScrollMode=ScrollMode.Auto});selectionRegion.Margin=new Thickness(12,0,12,6);selectionRegion.HorizontalAlignment=HorizontalAlignment.Left;ToolTipService.SetToolTip(selectionRegion,UiLanguage.Text("ЛКМ — выделение; Alt+ЛКМ — вращение; колесико — перемещение"));selectionRegion.SelectionChanged+=async(_,_)=>await SyncViewportSelection();header.Children.Add(selectionRegion);grid.Children.Add(header);
+  selectionRegion.Click+=async(_,_)=>{RefreshSelectionModeButton();await SyncViewportSelection();};RefreshSelectionModeButton();toolbar.Children.Add(new Microsoft.UI.Xaml.Shapes.Rectangle{Width=1,Height=20,Margin=new Thickness(4,0,4,0),Fill=selectionRegion.Foreground,Opacity=.3});toolbar.Children.Add(selectionRegion);
+  grid.Children.Add(new ScrollViewer{Content=toolbar,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,VerticalScrollBarVisibility=ScrollBarVisibility.Disabled,HorizontalScrollMode=ScrollMode.Auto});
+  var regionShortcut=new KeyboardAccelerator{Key=Windows.System.VirtualKey.O,Modifiers=Windows.System.VirtualKeyModifiers.Shift};regionShortcut.Invoked+=async(_,e)=>{if(!selectionRegion.IsEnabled||EditingText()||view.FocusState!=FocusState.Unfocused)return;e.Handled=true;await ToggleSelectionMode();};grid.KeyboardAccelerators.Add(regionShortcut);
 
   var footer=new Grid{Margin=new Thickness(14,8,14,8),ColumnSpacing=16,RowSpacing=4};footer.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});footer.ColumnDefinitions.Add(new(){Width=GridLength.Auto});footer.RowDefinitions.Add(new(){Height=GridLength.Auto});footer.RowDefinitions.Add(new(){Height=GridLength.Auto});
   footer.Children.Add(geometryInfo);Grid.SetColumn(dirtyText,1);footer.Children.Add(dirtyText);Grid.SetRow(status,1);Grid.SetColumnSpan(status,2);footer.Children.Add(status);Grid.SetRow(footer,2);grid.Children.Add(footer);
@@ -102,7 +104,7 @@ sealed partial class EditorWindow
  }
  void RefreshMenuLanguage()
  {
-  cabinAssemblyMenu.Text=UiLanguage.Text("Рабочие части кабины");
+  RefreshSelectionModeButton();cabinAssemblyMenu.Text=UiLanguage.Text("Рабочие части кабины");
   wireframeMenu.Text=UiLanguage.Text("Полигональная сетка");
   foreach(var entry in menuButtons){if(entry.Button.Content is string)entry.Button.Content=UiLanguage.Text(entry.Label);else Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(entry.Button,UiLanguage.Text(entry.Label));}
   foreach(var entry in menuCommands)entry.Item.Text=UiLanguage.Text(entry.Label);
