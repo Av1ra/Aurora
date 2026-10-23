@@ -1,5 +1,7 @@
 # Codex handoff: Aurora Launcher + Aurora Editor
 
+**Ready wheel steering/object pivot revision:** source `a28f2b7`, clean production `build-ea99c112b932407a9945817c16d1de17`, 0.2. Native VAZ tireShape steering restored, persistent steering flyout works during wheel spin, independent object frames and pivot-only editing. Core/JS/WebGL/native-car/WinUI/package/signature/installer checks PASS. Installation awaits owner closure; see the end of [selection revision](EDITOR_SELECTION_REVISION_2026-10-23.md).
+
 **Latest installed stable selection outline:** source `2942b98`, production `build-faba25c654fa4d95af9478999f156762`. GPU external silhouette replaces flashing triangle edges; hover retains selection, interiors stay unchanged, repeated selection does not upload geometry. Owner closed Aurora; all 581 installed hashes and hidden WinUI startup/layout pass. Backup `%LOCALAPPDATA%/Aurora/backups/584233421`. Real WebGL pixel checks pass; live owner acceptance remains separate. See the end of [selection revision](EDITOR_SELECTION_REVISION_2026-10-23.md).
 
 **Latest installed compact selection button:** source `f6c7b8b`, production `build-83be9c5a93a043b99b61917dfbd15c40`. Main-toolbar Window/Crossing icon toggle replaces the extra dropdown row; Shift+O and mode tooltips. Owner closed Aurora; all 581 hashes and installed WinUI startup/layout verified. Backup `%LOCALAPPDATA%/Aurora/backups/583555953`. See the end of [selection revision](EDITOR_SELECTION_REVISION_2026-10-23.md).
