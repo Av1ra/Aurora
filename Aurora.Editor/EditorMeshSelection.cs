@@ -8,7 +8,7 @@ using System.Text.Json;
 namespace Aurora.Editor;
 sealed partial class EditorWindow
 {
- readonly ToggleButton selectionRegion=new(){Name="EditorSelectionMode",Width=32,Height=30,MinWidth=0,MinHeight=0,Padding=new Thickness(4),IsChecked=false};
+ readonly ToggleButton selectionRegion=new(){Name="EditorSelectionMode",Width=26,Height=24,MinWidth=0,MinHeight=0,Padding=new Thickness(4),IsChecked=false};
  readonly ComboBox meshLevel=new(){ItemsSource=new[]{UiLanguage.Text("Объект"),UiLanguage.Text("Элемент")},SelectedIndex=1,HorizontalAlignment=HorizontalAlignment.Stretch};
  readonly List<(int Node,int Part)> meshSelected=[];
  readonly Dictionary<int,MeshElement[]> meshElements=[];
@@ -89,6 +89,7 @@ sealed partial class EditorWindow
  }
  public void VerifyViewportLayout()
  {
+  VerifyAuoUiContract();
   VerifyToolTransitions();VerifyMeshPivotHistory();
   if(Grid.GetColumn(view)!=1||Grid.GetColumnSpan(view)!=1||Grid.GetRowSpan(view)!=1)throw new InvalidDataException("AuoUI viewport must reserve dock and timeline regions");
   foreach(var coordinate in gizmoCoordinates){if(coordinate.SmallChange!=.01||coordinate.NumberFormatter is not Windows.Globalization.NumberFormatting.DecimalFormatter formatter||formatter.FractionDigits!=2)throw new InvalidDataException("XYZ must use hundredths");string formatted=formatter.FormatDouble(.126);if(!formatted.EndsWith("13",StringComparison.Ordinal))throw new InvalidDataException("XYZ formatter did not retain hundredths");}
@@ -98,5 +99,5 @@ sealed partial class EditorWindow
   if(rightDock?.Content is not StackPanel flow||flow.Children.Count!=5||!ReferenceEquals(flow.Children[0],inspectorCaption)||!ReferenceEquals(flow.Children[1],cargoPalette)||!ReferenceEquals(flow.Children[2],lightPalette)||!ReferenceEquals(flow.Children[3],gizmoNumbers)||!ReferenceEquals(flow.Children[4],gizmoActions)||rightDock.VerticalScrollBarVisibility!=ScrollBarVisibility.Auto)throw new InvalidDataException("Viewport controls must share one automatic-scroll flow");
   string? oldScript=vehicleConfiguration;bool oldLight=lightEditing,oldVisible=gizmoVisible;try{vehicleConfiguration="$TYPE VEHICLETYPE_ROAD\n$SIREN_POINT -1 2 0\n$SIREN_POINT 1 2 0\n$END\n";lightEditing=gizmoVisible=true;RefreshLightPalette();gizmoActions.Visibility=Visibility.Visible;rightDock.Visibility=Visibility.Visible;foreach(double height in new[]{180d,320d,600d}){rightDock.MaxHeight=height;rightDock.ApplyTemplate();rightDock.Measure(new Windows.Foundation.Size(280,height));rightDock.Arrange(new Windows.Foundation.Rect(0,0,280,rightDock.DesiredSize.Height));if(rightDock.DesiredSize.Height>height+.1||rightDock.DesiredSize.Width>280.1)throw new InvalidDataException("Viewport control dock exceeds available size");}}finally{vehicleConfiguration=oldScript;lightEditing=oldLight;gizmoVisible=oldVisible;rightDock.Visibility=Visibility.Collapsed;lightPalette.Visibility=gizmoActions.Visibility=Visibility.Collapsed;lightPaletteKey=null;}
  }
- void LayoutRightDock(){if(rightDock==null||editorViewport==null)return;double available=editorViewport.RowDefinitions[0].ActualHeight;if(available<=0)available=editorViewport.ActualHeight-(animationEditing?animationPanel.ActualHeight:0);rightDock.MaxHeight=Math.Max(1,available);rightDock.Margin=new Thickness(0);rightDock.Visibility=gizmoVisible?Visibility.Visible:Visibility.Collapsed;layerPanel.Width=editorViewport.ActualWidth<800?140:180;if(layerBorder?.Child is ScrollViewer layers)layers.MaxHeight=Math.Max(1,available);}
+ void LayoutRightDock(){if(rightDock==null||editorViewport==null)return;double available=editorViewport.RowDefinitions[0].ActualHeight;if(available<=0)available=editorViewport.ActualHeight-(animationEditing?animationPanel.ActualHeight:0);rightDock.MaxHeight=Math.Max(1,available);rightDock.Margin=new Thickness(0);rightDock.Visibility=gizmoVisible&&floatingLightContent==null?Visibility.Visible:Visibility.Collapsed;layerPanel.Width=editorViewport.ActualWidth<800?112:135;if(layerBorder?.Child is ScrollViewer layers)layers.MaxHeight=Math.Max(1,available);}
 }

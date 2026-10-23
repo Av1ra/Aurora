@@ -9,6 +9,10 @@ sealed partial class EditorWindow
  {
   editorCommands["Переименовать объект…"]=(RenameObject,()=>HasModel&&objects.SelectedItem!=null);
   editorCommands["Разделить несвязанные меши"]=(SplitObject,()=>HasModel&&objects.SelectedItem!=null);
+  editorCommands["Трансформация…"]=(ConfigureObjectTransform,()=>HasModel&&objects.SelectedItem!=null);
+  editorCommands["Свойства объекта…"]=(ConfigureObjectProperties,()=>HasModel&&objects.SelectedItem!=null);
+  editorCommands["Pivot объекта…"]=(EditSelectedObjectPivot,()=>HasModel&&objects.SelectedItem!=null);
+  editorCommands["Удалить объект"]=(DeleteMeshSelection,()=>HasModel&&objects.SelectedItem!=null);
  }
  async Task RenameObject()
  {
@@ -18,8 +22,9 @@ sealed partial class EditorWindow
   foreach(var preset in new[]{("body","Основной корпус; механизм настраивается отдельно"),("tire_leftShape","Колесо левой стороны транспорта"),("tire_rightShape","Колесо правой стороны транспорта"),("tire2Shape","Дополнительная колёсная группа"),("tireShape","Колёсная группа с общим именем")}){var content=new StackPanel{Spacing=3};content.Children.Add(new TextBlock{Text=preset.Item1});content.Children.Add(new TextBlock{Text=UiLanguage.Text(preset.Item2),TextWrapping=TextWrapping.Wrap,MaxWidth=340,Opacity=.7});presets.Items.Add(new ComboBoxItem{Content=content,Tag=preset.Item1});}
   presets.SelectionChanged+=(_,_)=>{if(presets.SelectedItem is ComboBoxItem item&&item.Tag is string value)box.Text=value;};panel.Children.Add(presets);
   var dialog=VehicleDialog("Переименовать объект…",panel);if(await ShowDialog(dialog)!=ContentDialogResult.Primary)return;string name=box.Text.Trim();
-  var changed=lods.ToDictionary(p=>p.Key,p=>ModelEditing.Rename(p.Value,oldName,name));string? script=vehicleConfiguration==null?null:VehicleScript.RenamePart(vehicleConfiguration,oldName,name);foreach(var p in changed){var ids=ObjectIds(p.Key);if(ids.Remove(oldName,out var id))ids[name]=id;lods[p.Key]=p.Value;if(glassObjects[p.Key].Remove(oldName))glassObjects[p.Key].Add(name);}RenameAnimationMesh(oldName,name);if(interchange!=null)interchange=interchange with{Nodes=interchange.Nodes.Select(n=>n.Name==oldName?n with{Name=name}:n).ToArray()};vehicleConfiguration=script;vehicleConfigurationEdited|=script!=null;dirty=true;await Display();objects.SelectedItem=name;
+  await RenameObjectTo(oldName,name);
  }
+ async Task RenameObjectTo(string oldName,string name){var changed=lods.ToDictionary(p=>p.Key,p=>ModelEditing.Rename(p.Value,oldName,name));string? script=vehicleConfiguration==null?null:VehicleScript.RenamePart(vehicleConfiguration,oldName,name);foreach(var p in changed){var ids=ObjectIds(p.Key);if(ids.Remove(oldName,out var id))ids[name]=id;lods[p.Key]=p.Value;if(glassObjects[p.Key].Remove(oldName))glassObjects[p.Key].Add(name);}RenameAnimationMesh(oldName,name);if(interchange!=null)interchange=interchange with{Nodes=interchange.Nodes.Select(n=>n.Name==oldName?n with{Name=name}:n).ToArray()};vehicleConfiguration=script;vehicleConfigurationEdited|=script!=null;dirty=true;await Display();objects.SelectedItem=name;}
  async Task SplitObject()
  {
   var names=objects.SelectedItems.OfType<string>().ToArray();if(names.Length==0)return;var scope=new ComboBox{ItemsSource=new[]{UiLanguage.Text("Текущая модель"),UiLanguage.Text("Все LOD")},SelectedIndex=0,HorizontalAlignment=HorizontalAlignment.Stretch};if(await ShowDialog(VehicleDialog("Разделить несвязанные меши",scope))!=ContentDialogResult.Primary)return;bool all=scope.SelectedIndex==1;processing=true;UpdateControls();

@@ -6,20 +6,19 @@ using Microsoft.UI.Xaml.Media;
 namespace Aurora.Editor;
 sealed partial class EditorWindow
 {
- readonly StackPanel layerPanel=new(){Spacing=6,Width=180};
+ readonly StackPanel layerPanel=new(){Spacing=3,Width=135};
  Border? layerBorder;
  void BuildLayers(Grid viewport)
  {
   layerPanel.Children.Add(new TextBlock{Text=UiLanguage.Text("Объекты"),FontWeight=Microsoft.UI.Text.FontWeights.SemiBold});
   layerPanel.Children.Add(objects);objects.MaxHeight=500;objects.SelectionChanged+=(_,_)=>RefreshMeshGroups();
   var menu=new MenuFlyout{MenuFlyoutPresenterStyle=opaqueMenuStyle};void Add(string text,Func<Task> action){var item=new MenuFlyoutItem{Text=UiLanguage.Text(text)};item.Click+=async(_,_)=>await RunCommand(action);menu.Items.Add(item);}
-  Add("Редактировать",async()=>{if(meshEditing){EndMeshEditing();gizmoVisible=false;await Display();}else await BeginMeshEditing();});
   Add("Отделить",DetachMeshSelection);Add("Переименовать…",RenameObject);Add("Удалить",DeleteMeshSelection);
-  menu.Opening+=(_,_)=>{menu.Items[1].IsEnabled=meshEditing&&meshLevel.SelectedIndex==1&&meshSelected.Count>0;menu.Items[2].IsEnabled=menu.Items[3].IsEnabled=!meshEditing||meshLevel.SelectedIndex==0;};
+  menu.Opening+=(_,_)=>{menu.Items[0].IsEnabled=meshEditing&&meshLevel.SelectedIndex==1&&meshSelected.Count>0;menu.Items[1].IsEnabled=menu.Items[2].IsEnabled=!meshEditing||meshLevel.SelectedIndex==0;};
   objects.ContextFlyout=menu;viewportObjectMenu=menu;
   objects.RightTapped+=(_,e)=>{if(e.OriginalSource is DependencyObject node){while(node!=null&&node is not ListViewItem)node=VisualTreeHelper.GetParent(node);if(node is ListViewItem item&&item.Content is string name&&!objects.SelectedItems.Contains(name))objects.SelectedItem=name;}};
   var scroll=new ScrollViewer{Content=layerPanel,VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled};viewport.SizeChanged+=(_,_)=>scroll.MaxHeight=Math.Max(80,viewport.ActualHeight-160);
-  layerBorder=new Border{Child=scroll,Padding=new Thickness(8),Margin=new Thickness(0),HorizontalAlignment=HorizontalAlignment.Left,VerticalAlignment=VerticalAlignment.Stretch,Background=opaquePopup,Visibility=Visibility.Collapsed};Grid.SetColumn(layerBorder,0);viewport.Children.Add(layerBorder);
+  layerBorder=new Border{Child=scroll,Padding=new Thickness(4),Margin=new Thickness(0),HorizontalAlignment=HorizontalAlignment.Left,VerticalAlignment=VerticalAlignment.Stretch,Background=opaquePopup,Visibility=Visibility.Collapsed};Grid.SetColumn(layerBorder,0);viewport.Children.Add(layerBorder);
  }
  async void RefreshMeshGroups(){if(processing||selectionSync||!ready)return;try{if(animationEditing){await SelectAnimationObject(objects.SelectedItem as string);await SyncViewportSelection();return;}if(meshEditing&&objects.SelectedIndex>=0&&(meshLevel.SelectedIndex==0||objects.SelectedIndex!=meshEditNode)){meshEditNode=objects.SelectedIndex;meshSelected.Clear();if(meshLevel.SelectedIndex==0)foreach(var name in objects.SelectedItems.OfType<string>()){int at=CurrentModel().Nodes.FindIndex(n=>n.Name==name);if(at>=0)meshSelected.Add((at,-1));}ResetMeshBasis();await RefreshGizmo();}await SyncViewportSelection();}catch(Exception ex){SetStatus(ex.Message);}}
  Task ConfigureMeshLayers()=>BeginMeshEditing();
