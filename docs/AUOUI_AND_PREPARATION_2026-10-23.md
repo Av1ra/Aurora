@@ -99,4 +99,4 @@ dotnet run --project Aurora.Tests/Aurora.Tests.csproj -c Release -- --catalog-be
 
 Готовый общий ZIP Launcher + Editor, соседний Setup и контрольные суммы сохранены в `C:/Users/AVR/Downloads/Aurora-0.2-AuoUI-2026-10-23`. Публикация нового GitHub Release/tag не выполнялась.
 
-На момент подготовки отчёта запущен установленный Editor, который держит заменяемые файлы. Владельцу отправлен запрос закрыть Editor/Launcher. **Новый комплект ещё не установлен**; установленная версия остаётся предыдущей. После подтверждения закрытия необходимо выполнить транзакционную установку, сверить hashes с package и повторить installed hidden WinUI check. Не закрывать работающий пользовательский Editor принудительно.
+Владелец подтвердил закрытие Editor/Launcher. Транзакционная установка выполнена в `D:/SteamLibrary/steamapps/common/SovietRepublic/Aurora`. Все **581** установленных файлов сверены по SHA-256 с проверенным package; installed hidden WinUI startup PASS. Резервная копия: `C:/Users/AVR/AppData/Local/Aurora/backups/608198859`. Квитанция: локальный `artifacts/auoui-install.json`. Работа в видимом окне и первом кадре параметров остаётся приёмкой владельца.
