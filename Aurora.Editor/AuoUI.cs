@@ -34,8 +34,10 @@ static class AuoUI
    if(root is Microsoft.UI.Xaml.Controls.Panel panel)panel.Background=new SolidColorBrush(dark?Colour(30,33,37):Colour(231,234,238));
   }
   void ContrastChanged(Windows.UI.ViewManagement.AccessibilitySettings sender,object args){root.DispatcherQueue.TryEnqueue(Refresh);}
-  accessibility.HighContrastChanged+=ContrastChanged;root.Unloaded+=(_,_)=>accessibility.HighContrastChanged-=ContrastChanged;
-  root.Loaded+=(_,_)=>Refresh();root.ActualThemeChanged+=(_,_)=>Refresh();Refresh();
+  bool subscribed=false;
+  root.Loaded+=(_,_)=>{Refresh();if(!subscribed)try{accessibility.HighContrastChanged+=ContrastChanged;subscribed=true;}catch(System.Runtime.InteropServices.COMException){/* Some hosts do not expose this event; theme changes still refresh the palette. */}};
+  root.Unloaded+=(_,_)=>{if(subscribed){try{accessibility.HighContrastChanged-=ContrastChanged;}catch(System.Runtime.InteropServices.COMException){}subscribed=false;}};
+  root.ActualThemeChanged+=(_,_)=>Refresh();Refresh();
  }
  public static void Coordinate(NumberBox number){number.Tag=CoordinateTag;FormatNumber(number);}
  public static void FormatNumber(NumberBox number)
