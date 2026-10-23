@@ -90,6 +90,7 @@ sealed partial class EditorWindow
 
   selectionRegion.Click+=async(_,_)=>{RefreshSelectionModeButton();await SyncViewportSelection();};RefreshSelectionModeButton();toolbar.Children.Add(new Microsoft.UI.Xaml.Shapes.Rectangle{Width=1,Height=20,Margin=new Thickness(4,0,4,0),Fill=selectionRegion.Foreground,Opacity=.3});toolbar.Children.Add(selectionRegion);
   ToolTipService.SetToolTip(ghostOthers,"Остальные объекты: 50% прозрачности");Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(ghostOthers,"Прозрачность остальных объектов");ghostOthers.Click+=async(_,_)=>await SyncViewportSelection();toolbar.Children.Add(ghostOthers);
+  foreach(var control in toolbar.Children.OfType<Control>()){control.Height=control.MinHeight=26;control.VerticalAlignment=VerticalAlignment.Center;control.Padding=new Thickness(6,1,6,1);}fileButton.Width=30;selectionRegion.Width=ghostOthers.Width=30;
   grid.Children.Add(new ScrollViewer{Content=toolbar,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,VerticalScrollBarVisibility=ScrollBarVisibility.Disabled,HorizontalScrollMode=ScrollMode.Auto});
   var regionShortcut=new KeyboardAccelerator{Key=Windows.System.VirtualKey.O,Modifiers=Windows.System.VirtualKeyModifiers.Shift};regionShortcut.Invoked+=async(_,e)=>{if(!selectionRegion.IsEnabled||EditingText()||view.FocusState!=FocusState.Unfocused)return;e.Handled=true;await ToggleSelectionMode();};grid.KeyboardAccelerators.Add(regionShortcut);
 
