@@ -112,6 +112,7 @@ sealed partial class EditorWindow
   foreach(var content in detachedMenuContents)UiLanguage.Apply(content);
  }
  static void SetToolsEnabled(DependencyObject node,bool enabled){if(node is Control control){control.IsEnabled=enabled;return;}if(node is Panel panel)foreach(var child in panel.Children)SetToolsEnabled(child,enabled);else if(node is Border border&&border.Child!=null)SetToolsEnabled(border.Child,enabled);}
+ NativeModel? dimensionsModel;System.Numerics.Vector3 dimensionsSize;
  void UpdateMenuState()
  {
   selectionRegion.IsEnabled=HasModel&&!busy&&!cameraEditing;SetToolsEnabled(animationPanel,!busy&&!cameraEditing);SetToolsEnabled(gizmoActions,!busy&&!cameraEditing);SetToolsEnabled(gizmoNumbers,!busy&&!cameraEditing);if(effectBar!=null)SetToolsEnabled(effectBar,HasModel&&!busy&&!cameraEditing&&!meshEditing);
@@ -120,7 +121,7 @@ sealed partial class EditorWindow
   foreach(var command in menuCommands)command.Item.IsEnabled=!busy&&!cameraEditing&&command.CanExecute();
   if(selectedLod==null||!lods.TryGetValue(selectedLod,out var model)){geometryInfo.Text="";return;}
   var statistics=ModelStatistics.Of(model);
-  geometryInfo.Text=UiLanguage.Text("Объекты")+": "+statistics.Objects+"\n"+UiLanguage.Text("Треугольники")+": "+statistics.Triangles+"\n"+UiLanguage.Text("Вершины")+": "+statistics.Vertices;var bounds=ModelOrientation.Bounds(CurrentModel());var size=bounds.Max-bounds.Min;geometryInfo.Text+="\n"+UiLanguage.Text("Габариты модели, м")+$": {size.X:F1} × {size.Y:F1} × {size.Z:F1}";
+  geometryInfo.Text=UiLanguage.Text("Объекты")+": "+statistics.Objects+"\n"+UiLanguage.Text("Треугольники")+": "+statistics.Triangles+"\n"+UiLanguage.Text("Вершины")+": "+statistics.Vertices;if(!ReferenceEquals(dimensionsModel,model)){var bounds=ModelOrientation.Bounds(model);dimensionsSize=bounds.Max-bounds.Min;dimensionsModel=model;}var size=dimensionsSize;geometryInfo.Text+="\n"+UiLanguage.Text("Габариты модели, м")+$": {size.X:F1} × {size.Y:F1} × {size.Z:F1}";
  }
  async Task ExportNmf()
  {
