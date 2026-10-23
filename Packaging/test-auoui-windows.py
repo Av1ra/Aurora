@@ -11,5 +11,6 @@ with tempfile.TemporaryDirectory(prefix='Aurora-AuoUI-') as temp:
  metrics=data['Metrics']
  assert metrics['Reopened'] and metrics['ToolWindowReused'] and not metrics['WindowActivated'],metrics
  assert metrics['TallFormScrolling'] and metrics['PrimaryValidationCancelledThenAccepted'],metrics
+ assert metrics['CompactConfirmation'] and metrics['NativeSizeLimits'] and metrics['NoticeDismissal'],metrics
  assert all(s['ScrollableHeight']==0 for s in metrics['Sizes']),metrics
  print('PASS real AuoUI templates, separate window reopen/cleanup, scrolling and native primary validation without activation')

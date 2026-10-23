@@ -25,4 +25,18 @@ Owner-authorized continuation of the working design. Native WinUI remains the ba
 - Real signed hidden WinUI construction/layout passed, including selected-object local pivot transforms, scene keys for two targets, history context and compact layout checks.
 - Test-owned native windows passed: repeat open/close, automatic scrolling, validation cancel/accept, compact exit confirmation, native size limits, tool reuse and five-second notice reset/dismissal. No user window was activated or controlled.
 
-Production package and delivery results are recorded below after packaging. These automated checks do not establish owner live GUI/DPI acceptance or actual in-game animation acceptance.
+These automated checks do not establish owner live GUI/DPI acceptance or actual in-game animation acceptance.
+
+## Delivered and installed
+
+Clean production source: `8d513527e5870f6cf3c48e7b398d6230d20110bd`, `ModifiedSources=false`, production signing, version 0.2. Build: `build-1f7df11c22264a42893209aae0cba9ea`.
+
+Native installer fixtures, combined-package integrity/tamper checks, executable branding and module/update signatures passed. Production hidden parameter-form measurement on 1,073 catalog objects: 114–161 ms construction/measure; this does not measure the owner's visible first frame.
+
+Installed transactionally while Aurora was closed in `D:/SteamLibrary/steamapps/common/SovietRepublic/Aurora`. All **577** packaged files match their installed SHA-256. Installed hidden Editor construction and native-window checks passed. The root `Aurora Editor.exe` independently passed forwarding to the real Editor without activation. Backup: `C:/Users/AVR/AppData/Local/Aurora/backups/616580734`. Installation receipt: ignored local `artifacts/workflow-install.json`.
+
+Ready executable copy, also hash-verified: `C:/Users/AVR/Downloads/Aurora-0.2-Workflow-8d51352`. Exactly one Launcher + Editor ZIP and adjacent Setup remain in the production output. No Release/tag was published. Existing unrelated files were preserved; the game was not launched or controlled.
+
+Actual offscreen WinUI test form after fitting, using synthetic field values rather than the owner's vehicle:
+
+![Compact native AuoUI dialog](images/auoui-compact-dialog.png)

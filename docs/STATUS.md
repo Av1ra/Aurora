@@ -4,6 +4,8 @@
 
 ## Implemented
 
+- 2026-10-23: [AuoUI workflow corrections installed](AUOUI_WORKFLOW_FIXES_2026-10-23.md), clean source `8d51352`, production `build-1f7df11c22264a42893209aae0cba9ea`, 0.2. Content-fit/shrink-only native windows; five-second notices; permanent inspector, persistent local pivots and scene keys; floor grid, coordinate footer and ghosting. 444 Core, JS/real WebGL, signed hidden WinUI/windows, native/package/signature/branding PASS. 577 installed hashes, installed hidden checks and root Editor forwarding PASS. Backup `616580734`; Downloads ready executable folder `Aurora-0.2-Workflow-8d51352`. Owner live GUI/DPI and in-game acceptance remain separate.
+
 - Root contains Aurora.exe, Aurora.Editor.exe and app/. Shared .NET/WinUI files stay in app; the optional editor does not duplicate that runtime.
 - Separate adjacent ZIP and native installer (~390 KB). Installer checks the archive's pinned SHA-256, validates paths and extracts it. Default target is SovietRepublic/Aurora, detected from the saved game path or Steam libraries. A different destination is supported.
 - Main window title is Aurora. Sidebar is 200px. Home has game launch, game/mod settings, Workshop and direct Find mods. No repeated Aurora body heading, no Game folder / Mods folder buttons, no instruction to search in Settings.
