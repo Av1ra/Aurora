@@ -13,7 +13,7 @@ sealed partial class EditorWindow
  }
  System.Numerics.Vector3 LocalObjectPivot(NativeModel model,MeshNode node)=>explicitPivots.Contains(ObjectIds(selectedLod!)[node.Name])?RigidScene.Frame(model,node).Translation:ObjectPivots.Local(model,node);
  AnimationTrack NewAnimationTrack(string mesh){var model=CurrentModel();var p=LocalObjectPivot(model,model.Nodes.First(n=>n.Name==mesh));return ObjectPivots.Track(model,mesh) with{Pivot=[p.X,p.Y,p.Z],ObjectId=ObjectIds(selectedLod!)[mesh]};}
- NativeModel ObjectFramesChanged(NativeModel after,IEnumerable<int> indices){var ids=ObjectIds(selectedLod!);var targets=indices.Distinct().ToDictionary(i=>after.Nodes[i].Name,i=>RigidScene.Frame(after,after.Nodes[i]).Translation);foreach(string name in targets.Keys)explicitPivots.Add(ids[name]);animationClips=animationClips.Select(c=>c with{Tracks=c.Tracks.Select(t=>t.PivotSource=="Object"&&targets.TryGetValue(t.Mesh,out var p)?t with{Pivot=[p.X,p.Y,p.Z]}:t).ToArray()}).ToArray();return after;}
+ NativeModel ObjectFramesChanged(NativeModel after,IEnumerable<int> indices){var ids=ObjectIds(selectedLod!);var targets=indices.Distinct().ToDictionary(i=>after.Nodes[i].Name,i=>RigidScene.Frame(after,after.Nodes[i]));foreach(string name in targets.Keys)explicitPivots.Add(ids[name]);animationClips=animationClips.Select(c=>c with{Tracks=c.Tracks.Select(t=>t.PivotSource=="Object"&&targets.TryGetValue(t.Mesh,out var frame)?t with{Pivot=[frame.M41,frame.M42,frame.M43],AxisRotation=ObjectPivots.Axes(frame)}:t).ToArray()}).ToArray();return after;}
  void BindAnimationIdentities()
  {
   if(lods.Count==0)return;var ids=ObjectIds(lods.Keys.First());
