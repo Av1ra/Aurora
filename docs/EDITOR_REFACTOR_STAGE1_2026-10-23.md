@@ -19,6 +19,8 @@ Installed source `8ed0d628f1ff9e535e57a0fdd5a33e31b6e8eeb1`, clean production `b
 
 Initial packaging stopped at compile because the explicitly listed bundled-module sources omitted EditorDensity; fixed before final packaging. The incomplete package was not installed.
 
-## Remaining audit work
+## Remaining audit work at stage 1 (superseded by the final report)
+
+Owner subsequently authorized the remainder; see [implementation and installation](EDITOR_AUDIT_IMPLEMENTATION_2026-10-23.md) for current state and verification limits.
 
 Explicit object/custom/mechanism pivot binding and pose-preserving rebind of old clips; full replacement of mode flags and stable object IDs; full dock layout and 100/125/150/200% DPI acceptance; remaining bespoke forms/templates (some still have explicit larger sizes); NAME/NAME_STR modes; shared sound/effect drafts; update-domain/performance instrumentation; broader scenario coverage and DCC/game acceptance. This first package does not claim a complete AuaUI toolkit or completion of all audit findings.
