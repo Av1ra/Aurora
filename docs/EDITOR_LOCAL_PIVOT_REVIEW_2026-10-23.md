@@ -1,6 +1,6 @@
 # Local pivot and model settings consistency review — 2026-10-23
 
-Ready source `5eaaa3f51f76fd92a94fa3da4bf1bffc4fec52f8`, clean production `build-46031a10aa29436cb518fd090e496326`, version 0.2. Not installed: owner Launcher PID 48432 holds files. Delivery Downloads/Aurora-0.2-LocalPivot-2026-10-23.
+Ready source `5eaaa3f51f76fd92a94fa3da4bf1bffc4fec52f8`, clean production `build-46031a10aa29436cb518fd090e496326`, version 0.2. Installed after owner confirmed closure: 581 installed SHA256 hashes match, installed hidden WinUI startup/layout PASS. Backup `%LOCALAPPDATA%/Aurora/backups/586792000`; ignored receipt `artifacts/local-pivot-install.json`. Delivery Downloads/Aurora-0.2-LocalPivot-2026-10-23.
 
 ## Fixed in this package
 
