@@ -5,13 +5,13 @@ import assert from 'node:assert/strict';
 // This covers async scene ownership and coordinate conversion, not visual quality.
 const html = fs.readFileSync(new URL('../Aurora.Editor/Assets/viewport.html', import.meta.url), 'utf8');
 const script = html.match(/<script>([\s\S]*?)<\/script>/)[1].replace('/*AURORA_GIZMO*/',fs.readFileSync(new URL('../Aurora.Editor/Assets/gizmo.js',import.meta.url),'utf8')).replace('/*AURORA_PREVIEWS*/',fs.readFileSync(new URL('../Aurora.Editor/Assets/previews.js',import.meta.url),'utf8')).replace('/*AURORA_SELECTION*/',fs.readFileSync(new URL('../Aurora.Editor/Assets/selection.js',import.meta.url),'utf8'));
-const images = [], deleted = [], messages = [], reads = [],drawCalls=[];
+let vertexUploads=0;const images = [], deleted = [], messages = [], reads = [],drawCalls=[];
 const uniforms = new Map();
 let created = 0, pickId = 1, viewportSize;const previewFrames=[],clearColours=[],eventHandlers=new Map(),cameraFrames=[],animationFrames=[],effectFrames=[];let frameTime=0,spriteCount=0;const wheelFrames=[];
 class Texture {}
 class ImageStub { constructor() { images.push(this); } }
 const gpu = new Proxy({
-  LINES:2,TRIANGLES:3,drawElements:(mode,count)=>drawCalls.push({mode,count}),
+  bufferData:()=>vertexUploads++,checkFramebufferStatus:()=>1,LINES:2,TRIANGLES:3,drawElements:(mode,count)=>drawCalls.push({mode,count}),
   drawArrays:()=>spriteCount++,
   getShaderParameter: () => true, getProgramParameter: () => true,
   createTexture: () => { created++; return new Texture(); },
@@ -172,3 +172,5 @@ api.gizmo({visible:false,position:[4,1,4],rotation:[0,0,0],scale:[1,1,1],cargo:-
 console.log('PASS wheel pause/resume/reset and mesh-element transforms retain untouched geometry and the existing VAO');
 
 api.selectionOptions({enabled:true});const shortcutMessages=messages.length;eventHandlers.get('keydown')({code:'KeyO',shiftKey:true,preventDefault(){}});assert.equal(messages.length,shortcutMessages+1);assert.equal(messages.at(-1).selectionToggle,true);eventHandlers.get('keydown')({code:'KeyO',shiftKey:true,ctrlKey:true,preventDefault(){}});assert.equal(messages.length,shortcutMessages+1);console.log('PASS Shift+O routes window/crossing toggle from the focused viewport and leaves other shortcuts alone');
+
+api.selectionOptions({enabled:false,items:[]});api.gizmo({visible:false,position:[0,0,0],rotation:[0,0,0],scale:[1,1,1],cargo:-1});const beforeIdentity=vertexUploads;api.meshPreview({revision:99,pivot:[0,0,0],items:[{node:0,vertices:[0,1,2]}]});api.meshPreview({revision:99,pivot:[0,0,0],items:[{node:0,vertices:[0,1,2]}]});assert.equal(vertexUploads,beforeIdentity,'choosing a component and repeated UI echoes must not upload geometry');console.log('PASS selection-only acknowledgements do not re-upload vertex buffers');
