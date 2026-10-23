@@ -16,6 +16,7 @@ static class MeshElementChecks
   var raw=ObjImporter.Parse("o front\nv 2 0 4\nv 4 0 4\nv 3 2 4\nf 1 2 3\no rear\nv -4 0 -4\nv -2 0 -4\nv -3 2 -4\nf 4 5 6\n").Model;var individual=ObjectPivots.InitialiseSharedOrigins(raw);check(Vector3.Distance(ObjectPivots.Local(raw,raw.Nodes[0]),new(3,1,4))<.0001f,"legacy identity-frame objects use their own centre for tools and new animation axes");
   check(Vector3.Distance(RigidScene.Frame(individual,individual.Nodes[0]).Translation,new(3,1,4))<.0001f&&Vector3.Distance(RigidScene.Frame(individual,individual.Nodes[1]).Translation,new(-3,1,-4))<.0001f,"legacy shared identity origins become independent object centres");
   check(WheelDiagnostics.Read(ModelEditing.Rename(raw,"front","tireShape")).All(w=>!w.Steering),"generic tireShape is not forced to steer without native steering names");
+  check(ObjectPivots.Track(raw,"front").Pivot.SequenceEqual(new[]{3f,1f,4f}),"all new animation tracks use the selected object's local origin");
   var adjacent=ObjImporter.Parse("o surface\nv 0 0 0\nv 1 0 0\nv 0 1 0\nv 1 1 0\nusemtl first\nf 1 2 3\nusemtl second\nf 2 4 3\n").Model;check(MeshElements.Read(adjacent.Nodes[0]).Length==1,"shared geometric edge joins UV/material seams into one connected element");
  }
 }

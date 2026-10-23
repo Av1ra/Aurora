@@ -120,6 +120,7 @@ static class UiLanguage
 ["Все колёса"]="All wheels",
 ["Проверка колёс"]="Wheel test",
 ["Категория транспорта"]="Transport category",["Назначение техники"]="Vehicle purpose",
+["Добавьте выбранный объект в анимацию кнопкой +"]="Add the selected object to the animation with +",
 ["Поворот передних колёс"]="Front wheel steering",["Сбросить поворот"]="Reset steering",["Завершить правку pivot"]="Finish pivot editing",
 ["Вращение колёс"]="Wheel rotation",
 ["LOD присоединённой части"]="Attached part LOD",

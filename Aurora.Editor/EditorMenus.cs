@@ -49,13 +49,13 @@ sealed partial class EditorWindow
   flyout.Placement=FlyoutPlacementMode.BottomEdgeAlignedLeft;
   flyout.ShouldConstrainToRootBounds=true;
   flyout.Opened+=(_,_)=>{var root=((FrameworkElement)Content).XamlRoot;if(root==null)return;void Opaque(DependencyObject node){if(node is MenuFlyoutPresenter menu){menu.SystemBackdrop=null;menu.Background=opaquePopup;}else if(node is FlyoutPresenter panel)panel.Background=opaquePopup;for(int i=0;i<VisualTreeHelper.GetChildrenCount(node);i++)Opaque(VisualTreeHelper.GetChild(node,i));}foreach(var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(root))if(popup.Child!=null)Opaque(popup.Child);};
-  editorFlyouts.Add(flyout);var button=new Button{Content=UiLanguage.Text(label),Flyout=flyout,MinHeight=30,Padding=new Thickness(10,3,10,3)};
+  editorFlyouts.Add(flyout);var button=new Button{Content=UiLanguage.Text(label),Flyout=flyout,MinHeight=26,Padding=new Thickness(7,2,7,2)};
   button.Background=opaqueButton;foreach(string key in new[]{"ButtonBackground","ButtonBackgroundPointerOver","ButtonBackgroundPressed","ButtonBackgroundDisabled"})button.Resources[key]=opaqueButton;
   menuButtons.Add((button,label));return button;
  }
  void BuildMenuLayout(Grid grid)
  {
-  ConfigureOpaqueSurfaces(grid);
+  ConfigureCompactEditor();ConfigureOpaqueSurfaces(grid);
   // Reuse the existing stateful selectors and command handlers.
   var toolbar=new StackPanel{Name="EditorToolbar",Orientation=Orientation.Horizontal,Spacing=6,Margin=new Thickness(12,6,12,6)};
   RegisterImportCommands();RegisterSceneCommands();RegisterVehicleCommands();RegisterMaterialCommands();RegisterProjectCommands();RegisterObjectCommands();RegisterHistoryCommands();RegisterModelSettingsCommands();
