@@ -1,0 +1,56 @@
+{
+  "Catalog": {
+    "Objects": 1073,
+    "SourceFiles": 1075,
+    "FreshMs": 456.1,
+    "RawSamplesMs": [
+      233.3826,
+      228.5437,
+      263.2876,
+      246.7062,
+      240.3642
+    ],
+    "CacheSamplesMs": [
+      78.3747,
+      83.3635,
+      57.7463,
+      56.8945,
+      55.895
+    ],
+    "RawMedianMs": 240.3642,
+    "CacheMedianMs": 57.7463,
+    "CacheHit": true,
+    "ValidationMilliseconds": 36.7518
+  },
+  "ParameterForm": {
+    "Success": true,
+    "Metrics": {
+      "CatalogMilliseconds": 265.7744,
+      "Objects": 1073,
+      "Samples": [
+        {
+          "TotalMilliseconds": 122.3961,
+          "MeasureMilliseconds": 85.4022,
+          "Controls": 31
+        },
+        {
+          "TotalMilliseconds": 96.4652,
+          "MeasureMilliseconds": 88.1437,
+          "Controls": 31
+        },
+        {
+          "TotalMilliseconds": 93.8446,
+          "MeasureMilliseconds": 86.0402,
+          "Controls": 31
+        }
+      ],
+      "WindowActivated": false
+    }
+  },
+  "CoreChecks": 444,
+  "WinUIHidden": true,
+  "RealWebGL": true,
+  "Source": "ff4f8165571c29268dda34d2f70dc178f839e651",
+  "Build": "build-363a7400687841c2bb1b5961bb5f5fa0",
+  "VisibleWindowAcceptance": false
+}

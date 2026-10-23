@@ -1,0 +1,32 @@
+<svg xml:space="preserve" xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660">
+<style>text{font-family:'Segoe UI',sans-serif;fill:#e8eaed;font-size:15px}.small{font-size:13px;fill:#aab1bb}.label{font-size:12px;fill:#aab1bb}.heading{font-size:16px;font-weight:600}.muted{fill:#aab1bb}.edge{stroke:#4a5058;stroke-width:1}.field{fill:#373b41;stroke:#4a5058;stroke-width:1}</style>
+<rect width="1200" height="660" fill="#1e2125"/>
+<text x="20" y="30" class="heading">AuoUI v1</text><text x="1180" y="30" text-anchor="end" class="small">Схема областей, не снимок окна</text>
+<rect x="12" y="46" width="1176" height="40" fill="#292c30"/>
+<text x="26" y="72">☰</text><text x="68" y="72">Объект</text><text x="160" y="72">Модификаторы</text><text x="318" y="72">Материалы</text><text x="446" y="72">Скрипты</text>
+<rect x="12" y="87" width="185" height="437" fill="#292c30"/><line x1="197" y1="87" x2="197" y2="524" class="edge"/>
+<text x="26" y="113" class="heading">Объекты</text><text x="30" y="151">body</text>
+<rect x="22" y="169" width="165" height="30" fill="#374c5f"/><rect x="22" y="169" width="3" height="30" fill="#72a4cd"/><text x="31" y="190">wheel_left</text><text x="30" y="225">wheel_right</text>
+<rect x="198" y="87" width="705" height="437" fill="#202020"/>
+<text x="550" y="285" text-anchor="middle" class="heading">Вьюпорт</text>
+<text x="550" y="312" text-anchor="middle" class="small">Свободная область учитывает ширину обеих панелей</text>
+<text x="214" y="503" class="small">День / ночь     Поворотники     Маяки     Колёса</text>
+<rect x="904" y="87" width="284" height="437" fill="#292c30"/><line x1="903" y1="87" x2="903" y2="524" class="edge"/>
+<text x="920" y="114" class="heading">Объект / wheel_left</text><text x="920" y="140" class="small">Один контекст инструмента</text>
+<line x1="920" y1="156" x2="1172" y2="156" class="edge"/>
+<text x="920" y="183" class="label">X</text><text x="1007" y="183" class="label">Y</text><text x="1094" y="183" class="label">Z</text>
+<rect x="920" y="191" width="78" height="28" rx="2" class="field"/><rect x="1007" y="191" width="78" height="28" rx="2" class="field"/><rect x="1094" y="191" width="78" height="28" rx="2" class="field"/>
+<text x="929" y="211">0,50</text><text x="1016" y="211">0,70</text><text x="1103" y="211">2,00</text>
+<text x="920" y="246" class="small">XYZ: сотые, шаг 0,01</text>
+<rect x="920" y="266" width="252" height="28" rx="2" class="field"/><text x="1046" y="286" text-anchor="middle">Редактировать pivot</text>
+<rect x="920" y="302" width="252" height="28" rx="2" class="field"/><text x="1046" y="322" text-anchor="middle">Автоцентрирование</text>
+<rect x="920" y="338" width="252" height="28" rx="2" class="field"/><text x="1046" y="358" text-anchor="middle">Отменить действие</text>
+<text x="920" y="406" class="small">Палитра, координаты и действия</text><text x="920" y="428" class="small">прокручиваются вместе</text>
+<rect x="1180" y="102" width="3" height="170" fill="#69717b"/>
+<rect x="12" y="525" width="1176" height="86" fill="#292c30"/><line x1="12" y1="525" x2="1188" y2="525" class="edge"/>
+<rect x="24" y="538" width="148" height="28" rx="2" class="field"/><text x="34" y="558">Клип</text>
+<rect x="182" y="538" width="205" height="28" rx="2" class="field"/><text x="192" y="558">wheel_left</text>
+<text x="410" y="558">+     Ключ     Удалить ключ      ▶     ■     Сброс</text><text x="1166" y="558" text-anchor="end" class="small">Параметры    Кривые</text>
+<line x1="28" y1="590" x2="1170" y2="590" stroke="#69717b" stroke-width="2"/><circle cx="28" cy="590" r="5" fill="#72a4cd"/>
+<text x="24" y="636" class="small">Объекты    Треугольники    Вершины    Габариты</text><text x="1176" y="636" text-anchor="end" class="small">Состояние проекта</text>
+</svg>
